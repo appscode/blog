@@ -8,12 +8,12 @@ body {
   font-family: $font-paragraph;
   font-weight: 400;
   font-style: normal;
-  font-size: 15px;
+  font-size: 1em;
 }
 
 p {
   font-family: $font-paragraph;
-  font-size: 15px;
+  font-size: 1em;
   font-weight: 400;
   line-height: 1.8;
   color: $paragraph-color;
@@ -102,6 +102,25 @@ h5 {
 h6 {
   font-size: 14px;
   line-height: 24px;
+}
+.inline-button {
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  &:after {
+    position: absolute;
+    content: "";
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: $primary-color;
+    border-radius: 50px;
+    transition: 0.3s ease-in-out;
+  }
+  &:hover.inline-button:after {
+    width: 100%;
+  }
 }
 .button.is-primary {
   background: $primary-color;
