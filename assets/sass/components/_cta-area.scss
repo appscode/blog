@@ -1,0 +1,54 @@
+// cta area start
+.cta-area {
+  background-image: url(../images/bg-image/cta-bg.png);
+  background-repeat: repeat;
+  background-color: $primary-color;
+  .section-title.is-dark-bg {
+    h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: $white-color;
+      line-height: 42px;
+    }
+    p {
+      color: darken($white-color, 20%);
+      margin-bottom: 30px;
+    }
+  }
+  .cta-buttons .button:not(:last-child):not(.is-fullwidth) {
+    margin-right: 30px;
+  }
+  .right-sidebar {
+    border-left: 2px solid #8e939a;
+    .right-sidebar-inner {
+      padding-left: 30px;
+      .single-sidebar-item {
+        margin-bottom: 30px;
+        h5 {
+          font-size: 16px;
+          color: $white-color;
+        }
+        .inline-button {
+          font-size: 14px;
+          font-weight: 500;
+          position: relative;
+          &:after {
+            position: absolute;
+            content: "";
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: $primary-color;
+            border-radius: 50px;
+            transition: 0.3s ease-in-out;
+          }
+        }
+        &:hover .inline-button:after {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+// cta area end
