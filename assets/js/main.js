@@ -61,3 +61,14 @@ var basicScrollTop = function() {
   btnTop.addEventListener("click", TopscrollTo);
 };
 basicScrollTop();
+
+
+// blog page hero slider
+bulmaCarousel.attach('#blogSlider', {
+  slidesToScroll: 1,
+  slidesToShow: 1,
+  infinite: true,
+  loop: true,
+  // autoplay: true,
+  effect: 'fade',
+});

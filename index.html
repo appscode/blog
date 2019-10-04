@@ -25,10 +25,10 @@
   <meta name="msapplication-TileImage" content="/assets/images/favicon/ms-icon-144x144.png">
   <!-- font-awesome css  -->
   <link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
-  <!-- bulma-carousel css  -->
-  <link rel="stylesheet" href="/assets/css/bulma-carousel.min.css" />
   <!-- bulma css  -->
   <link rel="stylesheet" href="/assets/css/bulma.min.css" />
+  <!-- bulma-carousel css  -->
+  <link rel="stylesheet" href="/assets/css/bulma-carousel.min.css" />
   <!-- main style css  -->
   <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
@@ -95,7 +95,7 @@
   <!-- header-area end -->
 
   <!-- blog hero area start  -->
-  <section class="blog-hero-area section-padding">
+  <section class="blog-hero-area section-padding hero is-medium has-carousel">
     <div class="container section">
 
       <!-- slider wrapper start  -->
@@ -122,38 +122,137 @@
         </div>
         <!-- social media share area end -->
 
-        <div class="blog-slider-inner">
+        <div class="blog-slider-inner hero-carousel is-clipped" id="blogSlider">
+
+          <!-- single slider start  -->
           <div class="single-blog">
-            <div class="columns">
-              <div class="column is-6">
-                <!-- left content start  -->
-                <div class="blog-content-wrapper d-table">
-                  <div class="blog-content-inner d-table-cell">
-                    <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> 1-Jan-19</p>
-                    <h1><a href="#">The case for AppBinding</a></h1>
-                    <p class="author"><span>by </span>Tamal Saha</p>
-                    <p class="description">Kubernetes has become the de-facto orchestrator for the cloud native world.
-                      Kubernetes upholds
-                      the philosophy that the core should be small and allow developers to write their own extensions.
-                      One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known
-                      as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like
-                      standard Kubernetes resources. This allows anyone to write a controller for custom resources and
-                      capture operational knowledge in a software form. CoreOS popularized the term “operators” as a
-                      name for this pattern</p>
-                    <a href="#" class="inline-button">Read More</a>
+              <div class="columns">
+                <div class="column is-6">
+                  <!-- left content start  -->
+                  <div class="blog-content-wrapper d-table">
+                    <div class="blog-content-inner d-table-cell">
+                      <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> 1-Jan-19</p>
+                      <h1><a href="#">The case for AppBinding 01</a></h1>
+                      <p class="author"><span>by </span>Tamal Saha</p>
+                      <p class="description">Kubernetes has become the de-facto orchestrator for the cloud native world.
+                        Kubernetes upholds
+                        the philosophy that the core should be small and allow developers to write their own extensions.
+                        One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known
+                        as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like
+                        standard Kubernetes resources. This allows anyone to write a controller for custom resources and
+                        capture operational knowledge in a software form. CoreOS popularized the term “operators” as a
+                        name for this pattern</p>
+                      <a href="#" class="inline-button">Read More</a>
+                    </div>
                   </div>
+                  <!-- left content end -->
                 </div>
-                <!-- left content end -->
-              </div>
-              <div class="column is-6">
-                <!-- slider image start  -->
-                <div class="blog-slider-image">
-                  <img src="/assets/images/slider-image/s-1.jpg" alt="">
+                <div class="column is-6">
+                  <!-- slider image start  -->
+                  <a href="#" class="blog-slider-image blog-bg-3"></a>
+                  <!-- slider image end -->
                 </div>
-                <!-- slider image end -->
               </div>
             </div>
-          </div>
+          <!-- single slider end  -->
+
+          <!-- single slider start  -->
+          <div class="single-blog">
+              <div class="columns">
+                <div class="column is-6">
+                  <!-- left content start  -->
+                  <div class="blog-content-wrapper d-table">
+                    <div class="blog-content-inner d-table-cell">
+                      <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> 1-Jan-19</p>
+                      <h1><a href="#">The case for 02 slide</a></h1>
+                      <p class="author"><span>by </span>Tamal Saha</p>
+                      <p class="description">Kubernetes has become the de-facto orchestrator for the cloud native world.
+                        Kubernetes upholds
+                        the philosophy that the core should be small and allow developers to write their own extensions.
+                        One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known
+                        as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like
+                        standard Kubernetes resources. This allows anyone to write a controller for custom resources and
+                        capture operational knowledge in a software form. CoreOS popularized the term “operators” as a
+                        name for this pattern</p>
+                      <a href="#" class="inline-button">Read More</a>
+                    </div>
+                  </div>
+                  <!-- left content end -->
+                </div>
+                <div class="column is-6">
+                  <!-- slider image start  -->
+                  <a href="#" class="blog-slider-image blog-bg-"></a>
+                  <!-- slider image end -->
+                </div>
+              </div>
+            </div>
+          <!-- single slider end  -->
+
+          <!-- single slider start  -->
+          <div class="single-blog">
+              <div class="columns">
+                <div class="column is-6">
+                  <!-- left content start  -->
+                  <div class="blog-content-wrapper d-table">
+                    <div class="blog-content-inner d-table-cell">
+                      <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> 1-Jan-19</p>
+                      <h1><a href="#">The case for AppBinding 03</a></h1>
+                      <p class="author"><span>by </span>Tamal Saha</p>
+                      <p class="description">Kubernetes has become the de-facto orchestrator for the cloud native world.
+                        Kubernetes upholds
+                        the philosophy that the core should be small and allow developers to write their own extensions.
+                        One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known
+                        as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like
+                        standard Kubernetes resources. This allows anyone to write a controller for custom resources and
+                        capture operational knowledge in a software form. CoreOS popularized the term “operators” as a
+                        name for this pattern</p>
+                      <a href="#" class="inline-button">Read More</a>
+                    </div>
+                  </div>
+                  <!-- left content end -->
+                </div>
+                <div class="column is-6">
+                  <!-- slider image start  -->
+                  <a href="" class="blog-slider-image blog-bg-3"></a>
+                  <!-- slider image end -->
+                </div>
+              </div>
+            </div>
+          <!-- single slider end  -->
+
+          <!-- single slider start  -->
+          <div class="single-blog">
+              <div class="columns">
+                <div class="column is-6">
+                  <!-- left content start  -->
+                  <div class="blog-content-wrapper d-table">
+                    <div class="blog-content-inner d-table-cell">
+                      <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> 1-Jan-19</p>
+                      <h1><a href="#">The case for AppBinding</a></h1>
+                      <p class="author"><span>by </span>Tamal Saha</p>
+                      <p class="description">Kubernetes has become the de-facto orchestrator for the cloud native world.
+                        Kubernetes upholds
+                        the philosophy that the core should be small and allow developers to write their own extensions.
+                        One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known
+                        as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like
+                        standard Kubernetes resources. This allows anyone to write a controller for custom resources and
+                        capture operational knowledge in a software form. CoreOS popularized the term “operators” as a
+                        name for this pattern</p>
+                      <a href="#" class="inline-button">Read More</a>
+                    </div>
+                  </div>
+                  <!-- left content end -->
+                </div>
+                <div class="column is-6">
+                  <!-- slider image start  -->
+                  <div class="blog-slider-image">
+                    <img src="/assets/images/slider-image/s-1.jpg" alt="">
+                  </div>
+                  <!-- slider image end -->
+                </div>
+              </div>
+            </div>
+          <!-- single slider end  -->
         </div>
       </div>
       <!-- slider wrapper end -->
