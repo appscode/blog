@@ -8,12 +8,12 @@ body {
   font-family: $font-paragraph;
   font-weight: 400;
   font-style: normal;
-  font-size: 1em;
+  font-size: 16px;
 }
 
 p {
   font-family: $font-paragraph;
-  font-size: 1em;
+  font-size: 16px;
   font-weight: 400;
   line-height: 1.8;
   color: $paragraph-color;
@@ -143,6 +143,7 @@ h6 {
   font-family: $font-heading;
   font-weight: 600;
 }
+
 .button.is-large {
   font-size: 16px;
   padding: 27px 60px;
@@ -157,6 +158,11 @@ h6 {
 .button.btn-transparent {
   background: transparent;
   border: none;
+}
+button.button{
+  padding: 10px 35px;
+  height: auto;
+
 }
 .section-padding {
   padding: 100px 0;
@@ -299,7 +305,6 @@ textarea.textarea {
   Global CSS End
 ========================*/
 
-
 /*=================================================================================================
                                     Responsive code start
 =================================================================================================*/
@@ -331,7 +336,7 @@ textarea.textarea {
   }
   .section-padding-60 {
     padding: 40px 0;
-}
+  }
 }
 
 /**************************************************************** 
@@ -344,7 +349,7 @@ textarea.textarea {
   }
   .section-padding-60 {
     padding: 30px 0;
-}
+  }
 }
 
 /*=================================================================================================

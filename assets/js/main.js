@@ -35,8 +35,6 @@ function fixNav() {
 }
 window.addEventListener("scroll", fixNav);
 
-
-
 // scroll to top
 var basicScrollTop = function() {
   // The button
