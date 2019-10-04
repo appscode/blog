@@ -430,6 +430,10 @@ body.fixed-nav #header {
         font-size: 30px;
         cursor: pointer;
         display: block; }
+        .blog-hero-area .blog-slider-wrapper .blog-slider-inner .slider-button .slide img {
+          animation: arrowAnimate 2s infinite; }
+        .blog-hero-area .blog-slider-wrapper .blog-slider-inner .slider-button .slide:hover img {
+          animation-play-state: paused; }
     .blog-hero-area .blog-slider-wrapper .blog-slider-inner .single-blog {
       opacity: 0;
       visibility: hidden;
@@ -474,7 +478,8 @@ body.fixed-nav #header {
         background-position: center;
         display: block;
         user-select: none;
-        overflow: hidden; }
+        overflow: hidden;
+        background-color: #333; }
 
 .blog-bg-1 {
   background-image: url(/assets/images/slider-image/s-1.jpg); }
@@ -485,6 +490,28 @@ body.fixed-nav #header {
 .blog-bg-3 {
   background-image: url(/assets/images/slider-image/s-3.jpg); }
 
+@-webkit-keyframes arrowAnimate {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    -webkit-transform: translateX(0); }
+  40% {
+    -webkit-transform: translateX(-30px); }
+  60% {
+    -webkit-transform: translateX(-15px); } }
+@keyframes arrowAnimate {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateX(0); }
+  40% {
+    transform: translateX(-30px); }
+  60% {
+    transform: translateX(-15px); } }
 .blog-left-sidebar {
   position: sticky;
   top: 120px; }
@@ -516,14 +543,16 @@ body.fixed-nav #header {
     line-height: 1;
     cursor: pointer; }
 
-.blog-category ul li a {
-  font-size: 16px;
-  font-weight: 500;
-  color: #74818d;
-  display: block;
-  padding: 10px; }
-  .blog-category ul li a:hover, .blog-category ul li a.is-active {
-    color: #0071bd; }
+.blog-category ul {
+  padding: 20px; }
+  .blog-category ul li a {
+    font-size: 16px;
+    font-weight: 500;
+    color: #74818d;
+    display: block;
+    padding: 10px; }
+    .blog-category ul li a:hover, .blog-category ul li a.is-active {
+      color: #0071bd; }
 
 .single-blog-item {
   overflow: hidden;

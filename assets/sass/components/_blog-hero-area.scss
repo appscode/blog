@@ -58,6 +58,14 @@
           font-size: 30px;
           cursor: pointer;
           display: block;
+          img {
+            animation: arrowAnimate 2s infinite;
+          }
+          &:hover{
+            img{
+              animation-play-state: paused;
+            }
+          }
         }
       }
       .single-blog {
@@ -117,6 +125,7 @@
           display: block;
           user-select: none;
           overflow: hidden;
+          background-color: #333;
         }
       }
     }
@@ -130,4 +139,37 @@
 }
 .blog-bg-3 {
   background-image: url(/assets/images/slider-image/s-3.jpg);
+}
+
+//animation
+@-webkit-keyframes arrowAnimate {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    -webkit-transform: translateX(0);
+  }
+  40% {
+    -webkit-transform: translateX(-30px);
+  }
+  60% {
+    -webkit-transform: translateX(-15px);
+  }
+}
+
+@keyframes arrowAnimate {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateX(0);
+  }
+  40% {
+    transform: translateX(-30px);
+  }
+  60% {
+    transform: translateX(-15px);
+  }
 }

@@ -62,10 +62,9 @@ var basicScrollTop = function() {
 };
 basicScrollTop();
 
-
 // blog page hero slider
-var sBtn = document.getElementById('sBtn');
-sBtn.addEventListener('click', function (event) {
+var sBtn = document.getElementById("sBtn");
+sBtn.addEventListener("click", function(event) {
   event.preventDefault();
 
   const sliderItems = document.querySelectorAll(".single-blog");
@@ -79,8 +78,7 @@ sBtn.addEventListener('click', function (event) {
     }
   });
 
-
   let newIndex = (indexOfShow + 1) % arr.length;
 
   arr[newIndex].classList.add("show");
-})
+});
