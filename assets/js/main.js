@@ -64,11 +64,23 @@ basicScrollTop();
 
 
 // blog page hero slider
-bulmaCarousel.attach('#blogSlider', {
-  slidesToScroll: 1,
-  slidesToShow: 1,
-  infinite: true,
-  loop: true,
-  // autoplay: true,
-  effect: 'fade',
-});
+var sBtn = document.getElementById('sBtn');
+sBtn.addEventListener('click', function (event) {
+  event.preventDefault();
+
+  const sliderItems = document.querySelectorAll(".single-blog");
+  const arr = Array.from(sliderItems);
+
+  let indexOfShow = 0;
+  arr.forEach((sliderItem, idx) => {
+    if (sliderItem.classList.contains("show")) {
+      indexOfShow = idx;
+      sliderItem.classList.remove("show");
+    }
+  });
+
+
+  let newIndex = (indexOfShow + 1) % arr.length;
+
+  arr[newIndex].classList.add("show");
+})

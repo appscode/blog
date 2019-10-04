@@ -44,7 +44,32 @@
       }
     }
     .blog-slider-inner {
+      position: relative;
+      z-index: 1;
+      .slider-button {
+        position: absolute;
+        right: 42.35%;
+        bottom: 10px;
+        .slide {
+          background: #fff;
+          border: 1px solid transparent;
+          width: 88px;
+          height: 80px;
+          font-size: 30px;
+          cursor: pointer;
+          display: block;
+        }
+      }
       .single-blog {
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.3s ease-in-out;
+        display: none;
+        &.show {
+          opacity: 1;
+          visibility: visible;
+          display: block;
+        }
         .blog-content-wrapper {
           .blog-content-inner {
             padding-right: 50px;
@@ -56,13 +81,22 @@
             }
             h1 {
               a {
+                display: block;
                 font-size: 48px;
-                line-height: 1;
+                line-height: 60px;
+                margin-bottom: 10px;
               }
             }
             .description {
               line-height: 26px;
               margin-bottom: 20px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              display: -webkit-box;
+              line-clamp: 6;
+              -webkit-line-clamp: 6;
+              box-orient: vertical;
+              -webkit-box-orient: vertical;
             }
             .author {
               font-weight: 500;
@@ -82,40 +116,18 @@
           background-position: center;
           display: block;
           user-select: none;
+          overflow: hidden;
         }
       }
     }
   }
-  .slider-pagination{
-    display: none;
-  }
-  .slider-navigation-previous{
-    display: none;
-  }
-  .slider-navigation-next{
-    right: 42.4%;
-    top: 89%;
-    height: 88px;
-    width: 88px;
-    border-radius: 0;
-    margin-left: -44px;
-    box-shadow: none;
-    svg{
-      width: 20%;
-      color: $primary-color;
-    }
-    &:hover{
-      transform: scale(1);
-    }
-  }
-  
 }
-.blog-bg-1{
+.blog-bg-1 {
   background-image: url(/assets/images/slider-image/s-1.jpg);
 }
-.blog-bg-2{
+.blog-bg-2 {
   background-image: url(/assets/images/slider-image/s-2.jpg);
 }
-.blog-bg-3{
+.blog-bg-3 {
   background-image: url(/assets/images/slider-image/s-3.jpg);
 }
