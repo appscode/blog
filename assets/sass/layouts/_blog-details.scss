@@ -1,0 +1,156 @@
+.blog-details-area{
+  padding-bottom: 100px;
+}
+.blog-heading {
+  h1 {
+    font-size: 48px;
+    line-height: 68px;
+  }
+}
+figure {
+  img {
+    user-select: none;
+    display: block;
+  }
+  figcaption {
+    max-width: 80%;
+    margin: 0 auto;
+    color: $paragraph-color;
+    opacity: 0.8;
+    padding: 10px 0;
+    border-bottom: 1px solid $border-color;
+  }
+}
+//sticky social link
+.sticky-social-menu {
+  position: sticky;
+  top: 100px;
+}
+//code block style
+.code-block-heading {
+  display: flex;
+  justify-content: space-between;
+  background: #f0f3f6;
+  padding: 10px;
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
+  border: 1px solid #d1d5d9;
+  border-bottom: transparent;
+  h4 {
+    font-size: 16px;
+    font-family: $font-paragraph;
+    font-weight: 400;
+  }
+  .copy-here {
+    background: transparent;
+    border: none;
+    color: #9aa2ad;
+    font-size: 20px;
+    cursor: copy
+  }
+}
+.code-block-wrapper {
+  pre {
+    background-color: #1c2c41;
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  margin-bottom: 40px;
+}
+.blog-content {
+  h2 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 30px;
+  }
+  p {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  .inline-button {
+    font-size: 20px;
+  }
+  ul {
+    padding-left: 20px;
+    margin-bottom: 30px;
+    li {
+      font-size: 20px;
+      list-style: disc;
+      margin-bottom: 15px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+  blockquote {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #1c2c41;
+    text-indent: -50px;
+    &:before {
+      padding-right: 20px;
+      content: url(/assets/images/icons/quote.svg);
+    }
+  }
+  .name-descriptor{
+    font-size: 20px;
+    text-indent: -50px;
+    margin-bottom: 20px;
+    &::before{
+      content: url(/assets/images/icons/line.svg);
+      padding-right: 8px;
+    }
+    span{
+      font-size: 16px;
+    }
+  }
+  .tags{
+    .tag{
+      height: 36px;
+      font-size: 14px;
+      padding: 5px 20px;
+    }
+  }
+}
+
+
+/*=================================================================================================
+                                    Responsive code start
+=================================================================================================*/
+/**************************************************************** 
+                  Full HD Min Width 1407
+**************************************************************** */
+/* Full HD Min Width 1408px */
+@media (min-width: 1408px) {
+}
+
+/**************************************************************** 
+                  Widescreen Between 1216px and 1407px
+**************************************************************** */
+@media (min-width: 1216px) and (max-width: 1407px) {
+}
+
+/**************************************************************** 
+                  Desktop Between 1024px and 1215px
+**************************************************************** */
+@media (min-width: 1024px) and (max-width: 1215px) {
+}
+/**************************************************************** 
+                  Tablet Between 769px and 1023px
+**************************************************************** */
+@media (min-width: 769px) and (max-width: 1023px) {
+  
+}
+
+/**************************************************************** 
+                    Mobile Up to 768px. 
+**************************************************************** */
+@media only screen and (min-width: 100px) and (max-width: 768px) {
+  
+}
+
+/*=================================================================================================
+                                    Responsive code end
+=================================================================================================*/
