@@ -9,11 +9,11 @@
 
 // COMPONENTS
 @import "components/_header";
-@import "components/_blog-hero-area";
-@import "components/_blog-body";
+
 @import "components/_cta-area";
 @import "components/_footer";
 @import "components/_go-to-top";
 
 //LAYOUTS - Page layout styles
+@import "layouts/_blog-page";
 @import "layouts/_blog-details";

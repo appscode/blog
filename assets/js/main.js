@@ -80,7 +80,6 @@ if(sBtn){
     });
   
     let newIndex = (indexOfShow + 1) % arr.length;
-  
     arr[newIndex].classList.add("show");
   });
 }
