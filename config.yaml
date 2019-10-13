@@ -1,0 +1,27 @@
+baseURL: https://blog.byte.builders/
+languageCode: en-us
+title: ByteBuilders Blog
+assetDir: static
+googleAnalytics: UA-62096468-4
+taxonomies:
+  tag: tags
+params:
+  domain_appscode: https://appscode.com
+  domain_kubedb: https://kubedb.com
+  domain_kubevault: https://kubevault.com
+  domain_kubeci: https://kube.ci
+  domain_kubeshield: https://kubeshield.com
+  domain_bytebuilders: https://byte.builders
+  domain_marketplace: https://marketplace.byte.builders
+  search_engine_ID: 015199383701854252104:jccvu4eiulw
+  search_api_key: AIzaSyBo15AW3hatf4fO8actJUZ_d5qZJpx0rXM
+  blog_url: https://blog.byte.builders
+  slack_url: https://slack.appscode.com
+  twitter_url: https://twitter.com/AppsCodeHQ
+  facebook_url: https://www.facebook.com/appscode
+  youtube_url: https://www.youtube.com/c/AppsCodeInc
+  contact_email: support@appscode.com
+  contact_phone: +1(650)241-8486
+  domain_kubeform: https://kubeform.com
+  github_url: https://github.com/appscode
+  domain_pharmer: https://pharmer.io
