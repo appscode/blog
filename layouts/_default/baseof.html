@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {{ template "_internal/google_analytics_async.html" . }}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="theme-color" content="#0071BD" />
+  <title>Blog | ByteBuilders</title>
+  <!-- favicon -->
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/images/products/bytebuilders/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/images/products/bytebuilders/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/images/products/bytebuilders/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/images/products/bytebuilders/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/images/products/bytebuilders/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/images/products/bytebuilders/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/images/products/bytebuilders/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/images/products/bytebuilders/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/products/bytebuilders/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/images/products/bytebuilders/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/products/bytebuilders/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/products/bytebuilders/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/products/bytebuilders/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/products/bytebuilders/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/images/products/bytebuilders/icons/ms-icon-144x144.png">
+  <!-- font-awesome css  -->
+  <link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
+  <!-- bulma css  -->
+  <link rel="stylesheet" href="/assets/css/bulma.min.css" />
+  <!-- Custom CSS -->
+  {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
+  <link rel="stylesheet" href="{{ $style.RelPermalink }}" />
+  {{ end }}
+  <!-- <link rel="stylesheet" href="/assets/css/style.css" /> -->
+</head>
+
+<body>
+  <!--[if lte IE 9]>
+    <p class="browserupgrade">
+      You are using an <strong>outdated</strong> browser. Please
+      <a href="https://browsehappy.com/">upgrade your browser</a> to improve
+      your experience and security.
+    </p>
+  <![endif]-->
+  <!-- header-area start -->
+  {{ block "header" . }}
+  <header id="header">
+    <!-- header-area top start -->
+    {{ block "header-top" . }}
+    <div class="header-top">
+      <div class="container section">
+        <nav class="navbar customize-navbar" role="navigation" aria-label="main navigation">
+          <!-- navbar brand start -->
+          <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+              <img src="{{ .Site.Data.products.bytebuilders.logo.src }}" />
+            </a>
+
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+              data-target="navbarBasicExample">
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+            </a>
+          </div>
+          <!-- navbar brand end -->
+
+          <!-- navbar-menu start -->
+          <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-end">
+              <a href="{{.Site.Params.domain_marketplace}}" class="navbar-item">
+                Marketplace
+              </a>
+
+              <a href="{{.Site.Params.blog_url}}" class="navbar-item">
+                Blog
+              </a>
+
+              <a href="{{.Site.Params.domain_appscode}}/about/" class="navbar-item">
+                About Us
+              </a>
+
+              <a href="{{.Site.Params.domain_appscode}}/contact/" class="navbar-item">
+                Contact
+              </a>
+
+              <div class="navbar-item">
+                <div class="buttons">
+                  <a href="{{.Site.Params.domain_bytebuilders}}/user/sign_up" class="button is-light is-primary">
+                    Sign up
+                  </a>
+                  <a href="{{.Site.Params.domain_bytebuilders}}/user/login" class="button is-primary">
+                    Sign in
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- navbar-menu end -->
+        </nav>
+      </div>
+    </div>
+    {{ end }}
+    <!-- header-area top end -->
+  </header>
+  {{ end }}
+  <!-- header-area end -->
+
+  {{ block "main" . }}
+  {{ end }}
+
+  <!-- cta-area start  -->
+  {{ block "cta-install" . }}
+  <section class="cta-area section-padding">
+    <div class="container section">
+      <div class="columns">
+        <div class="column is-5 has-text-left">
+          <div class="section-title is-dark-bg">
+            <h2>Get Up and Running Quickly</h2>
+            <p>
+              {{ .Site.Data.products.bytebuilders.summary | plainify }}
+            </p>
+          </div>
+          <div class="cta-buttons buttons">
+              <a href="/user/sign_up" class="button is-primary is-large">Get started free</a>
+              <a href="{{.Site.Params.domain_appscode}}/meet-expert/" class="button is-large">Get a Demo</a>
+            </div>
+        </div>
+        <div class="column is-4 is-offset-3">
+          <div class="right-sidebar style-1">
+            <div class="right-sidebar-inner">
+              <div class="single-sidebar-item">
+                <h5>Want to host dedicated setup? We got you.</h5>
+                <a href="{{.Site.Params.domain_appscode}}/contact/" class="inline-button">Contact us</a>
+              </div>
+              <div class="single-sidebar-item">
+                <h5>Need Support SLA for AppsCode OSS projects?</h5>
+                <a href="{{.Site.Params.domain_appscode}}/pricing/" class="inline-button">Purchase our commercial support package</a>
+              </div>
+              <div class="single-sidebar-item">
+                <h5>Interested in Professional Services & Training?</h5>
+                <a href="{{.Site.Params.domain_appscode}}/consulting/" class="inline-button">Explore our services</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {{ end }}
+  <!-- cta-area end -->
+
+  <!-- footer area start  -->
+  {{ block "footer" . }}
+  <footer class="footer-area">
+    <!-- footer top start  -->
+    <div class="footer-top">
+      <div class="container section">
+        <div class="columns">
+          <div class="column is-4">
+            <div class="single-footer-widget">
+              <div class="footer-logo">
+                <a href="{{.Site.Params.domain_appscode}}"
+                    ><img
+                      src="/assets/images/products/appscode/appscode-logo.png"
+                      alt=""
+                      class="img"
+                  /></a>
+              </div>
+              <!-- subscription area start  -->
+              <div class="subscription-form">
+                  <form
+                    action="https://appscode.us17.list-manage.com/subscribe/post?u=feb2bf31969a951e7449048a3&amp;id=82fb19acb9"
+                    method="post"
+                    id="mc-embedded-subscribe-form"
+                    name="mc-embedded-subscribe-form"
+                    class="navbar-form"
+                    target="_blank"
+                    novalidate=""
+                    role="email"
+                  >
+                    <h4>Subscribe to Our Newsletter</h4>
+                    <p class="spam-message">
+                      No spam, we promise. Your mail address is secure
+                    </p>
+                    <div class="field has-addons">
+                      <div class="control">
+                        <input
+                          class="input"
+                          name="EMAIL"
+                          id="mce-EMAIL"
+                          type="email"
+                          placeholder="Your work email address"
+                          required=""
+                        />
+                        <button
+                          id="mc-embedded-subscribe"
+                          type="submit"
+                          name="subscribe"
+                          class="subscription-button"
+                        >
+                          <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              <!-- subscription area end  -->
+              <!-- contact info start  -->
+              <div class="contact-information">
+                <h4>Have any Inquiry?</h4>
+                <ul class="all-contact-info">
+                  <li>
+                    <a href="callto:{{.Site.Params.contact_phone}}"
+                        ><span
+                          ><i class="fa fa-phone" aria-hidden="true"></i></span
+                        >{{.Site.Params.contact_phone}}</a
+                      >
+                  </li>
+
+                  <li>
+                    <a href="mailto:{{.Site.Params.contact_email}}"
+                        ><span
+                          ><i
+                            class="fa fa-envelope-o"
+                            aria-hidden="true"
+                          ></i></span
+                        >{{.Site.Params.contact_email}}</a
+                      >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- subscription area end  -->
+          <div class="column is-2">
+            <div class="single-footer-widget">
+              <div class="footer-menu">
+                <h4>Products</h4>
+                <ul class="footer-link">
+                  {{ range $item := $.Site.Data.config.footerLinks }}
+                  {{ $p := (index $.Site.Data.products $item) }}
+                  <li><a href="{{index $.Site.Params $p.website.domainKey}}{{$p.website.path}}">{{$p.name}}</a></li>
+                  {{ end }}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-2">
+            <div class="single-footer-widget">
+              <div class="footer-menu">
+                <h4>Services</h4>
+                <ul class="footer-link">
+                  <li><a href="{{.Site.Params.domain_appscode}}/consulting/">Consulting</a></li>
+                  <li><a href="{{.Site.Params.domain_appscode}}/training/">Training</a></li>
+                  <li><a href="{{.Site.Params.domain_appscode}}/support/">Support</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-2">
+            <div class="single-footer-widget">
+              <div class="footer-menu">
+                <h4>Company</h4>
+                <ul class="footer-link">
+                  <li><a href="{{.Site.Params.domain_appscode}}/about/">About Us</a></li>
+                  <li><a href="{{.Site.Params.blog_url}}">Blog</a></li>
+                  <li><a href="{{.Site.Params.domain_appscode}}/contact/">Contact Us</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-2">
+            <div class="single-footer-widget">
+              <div class="footer-menu">
+                <h4>Legal</h4>
+                <ul class="footer-link">
+                  <li><a href="{{.Site.Params.domain_appscode}}/legal/tos/">Terms of Sevice</a></li>
+                  <li><a href="{{.Site.Params.domain_appscode}}/legal/privacy-policy/">Privacy Policy</a></li>
+                  <li><a href="{{.Site.Params.domain_appscode}}/legal/security/">Security</a></li>
+                  <li><a href="{{.Site.Params.domain_appscode}}/legal/sla/">Service Level Agreement</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- footer top end  -->
+
+    <!-- footer bottom start  -->
+    <div class="footer-bottom">
+      <div class="container section">
+        <div class="columns">
+          <div class="column is-4">
+            <p>© {{ now.Format "2006" }} AppsCode Inc. All rights reserved.</p>
+          </div>
+          <div class="column is-4 has-text-centered-desktop has-text-left-touch">
+            <div class="footer-inline-link">
+                <a href="{{.Site.Params.domain_appscode}}/legal/privacy-policy/">Privacy Policy</a>
+                <a href="{{.Site.Params.domain_appscode}}/legal/tos/">Terms of Service</a>
+            </div>
+          </div>
+          <div class="column is-4 has-text-right-desktop has-text-left-touch">
+            <div class="social-link-inline">
+              <ul>
+                <li>
+                  <a href="{{.Site.Params.twitter_url}}"
+                    ><i class="fa fa-twitter" aria-hidden="true"></i
+                  ></a>
+                </li>
+                <li>
+                  <a href="{{.Site.Params.facebook_url}}"
+                    ><i class="fa fa-facebook" aria-hidden="true"></i
+                  ></a>
+                </li>
+                <li>
+                  <a href="{{.Site.Params.youtube_url}}"
+                    ><i class="fa fa-youtube" aria-hidden="true"></i
+                  ></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- footer bottom end  -->
+  </footer>
+  {{ end }}
+  <!-- footer area end -->
+
+  <!-- go-to-top start  -->
+  <button class="go-to-top" id="goTop">
+    <i class="fa fa-angle-up" aria-hidden="true"></i>
+  </button>
+  <!-- go-to-top end -->
+
+  <!-- Main JS -->
+  <script src="/assets/js/main.js"></script>
+</body>
+
+</html>

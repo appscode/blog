@@ -1,0 +1,34 @@
+{
+  "key": "appscode",
+  "name": "AppsCode",
+  "tagline": "GitHub for Kubernetes",
+  "summary": "Accelerating the transition to Containers by building a Kubernetes-native Cloud",
+  "published": false,
+  "website": {
+    "domainKey": "domain_appscode",
+    "path": ""
+  },
+  "heroImage": {
+    "src": "https://cdn.appscode.com/images/products/appscode/appscode-hero.png",
+    "alt": "AppsCode"
+  },
+  "logo": {
+    "src": "https://cdn.appscode.com/images/products/appscode/appscode.png",
+    "alt": "AppsCode"
+  },
+  "logoWhite": {
+    "src": "https://cdn.appscode.com/images/products/appscode/appscode-white.png",
+    "alt": "AppsCode"
+  },
+  "icon": {
+    "src": "https://cdn.appscode.com/images/products/appscode/appscode-icon.png",
+    "alt": "AppsCode",
+    "sizes": {
+      "192x192": "https://cdn.appscode.com/images/products/appscode/icons/android-icon-192x192.png"
+    }
+  },
+  "datasheetFormID": "",
+  "videos": {
+    "intro": "8az5rYUxyGs"
+  }
+}
