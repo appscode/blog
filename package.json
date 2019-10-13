@@ -1,0 +1,23 @@
+{
+  "name": "bytebuilders-static",
+  "version": "0.0.1",
+  "description": "byte.builders",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/appscode-cloud/bytebuilders-static.git"
+  },
+  "author": "AppsCode Inc. <support@appscode.com>",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/appscode-cloud/bytebuilders-static/issues"
+  },
+  "homepage": "https://github.com/appscode-cloud/bytebuilders-static#readme",
+  "devDependencies": {
+    "autoprefixer": "^9.6.1",
+    "postcss-cli": "^6.1.3"
+  },
+  "private": true
+}
