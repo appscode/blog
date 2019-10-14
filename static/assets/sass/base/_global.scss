@@ -269,11 +269,13 @@ textarea.textarea {
   color: $white-color;
   background: $primary-color;
 }
- 
+
 //for blog
 .meta-date {
+  display: inline-block;
   font-size: 16px;
   i {
+    padding-right: 5px;
     color: $primary-color;
   }
 }
@@ -305,23 +307,31 @@ textarea.textarea {
         border-radius: 50%;
         border: 1px solid#1C2C41;
         color: #1c2c41;
+        &.is-static {
+          cursor: default;
+          background-color: #1c2c41;
+          color: #fff;
+        }
         &:hover {
           color: $white-color;
           background: #1c2c41;
-          &.linkedin{
-            background-color: #0E76A8;
-            border: 1px solid #0E76A8;
+          &.linkedin {
+            background-color: #0e76a8;
+            border: 1px solid #0e76a8;
           }
-          &.twitter{
-            background-color: #1DA1F2;
-            border: 1px solid #1DA1F2;
+          &.twitter {
+            background-color: #1da1f2;
+            border: 1px solid #1da1f2;
           }
-          &.facebook{
-            background-color: #3B5998;
-            border: 1px solid #3B5998;
+          &.facebook {
+            background-color: #3b5998;
+            border: 1px solid #3b5998;
           }
           i {
             animation: icon-animation 0.9s both;
+            &.fa-share-alt {
+              animation: none;
+            }
           }
         }
       }
@@ -385,12 +395,20 @@ textarea.textarea {
                   Widescreen Between 1216px and 1407px
 **************************************************************** */
 @media (min-width: 1216px) and (max-width: 1407px) {
+  .button.is-large {
+    font-size: 16px;
+    padding: 27px 50px;
+  }
 }
 
 /**************************************************************** 
                   Desktop Between 1024px and 1215px
 **************************************************************** */
 @media (min-width: 1024px) and (max-width: 1215px) {
+  .button.is-large {
+    font-size: 16px;
+    padding: 27px 50px;
+  }
 }
 /**************************************************************** 
                   Tablet Between 769px and 1023px
@@ -402,6 +420,10 @@ textarea.textarea {
   }
   .section-padding-60 {
     padding: 40px 0;
+  }
+  .button.is-large {
+    font-size: 16px;
+    padding: 27px 50px;
   }
 }
 

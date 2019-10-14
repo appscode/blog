@@ -1,1 +1,42 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tags on ByteBuilders Blog</title><link>https://blog.byte.builders/tags/</link><description>Recent content in Tags on ByteBuilders Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 01 Jan 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.byte.builders/tags/index.xml" rel="self" type="application/rss+xml"/><item><title>crd</title><link>https://blog.byte.builders/tags/crd/</link><pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate><guid>https://blog.byte.builders/tags/crd/</guid><description/></item><item><title>kubernetes</title><link>https://blog.byte.builders/tags/kubernetes/</link><pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate><guid>https://blog.byte.builders/tags/kubernetes/</guid><description/></item><item><title>service-catalog</title><link>https://blog.byte.builders/tags/service-catalog/</link><pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate><guid>https://blog.byte.builders/tags/service-catalog/</guid><description/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on ByteBuilders Blog</title>
+    <link>https://blog.byte.builders/tags/</link>
+    <description>Recent content in Tags on ByteBuilders Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 01 Jan 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://blog.byte.builders/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>crd</title>
+      <link>https://blog.byte.builders/tags/crd/</link>
+      <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.byte.builders/tags/crd/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kubernetes</title>
+      <link>https://blog.byte.builders/tags/kubernetes/</link>
+      <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.byte.builders/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>service-catalog</title>
+      <link>https://blog.byte.builders/tags/service-catalog/</link>
+      <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.byte.builders/tags/service-catalog/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

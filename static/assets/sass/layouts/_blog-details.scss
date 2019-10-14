@@ -1,4 +1,4 @@
-.blog-details-area{
+.blog-details-area {
   padding-bottom: 100px;
 }
 .blog-heading {
@@ -46,13 +46,12 @@ figure {
     border: none;
     color: #9aa2ad;
     font-size: 20px;
-    cursor: copy
+    cursor: copy;
   }
 }
-.code-block-wrapper {
+.highlight {
   pre {
-    background-color: #1c2c41;
-    color: #fff;
+    background-color: #1c2c41 !important;
     font-size: 14px;
     margin-bottom: 20px;
   }
@@ -62,11 +61,31 @@ figure {
   h2 {
     font-size: 36px;
     font-weight: 700;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
   }
   p {
     font-size: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    a {
+      font-weight: 500;
+      position: relative;
+      &:after {
+        position: absolute;
+        content: "";
+        left: 0;
+        bottom: 0;
+        width: 0;
+        height: 2px;
+        background: $primary-color;
+        border-radius: 50px;
+        transition: 0.3s ease-in-out;
+      }
+      &:hover {
+        &:after {
+          width: 100%;
+        }
+      }
+    }
   }
   .inline-button {
     font-size: 20px;
@@ -94,27 +113,26 @@ figure {
       content: url(/assets/images/icons/quote.svg);
     }
   }
-  .name-descriptor{
+  .name-descriptor {
     font-size: 20px;
     text-indent: -50px;
     margin-bottom: 20px;
-    &::before{
+    &::before {
       content: url(/assets/images/icons/line.svg);
       padding-right: 8px;
     }
-    span{
+    span {
       font-size: 16px;
     }
   }
-  .tags{
-    .tag{
+  .tags {
+    .tag {
       height: 36px;
       font-size: 14px;
       padding: 5px 20px;
     }
   }
 }
-
 
 /*=================================================================================================
                                     Responsive code start
@@ -141,14 +159,72 @@ figure {
                   Tablet Between 769px and 1023px
 **************************************************************** */
 @media (min-width: 769px) and (max-width: 1023px) {
-  
+  .blog-content {
+    p,
+    a,
+    ul li {
+      font-size: 18px;
+    }
+    p {
+      margin-bottom: 20px;
+    }
+    h2 {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+    .highlight {
+      margin-bottom: 0;
+      overflow: hidden;
+    }
+  }
 }
 
 /**************************************************************** 
                     Mobile Up to 768px. 
 **************************************************************** */
 @media only screen and (min-width: 100px) and (max-width: 768px) {
-  
+  .blog-heading-area {
+    padding-top: 100px;
+    .blog-heading {
+      h1 {
+        font-size: 36px;
+        line-height: 50px;
+      }
+    }
+  }
+
+  .blog-details-area {
+    .social-link-vertical {
+      ul {
+        li {
+          display: inline-block;
+          margin-bottom: 0;
+          margin-right: 10px;
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+  }
+  .blog-content {
+    p,
+    a,
+    ul li {
+      font-size: 16px;
+    }
+    p {
+      margin-bottom: 20px;
+    }
+    h2 {
+      font-size: 26px;
+      margin-bottom: 5px;
+    }
+    .highlight {
+      margin-bottom: 0;
+      overflow: hidden;
+    }
+  }
 }
 
 /*=================================================================================================

@@ -1,78 +1,112 @@
 {{ define "main" }}
 
-  <!-- blog heading start  -->
-  <section class="blog-heading-area section-padding">
-    <div class="container section">
-      <div class="columns">
-        <div class="column has-text-centered">
+<!-- blog heading start  -->
+<section class="blog-heading-area section-padding">
+  <div class="container section">
+    <div class="columns">
+      <div class="column has-text-centered">
 
-          <!-- blog heading start  -->
-          <div class="blog-heading">
-            <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> {{ .Date.Format "2-Jan-2006" }}</p>
-            <h1><a href="{{ .RelPermalink }}">{{ .Title }}</a></h1>
-            {{ if or .Params.author .Site.Params.author }}
-            <p class="author"><span>by </span><a href="#">{{ .Params.author | default .Site.Params.author }}</a></p>
+        <!-- blog heading start  -->
+        <div class="blog-heading">
+          <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> {{ .Date.Format "2-Jan-2006" }}</p>
+          <h1><a href="{{ .RelPermalink }}">{{ .Title }}</a></h1>
+          {{ if or .Params.author .Site.Params.author }}
+          <p class="author"><span>by </span><a href="#">{{ .Params.author | default .Site.Params.author }}</a></p>
+          {{ end }}
+        </div>
+        <!-- blog heading end -->
+
+        <!-- blog large image start -->
+        <figure>
+          <img src="{{ ( .Resources.GetMatch "hero.jpg").RelPermalink }}" alt="">
+          <!-- <figcaption>capture operational knowledge in a software form</figcaption> -->
+          </a>
+        </figure>
+        <!-- blog large image end -->
+
+      </div>
+    </div>
+  </div>
+</section>
+<!-- blog heading end -->
+
+<!-- blog details area start  -->
+<section class="blog-details-area">
+  <div class="container section">
+    <div class="columns">
+      <div class="column is-2">
+        <!-- sticky social menu start  -->
+        <div class="sticky-social-menu">
+          <div class="social-link-vertical">
+            <ul>
+              <li>
+                <a class="is-static"><i class="fa fa-share-alt" aria-hidden="true"></i></a>
+              </li>
+              <li>
+                <a title="Twitter" href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title | htmlEscape }}" class="twitter"
+                  aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+              </li>
+              <li>
+                <a title="Linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title | htmlEscape }}&summary={{ .Summary | htmlEscape }}&source=LinkedIn"
+                  class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+              </li>
+              <li>
+                <a title="Facebook" href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" class="facebook"
+                  aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!--sticky  social menu end -->
+      </div>
+      <div class="column is-8">
+        <!-- blog-content start  -->
+        <div class="blog-content">
+
+          <div class="highlight">
+            <!-- code title start -->
+            <div class="code-block-heading">
+              <div class="code-title">
+                <h4>PostgreSQL database</h4>
+              </div>
+              <div class="copy-button">
+                <button class="copy-here" title="Copy">
+                  <img src="/assets/images/icons/copy.svg" alt="copy-icon">
+                </button>
+              </div>
+            </div>
+            <!-- code title end -->
+            <pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: kubedb.com/v1alpha1
+              kind: Postgres
+              metadata:
+                name: quick-postgres
+                namespace: demo
+              spec:
+                version: <span style="color:#e6db74">"10.2-v1"</span>
+                storageType: Durable
+                storage:
+                  storageClassName: <span style="color:#e6db74">"standard"</span>
+                  accessModes:
+                  - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 1Gi
+                terminationPolicy: DoNotTerminate</code></pre>
+          </div>
+
+          {{ .Content }}
+
+          <div class="tags">
+            {{ range $tag := .Params.tags }}
+            <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
             {{ end }}
           </div>
-          <!-- blog heading end -->
-
-          <!-- blog large image start -->
-          <figure>
-            <img src="{{ ( .Resources.GetMatch "hero.jpg").RelPermalink }}" alt="">
-            <!-- <figcaption>capture operational knowledge in a software form</figcaption> -->
-            </a>
-          </figure>
-          <!-- blog large image end -->
-
         </div>
+        <!-- blog-content end -->
       </div>
     </div>
-  </section>
-  <!-- blog heading end -->
-
-  <!-- blog details area start  -->
-  <section class="blog-details-area">
-    <div class="container section">
-      <div class="columns">
-        <div class="column is-2">
-          <!-- sticky social menu start  -->
-          <div class="sticky-social-menu">
-            <div class="social-link-vertical">
-              <ul>
-                <li>
-                  <a href="#"><i class="fa fa-share-alt" aria-hidden="true"></i></a>
-                </li>
-                <li>
-                  <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title | htmlEscape }}" class="twitter" aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-                </li>
-                <li>
-                  <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title | htmlEscape }}&summary={{ .Summary | htmlEscape }}&source=LinkedIn" class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
-                </li>
-                <li>
-                  <a href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" class="facebook" aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <!--sticky  social menu end -->
-        </div>
-        <div class="column is-8">
-          <!-- blog-content start  -->
-          <div class="blog-content">
-
-            {{ .Content }}
-
-            <div class="tags">
-              {{ range $tag := .Params.tags }}
-              <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
-              {{ end }}
-            </div>
-          </div>
-          <!-- blog-content end -->
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- blog details area end -->
+  </div>
+</section>
+<!-- blog details area end -->
 
 {{ end }}

@@ -23,6 +23,7 @@
         position: absolute;
         right: 42.35%;
         bottom: 0px;
+        z-index: 2;
         .slide {
           background: #fff;
           border: 1px solid transparent;
@@ -47,6 +48,8 @@
         transition: 0.3s ease-in-out;
         display: none;
         overflow: hidden;
+        position: relative;
+        z-index: 1;
         &.show {
           opacity: 1;
           visibility: visible;
@@ -55,6 +58,9 @@
         .blog-content-wrapper {
           .blog-content-inner {
             padding-right: 50px;
+            .meta-date{
+              margin-bottom: 10px;
+            }
             h1 {
               display: block;
               font-size: 48px;
@@ -140,7 +146,6 @@
 // category start
 .blog-category {
   ul {
-    padding: 20px;
     li {
       a {
         font-size: 16px;
@@ -314,7 +319,15 @@
                   Desktop Between 1024px and 1215px
 **************************************************************** */
 @media (min-width: 1024px) and (max-width: 1215px) {
+  .blog-hero-area{
+    .blog-slider-wrapper {
+      .social-media-share{
+        padding: 30px 15px;
+      }
+    }
+  }
 }
+
 /**************************************************************** 
                   Tablet Between 769px and 1023px
 **************************************************************** */
