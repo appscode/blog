@@ -10,11 +10,12 @@ tags:
   - crd
   - service-catalog
 ---
+
 Kubernetes has become the de-facto orchestrator for the cloud native world. Kubernetes upholds the philosophy that the core should be small and allow developers to write their own extensions. One way to introduce new resource types is using `CustomResourceDefintions (CRD)` (originally known as `ThirdPartyResources`). Using CRDs anyone can define a new resource type that behaves like standard Kubernetes resources. This allows anyone to write a controller for custom resources and capture operational knowledge in a software form. CoreOS popularized the term "[operators](https://coreos.com/blog/introducing-operators.html)" as a name for this pattern.
 
 At [AppsCode](https://twitter.com/AppsCodeHQ) , we have used this model to build various Kubernetes native applications. For example, we have been working on a project called [KubeDB](https://twitter.com/KubeDB) that automates the management of databases on Kubernetes. This is kind of like AWS RDS but using containers running on Kubernetes. For example, to deploy a PostgreSQL database you can use a yaml definition like below:
 
-```yaml
+{{< highlight yaml >}}
 apiVersion: kubedb.com/v1alpha1
 kind: Postgres
 metadata:
@@ -31,7 +32,7 @@ spec:
       requests:
         storage: 1Gi
   terminationPolicy: DoNotTerminate
-```
+{{< /highlight >}}
 
 ## Connecting Operators
 
@@ -61,7 +62,7 @@ Hence, we came up with the concept of `AppBinding`. AppBinding points to an appl
 
 Here is an example of an AppBinding that points to a PostgreSQL instance.
 
-```yaml
+{{< highlight yaml >}}
 apiVersion: appcatalog.appscode.com/v1alpha1
 kind: AppBinding
 metadata:
@@ -81,7 +82,7 @@ spec:
   parameters:
     # names of the allowed roles to use this connection config in Vault
     allowedRoles: "*"
-```
+{{< /highlight >}}
 
 Now, KubeVault operator can refer to this database object from it’s own CRD and issue secrets accordingly.
 
