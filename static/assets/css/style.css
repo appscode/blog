@@ -165,8 +165,9 @@ button.button {
 .section-title p {
   font-size: 16px; }
 
-.section {
-  padding: 0 15px; }
+.container.section {
+  padding-top: 0;
+  padding-bottom: 0; }
 
 .d-table {
   display: table;
@@ -373,7 +374,7 @@ textarea.textarea {
 **************************************************************** */
 @media only screen and (min-width: 100px) and (max-width: 768px) {
   .button.is-large {
-    padding: 20px 30px;
+    padding: 20px 25px;
     font-size: 14px; }
 
   .button.is-sm-medium {
@@ -520,7 +521,7 @@ body.fixed-nav #header {
                                     Responsive code end
 =================================================================================================*/
 .footer-logo {
-  max-width: 200px; }
+  max-width: 160px; }
 
 .subscription-form {
   margin-top: 10px; }
