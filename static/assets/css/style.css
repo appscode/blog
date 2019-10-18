@@ -267,12 +267,12 @@ textarea.textarea {
     color: #4a4a4a;
     font-weight: 400; }
 
-.social-link-vertical ul li {
+.social-link-vertical ul li, .social-link-horizontal ul li {
   display: block;
   margin-bottom: 25px; }
-  .social-link-vertical ul li:last-child {
+  .social-link-vertical ul li:last-child, .social-link-horizontal ul li:last-child {
     margin-bottom: 0; }
-  .social-link-vertical ul li a {
+  .social-link-vertical ul li a, .social-link-horizontal ul li a {
     font-size: 20px;
     display: inline-block;
     text-align: center;
@@ -282,26 +282,39 @@ textarea.textarea {
     border-radius: 50%;
     border: 1px solid #1C2C41;
     color: #1c2c41; }
-    .social-link-vertical ul li a.is-static {
+    .social-link-vertical ul li a.is-static, .social-link-horizontal ul li a.is-static {
       cursor: default;
       background-color: #1c2c41;
       color: #fff; }
-    .social-link-vertical ul li a:hover {
+    .social-link-vertical ul li a:hover, .social-link-horizontal ul li a:hover {
       color: #ffffff;
       background: #1c2c41; }
-      .social-link-vertical ul li a:hover.linkedin {
+      .social-link-vertical ul li a:hover.linkedin, .social-link-horizontal ul li a:hover.linkedin {
         background-color: #0e76a8;
         border: 1px solid #0e76a8; }
-      .social-link-vertical ul li a:hover.twitter {
+      .social-link-vertical ul li a:hover.twitter, .social-link-horizontal ul li a:hover.twitter {
         background-color: #1da1f2;
         border: 1px solid #1da1f2; }
-      .social-link-vertical ul li a:hover.facebook {
+      .social-link-vertical ul li a:hover.facebook, .social-link-horizontal ul li a:hover.facebook {
         background-color: #3b5998;
         border: 1px solid #3b5998; }
-      .social-link-vertical ul li a:hover i {
+      .social-link-vertical ul li a:hover i, .social-link-horizontal ul li a:hover i {
         animation: icon-animation 0.9s both; }
-        .social-link-vertical ul li a:hover i.fa-share-alt {
+        .social-link-vertical ul li a:hover i.fa-share-alt, .social-link-horizontal ul li a:hover i.fa-share-alt {
           animation: none; }
+
+.social-link-horizontal ul li {
+  display: inline-block;
+  margin-right: 10px; }
+  .social-link-horizontal ul li:last-child {
+    margin-right: 0; }
+  .social-link-horizontal ul li a {
+    font-size: 15px;
+    display: block;
+    text-align: center;
+    line-height: 30px;
+    width: 30px;
+    height: 30px; }
 
 @-webkit-keyframes arrowAnimate {
   0%,
@@ -396,7 +409,7 @@ textarea.textarea {
   top: 0;
   transition: 0.1s ease; }
   #header .header-top {
-    padding: 10px 0; }
+    padding: 10px 15px; }
 
 body.fixed-nav #header {
   position: fixed;
@@ -825,11 +838,11 @@ p.spam-message {
     line-height: 1;
     cursor: pointer; }
 
-.category-title {
+.widget-title {
   position: relative;
   z-index: 1;
   margin-left: -8px; }
-  .category-title:before {
+  .widget-title:before {
     position: absolute;
     content: "";
     left: 0;
@@ -839,7 +852,7 @@ p.spam-message {
     background: #333;
     padding-left: 5px;
     border-radius: 2px; }
-  .category-title h3 {
+  .widget-title h3 {
     font-size: 22px;
     font-weight: 700;
     padding-left: 15px;
@@ -1171,5 +1184,26 @@ figure figcaption {
 /*=================================================================================================
                                     Responsive code end
 =================================================================================================*/
+.author-hero-area {
+  padding: 120px 0 40px;
+  border-bottom: 1px solid #EAEBF5; }
+
+.author-content .image {
+  width: 165px;
+  height: 165px;
+  margin: 0 auto; }
+.author-content p {
+  font-size: 16px; }
+.author-content .image, .author-content h3, .author-content p {
+  margin-bottom: 20px; }
+
+.widget-wrapper .tags {
+  padding-top: 20px; }
+  .widget-wrapper .tags .tag {
+    height: 36px;
+    padding: 0 30px;
+    font-size: 14px;
+    color: #74818D;
+    background: #EAEBF5; }
 
 /*# sourceMappingURL=style.css.map */

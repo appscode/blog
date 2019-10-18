@@ -83,3 +83,13 @@ if(sBtn){
     arr[newIndex].classList.add("show");
   });
 }
+
+
+//clipboard js
+var copyBtn = document.querySelector('.copy-here')
+if(copyBtn){
+  new ClipboardJS(copyBtn);
+  copyBtn.addEventListener('click', function(){
+    copyBtn.setAttribute("title", "copied!")
+  })
+}

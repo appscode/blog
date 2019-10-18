@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Author page</title>
+      <link>https://blog.byte.builders/author/01/</link>
+      <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.byte.builders/author/01/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>The case for AppBinding</title>
       <link>https://blog.byte.builders/post/appbinding/</link>
       <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>

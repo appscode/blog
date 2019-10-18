@@ -53,7 +53,7 @@ if (!doNotTrack) {
     
     
     <div class="header-top">
-      <div class="container section">
+      <div class="container">
         <nav class="navbar customize-navbar" role="navigation" aria-label="main navigation">
           
           <div class="navbar-brand">
@@ -113,195 +113,308 @@ if (!doNotTrack) {
 
   
 
-  
-  <section class="blog-hero-area section-padding hero is-medium has-carousel">
-    <div class="container section">
 
-      
-      <div class="blog-slider-wrapper">
+<section class="blog-hero-area section-padding hero is-medium has-carousel">
+  <div class="container section">
+
+    
+    <div class="blog-slider-wrapper">
+
+      <div class="blog-slider-inner">
 
         
-        <div class="social-media-share">
-          <div class="social-link-vertical">
-            <ul>
-              <li>
-                <a href="#"><i class="fa fa-share-alt" aria-hidden="true"></i></a>
-              </li>
-              <li>
-                <a href="http://twitter.com/share?url=https%3a%2f%2fblog.byte.builders%2ftags%2fcrd%2f&text=crd" class="twitter" aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-              </li>
-              <li>
-                <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fblog.byte.builders%2ftags%2fcrd%2f&title=crd&summary=" class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
-              </li>
-              <li>
-                <a href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fblog.byte.builders%2ftags%2fcrd%2f" class="facebook" aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-              </li>
-            </ul>
-          </div>
+        <div class="slider-button">
+          <button id="sBtn" class="slide"><img src="/assets/images/icons/arrow.svg" alt="arrow"></button>
         </div>
         
 
-        <div class="blog-slider-inner">
+        
+        
+        <div class="single-blog show">
 
           
-          <div class="slider-button">
-            <button id="sBtn" class="slide"><img src="/assets/images/icons/arrow.svg" alt="arrow"></button>
-          </div>
-          
-
-          
-          
-          <div class="single-blog show">
-            <div class="columns">
-              <div class="column is-6">
-                
-                <div class="blog-content-wrapper d-table">
-                  <div class="blog-content-inner d-table-cell">
-                    <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> 1-Jan-2019</p>
-                    <h1><a href="/post/appbinding/">The case for AppBinding</a></h1>
-                    <p class="author"><span>by </span><a href="#" target="_blank">Tamal Saha</a></p>
-                    <p class="description">Kubernetes has become the de-facto orchestrator for the cloud native world. Kubernetes upholds the philosophy that the core should be small and allow developers to write their own extensions. One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like standard Kubernetes resources. This allows anyone to write a controller for custom resources and capture operational knowledge in a software form.</p>
-                    <a href="/post/appbinding/" class="inline-button">Read More</a>
-                  </div>
-                </div>
-                
-              </div>
-              <div class="column is-6">
-                
-                <a href="blog-details.html" class="blog-slider-image blog-bg-3"></a>
-                
-              </div>
+          <div class="social-media-share">
+            <div class="social-link-vertical">
+              <ul>
+                <li>
+                  <a href="http://twitter.com/share?url=https%3a%2f%2fblog.byte.builders%2fauthor%2f01%2f&text=Author%20page" class="twitter"
+                    aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fblog.byte.builders%2fauthor%2f01%2f&title=Author%20page&summary="
+                    class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fblog.byte.builders%2fauthor%2f01%2f" class="facebook"
+                    aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="mailto:xyz@gmail.com"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+                </li>
+              </ul>
             </div>
           </div>
           
-          
-          
-          <div class="single-blog ">
-            <div class="columns">
-              <div class="column is-6">
-                
-                <div class="blog-content-wrapper d-table">
-                  <div class="blog-content-inner d-table-cell">
-                    <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> 2-Feb-2018</p>
-                    <h1><a href="/post/testpost/">The case for Test post</a></h1>
-                    <p class="author"><span>by </span><a href="#" target="_blank">Tamal Saha</a></p>
-                    <p class="description">Kubernetes has become the de-facto orchestrator for the cloud native world. Kubernetes upholds the philosophy that the core should be small and allow developers to write their own extensions. One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like standard Kubernetes resources. This allows anyone to write a controller for custom resources and capture operational knowledge in a software form.</p>
-                    <a href="/post/testpost/" class="inline-button">Read More</a>
-                  </div>
+
+          <div class="columns">
+            <div class="column is-6">
+              
+              <div class="blog-content-wrapper d-table">
+                <div class="blog-content-inner d-table-cell">
+                  <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i>
+                    1-Jan-2019</p>
+                  <h1><a href="/author/01/">Author page</a></h1>
+                  <p class="author"><span>by </span><a href="#"
+                      target="_blank">Tamal Saha</a></p>
+                  <p class="description"></p>
+                  <a href="/author/01/" class="inline-button">Read More</a>
                 </div>
-                
               </div>
-              <div class="column is-6">
-                
-                <a href="blog-details.html" class="blog-slider-image blog-bg-3"></a>
-                
-              </div>
+              
+            </div>
+            <div class="column is-6">
+              
+              <a href="blog-details.html" class="blog-slider-image blog-bg-3"></a>
+              
+            </div>
+          </div>
+        </div>
+        
+        
+        
+        <div class="single-blog ">
+
+          
+          <div class="social-media-share">
+            <div class="social-link-vertical">
+              <ul>
+                <li>
+                  <a href="http://twitter.com/share?url=https%3a%2f%2fblog.byte.builders%2fpost%2fappbinding%2f&text=The%20case%20for%20AppBinding" class="twitter"
+                    aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fblog.byte.builders%2fpost%2fappbinding%2f&title=The%20case%20for%20AppBinding&summary=Kubernetes%20has%20become%20the%20de-facto%20orchestrator%20for%20the%20cloud%20native%20world.%20Kubernetes%20upholds%20the%20philosophy%20that%20the%20core%20should%20be%20small%20and%20allow%20developers%20to%20write%20their%20own%20extensions.%20One%20way%20to%20introduce%20new%20resource%20types%20is%20using%20CustomResourceDefintions%20%28CRD%29%20%28originally%20known%20as%20ThirdPartyResources%29.%20Using%20CRDs%20anyone%20can%20define%20a%20new%20resource%20type%20that%20behaves%20like%20standard%20Kubernetes%20resources.%20This%20allows%20anyone%20to%20write%20a%20controller%20for%20custom%20resources%20and%20capture%20operational%20knowledge%20in%20a%20software%20form."
+                    class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fblog.byte.builders%2fpost%2fappbinding%2f" class="facebook"
+                    aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="mailto:xyz@gmail.com"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+                </li>
+              </ul>
             </div>
           </div>
           
+
+          <div class="columns">
+            <div class="column is-6">
+              
+              <div class="blog-content-wrapper d-table">
+                <div class="blog-content-inner d-table-cell">
+                  <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i>
+                    1-Jan-2019</p>
+                  <h1><a href="/post/appbinding/">The case for AppBinding</a></h1>
+                  <p class="author"><span>by </span><a href="#"
+                      target="_blank">Tamal Saha</a></p>
+                  <p class="description">Kubernetes has become the de-facto orchestrator for the cloud native world. Kubernetes upholds the philosophy that the core should be small and allow developers to write their own extensions. One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like standard Kubernetes resources. This allows anyone to write a controller for custom resources and capture operational knowledge in a software form.</p>
+                  <a href="/post/appbinding/" class="inline-button">Read More</a>
+                </div>
+              </div>
+              
+            </div>
+            <div class="column is-6">
+              
+              <a href="blog-details.html" class="blog-slider-image blog-bg-3"></a>
+              
+            </div>
+          </div>
+        </div>
+        
+        
+        
+        <div class="single-blog ">
+
+          
+          <div class="social-media-share">
+            <div class="social-link-vertical">
+              <ul>
+                <li>
+                  <a href="http://twitter.com/share?url=https%3a%2f%2fblog.byte.builders%2fpost%2ftestpost%2f&text=The%20case%20for%20Test%20post" class="twitter"
+                    aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fblog.byte.builders%2fpost%2ftestpost%2f&title=The%20case%20for%20Test%20post&summary=Kubernetes%20has%20become%20the%20de-facto%20orchestrator%20for%20the%20cloud%20native%20world.%20Kubernetes%20upholds%20the%20philosophy%20that%20the%20core%20should%20be%20small%20and%20allow%20developers%20to%20write%20their%20own%20extensions.%20One%20way%20to%20introduce%20new%20resource%20types%20is%20using%20CustomResourceDefintions%20%28CRD%29%20%28originally%20known%20as%20ThirdPartyResources%29.%20Using%20CRDs%20anyone%20can%20define%20a%20new%20resource%20type%20that%20behaves%20like%20standard%20Kubernetes%20resources.%20This%20allows%20anyone%20to%20write%20a%20controller%20for%20custom%20resources%20and%20capture%20operational%20knowledge%20in%20a%20software%20form."
+                    class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fblog.byte.builders%2fpost%2ftestpost%2f" class="facebook"
+                    aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="mailto:xyz@gmail.com"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+
+          <div class="columns">
+            <div class="column is-6">
+              
+              <div class="blog-content-wrapper d-table">
+                <div class="blog-content-inner d-table-cell">
+                  <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i>
+                    2-Feb-2018</p>
+                  <h1><a href="/post/testpost/">The case for Test post</a></h1>
+                  <p class="author"><span>by </span><a href="#"
+                      target="_blank">Tamal Saha</a></p>
+                  <p class="description">Kubernetes has become the de-facto orchestrator for the cloud native world. Kubernetes upholds the philosophy that the core should be small and allow developers to write their own extensions. One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like standard Kubernetes resources. This allows anyone to write a controller for custom resources and capture operational knowledge in a software form.</p>
+                  <a href="/post/testpost/" class="inline-button">Read More</a>
+                </div>
+              </div>
+              
+            </div>
+            <div class="column is-6">
+              
+              <a href="blog-details.html" class="blog-slider-image blog-bg-3"></a>
+              
+            </div>
+          </div>
+        </div>
+        
+        
+
+      </div>
+    </div>
+    
+
+  </div>
+</section>
+
+
+
+<div class="blog-items-area section-padding-60">
+  <div class="container section">
+    <div class="columns">
+      
+      <div class="column is-3">
+        <div class="blog-left-sidebar">
+
+          
+          
+          
+
+          
+          <div class="category-title">
+            <h3>Categories</h3>
+          </div>
+          
+
+          
+          <div class="blog-category">
+            <ul>
+              
+              
+              <li><a href="https://blog.byte.builders/tags/crd/">Crd</a></li>
+              
+              <li><a href="https://blog.byte.builders/tags/kubernetes/">Kubernetes</a></li>
+              
+              <li><a href="https://blog.byte.builders/tags/service-catalog/">Service-Catalog</a></li>
+              
+            </ul>
+          </div>
           
 
         </div>
       </div>
       
+      <div class="column is-9">
+        <div class="columns is-multiline">
 
-    </div>
-  </section>
-  
-
-  
-  <div class="blog-items-area section-padding-60">
-    <div class="container section">
-      <div class="columns">
-        
-        <div class="column is-3">
-          <div class="blog-left-sidebar">
-
-            
-            <div class="search-bar">
-              <input type="search" name="search" placeholder="Search">
-              <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+          
+          
+          <div class="column is-one-third-fullhd is-half-tablet is-one-third-desktop">
+            <div class="single-blog-item">
+              <div class="blog-image-wrapper">
+                <a href="blog-details.html" class="blog-image blog-1"></a>
+              </div>
+              <div class="single-blog-content">
+                <div class="blog-meta">
+                  <div class="meta-date"><i class="fa fa-calendar"
+                      aria-hidden="true"></i>1-Jan-2019</div>
+                  <div class="meta-author"><a href="#"><span>by</span>
+                      Tamal Saha</a></div>
+                </div>
+                <div class="blog-description">
+                  <h2><a href="/author/01/">Author page</a></h2>
+                  <p></p>
+                  <a href="/author/01/" class="inline-button">Read More</a>
+                </div>
+              </div>
             </div>
-            
-
-            
-            <div class="blog-category">
-              <ul>
-                
-                
-                <li><a href="https://blog.byte.builders/tags/crd/">Crd</a></li>
-                
-                <li><a href="https://blog.byte.builders/tags/kubernetes/">Kubernetes</a></li>
-                
-                <li><a href="https://blog.byte.builders/tags/service-catalog/">Service-Catalog</a></li>
-                
-              </ul>
-            </div>
-            
-
           </div>
+          
+          
+          
+          <div class="column is-one-third-fullhd is-half-tablet is-one-third-desktop">
+            <div class="single-blog-item">
+              <div class="blog-image-wrapper">
+                <a href="blog-details.html" class="blog-image blog-1"></a>
+              </div>
+              <div class="single-blog-content">
+                <div class="blog-meta">
+                  <div class="meta-date"><i class="fa fa-calendar"
+                      aria-hidden="true"></i>1-Jan-2019</div>
+                  <div class="meta-author"><a href="#"><span>by</span>
+                      Tamal Saha</a></div>
+                </div>
+                <div class="blog-description">
+                  <h2><a href="/post/appbinding/">The case for AppBinding</a></h2>
+                  <p>Kubernetes has become the de-facto orchestrator for the cloud native world. Kubernetes upholds the philosophy that the core should be small and allow developers to write their own extensions. One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like standard Kubernetes resources. This allows anyone to write a controller for custom resources and capture operational knowledge in a software form.</p>
+                  <a href="/post/appbinding/" class="inline-button">Read More</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+          <div class="column is-one-third-fullhd is-half-tablet is-one-third-desktop">
+            <div class="single-blog-item">
+              <div class="blog-image-wrapper">
+                <a href="blog-details.html" class="blog-image blog-1"></a>
+              </div>
+              <div class="single-blog-content">
+                <div class="blog-meta">
+                  <div class="meta-date"><i class="fa fa-calendar"
+                      aria-hidden="true"></i>2-Feb-2018</div>
+                  <div class="meta-author"><a href="#"><span>by</span>
+                      Tamal Saha</a></div>
+                </div>
+                <div class="blog-description">
+                  <h2><a href="/post/testpost/">The case for Test post</a></h2>
+                  <p>Kubernetes has become the de-facto orchestrator for the cloud native world. Kubernetes upholds the philosophy that the core should be small and allow developers to write their own extensions. One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like standard Kubernetes resources. This allows anyone to write a controller for custom resources and capture operational knowledge in a software form.</p>
+                  <a href="/post/testpost/" class="inline-button">Read More</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+
         </div>
-        
-        <div class="column is-9">
-          <div class="columns is-multiline">
-
+        <div class="columns">
+          <div class="column has-text-centered">
             
-            
-            <div class="column is-4">
-              <div class="single-blog-item">
-                <div class="blog-image-wrapper">
-                  <a href="blog-details.html" class="blog-image blog-1"></a>
-                </div>
-                <div class="single-blog-content">
-                  <div class="blog-meta">
-                    <div class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i>1-Jan-2019</div>
-                    <div class="meta-author"><a href="#"><span>by</span> Tamal Saha</a></div>
-                  </div>
-                  <div class="blog-description">
-                    <h2><a href="/post/appbinding/">The case for AppBinding</a></h2>
-                    <p>Kubernetes has become the de-facto orchestrator for the cloud native world. Kubernetes upholds the philosophy that the core should be small and allow developers to write their own extensions. One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like standard Kubernetes resources. This allows anyone to write a controller for custom resources and capture operational knowledge in a software form.</p>
-                    <a href="/post/appbinding/" class="inline-button">Read More</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            
-            
-            <div class="column is-4">
-              <div class="single-blog-item">
-                <div class="blog-image-wrapper">
-                  <a href="blog-details.html" class="blog-image blog-1"></a>
-                </div>
-                <div class="single-blog-content">
-                  <div class="blog-meta">
-                    <div class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i>2-Feb-2018</div>
-                    <div class="meta-author"><a href="#"><span>by</span> Tamal Saha</a></div>
-                  </div>
-                  <div class="blog-description">
-                    <h2><a href="/post/testpost/">The case for Test post</a></h2>
-                    <p>Kubernetes has become the de-facto orchestrator for the cloud native world. Kubernetes upholds the philosophy that the core should be small and allow developers to write their own extensions. One way to introduce new resource types is using CustomResourceDefintions (CRD) (originally known as ThirdPartyResources). Using CRDs anyone can define a new resource type that behaves like standard Kubernetes resources. This allows anyone to write a controller for custom resources and capture operational knowledge in a software form.</p>
-                    <a href="/post/testpost/" class="inline-button">Read More</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            
-
-          </div>
-          <div class="columns">
-            <div class="column has-text-centered">
-              <div class="load-more-button">
-                <a href="#" class="button is-sm-medium is-primary">Load more</a>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
+</div>
+
 
 
 
@@ -551,6 +664,7 @@ if (!doNotTrack) {
   
 
   
+  <script src="/assets/js/clipboard.min.js"></script>
   <script src="/assets/js/main.js"></script>
 </body>
 

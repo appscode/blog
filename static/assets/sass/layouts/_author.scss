@@ -1,0 +1,29 @@
+.author-hero-area{
+  padding: 120px 0 40px;
+  border-bottom: 1px solid #EAEBF5;
+}
+.author-content {
+  .image {
+    width: 165px;
+    height: 165px;
+    margin: 0 auto;
+  }
+  p{
+    font-size: 16px;
+  }
+  .image,h3,p{
+    margin-bottom: 20px;
+  }
+}
+.widget-wrapper {
+  .tags {
+    padding-top: 20px;
+    .tag {
+      height: 36px;
+      padding: 0 30px;
+      font-size: 14px;
+      color: #74818D;
+      background: #EAEBF5;
+    }
+  }
+}
