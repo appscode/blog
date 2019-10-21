@@ -305,7 +305,8 @@ textarea.textarea {
 
 .social-link-horizontal ul li {
   display: inline-block;
-  margin-right: 10px; }
+  margin-right: 10px;
+  margin-bottom: 0; }
   .social-link-horizontal ul li:last-child {
     margin-right: 0; }
   .social-link-horizontal ul li a {
@@ -811,33 +812,6 @@ p.spam-message {
   top: 120px;
   padding-left: 10px; }
 
-.search-bar {
-  position: relative;
-  z-index: 1; }
-  .search-bar input[type="search"] {
-    background-color: #eaebf5;
-    border: transparent;
-    font-size: 15px;
-    height: 60px;
-    width: 100%;
-    padding: 10px 50px 10px 30px;
-    border-radius: 4px;
-    overflow: hidden;
-    font-weight: 500; }
-    .search-bar input[type="search"]:focus {
-      outline: 1px solid #0071bd; }
-  .search-bar button {
-    position: absolute;
-    right: 0;
-    height: 100%;
-    border: transparent;
-    background: transparent;
-    padding: 10px 20px;
-    color: #0071bd;
-    font-size: 28px;
-    line-height: 1;
-    cursor: pointer; }
-
 .widget-title {
   position: relative;
   z-index: 1;
@@ -1186,7 +1160,7 @@ figure figcaption {
 =================================================================================================*/
 .author-hero-area {
   padding: 120px 0 40px;
-  border-bottom: 1px solid #EAEBF5; }
+  border-bottom: 1px solid #eaebf5; }
 
 .author-content .image {
   width: 165px;
@@ -1194,7 +1168,9 @@ figure figcaption {
   margin: 0 auto; }
 .author-content p {
   font-size: 16px; }
-.author-content .image, .author-content h3, .author-content p {
+.author-content .image,
+.author-content h3,
+.author-content p {
   margin-bottom: 20px; }
 
 .widget-wrapper .tags {
@@ -1203,7 +1179,35 @@ figure figcaption {
     height: 36px;
     padding: 0 30px;
     font-size: 14px;
-    color: #74818D;
-    background: #EAEBF5; }
+    color: #74818d;
+    background: #eaebf5; }
+
+/*=================================================================================================
+                                    Responsive code start
+=================================================================================================*/
+/**************************************************************** 
+                  Full HD Min Width 1407
+**************************************************************** */
+/* Full HD Min Width 1408px */
+/**************************************************************** 
+                  Widescreen Between 1216px and 1407px
+**************************************************************** */
+/**************************************************************** 
+                  Desktop Between 1024px and 1215px
+**************************************************************** */
+/**************************************************************** 
+                  Tablet Between 769px and 1023px
+**************************************************************** */
+/**************************************************************** 
+                    Mobile Up to 768px. 
+**************************************************************** */
+@media only screen and (min-width: 100px) and (max-width: 768px) {
+  .author-content .image {
+    margin-bottom: 20px; }
+  .author-content h3 {
+    margin-bottom: 10px; } }
+/*=================================================================================================
+                                    Responsive code end
+=================================================================================================*/
 
 /*# sourceMappingURL=style.css.map */
