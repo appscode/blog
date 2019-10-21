@@ -1027,12 +1027,14 @@ figure figcaption {
     font-size: 16px;
     font-family: "Roboto", sans-serif;
     font-weight: 400; }
-  .code-block-heading .copy-here {
+  .code-block-heading .copy-and-download .download-here, .code-block-heading .copy-and-download .copy-here {
     background: transparent;
     border: none;
     color: #9aa2ad;
     font-size: 20px;
     cursor: copy; }
+  .code-block-heading .copy-and-download .download-here {
+    cursor: pointer; }
 
 .highlight {
   margin-bottom: 40px; }
@@ -1172,15 +1174,6 @@ figure figcaption {
 .author-content h3,
 .author-content p {
   margin-bottom: 20px; }
-
-.widget-wrapper .tags {
-  padding-top: 20px; }
-  .widget-wrapper .tags .tag {
-    height: 36px;
-    padding: 0 30px;
-    font-size: 14px;
-    color: #74818d;
-    background: #eaebf5; }
 
 /*=================================================================================================
                                     Responsive code start

@@ -55,24 +55,22 @@
           </div> -->
           <!-- search-bar end -->
 
-          <!-- tags title  -->
+          <!-- categories title  -->
           <div class="widget-title">
-            <h3>Tags</h3>
-          </div>
-          <!-- tags title  -->
-
-          <!-- tags start  -->
-          <div class="widget-wrapper">
-            <div class="tags">
-              <a href="/tags/kubernetes" class="tag">kubernetes</a>
-              <a href="/tags/crd" class="tag">crd</a>
-              <a href="/tags/service-catalog" class="tag">service-catalog</a>
-              <a href="/tags/kubernetes" class="tag">kubernetes</a>
-              <a href="/tags/crd" class="tag">crd</a>
-              <a href="/tags/service-catalog" class="tag">service-catalog</a>
+              <h3>Categories</h3>
             </div>
-          </div>
-          <!-- tags end  -->
+            <!-- categories title  -->
+  
+            <!-- category start  -->
+            <div class="blog-category">
+              <ul>
+                <!-- <li><a href="#" class="is-active">All</a></li> -->
+                {{ range .Site.Taxonomies.tags.Alphabetical }}
+                <li><a href="{{ .Page.Permalink }}">{{ .Page.Name | title }}</a></li>
+                {{ end }}
+              </ul>
+            </div>
+            <!-- category end  -->
 
         </div>
       </div>

@@ -41,13 +41,19 @@ figure {
     font-family: $font-paragraph;
     font-weight: 400;
   }
-  .copy-here {
-    background: transparent;
-    border: none;
-    color: #9aa2ad;
-    font-size: 20px;
-    cursor: copy;
+  .copy-and-download{
+    .download-here,.copy-here {
+      background: transparent;
+      border: none;
+      color: #9aa2ad;
+      font-size: 20px;
+      cursor: copy;
+    }
+    .download-here{
+      cursor: pointer;
+    }
   }
+ 
 }
 .highlight {
   pre {
