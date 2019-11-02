@@ -110,42 +110,9 @@
   top: 120px;
   padding-left: 10px;
 }
-// search-bar start
-.search-bar {
-  position: relative;
-  z-index: 1;
 
-  input[type="search"] {
-    background-color: #eaebf5;
-    border: transparent;
-    font-size: 15px;
-    height: 60px;
-    width: 100%;
-    padding: 10px 50px 10px 30px;
-    border-radius: 4px;
-    overflow: hidden;
-    font-weight: 500;
-
-    &:focus {
-      outline: 1px solid $primary-color;
-    }
-  }
-
-  button {
-    position: absolute;
-    right: 0;
-    height: 100%;
-    border: transparent;
-    background: transparent;
-    padding: 10px 20px;
-    color: $primary-color;
-    font-size: 28px;
-    line-height: 1;
-    cursor: pointer;
-  }
-}
 // category start
-.category-title {
+.widget-title {
   position: relative;
   z-index: 1;
   margin-left: -8px;

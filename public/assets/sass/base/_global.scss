@@ -290,7 +290,7 @@ textarea.textarea {
   }
 }
 //vertical social link style
-.social-link-vertical {
+.social-link-vertical,.social-link-horizontal {
   ul {
     li {
       display: block;
@@ -335,6 +335,26 @@ textarea.textarea {
             }
           }
         }
+      }
+    }
+  }
+}
+.social-link-horizontal {
+  ul {
+    li {
+      display: inline-block;
+      margin-right: 10px;
+      margin-bottom: 0;
+      &:last-child {
+        margin-right: 0;
+      }
+      a {
+        font-size: 15px;
+        display: block;
+        text-align: center;
+        line-height: 30px;
+        width: 30px;
+        height: 30px;
       }
     }
   }

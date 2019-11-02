@@ -267,12 +267,12 @@ textarea.textarea {
     color: #4a4a4a;
     font-weight: 400; }
 
-.social-link-vertical ul li {
+.social-link-vertical ul li, .social-link-horizontal ul li {
   display: block;
   margin-bottom: 25px; }
-  .social-link-vertical ul li:last-child {
+  .social-link-vertical ul li:last-child, .social-link-horizontal ul li:last-child {
     margin-bottom: 0; }
-  .social-link-vertical ul li a {
+  .social-link-vertical ul li a, .social-link-horizontal ul li a {
     font-size: 20px;
     display: inline-block;
     text-align: center;
@@ -282,26 +282,40 @@ textarea.textarea {
     border-radius: 50%;
     border: 1px solid #1C2C41;
     color: #1c2c41; }
-    .social-link-vertical ul li a.is-static {
+    .social-link-vertical ul li a.is-static, .social-link-horizontal ul li a.is-static {
       cursor: default;
       background-color: #1c2c41;
       color: #fff; }
-    .social-link-vertical ul li a:hover {
+    .social-link-vertical ul li a:hover, .social-link-horizontal ul li a:hover {
       color: #ffffff;
       background: #1c2c41; }
-      .social-link-vertical ul li a:hover.linkedin {
+      .social-link-vertical ul li a:hover.linkedin, .social-link-horizontal ul li a:hover.linkedin {
         background-color: #0e76a8;
         border: 1px solid #0e76a8; }
-      .social-link-vertical ul li a:hover.twitter {
+      .social-link-vertical ul li a:hover.twitter, .social-link-horizontal ul li a:hover.twitter {
         background-color: #1da1f2;
         border: 1px solid #1da1f2; }
-      .social-link-vertical ul li a:hover.facebook {
+      .social-link-vertical ul li a:hover.facebook, .social-link-horizontal ul li a:hover.facebook {
         background-color: #3b5998;
         border: 1px solid #3b5998; }
-      .social-link-vertical ul li a:hover i {
+      .social-link-vertical ul li a:hover i, .social-link-horizontal ul li a:hover i {
         animation: icon-animation 0.9s both; }
-        .social-link-vertical ul li a:hover i.fa-share-alt {
+        .social-link-vertical ul li a:hover i.fa-share-alt, .social-link-horizontal ul li a:hover i.fa-share-alt {
           animation: none; }
+
+.social-link-horizontal ul li {
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 0; }
+  .social-link-horizontal ul li:last-child {
+    margin-right: 0; }
+  .social-link-horizontal ul li a {
+    font-size: 15px;
+    display: block;
+    text-align: center;
+    line-height: 30px;
+    width: 30px;
+    height: 30px; }
 
 @-webkit-keyframes arrowAnimate {
   0%,
@@ -396,7 +410,7 @@ textarea.textarea {
   top: 0;
   transition: 0.1s ease; }
   #header .header-top {
-    padding: 10px 0; }
+    padding: 10px 15px; }
 
 body.fixed-nav #header {
   position: fixed;
@@ -798,38 +812,11 @@ p.spam-message {
   top: 120px;
   padding-left: 10px; }
 
-.search-bar {
-  position: relative;
-  z-index: 1; }
-  .search-bar input[type="search"] {
-    background-color: #eaebf5;
-    border: transparent;
-    font-size: 15px;
-    height: 60px;
-    width: 100%;
-    padding: 10px 50px 10px 30px;
-    border-radius: 4px;
-    overflow: hidden;
-    font-weight: 500; }
-    .search-bar input[type="search"]:focus {
-      outline: 1px solid #0071bd; }
-  .search-bar button {
-    position: absolute;
-    right: 0;
-    height: 100%;
-    border: transparent;
-    background: transparent;
-    padding: 10px 20px;
-    color: #0071bd;
-    font-size: 28px;
-    line-height: 1;
-    cursor: pointer; }
-
-.category-title {
+.widget-title {
   position: relative;
   z-index: 1;
   margin-left: -8px; }
-  .category-title:before {
+  .widget-title:before {
     position: absolute;
     content: "";
     left: 0;
@@ -839,7 +826,7 @@ p.spam-message {
     background: #333;
     padding-left: 5px;
     border-radius: 2px; }
-  .category-title h3 {
+  .widget-title h3 {
     font-size: 22px;
     font-weight: 700;
     padding-left: 15px;
@@ -1040,12 +1027,14 @@ figure figcaption {
     font-size: 16px;
     font-family: "Roboto", sans-serif;
     font-weight: 400; }
-  .code-block-heading .copy-here {
+  .code-block-heading .copy-and-download .download-here, .code-block-heading .copy-and-download .copy-here {
     background: transparent;
     border: none;
     color: #9aa2ad;
     font-size: 20px;
     cursor: copy; }
+  .code-block-heading .copy-and-download .download-here {
+    cursor: pointer; }
 
 .highlight {
   margin-bottom: 40px; }
@@ -1168,6 +1157,48 @@ figure figcaption {
   .blog-content .highlight {
     margin-bottom: 0;
     overflow: hidden; } }
+/*=================================================================================================
+                                    Responsive code end
+=================================================================================================*/
+.author-hero-area {
+  padding: 120px 0 40px;
+  border-bottom: 1px solid #eaebf5; }
+
+.author-content .image {
+  width: 165px;
+  height: 165px;
+  margin: 0 auto; }
+.author-content p {
+  font-size: 16px; }
+.author-content .image,
+.author-content h3,
+.author-content p {
+  margin-bottom: 20px; }
+
+/*=================================================================================================
+                                    Responsive code start
+=================================================================================================*/
+/**************************************************************** 
+                  Full HD Min Width 1407
+**************************************************************** */
+/* Full HD Min Width 1408px */
+/**************************************************************** 
+                  Widescreen Between 1216px and 1407px
+**************************************************************** */
+/**************************************************************** 
+                  Desktop Between 1024px and 1215px
+**************************************************************** */
+/**************************************************************** 
+                  Tablet Between 769px and 1023px
+**************************************************************** */
+/**************************************************************** 
+                    Mobile Up to 768px. 
+**************************************************************** */
+@media only screen and (min-width: 100px) and (max-width: 768px) {
+  .author-content .image {
+    margin-bottom: 20px; }
+  .author-content h3 {
+    margin-bottom: 10px; } }
 /*=================================================================================================
                                     Responsive code end
 =================================================================================================*/
