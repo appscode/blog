@@ -52,7 +52,7 @@
                   aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
               </li>
               <li>
-                <a href="mailto:xyz@gmail.com"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+                <a href="mailto:?subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
               </li>
             </ul>
           </div>
