@@ -1,0 +1,128 @@
+{{ define "main" }}
+
+{{ $author := (index $.Site.Data.authors (.Title | urlize) ) }}
+
+<!-- author hero area start  -->
+<section class="author-hero-area">
+  <div class="container section">
+    <div class="columns">
+      <div class="column is-8 is-offset-2 has-text-centered">
+        <div class="author-content">
+          <figure class="image">
+            <img class="is-rounded" src="{{ $author.profile }}">
+          </figure>
+          <h3>{{ $author.name }}</h3>
+          <p>{{ $author.biography }}</p>
+          <div class="social-link-horizontal">
+            <ul>
+              {{ if $author.twitter }}
+              <li>
+                <a href="{{ $author.twitter }}" target="_blank" class="twitter" aria-label="Follow on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+              </li>
+              {{ end }}
+              {{ if $author.linkedin }}
+              <li>
+                <a href="{{ $author.linkedin }}" target="_blank" class="linkedin" aria-label="Connect on Linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+              </li>
+              {{ end }}
+              {{ if $author.facebook }}
+              <li>
+                <a href="{{ $author.facebook }}" target="_blank" class="facebook" aria-label="Follow on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+              </li>
+              {{ end }}
+              {{ if $author.email }}
+              <li>
+                <a href="mailto:{{ $author.email }}"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+              </li>
+              {{ end }}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- author hero area end -->
+
+
+<!-- all blog content start  -->
+<div class="blog-items-area section-padding-60">
+  <div class="container section">
+    <div class="columns">
+      <!-- left sidebar start  -->
+      <div class="column is-3">
+        <div class="blog-left-sidebar">
+
+          <!-- search-bar start  -->
+          <!-- <div class="search-bar">
+            <input type="search" name="search" placeholder="Search">
+            <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+          </div> -->
+          <!-- search-bar end -->
+
+          <!-- categories title  -->
+          <div class="widget-title">
+              <h3>Categories</h3>
+            </div>
+            <!-- categories title  -->
+  
+            <!-- category start  -->
+            <div class="blog-category">
+              <ul>
+                <!-- <li><a href="#" class="is-active">All</a></li> -->
+                {{ range .Site.Taxonomies.tags.Alphabetical }}
+                <li><a href="{{ .Page.Permalink }}">{{ .Page.Name | title }}</a></li>
+                {{ end }}
+              </ul>
+            </div>
+            <!-- category end  -->
+
+        </div>
+      </div>
+      <!-- left sidebar end -->
+      <div class="column is-9">
+        <div class="columns is-multiline">
+
+          {{ range $idx, $p := .Pages }}
+          <!-- single blog start  -->
+          <div class="column is-one-third-fullhd is-half-tablet is-one-third-desktop">
+            <div class="single-blog-item">
+              <div class="blog-image-wrapper">
+                <a href="{{ $p.RelPermalink }}" class="blog-image blog-1"></a>
+              </div>
+              <div class="single-blog-content">
+                <div class="blog-meta">
+                  <div class="meta-date"><i class="fa fa-calendar"
+                      aria-hidden="true"></i>{{ $p.Date.Format "2-Jan-2006" }}</div>
+                  <div class="meta-author">
+                    {{ range $author := $p.Params.authors }}
+                    <a href="/authors/{{ $author | urlize }}"><span>by</span>{{ $author }}</a>
+                    {{ end }}
+                  </div>
+                </div>
+                <div class="blog-description">
+                  <h2><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h2>
+                  <p>{{ $p.Summary }}</p>
+                  <a href="{{ $p.RelPermalink }}" class="inline-button">Read More</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- single blog end -->
+          {{ end }}
+
+        </div>
+        <div class="columns">
+          <div class="column has-text-centered">
+            <!-- <div class="load-more-button">
+              <a href="#" class="button is-sm-medium is-primary">Load more</a>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- all blog content end -->
+
+{{ end }}

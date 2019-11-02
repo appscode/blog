@@ -64,13 +64,13 @@ basicScrollTop();
 
 // blog page hero slider
 var sBtn = document.getElementById("sBtn");
-if(sBtn){
+if (sBtn) {
   sBtn.addEventListener("click", function(event) {
     event.preventDefault();
-  
+
     const sliderItems = document.querySelectorAll(".single-blog");
     const arr = Array.from(sliderItems);
-  
+
     let indexOfShow = 0;
     arr.forEach((sliderItem, idx) => {
       if (sliderItem.classList.contains("show")) {
@@ -78,8 +78,40 @@ if(sBtn){
         sliderItem.classList.remove("show");
       }
     });
-  
+
     let newIndex = (indexOfShow + 1) % arr.length;
     arr[newIndex].classList.add("show");
   });
 }
+
+// code download and copy function //
+var codeHeading = document.querySelectorAll(".code-block-heading");
+Array.from(codeHeading).forEach(heading => {
+  const pre = heading.nextElementSibling;
+  const code = pre.querySelector("code");
+  const codeContent = code.textContent;
+  let fileType = code.getAttribute("class");
+  if (fileType) {
+    fileType = fileType.replace("language-", "");
+  } else {
+    fileType = "txt";
+  }
+  let fileName = heading.querySelector('.code-title > h4').textContent.replace(" ", "_")
+  
+  // download js //
+  var downloadBtn = heading.querySelector(".download-here");
+  if (downloadBtn) {
+    downloadBtn.addEventListener("click", function() {
+      return download(codeContent, `${fileName}.${fileType}`, "text/plain");
+    });
+  }
+
+  //clipboard js
+  var copyBtn = heading.querySelector(".copy-here");
+  if (copyBtn) {
+    new ClipboardJS(copyBtn);
+    copyBtn.addEventListener("click", function() {
+      copyBtn.setAttribute("title", "copied!");
+    });
+  }
+});

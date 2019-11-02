@@ -23,6 +23,7 @@
         position: absolute;
         right: 42.35%;
         bottom: 0px;
+        z-index: 2;
         .slide {
           background: #fff;
           border: 1px solid transparent;
@@ -47,6 +48,8 @@
         transition: 0.3s ease-in-out;
         display: none;
         overflow: hidden;
+        position: relative;
+        z-index: 1;
         &.show {
           opacity: 1;
           visibility: visible;
@@ -55,6 +58,9 @@
         .blog-content-wrapper {
           .blog-content-inner {
             padding-right: 50px;
+            .meta-date{
+              margin-bottom: 10px;
+            }
             h1 {
               display: block;
               font-size: 48px;
@@ -102,45 +108,36 @@
 .blog-left-sidebar {
   position: sticky;
   top: 120px;
+  padding-left: 10px;
 }
-// search-bar start
-.search-bar {
+
+// category start
+.widget-title {
   position: relative;
   z-index: 1;
-
-  input[type="search"] {
-    background-color: #eaebf5;
-    border: transparent;
-    font-size: 15px;
-    height: 60px;
-    width: 100%;
-    padding: 10px 50px 10px 30px;
-    border-radius: 4px;
-    overflow: hidden;
-    font-weight: 500;
-
-    &:focus {
-      outline: 1px solid $primary-color;
-    }
-  }
-
-  button {
+  margin-left: -8px;
+  &:before {
     position: absolute;
-    right: 0;
+     content: ""; 
+    left: 0;
+    top: 0;
+    width: 5px;
     height: 100%;
-    border: transparent;
-    background: transparent;
-    padding: 10px 20px;
-    color: $primary-color;
-    font-size: 28px;
+    background: #333;
+    padding-left: 5px;
+    border-radius: 2px;
+  }
+  h3 {
+    font-size: 22px;
+    font-weight: 700;
+    padding-left: 15px;
+    margin-bottom: 10px;
     line-height: 1;
-    cursor: pointer;
   }
 }
-// category start
+
 .blog-category {
   ul {
-    padding: 20px;
     li {
       a {
         font-size: 16px;
@@ -314,7 +311,15 @@
                   Desktop Between 1024px and 1215px
 **************************************************************** */
 @media (min-width: 1024px) and (max-width: 1215px) {
+  .blog-hero-area{
+    .blog-slider-wrapper {
+      .social-media-share{
+        padding: 30px 15px;
+      }
+    }
+  }
 }
+
 /**************************************************************** 
                   Tablet Between 769px and 1023px
 **************************************************************** */
