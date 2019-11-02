@@ -50,7 +50,7 @@
     <!-- header-area top start -->
     {{ block "header-top" . }}
     <div class="header-top">
-      <div class="container section">
+      <div class="container">
         <nav class="navbar customize-navbar" role="navigation" aria-label="main navigation">
           <!-- navbar brand start -->
           <div class="navbar-brand">
@@ -124,7 +124,7 @@
             </p>
           </div>
           <div class="cta-buttons buttons">
-              <a href="/user/sign_up" class="button is-primary is-large">Get started free</a>
+              <a href="{{.Site.Params.domain_bytebuilders}}/user/sign_up" class="button is-primary is-large">Get started free</a>
               <a href="{{.Site.Params.domain_appscode}}/meet-expert/" class="button is-large">Get a Demo</a>
             </div>
         </div>
@@ -162,12 +162,13 @@
           <div class="column is-4">
             <div class="single-footer-widget">
               <div class="footer-logo">
-                <a href="{{.Site.Params.domain_appscode}}"
-                    ><img
-                      src="/assets/images/products/appscode/appscode-logo.png"
-                      alt=""
-                      class="img"
-                  /></a>
+                <a href="{{.Site.Params.domain_appscode}}">
+                  <img
+                    src="{{$.Site.Data.products.appscode.logo.src}}"
+                    alt="{{$.Site.Data.products.appscode.logo.alt}}"
+                    class="img"
+                  />
+                </a>
               </div>
               <!-- subscription area start  -->
               <div class="subscription-form">
@@ -341,6 +342,10 @@
   </button>
   <!-- go-to-top end -->
 
+  <!-- download js  -->
+  <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
+  <!-- clipboard js  -->
+  <script src="https://unpkg.com/clipboard@2/dist/clipboard.min.js"></script>
   <!-- Main JS -->
   <script src="/assets/js/main.js"></script>
 </body>

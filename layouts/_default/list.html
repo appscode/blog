@@ -1,143 +1,160 @@
 {{ define "main" }}
 
-  <!-- blog hero area start  -->
-  <section class="blog-hero-area section-padding hero is-medium has-carousel">
-    <div class="container section">
+<!-- blog hero area start  -->
+<section class="blog-hero-area section-padding hero is-medium has-carousel">
+  <div class="container section">
 
-      <!-- slider wrapper start  -->
-      <div class="blog-slider-wrapper">
+    <!-- slider wrapper start  -->
+    <div class="blog-slider-wrapper">
 
-        <!-- social media share area start  -->
-        <div class="social-media-share">
-          <div class="social-link-vertical">
-            <ul>
-              <li>
-                <a href="#"><i class="fa fa-share-alt" aria-hidden="true"></i></a>
-              </li>
-              <li>
-                <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title }}" class="twitter" aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-              </li>
-              <li>
-                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title }}&summary={{ .Summary }}" class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
-              </li>
-              <li>
-                <a href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" class="facebook" aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-              </li>
-            </ul>
-          </div>
+      <div class="blog-slider-inner">
+
+        <!-- slider-button start  -->
+        <div class="slider-button">
+          <button id="sBtn" class="slide"><img src="/assets/images/icons/arrow.svg" alt="arrow"></button>
         </div>
-        <!-- social media share area end -->
+        <!-- slider-button end -->
 
-        <div class="blog-slider-inner">
+        {{ range $idx, $p := .Pages | first 3 }}
+        <!-- single slider start  -->
+        <div class="single-blog {{if eq $idx 0}}show{{end}}">
 
-          <!-- slider-button start  -->
-          <div class="slider-button">
-            <button id="sBtn" class="slide"><img src="/assets/images/icons/arrow.svg" alt="arrow"></button>
-          </div>
-          <!-- slider-button end -->
-
-          {{ range $idx, $p := .Pages | first 3 }}
-          <!-- single slider start  -->
-          <div class="single-blog {{if eq $idx 0}}show{{end}}">
-            <div class="columns">
-              <div class="column is-6">
-                <!-- left content start  -->
-                <div class="blog-content-wrapper d-table">
-                  <div class="blog-content-inner d-table-cell">
-                    <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> {{ $p.Date.Format "2-Jan-2006" }}</p>
-                    <h1><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h1>
-                    <p class="author"><span>by </span><a href="#" target="_blank">{{ $p.Params.author | default .Site.Params.author }}</a></p>
-                    <p class="description">{{ $p.Summary }}</p>
-                    <a href="{{ $p.RelPermalink }}" class="inline-button">Read More</a>
-                  </div>
-                </div>
-                <!-- left content end -->
-              </div>
-              <div class="column is-6">
-                <!-- slider image start  -->
-                <a href="blog-details.html" class="blog-slider-image blog-bg-3"></a>
-                <!-- slider image end -->
-              </div>
+          <!-- social media share area start  -->
+          <div class="social-media-share">
+            <div class="social-link-vertical">
+              <ul>
+                <li>
+                  <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title }}" target="_blank" class="twitter"
+                    aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title }}&summary={{ .Summary }}" target="_blank"
+                    class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" target="_blank" class="facebook"
+                    aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="mailto:xyz@gmail.com"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+                </li>
+              </ul>
             </div>
           </div>
-          <!-- single slider end  -->
-          {{ end }}
+          <!-- social media share area end -->
+
+          <div class="columns">
+            <div class="column is-6">
+              <!-- left content start  -->
+              <div class="blog-content-wrapper d-table">
+                <div class="blog-content-inner d-table-cell">
+                  <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i>
+                    {{ $p.Date.Format "2-Jan-2006" }}</p>
+                  <h1><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h1>
+                  <p class="author"><span>by </span><a href="#"
+                      target="_blank">{{ $p.Params.author | default .Site.Params.author }}</a></p>
+                  <p class="description">{{ $p.Summary }}</p>
+                  <a href="{{ $p.RelPermalink }}" class="inline-button">Read More</a>
+                </div>
+              </div>
+              <!-- left content end -->
+            </div>
+            <div class="column is-6">
+              <!-- slider image start  -->
+              <a href="{{ $p.RelPermalink }}" class="blog-slider-image blog-bg-3"></a>
+              <!-- slider image end -->
+            </div>
+          </div>
+        </div>
+        <!-- single slider end  -->
+        {{ end }}
+
+      </div>
+    </div>
+    <!-- slider wrapper end -->
+
+  </div>
+</section>
+<!-- blog hero area end -->
+
+<!-- all blog content start  -->
+<div class="blog-items-area section-padding-60">
+  <div class="container section">
+    <div class="columns">
+      <!-- left sidebar start  -->
+      <div class="column is-3">
+        <div class="blog-left-sidebar">
+
+          <!-- search-bar start  -->
+          <!-- <div class="search-bar">
+            <input type="search" name="search" placeholder="Search">
+            <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+          </div> -->
+          <!-- search-bar end -->
+
+          <!-- categories title  -->
+          <div class="widget-title">
+            <h3>Categories</h3>
+          </div>
+          <!-- categories title  -->
+
+          <!-- category start  -->
+          <div class="blog-category">
+            <ul>
+              <!-- <li><a href="#" class="is-active">All</a></li> -->
+              {{ range .Site.Taxonomies.tags.Alphabetical }}
+              <li><a href="{{ .Page.Permalink }}">{{ .Page.Name | title }}</a></li>
+              {{ end }}
+            </ul>
+          </div>
+          <!-- category end  -->
 
         </div>
       </div>
-      <!-- slider wrapper end -->
+      <!-- left sidebar end -->
+      <div class="column is-9">
+        <div class="columns is-multiline">
 
-    </div>
-  </section>
-  <!-- blog hero area end -->
-
-  <!-- all blog content start  -->
-  <div class="blog-items-area section-padding-60">
-    <div class="container section">
-      <div class="columns">
-        <!-- left sidebar start  -->
-        <div class="column is-3">
-          <div class="blog-left-sidebar">
-
-            <!-- search-bar start  -->
-            <div class="search-bar">
-              <input type="search" name="search" placeholder="Search">
-              <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+          {{ range $idx, $p := .Pages }}
+          <!-- single blog start  -->
+          <div class="column is-one-third-fullhd is-half-tablet is-one-third-desktop">
+            <div class="single-blog-item">
+              <div class="blog-image-wrapper">
+                <a href="{{ $p.RelPermalink }}" class="blog-image blog-1"></a>
+              </div>
+              <div class="single-blog-content">
+                <div class="blog-meta">
+                  <div class="meta-date"><i class="fa fa-calendar"
+                      aria-hidden="true"></i>{{ $p.Date.Format "2-Jan-2006" }}</div>
+                  <div class="meta-author">
+                    {{ range $author := $p.Params.authors }}
+                    <a href="/authors/{{ $author | urlize }}"><span>by</span>{{ $author }}</a>
+                    {{ end }}
+                  </div>
+                </div>
+                <div class="blog-description">
+                  <h2><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h2>
+                  <p>{{ $p.Summary }}</p>
+                  <a href="{{ $p.RelPermalink }}" class="inline-button">Read More</a>
+                </div>
+              </div>
             </div>
-            <!-- search-bar end -->
-
-            <!-- category start  -->
-            <div class="blog-category">
-              <ul>
-                <!-- <li><a href="#" class="is-active">All</a></li> -->
-                {{ range .Site.Taxonomies.tags.Alphabetical }}
-                <li><a href="{{ .Page.Permalink }}">{{ .Page.Name | title }}</a></li>
-                {{ end }}
-              </ul>
-            </div>
-            <!-- category end  -->
-
           </div>
+          <!-- single blog end -->
+          {{ end }}
+
         </div>
-        <!-- left sidebar end -->
-        <div class="column is-9">
-          <div class="columns is-multiline">
-
-            {{ range $idx, $p := .Pages }}
-            <!-- single blog start  -->
-            <div class="column is-4">
-              <div class="single-blog-item">
-                <div class="blog-image-wrapper">
-                  <a href="blog-details.html" class="blog-image blog-1"></a>
-                </div>
-                <div class="single-blog-content">
-                  <div class="blog-meta">
-                    <div class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i>{{ $p.Date.Format "2-Jan-2006" }}</div>
-                    <div class="meta-author"><a href="#"><span>by</span> {{ $p.Params.author | default .Site.Params.author }}</a></div>
-                  </div>
-                  <div class="blog-description">
-                    <h2><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h2>
-                    <p>{{ $p.Summary }}</p>
-                    <a href="{{ $p.RelPermalink }}" class="inline-button">Read More</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- single blog end -->
-            {{ end }}
-
-          </div>
-          <div class="columns">
-            <div class="column has-text-centered">
-              <div class="load-more-button">
-                <a href="#" class="button is-sm-medium is-primary">Load more</a>
-              </div>
-            </div>
+        <div class="columns">
+          <div class="column has-text-centered">
+            <!-- <div class="load-more-button">
+              <a href="#" class="button is-sm-medium is-primary">Load more</a>
+            </div> -->
           </div>
         </div>
       </div>
     </div>
   </div>
-  <!-- all blog content end -->
+</div>
+<!-- all blog content end -->
 
 {{ end }}

@@ -5,6 +5,9 @@ assetDir: static
 googleAnalytics: UA-62096468-4
 taxonomies:
   tag: tags
+  author: authors
+disableKinds:
+- taxonomyTerm
 params:
   domain_appscode: https://appscode-v3-hugo.web.app
   domain_kubedb: https://kubedb-v2-hugo.web.app

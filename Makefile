@@ -2,8 +2,6 @@
 run:
 	hugo server --config=config.dev.yaml
 
-PRODUCT ?=
-
 .PHONY: docs
 docs:
 	hugo-tools docs-aggregator
@@ -28,3 +26,7 @@ release: gen-prod
 	firebase use prod
 	firebase deploy
 	firebase use default
+
+.PHONY: check-links
+check-links:
+	liche -r public -d http://localhost:1313 -c 10 -p -l
