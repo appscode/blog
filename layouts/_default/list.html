@@ -36,7 +36,7 @@
                     aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
                 </li>
                 <li>
-                  <a href="mailto:xyz@gmail.com"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+                  <a href="mailto:?subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
                 </li>
               </ul>
             </div>
@@ -51,8 +51,9 @@
                   <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i>
                     {{ $p.Date.Format "2-Jan-2006" }}</p>
                   <h1><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h1>
-                  <p class="author"><span>by </span><a href="#"
-                      target="_blank">{{ $p.Params.author | default .Site.Params.author }}</a></p>
+                  {{ range $author := $p.Params.authors }}
+                  <p class="author"><span>by </span><a href="/authors/{{ $author | urlize }}" target="_blank">{{ $author }}</a></p>
+                  {{ end }}
                   <p class="description">{{ $p.Summary }}</p>
                   <a href="{{ $p.RelPermalink }}" class="inline-button">Read More</a>
                 </div>
