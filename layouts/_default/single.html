@@ -10,8 +10,8 @@
         <div class="blog-heading">
           <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> {{ .Date.Format "2-Jan-2006" }}</p>
           <h1>{{ .Title }}</h1>
-          {{ if or .Params.author .Site.Params.author }}
-          <p class="author"><span>by </span><a href="http://localhost:1313/author/01/">{{ .Params.author | default .Site.Params.author }}</a></p>
+          {{ range $author := .Params.authors }}
+          <p class="author"><span>by </span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a></p>
           {{ end }}
         </div>
         <!-- blog heading end -->

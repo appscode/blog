@@ -126,8 +126,11 @@
                 <div class="blog-meta">
                   <div class="meta-date"><i class="fa fa-calendar"
                       aria-hidden="true"></i>{{ $p.Date.Format "2-Jan-2006" }}</div>
-                  <div class="meta-author"><a href="#"><span>by</span>
-                      {{ $p.Params.author | default .Site.Params.author }}</a></div>
+                  <div class="meta-author">
+                    {{ range $author := $p.Params.authors }}
+                    <a href="/authors/{{ $author | urlize }}"><span>by</span>{{ $author }}</a>
+                    {{ end }}
+                  </div>
                 </div>
                 <div class="blog-description">
                   <h2><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h2>
