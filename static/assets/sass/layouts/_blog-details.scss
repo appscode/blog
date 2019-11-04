@@ -53,13 +53,15 @@ figure {
       cursor: pointer;
     }
   }
- 
 }
 .highlight {
   pre {
     background-color: #1c2c41 !important;
     font-size: 14px;
     margin-bottom: 20px;
+    code{
+      color: #f1f1f1;
+    }
   }
   margin-bottom: 40px;
 }
