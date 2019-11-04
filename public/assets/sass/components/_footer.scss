@@ -42,6 +42,7 @@
 .subscription-form input[type="email"]:hover {
   outline: none;
   box-shadow: none;
+  border: 1px solid $primary-color;
 }
 .contact-information {
   h4 {
