@@ -10,6 +10,8 @@ tags:
   - kubernetes
   - crd
   - service-catalog
+aliases:
+  - /post/the-case-for-appbinding/
 ---
 
 Kubernetes has become the de-facto orchestrator for the cloud native world. Kubernetes upholds the philosophy that the core should be small and allow developers to write their own extensions. One way to introduce new resource types is using `CustomResourceDefintions (CRD)` (originally known as `ThirdPartyResources`). Using CRDs anyone can define a new resource type that behaves like standard Kubernetes resources. This allows anyone to write a controller for custom resources and capture operational knowledge in a software form. CoreOS popularized the term "[operators](https://coreos.com/blog/introducing-operators.html)" as a name for this pattern.
