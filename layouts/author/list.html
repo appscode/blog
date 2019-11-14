@@ -17,17 +17,17 @@
             <ul>
               {{ if $author.twitter }}
               <li>
-                <a href="{{ $author.twitter }}" target="_blank" class="twitter" aria-label="Follow on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                <a href="{{ $author.twitter }}" target="_blank" rel="noopener" class="twitter" aria-label="Follow on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
               </li>
               {{ end }}
               {{ if $author.linkedin }}
               <li>
-                <a href="{{ $author.linkedin }}" target="_blank" class="linkedin" aria-label="Connect on Linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                <a href="{{ $author.linkedin }}" target="_blank" rel="noopener" class="linkedin" aria-label="Connect on Linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
               </li>
               {{ end }}
               {{ if $author.facebook }}
               <li>
-                <a href="{{ $author.facebook }}" target="_blank" class="facebook" aria-label="Follow on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                <a href="{{ $author.facebook }}" target="_blank" rel="noopener" class="facebook" aria-label="Follow on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
               </li>
               {{ end }}
               {{ if $author.email }}
