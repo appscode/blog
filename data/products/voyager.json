@@ -9,22 +9,22 @@
     "path": "/products/voyager/"
   },
   "heroImage": {
-    "src": "https://cdn.appscode.com/images/products/voyager/voyager-hero.png",
+    "src": "/assets/images/products/voyager/voyager-hero.png",
     "alt": "Voyager"
   },
   "logo": {
-    "src": "https://cdn.appscode.com/images/products/voyager/voyager.png",
+    "src": "/assets/images/products/voyager/voyager.png",
     "alt": "Voyager"
   },
   "logoWhite": {
-    "src": "https://cdn.appscode.com/images/products/voyager/voyager-white.png",
+    "src": "/assets/images/products/voyager/voyager-white.png",
     "alt": "Voyager"
   },
   "icon": {
-    "src": "https://cdn.appscode.com/images/products/voyager/voyager-icon.png",
+    "src": "/assets/images/products/voyager/voyager-icon.png",
     "alt": "Voyager",
     "sizes": {
-      "192x192": "https://cdn.appscode.com/images/products/voyager/icons/android-icon-192x192.png"
+      "192x192": "/assets/images/products/voyager/icons/android-icon-192x192.png"
     }
   },
   "repoURL": "https://github.com/appscode/voyager",
@@ -33,12 +33,12 @@
   "datasheetFormID": "",
   "badges": [
     {
-      "url" : "github/stars/appscode/voyager",
+      "url": "github/stars/appscode/voyager",
       "alt": "GitHub Stars",
       "logo": "github"
     },
     {
-      "url" : "docker/pulls/appscode/voyager",
+      "url": "docker/pulls/appscode/voyager",
       "alt": "Docker Pulls",
       "logo": "docker"
     }
@@ -47,11 +47,11 @@
     {
       "title": "HTTP & TCP",
       "image": {
-        "src": "https://cdn.appscode.com/images/products/voyager/features/feature-1.png",
+        "src": "/assets/images/products/voyager/features/feature-1.png",
         "alt": "http"
       },
       "icon": {
-        "src": "https://cdn.appscode.com/images/products/voyager/features/http.svg",
+        "src": "/assets/images/products/voyager/features/http.svg",
         "alt": "http"
       },
       "summary": "",
@@ -60,11 +60,11 @@
     {
       "title": "SSL",
       "image": {
-        "src": "https://cdn.appscode.com/images/products/voyager/features/feature-2.png",
+        "src": "/assets/images/products/voyager/features/feature-2.png",
         "alt": "http"
       },
       "icon": {
-        "src": "https://cdn.appscode.com/images/products/voyager/features/ssl.svg",
+        "src": "/assets/images/products/voyager/features/ssl.svg",
         "alt": "http"
       },
       "summary": "",
@@ -73,11 +73,11 @@
     {
       "title": "Platform support",
       "image": {
-        "src": "https://cdn.appscode.com/images/products/voyager/features/feature-3.png",
+        "src": "/assets/images/products/voyager/features/feature-3.png",
         "alt": "http"
       },
       "icon": {
-        "src": "https://cdn.appscode.com/images/products/voyager/features/platform.svg",
+        "src": "/assets/images/products/voyager/features/platform.svg",
         "alt": "http"
       },
       "summary": "",
@@ -86,11 +86,11 @@
     {
       "title": "HAProxy",
       "image": {
-        "src": "https://cdn.appscode.com/images/products/voyager/features/feature-4.png",
+        "src": "/assets/images/products/voyager/features/feature-4.png",
         "alt": "http"
       },
       "icon": {
-        "src": "https://cdn.appscode.com/images/products/voyager/features/haproxy.svg",
+        "src": "/assets/images/products/voyager/features/haproxy.svg",
         "alt": "http"
       },
       "summary": "",
@@ -99,11 +99,11 @@
     {
       "title": "Prometheus",
       "image": {
-        "src": "https://cdn.appscode.com/images/products/voyager/features/feature-5.png",
+        "src": "/assets/images/products/voyager/features/feature-5.png",
         "alt": "http"
       },
       "icon": {
-        "src": "https://cdn.appscode.com/images/products/voyager/features/prometheus.svg",
+        "src": "/assets/images/products/voyager/features/prometheus.svg",
         "alt": "http"
       },
       "summary": "",
@@ -112,11 +112,11 @@
     {
       "title": "Let's Encrypt",
       "image": {
-        "src": "https://cdn.appscode.com/images/products/voyager/features/feature-6.png",
+        "src": "/assets/images/products/voyager/features/feature-6.png",
         "alt": "http"
       },
       "icon": {
-        "src": "https://cdn.appscode.com/images/products/voyager/features/encrypt.svg",
+        "src": "/assets/images/products/voyager/features/encrypt.svg",
         "alt": "http"
       },
       "summary": "",
@@ -173,5 +173,22 @@
     "Support URL": "https://appscode.freshdesk.com",
     "Website URL": "https://appscode.com/products/voyager"
   },
-  "stripeProductID": "prod_FARYkUPIIB0Ocx"
+  "stripeProductID": "prod_FARYkUPIIB0Ocx",
+  "plans": {
+    "Community": {
+      "price": "0"
+    },
+    "Standard_M2M": {
+      "price": "599"
+    },
+    "Standard_Y2Y": {
+      "price": "399"
+    },
+    "Golden_M2M": {
+      "price": "999"
+    },
+    "Golden_Y2Y": {
+      "price": "799"
+    }
+  }
 }

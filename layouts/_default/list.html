@@ -24,15 +24,15 @@
             <div class="social-link-vertical">
               <ul>
                 <li>
-                  <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title }}" target="_blank" class="twitter"
+                  <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title }}" target="_blank" rel="noopener" class="twitter"
                     aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
                 </li>
                 <li>
-                  <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title }}&summary={{ .Summary }}" target="_blank"
+                  <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title }}&summary={{ .Summary }}" target="_blank" rel="noopener"
                     class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
                 </li>
                 <li>
-                  <a href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" target="_blank" class="facebook"
+                  <a href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" target="_blank" rel="noopener" class="facebook"
                     aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
                 </li>
                 <li>
@@ -52,7 +52,7 @@
                     {{ $p.Date.Format "2-Jan-2006" }}</p>
                   <h1><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h1>
                   {{ range $author := $p.Params.authors }}
-                  <p class="author"><span>by </span><a href="/authors/{{ $author | urlize }}" target="_blank">{{ $author }}</a></p>
+                  <p class="author"><span>by </span><a href="/authors/{{ $author | urlize }}" target="_blank" rel="noopener">{{ $author }}</a></p>
                   {{ end }}
                   <p class="description">{{ $p.Summary }}</p>
                   <a href="{{ $p.RelPermalink }}" class="inline-button">Read More</a>
