@@ -476,7 +476,7 @@ body.fixed-nav #header {
       max-height: 100%; }
 
 .cta-area {
-  background-image: url(../images/bg-image/cta-bg.png);
+  background-image: url(../images/bg-image/cta-bg.webp);
   background-repeat: repeat;
   background-color: #0071bd; }
   .cta-area .section-title.is-dark-bg h2 {
@@ -809,13 +809,13 @@ p.spam-message {
         background-color: #333; }
 
 .blog-bg-1 {
-  background-image: url(/assets/images/slider-image/s-1.jpg); }
+  background-image: url(/assets/images/slider-image/s-1.webp); }
 
 .blog-bg-2 {
-  background-image: url(/assets/images/slider-image/s-2.jpg); }
+  background-image: url(/assets/images/slider-image/s-2.webp); }
 
 .blog-bg-3 {
-  background-image: url(/assets/images/slider-image/s-3.jpg); }
+  background-image: url(/assets/images/slider-image/s-3.webp); }
 
 .blog-left-sidebar {
   position: sticky;
