@@ -2,8 +2,6 @@
 title: The case for AppBinding
 date: 2019-01-01
 weight: 10
-author: Tamal Saha
-authorAvatar: tamal.png
 authors:
   - Tamal Saha
 tags:
