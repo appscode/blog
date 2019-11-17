@@ -1,3 +1,16 @@
+---
+title: Introducing Kubeform - Provision cloud resources using Kubernetes CRDs & Terraform
+date: 2019-11-17
+weight: 12
+authors:
+  - Mohammad Fahim Abrar
+tags:
+  - kubernetes
+  - kubeform
+  - service-catalog
+  - tarraform
+---
+
 # How to use Kubeform
 
 Let's take a look at how can we create anp AWS `RDS` (Relational Database Service) using `Kubeform`.
