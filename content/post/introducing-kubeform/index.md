@@ -191,3 +191,8 @@ The Resource Creation Process of Kubeform consists of the following steps:
 8. Then `terraform apply` command updates the `tfstate` file if necessary.
 
 9. If the `.tfstate` file is updated, KFC also updates the `status.output` & `status.state` fields of the CRD.
+
+
+You can find the project on [GitHub](https://github.com/kubeform).
+
+If you have read all the way to the end, I want to thank you. If you have any questions and want to know more, you can reach us via [Email](mailto:kubeform-dev@appscode.com).
