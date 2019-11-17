@@ -207,4 +207,4 @@ is_open_read {
 
 You can find the project on [GitHub](https://github.com/kubeshield/bpf-opa-demo).
 
-If you have read all the way to the end, I want to thank you. If you have any questions and want to know more, you can reach me via [Twitter](https://twitter.com/tsaha) or [Email](mailto:tamal@appscode.com).
+If you have read all the way to the end, I want to thank you. If you have any questions and want to know more, you can reach us via [Email](mailto:kubeshield-dev@appscode.com).
