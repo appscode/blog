@@ -3,7 +3,7 @@ title: Introducing Kubeform - Provision cloud resources using Kubernetes CRDs & 
 date: 2019-11-17
 weight: 12
 authors:
-  - Mohammad Fahim Abrar
+  - Md Fahim Abrar
 tags:
   - kubernetes
   - kubeform
