@@ -59,6 +59,40 @@ Let's take a look at how can we create anp AWS `RDS` (Relational Database Servic
 
 - First install the kubeform operator following the instructions [here](https://kubeform.com/docs/latest/setup/install/):
 
+<ul class="nav nav-tabs" id="installerTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="helm3-tab" data-toggle="tab" href="#helm3" role="tab" aria-controls="helm3" aria-selected="true">Helm 3</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="helm2-tab" data-toggle="tab" href="#helm2" role="tab" aria-controls="helm2" aria-selected="false">Helm 2</a>
+  </li>
+</ul>
+<div class="tab-content" id="installerTabContent">
+  <div class="tab-pane fade show active" id="helm3" role="tabpanel" aria-labelledby="helm3-tab">
+
+## Using Helm 3
+
+Kubeform can be installed via [Helm](https://helm.sh/) using the [chart](https://github.com/kubeform/installer/tree/v0.1.0/charts/kubeform) from [AppsCode Charts Repository](https://github.com/appscode/charts). To install the chart with the release name `my-release`:
+
+```console
+$ helm repo add appscode https://charts.appscode.com/stable/
+$ helm repo update
+$ helm search repo appscode/kubeform
+NAME                CHART VERSION  APP VERSION  DESCRIPTION
+appscode/kubeform   v0.1.0         v0.1.0       Kubeform by AppsCode - Build Cloud Infrastructure from Kubernetes
+
+$ helm install kfc appscode/kubeform --version v0.1.0 --namespace kube-system
+```
+
+To see the detailed configuration options, visit [here](https://github.com/kubeform/installer/tree/v0.1.0/charts/kubeform).
+
+</div>
+<div class="tab-pane fade" id="helm2" role="tabpanel" aria-labelledby="helm2-tab">
+
+## Using Helm 2
+
+Kubeform can be installed via [Helm](https://helm.sh/) using the [chart](https://github.com/kubeform/installer/tree/v0.1.0/charts/kubeform) from [AppsCode Charts Repository](https://github.com/appscode/charts). To install the chart with the release name `my-release`:
+
 ```console
 $ helm repo add appscode https://charts.appscode.com/stable/
 $ helm repo update
@@ -68,6 +102,11 @@ appscode/kubeform   v0.1.0         v0.1.0       Kubeform by AppsCode - Build Clo
 
 $ helm install appscode/kubeform --name kfc --version v0.1.0 --namespace kube-system
 ```
+
+To see the detailed configuration options, visit [here](https://github.com/kubeform/installer/tree/v0.1.0/charts/kubeform).
+
+</div>
+</div>
 
 - Now, we need AWS provider secrets to connect with AWS. For terraform, this secrets are provided like this in a `.tf` file:
 
