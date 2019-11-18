@@ -38,13 +38,15 @@ Fig: Diagram showing the major components of bpf-opa-demo
 
 ## Usage
 
+> Make sure that you're running a linux machine with kernel version `4.17` or higher. We're attaching eBPF programs to `raw_tracepoints`, and this feature is available from linux kernel `4.17`. For more information, you can see [here](https://github.com/iovisor/bcc/blob/master/docs/kernel-versions.md).
+
 Download `Open Policy Agent` from [github release page](https://github.com/open-policy-agent/opa/releases). Start the OPA server
 
 ```bash
 opa run -s
 ```
 
-Run the binary with root permissions.
+Download `bpf-opa-demo` binary from [github release page](https://github.com/kubeshield/bpf-opa-demo/releases). Run the binary with root permissions.
 
 ```bash
 sudo ./bpf-opa-demo
