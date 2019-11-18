@@ -268,6 +268,10 @@ The process is shown in the following figure:
  <figcaption align="center">Fig: `state` string in CRD to `tfstate`</figcaption>
 </figure>
 
-Visit the project [website](https://kubeform.com) to learn more. You can also find us on [GitHub](https://github.com/kubeform).
+## Alternatives
+
+We have explored the option of using [Kubernetes Service Catalog](https://github.com/kubernetes-sigs/service-catalog) project to consume cloud services in Kubernetes using the Open Service Broker API. But CRDs provide better tooling in the context of Kubernetes. Also, this project has seen very little activity in recent times and cloud providers are [abandoning](https://cloud.google.com/kubernetes-engine/docs/concepts/google-cloud-platform-service-broker) it in favor of CRD based solutions.
+
+Visit Kubeform project [website](https://kubeform.com) to learn more. You can also find us on [GitHub](https://github.com/kubeform).
 
 If you have read all the way to the end, I want to thank you. If you have any questions and want to know more, you can reach us via [Email](mailto:kubeform-dev@appscode.com).
