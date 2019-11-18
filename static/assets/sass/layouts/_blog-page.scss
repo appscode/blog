@@ -63,8 +63,8 @@
             }
             h1 {
               display: block;
-              font-size: 48px;
-              line-height: 60px;
+              font-size: 36px;
+              line-height: 44px;
               margin-bottom: 7px;
             }
             .description {
@@ -190,49 +190,13 @@
     }
   }
 
-  //blog image start
-  // .blog-1 {
-  //   background-image: url(/assets/images/blog-image/1.jpg);
-  // }
-
-  // .blog-2 {
-  //   background-image: url(/assets/images/blog-image/2.jpg);
-  // }
-
-  // .blog-3 {
-  //   background-image: url(/assets/images/blog-image/3.jpg);
-  // }
-
-  // .blog-4 {
-  //   background-image: url(/assets/images/blog-image/4.jpg);
-  // }
-
-  // .blog-5 {
-  //   background-image: url(/assets/images/blog-image/5.jpg);
-  // }
-
-  // .blog-6 {
-  //   background-image: url(/assets/images/blog-image/6.jpg);
-  // }
-
-  // .blog-7 {
-  //   background-image: url(/assets/images/blog-image/7.jpg);
-  // }
-
-  // .blog-8 {
-  //   background-image: url(/assets/images/blog-image/8.jpg);
-  // }
-
-  // .blog-9 {
-  //   background-image: url(/assets/images/blog-image/9.jpg);
-  // }
-
   .single-blog-content {
     padding: 20px 20px;
     border: 1px solid #eaebf5;
     border-radius: 0 0 4px 4px;
     border-top: transparent;
     overflow: hidden;
+    min-height: 250px;
 
     .blog-meta {
       display: flex;
@@ -264,8 +228,8 @@
 
       h2 {
         a {
-          font-size: 20px;
-          line-height: 32px;
+          font-size: 16px;
+          line-height: 26px;
           font-weight: 700;
           display: block;
           margin-bottom: 10px;

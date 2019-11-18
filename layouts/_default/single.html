@@ -17,7 +17,7 @@
         <!-- blog heading end -->
 
         <!-- blog large image start -->
-        <figure>
+        <figure class="fig-style">
           {{ $original := .Resources.GetMatch "hero.jpg" }}
           {{ $cropped := $original.Fill "1408x690" }}
           <img src="{{ $cropped.RelPermalink }}" alt="">
