@@ -115,3 +115,29 @@ Array.from(codeHeading).forEach(heading => {
     });
   }
 });
+
+// tabs active class add script - setup | install page
+const tabItems = document.querySelectorAll(".nav-item .nav-link");
+tabItems.forEach(tab => {
+  tab.addEventListener("click", e => {
+    e.preventDefault();
+    const el = e.currentTarget;
+
+    // add .active class to the clicked item, remove .active from others
+    document.querySelectorAll(".nav-item .nav-link").forEach(navLink => {
+      navLink === el
+        ? navLink.classList.add("active")
+        : navLink.classList.remove("active");
+    });
+
+    // add .show class to the target tab-pane, remove from others
+    const elHref = el.getAttribute("href");
+    const tabPaneTarget = document.querySelector(elHref);
+
+    document.querySelectorAll(".tab-pane").forEach(tabPane => {
+      tabPane === tabPaneTarget
+        ? tabPane.classList.add("show")
+        : tabPane.classList.remove("show");
+    });
+  });
+});
