@@ -56,7 +56,20 @@ The Resource Creation Process of Kubeform consists of the following steps:
 
 Let's take a look at how can we create anp AWS `RDS` (Relational Database Service) using `Kubeform`.
 
-1. First of all, we need AWS provider secrets to connect with AWS. For terraform, this secrets are provided like this in a `.tf` file:
+
+- First install the kubeform operator following the instructions [here](https://kubeform.com/docs/latest/setup/install/):
+
+```console
+$ helm repo add appscode https://charts.appscode.com/stable/
+$ helm repo update
+$ helm search appscode/kubeform
+NAME                CHART VERSION  APP VERSION  DESCRIPTION
+appscode/kubeform   v0.1.0         v0.1.0       Kubeform by AppsCode - Build Cloud Infrastructure from Kubernetes
+
+$ helm install appscode/kubeform --name kfc --version v0.1.0 --namespace kube-system
+```
+
+- Now, we need AWS provider secrets to connect with AWS. For terraform, this secrets are provided like this in a `.tf` file:
 
 ```
 {
@@ -86,13 +99,13 @@ data:
 
 Then we have to reference it from our Resource CRD.
 
-2. Now We need to create the AWS RDS CRD. We can create the AWS RDS CRD using the following kubectl command:
+- Now We need to create the AWS RDS CRD. We can create the AWS RDS CRD using the following kubectl command:
 
 ```console
 kubectl apply -f https://github.com/kubeform/kubeform/raw/master/api/crds/aws.kubeform.com_dbinstances.yaml
 ```
 
-3. The AWS RDS configuration of terraform is given in a `.tf` like this:
+- The AWS RDS configuration of terraform is given in a `.tf` like this:
 
 ```
 {
@@ -150,9 +163,9 @@ spec:
 
 Here, we can see that the provider secret is referenced using a field called `providerRef` and the sensitive value secret is referenced using a field called `secretRef`.
 
-4. Let's put it altogether and apply it using kubectl. First create a `aws_rds.yaml` using the following yaml:
+- Let's put it altogether and apply it using kubectl. First create a `aws_rds.yaml` using the following yaml:
 
-{{% code title="Sample DbInstance" %}}
+{{% code title="AWS RDS" %}}
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -200,7 +213,7 @@ kubectl apply -f aws_rds.yaml
 
 After that, an AWS RDS will be created!
 
-6. To delete the rds instance just run:
+- To delete the rds instance just run:
 
 ```console
 kubectl delete -f aws_rds.yaml
@@ -255,6 +268,6 @@ The process is shown in the following figure:
  <figcaption align="center">Fig: `state` string in CRD to `tfstate`</figcaption>
 </figure>
 
-You can find the project on [GitHub](https://github.com/kubeform).
+Visit the project [website](https://kubeform.com) to learn more. You can also find us on [GitHub](https://github.com/kubeform).
 
 If you have read all the way to the end, I want to thank you. If you have any questions and want to know more, you can reach us via [Email](mailto:kubeform-dev@appscode.com).
