@@ -45,7 +45,7 @@ h6 a {
   font-style: normal;
   margin-top: 0px;
   color: $heading-color;
-  font-weight: 600;
+  font-weight: 700;
 }
 hr {
   margin: 30px 0;
@@ -284,6 +284,10 @@ textarea.textarea {
     padding-right: 5px;
     color: $primary-color;
   }
+}
+.blog-heading {
+  max-width: 70%;
+  margin: 0 auto;
 }
 .author {
   font-weight: 500;
