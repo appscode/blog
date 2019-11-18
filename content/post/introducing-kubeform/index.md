@@ -1,5 +1,5 @@
 ---
-title: Introducing Kubeform - Provision cloud resources using Kubernetes CRDs & Terraform
+title: Kubeform - Provision cloud resources using CRDs
 date: 2019-11-17
 weight: 12
 authors:
