@@ -262,6 +262,10 @@ textarea.textarea {
     padding-right: 5px;
     color: #0071bd; }
 
+.blog-heading {
+  max-width: 70%;
+  margin: 0 auto; }
+
 .author {
   font-weight: 500;
   color: #0071bd;
@@ -872,24 +876,6 @@ p.spam-message {
       background-repeat: no-repeat;
       height: 234px;
       display: block; }
-  .single-blog-item .blog-1 {
-    background-image: url(/assets/images/blog-image/1.jpg); }
-  .single-blog-item .blog-2 {
-    background-image: url(/assets/images/blog-image/2.jpg); }
-  .single-blog-item .blog-3 {
-    background-image: url(/assets/images/blog-image/3.jpg); }
-  .single-blog-item .blog-4 {
-    background-image: url(/assets/images/blog-image/4.jpg); }
-  .single-blog-item .blog-5 {
-    background-image: url(/assets/images/blog-image/5.jpg); }
-  .single-blog-item .blog-6 {
-    background-image: url(/assets/images/blog-image/6.jpg); }
-  .single-blog-item .blog-7 {
-    background-image: url(/assets/images/blog-image/7.jpg); }
-  .single-blog-item .blog-8 {
-    background-image: url(/assets/images/blog-image/8.jpg); }
-  .single-blog-item .blog-9 {
-    background-image: url(/assets/images/blog-image/9.jpg); }
   .single-blog-item .single-blog-content {
     padding: 20px 20px;
     border: 1px solid #eaebf5;
@@ -905,7 +891,8 @@ p.spam-message {
         color: #0071bd;
         padding-right: 5px; }
       .single-blog-item .single-blog-content .blog-meta .meta-author a {
-        font-weight: 500; }
+        font-weight: 500;
+        text-align: right; }
         .single-blog-item .single-blog-content .blog-meta .meta-author a span {
           color: #4a4a4a;
           font-weight: 400; }
