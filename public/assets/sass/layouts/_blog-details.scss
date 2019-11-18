@@ -3,14 +3,19 @@
 }
 .blog-heading {
   h1 {
-    font-size: 48px;
-    line-height: 68px;
+    font-size: 36px;
+    line-height: 44px;
+    font-weight: 700;
+    margin-bottom: 10px;
   }
 }
-figure {
+.fig-style {
+  max-height: 650px;
+  overflow: hidden;
   img {
     user-select: none;
     display: block;
+    border-radius: 8px;
   }
   figcaption {
     max-width: 80%;
@@ -58,8 +63,9 @@ figure {
   pre {
     background-color: #1c2c41 !important;
     font-size: 14px;
+    line-height: 22px;
     margin-bottom: 20px;
-    border-radius: 0 0 4px 4px;
+    border-radius: 0 0 4px 4px !important;
     code{
       color: #f1f1f1;
     }
@@ -74,7 +80,7 @@ figure {
   }
   p {
     font-size: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     a {
       font-weight: 500;
       position: relative;
@@ -95,6 +101,25 @@ figure {
         }
       }
     }
+    img{
+      border: 1px solid $border-color;
+      padding: 15px;
+      border-radius: 8px;
+    }
+  }
+  pre{
+    margin-bottom: 15px;
+    border-radius: 4px;
+    background-color: #1C2C41;
+    color: #fff;
+    font-size: 14px;
+    line-height: 22px;
+  }
+  figure{
+    border: 1px solid $border-color;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
   }
   .inline-button {
     font-size: 20px;
@@ -108,6 +133,27 @@ figure {
       margin-bottom: 15px;
       &:last-child {
         margin-bottom: 0;
+      }
+      code{
+        border-radius: 2px;
+      }
+      pre{
+        font-size: 14px;
+        margin-left: -20px;
+      }
+    }
+  }
+  ol {
+    padding-left: 20px;
+    margin-bottom: 30px;
+    li {
+      font-size: 20px;
+      margin-bottom: 15px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+      code{
+        border-radius: 2px;
       }
     }
   }
