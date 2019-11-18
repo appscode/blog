@@ -1,5 +1,5 @@
 ---
-title: Secure Kubernetes using eBPF and Open Policy Agent
+title: Secure Kubernetes using eBPF & Open Policy Agent
 date: 2019-11-17
 weight: 11
 authors:
