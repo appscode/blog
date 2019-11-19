@@ -46,15 +46,16 @@
     font-family: $font-paragraph;
     font-weight: 400;
   }
-  .copy-and-download{
-    .download-here,.copy-here {
+  .copy-and-download {
+    .download-here,
+    .copy-here {
       background: transparent;
       border: none;
       color: #9aa2ad;
       font-size: 20px;
       cursor: copy;
     }
-    .download-here{
+    .download-here {
       cursor: pointer;
     }
   }
@@ -66,7 +67,7 @@
     line-height: 22px;
     margin-bottom: 20px;
     border-radius: 0 0 4px 4px !important;
-    code{
+    code {
       color: #f1f1f1;
     }
   }
@@ -101,21 +102,21 @@
         }
       }
     }
-    img{
+    img {
       border: 1px solid $border-color;
       padding: 15px;
       border-radius: 8px;
     }
   }
-  pre{
+  pre {
     margin-bottom: 15px;
     border-radius: 4px;
-    background-color: #1C2C41;
+    background-color: #1c2c41;
     color: #fff;
     font-size: 14px;
     line-height: 22px;
   }
-  figure{
+  figure {
     border: 1px solid $border-color;
     padding: 15px;
     margin-bottom: 15px;
@@ -134,10 +135,10 @@
       &:last-child {
         margin-bottom: 0;
       }
-      code{
+      code {
         border-radius: 2px;
       }
-      pre{
+      pre {
         font-size: 14px;
         margin-left: -20px;
       }
@@ -152,34 +153,54 @@
       &:last-child {
         margin-bottom: 0;
       }
-      code{
+      code {
         border-radius: 2px;
       }
     }
   }
   blockquote {
-    font-size: 20px;
-    font-weight: 500;
-    margin-bottom: 10px;
-    color: #1c2c41;
-    text-indent: -50px;
-    &:before {
-      padding-right: 20px;
-      content: url(/assets/images/icons/quote.svg);
-    }
-  }
-  .name-descriptor {
-    font-size: 20px;
-    text-indent: -50px;
-    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+    padding-left: 20px;
+    opacity: 0.9;
     &::before {
-      content: url(/assets/images/icons/line.svg);
-      padding-right: 8px;
-    }
-    span {
-      font-size: 16px;
+      position: absolute;
+      content: "";
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background-color: $primary-color;
+      border-radius: 2px;
     }
   }
+  .bb-quote-msg {
+    position: relative;
+    z-index: 1;
+    p {
+      font-weight: 500;
+      margin-bottom: 15px;
+      color: #1C2C41;
+    }
+    .quote-icon {
+      position: absolute;
+      left: -50px;
+      top: 10px;
+    }
+    .name-descriptor {
+      font-size: 20px;
+      margin-bottom: 20px;
+      &::before {
+        content: url(/assets/images/icons/line.svg);
+        position: absolute;
+        left: -60px;
+      }
+      span {
+        font-size: 16px;
+      }
+    }
+  }
+  
   .tags {
     .tag {
       height: 36px;
