@@ -1108,7 +1108,8 @@ ul.nav.nav-tabs {
     font-size: 16px;
     font-family: "Roboto", sans-serif;
     font-weight: 400; }
-  .code-block-heading .copy-and-download .download-here, .code-block-heading .copy-and-download .copy-here {
+  .code-block-heading .copy-and-download .download-here,
+  .code-block-heading .copy-and-download .copy-here {
     background: transparent;
     border: none;
     color: #9aa2ad;
@@ -1157,7 +1158,7 @@ ul.nav.nav-tabs {
 .blog-content pre {
   margin-bottom: 15px;
   border-radius: 4px;
-  background-color: #1C2C41;
+  background-color: #1c2c41;
   color: #fff;
   font-size: 14px;
   line-height: 22px; }
@@ -1193,23 +1194,39 @@ ul.nav.nav-tabs {
     .blog-content ol li code {
       border-radius: 2px; }
 .blog-content blockquote {
-  font-size: 20px;
-  font-weight: 500;
-  margin-bottom: 10px;
-  color: #1c2c41;
-  text-indent: -50px; }
-  .blog-content blockquote:before {
-    padding-right: 20px;
-    content: url(/assets/images/icons/quote.svg); }
-.blog-content .name-descriptor {
-  font-size: 20px;
-  text-indent: -50px;
-  margin-bottom: 20px; }
-  .blog-content .name-descriptor::before {
-    content: url(/assets/images/icons/line.svg);
-    padding-right: 8px; }
-  .blog-content .name-descriptor span {
-    font-size: 16px; }
+  position: relative;
+  z-index: 1;
+  padding-left: 20px;
+  opacity: 0.9; }
+  .blog-content blockquote::before {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background-color: #0071bd;
+    border-radius: 2px; }
+.blog-content .bb-quote-msg {
+  position: relative;
+  z-index: 1; }
+  .blog-content .bb-quote-msg p {
+    font-weight: 500;
+    margin-bottom: 15px;
+    color: #1C2C41; }
+  .blog-content .bb-quote-msg .quote-icon {
+    position: absolute;
+    left: -50px;
+    top: 10px; }
+  .blog-content .bb-quote-msg .name-descriptor {
+    font-size: 20px;
+    margin-bottom: 20px; }
+    .blog-content .bb-quote-msg .name-descriptor::before {
+      content: url(/assets/images/icons/line.svg);
+      position: absolute;
+      left: -60px; }
+    .blog-content .bb-quote-msg .name-descriptor span {
+      font-size: 16px; }
 .blog-content .tags .tag {
   height: 36px;
   font-size: 14px;
