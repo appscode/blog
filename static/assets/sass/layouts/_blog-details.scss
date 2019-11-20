@@ -9,6 +9,10 @@
     margin-bottom: 10px;
   }
 }
+.blog-heading {
+  max-width: 70%;
+  margin: 0 auto;
+}
 .fig-style {
   max-height: 650px;
   overflow: hidden;
@@ -270,9 +274,12 @@
     padding-top: 100px;
     .blog-heading {
       h1 {
-        font-size: 36px;
-        line-height: 50px;
+        font-size: 30px;
+        line-height: 46px;
       }
+    }
+    .blog-heading {
+      max-width: 95%;
     }
   }
 
