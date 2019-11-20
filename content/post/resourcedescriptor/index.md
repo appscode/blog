@@ -1,5 +1,5 @@
 ---
-title: "Introducing ResourceDescriptor: A Generic API for defining Kuberbnetes Resource Graph"
+title: "Introducing ResourceDescriptor: A Generic API for defining Kubernetes Resource Graph"
 date: 2019-11-20
 weight: 13
 authors:
