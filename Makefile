@@ -1,6 +1,6 @@
 .PHONY: run
 run:
-	hugo server --config=config.dev.yaml
+	hugo server --config=config.dev.yaml --buildDrafts --buildFuture
 
 .PHONY: docs
 docs:
