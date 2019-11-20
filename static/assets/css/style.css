@@ -262,10 +262,6 @@ textarea.textarea {
     padding-right: 5px;
     color: #0071bd; }
 
-.blog-heading {
-  max-width: 70%;
-  margin: 0 auto; }
-
 .author {
   font-weight: 500;
   color: #0071bd;
@@ -280,12 +276,15 @@ textarea.textarea {
   .meta-author a span {
     padding-right: 5px; }
 
-.social-link-vertical ul li, .social-link-horizontal ul li {
+.social-link-vertical ul li,
+.social-link-horizontal ul li {
   display: block;
   margin-bottom: 25px; }
-  .social-link-vertical ul li:last-child, .social-link-horizontal ul li:last-child {
+  .social-link-vertical ul li:last-child,
+  .social-link-horizontal ul li:last-child {
     margin-bottom: 0; }
-  .social-link-vertical ul li a, .social-link-horizontal ul li a {
+  .social-link-vertical ul li a,
+  .social-link-horizontal ul li a {
     font-size: 20px;
     display: inline-block;
     text-align: center;
@@ -295,25 +294,32 @@ textarea.textarea {
     border-radius: 50%;
     border: 1px solid #1C2C41;
     color: #1c2c41; }
-    .social-link-vertical ul li a.is-static, .social-link-horizontal ul li a.is-static {
+    .social-link-vertical ul li a.is-static,
+    .social-link-horizontal ul li a.is-static {
       cursor: default;
       background-color: #1c2c41;
       color: #fff; }
-    .social-link-vertical ul li a:hover, .social-link-horizontal ul li a:hover {
+    .social-link-vertical ul li a:hover,
+    .social-link-horizontal ul li a:hover {
       color: #ffffff;
       background: #1c2c41; }
-      .social-link-vertical ul li a:hover.linkedin, .social-link-horizontal ul li a:hover.linkedin {
+      .social-link-vertical ul li a:hover.linkedin,
+      .social-link-horizontal ul li a:hover.linkedin {
         background-color: #0e76a8;
         border: 1px solid #0e76a8; }
-      .social-link-vertical ul li a:hover.twitter, .social-link-horizontal ul li a:hover.twitter {
+      .social-link-vertical ul li a:hover.twitter,
+      .social-link-horizontal ul li a:hover.twitter {
         background-color: #1da1f2;
         border: 1px solid #1da1f2; }
-      .social-link-vertical ul li a:hover.facebook, .social-link-horizontal ul li a:hover.facebook {
+      .social-link-vertical ul li a:hover.facebook,
+      .social-link-horizontal ul li a:hover.facebook {
         background-color: #3b5998;
         border: 1px solid #3b5998; }
-      .social-link-vertical ul li a:hover i, .social-link-horizontal ul li a:hover i {
+      .social-link-vertical ul li a:hover i,
+      .social-link-horizontal ul li a:hover i {
         animation: icon-animation 0.9s both; }
-        .social-link-vertical ul li a:hover i.fa-share-alt, .social-link-horizontal ul li a:hover i.fa-share-alt {
+        .social-link-vertical ul li a:hover i.fa-share-alt,
+        .social-link-horizontal ul li a:hover i.fa-share-alt {
           animation: none; }
 
 .social-link-horizontal ul li {
@@ -1076,6 +1082,10 @@ ul.nav.nav-tabs {
   font-weight: 700;
   margin-bottom: 10px; }
 
+.blog-heading {
+  max-width: 70%;
+  margin: 0 auto; }
+
 .fig-style {
   max-height: 650px;
   overflow: hidden; }
@@ -1272,8 +1282,10 @@ ul.nav.nav-tabs {
   .blog-heading-area {
     padding-top: 100px; }
     .blog-heading-area .blog-heading h1 {
-      font-size: 36px;
-      line-height: 50px; }
+      font-size: 30px;
+      line-height: 46px; }
+    .blog-heading-area .blog-heading {
+      max-width: 95%; }
 
   .blog-details-area .social-link-vertical ul li {
     display: inline-block;

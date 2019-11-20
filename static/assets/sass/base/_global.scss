@@ -147,9 +147,9 @@ h6 {
   font-size: 16px;
   padding: 27px 60px;
 }
-.button.is-white-hoverable{
-  &:hover{
-    background-color: scale-color($primary-color, $lightness: 90%)
+.button.is-white-hoverable {
+  &:hover {
+    background-color: scale-color($primary-color, $lightness: 90%);
   }
 }
 .button.is-medium {
@@ -285,10 +285,6 @@ textarea.textarea {
     color: $primary-color;
   }
 }
-.blog-heading {
-  max-width: 70%;
-  margin: 0 auto;
-}
 .author {
   font-weight: 500;
   color: $primary-color;
@@ -299,16 +295,17 @@ textarea.textarea {
     padding-right: 3px;
   }
 }
-.meta-author{
-  a{
+.meta-author {
+  a {
     display: inline-block;
-    span{
+    span {
       padding-right: 5px;
     }
   }
 }
 //vertical social link style
-.social-link-vertical,.social-link-horizontal {
+.social-link-vertical,
+.social-link-horizontal {
   ul {
     li {
       display: block;
