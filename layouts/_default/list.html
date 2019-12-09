@@ -124,6 +124,7 @@
                 {{ $original := $p.Resources.GetMatch "hero.jpg" }}
                 {{ $cropped := $original.Fill "328x234" }}
                 <a href="{{ $p.RelPermalink }}" class="blog-image blog-1" style="background-image: url({{ $cropped.RelPermalink }});"></a>
+
               </div>
               <div class="single-blog-content">
                 <div class="blog-meta">
