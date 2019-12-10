@@ -48,19 +48,19 @@
               <!-- left content start  -->
               <div class="blog-content-wrapper d-table">
                 <div class="blog-content-inner d-table-cell">
-                  <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i>
+                  <p data-aos="fade-up" class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i>
                     {{ $p.Date.Format "2-Jan-2006" }}</p>
-                  <h1><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h1>
+                  <h1 data-aos="fade-up" data-aos-duration="600"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h1>
                   {{ range $author := $p.Params.authors }}
-                  <p class="author"><span>by </span><a href="/authors/{{ $author | urlize }}" target="_blank" rel="noopener">{{ $author }}</a></p>
+                  <p data-aos="fade-up" data-aos-duration="700" class="author"><span>by </span><a href="/authors/{{ $author | urlize }}" target="_blank" rel="noopener">{{ $author }}</a></p>
                   {{ end }}
-                  <p class="description">{{ $p.Summary }}</p>
-                  <a href="{{ $p.RelPermalink }}" class="inline-button">Read More</a>
+                  <p data-aos="fade-up" data-aos-duration="800" class="description">{{ $p.Summary }}</p>
+                  <a data-aos="fade-up" data-aos-duration="1000" href="{{ $p.RelPermalink }}" class="inline-button">Read More</a>
                 </div>
               </div>
               <!-- left content end -->
             </div>
-            <div class="column is-6">
+            <div class="column is-6" data-aos="fade-left" data-aos-duration="1000">
               <!-- slider image start  -->
               <a href="{{ $p.RelPermalink }}" class="blog-slider-image blog-bg-3"></a>
               <!-- slider image end -->
@@ -84,7 +84,7 @@
     <div class="columns">
       <!-- left sidebar start  -->
       <div class="column is-3">
-        <div class="blog-left-sidebar">
+        <div class="blog-left-sidebar" >
 
           <!-- search-bar start  -->
           <!-- <div class="search-bar">
@@ -94,13 +94,13 @@
           <!-- search-bar end -->
 
           <!-- categories title  -->
-          <div class="widget-title">
+          <div class="widget-title" data-aos="fade-left">
             <h3>Categories</h3>
           </div>
           <!-- categories title  -->
 
           <!-- category start  -->
-          <div class="blog-category">
+          <div class="blog-category" data-aos="fade-left">
             <ul>
               <!-- <li><a href="#" class="is-active">All</a></li> -->
               {{ range .Site.Taxonomies.tags.Alphabetical }}
@@ -118,12 +118,13 @@
 
           {{ range $idx, $p := .Pages }}
           <!-- single blog start  -->
-          <div class="column is-one-third-fullhd is-half-tablet is-one-third-desktop">
+          <div class="column is-one-third-fullhd is-half-tablet is-one-third-desktop" data-aos="fade-up">
             <div class="single-blog-item">
               <div class="blog-image-wrapper">
                 {{ $original := $p.Resources.GetMatch "hero.jpg" }}
                 {{ $cropped := $original.Fill "328x234" }}
                 <a href="{{ $p.RelPermalink }}" class="blog-image blog-1" style="background-image: url({{ $cropped.RelPermalink }});"></a>
+
               </div>
               <div class="single-blog-content">
                 <div class="blog-meta">

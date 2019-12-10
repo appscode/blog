@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // AOS initialization 
+  AOS.init();
+  
   // Get all "navbar-burger" elements
   const $navbarBurgers = Array.prototype.slice.call(
     document.querySelectorAll(".navbar-burger"),
