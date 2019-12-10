@@ -8,10 +8,10 @@
 
         <!-- blog heading start  -->
         <div class="blog-heading">
-          <p class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> {{ .Date.Format "2-Jan-2006" }}</p>
-          <h1>{{ .Title }}</h1>
+          <p data-aos="fade-up" class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> {{ .Date.Format "2-Jan-2006" }}</p>
+          <h1 data-aos="fade-up" data-aos-duration="500">{{ .Title }}</h1>
           {{ range $author := .Params.authors }}
-          <p class="author"><span>by </span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a></p>
+          <p data-aos="fade-up" data-aos-duration="600" class="author"><span>by </span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a></p>
           {{ end }}
         </div>
         <!-- blog heading end -->
@@ -20,7 +20,7 @@
         <figure class="fig-style">
           {{ $original := .Resources.GetMatch "hero.jpg" }}
           {{ $cropped := $original.Fill "1300x650" }}
-          <img src="{{ $cropped.RelPermalink }}" alt="">
+          <img data-aos="fade-up" data-aos-duration="600" src="{{ $cropped.RelPermalink }}" alt="">
           <!-- <figcaption>capture operational knowledge in a software form</figcaption> -->
           </a>
         </figure>

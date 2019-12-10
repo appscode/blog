@@ -27,6 +27,8 @@
   <meta name="msapplication-TileImage" content="/assets/images/products/bytebuilders/icons/ms-icon-144x144.png">
   <!-- font-awesome css  -->
   <link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
+  <!-- AOS css  -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <!-- bulma css  -->
   <link rel="stylesheet" href="/assets/css/bulma.min.css" />
   <!-- Custom CSS -->
@@ -117,13 +119,13 @@
     <div class="container section">
       <div class="columns">
         <div class="column is-5 has-text-left">
-          <div class="section-title is-dark-bg">
+          <div class="section-title is-dark-bg" data-aos="fade-up">
             <h2>Get Up and Running Quickly</h2>
             <p>
               {{ .Site.Data.products.bytebuilders.summary | plainify }}
             </p>
           </div>
-          <div class="cta-buttons buttons">
+          <div class="cta-buttons buttons" data-aos="fade-up" data-aos-duration="600">
               <a href="{{.Site.Params.domain_bytebuilders}}/user/sign_up" class="button is-primary is-large">Get started free</a>
               <a href="{{.Site.Params.domain_appscode}}/meet-expert/" class="button is-large is-white-hoverable">Get a Demo</a>
             </div>
@@ -131,15 +133,15 @@
         <div class="column is-4 is-offset-3">
           <div class="right-sidebar style-1">
             <div class="right-sidebar-inner">
-              <div class="single-sidebar-item">
+              <div class="single-sidebar-item" data-aos="fade-left">
                 <h5>Want to host dedicated setup? We got you.</h5>
                 <a href="{{.Site.Params.domain_appscode}}/contact/" class="inline-button">Contact us</a>
               </div>
-              <div class="single-sidebar-item">
+              <div class="single-sidebar-item" data-aos="fade-left" data-aos-duration="500">
                 <h5>Need Support SLA for AppsCode OSS projects?</h5>
                 <a href="{{.Site.Params.domain_appscode}}/pricing/" class="inline-button">Purchase our commercial support package</a>
               </div>
-              <div class="single-sidebar-item">
+              <div class="single-sidebar-item" data-aos="fade-left" data-aos-duration="700">
                 <h5>Interested in Professional Services & Training?</h5>
                 <a href="{{.Site.Params.domain_appscode}}/consulting/" class="inline-button">Explore our services</a>
               </div>
@@ -158,7 +160,7 @@
     <!-- footer top start  -->
     <div class="footer-top">
       <div class="container section">
-        <div class="columns is-mobile is-multiline">
+        <div class="columns is-mobile is-multiline" data-aos="fade-up">
           <div class="column is-full-mobile is-one-third-desktop is-one-third-widescreen is-one-third-tablet">
             <div class="single-footer-widget">
               <div class="footer-logo">
@@ -236,7 +238,7 @@
             </div>
           </div>
           <!-- subscription area end  -->
-          <div class="column is-half-mobile">
+          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="400">
             <div class="single-footer-widget">
               <div class="footer-menu">
                 <h4>Products</h4>
@@ -250,7 +252,7 @@
             </div>
           </div>
 
-          <div class="column is-half-mobile">
+          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="500">
             <div class="single-footer-widget">
               <div class="footer-menu">
                 <h4>Services</h4>
@@ -263,7 +265,7 @@
             </div>
           </div>
 
-          <div class="column is-half-mobile">
+          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="600">
             <div class="single-footer-widget">
               <div class="footer-menu">
                 <h4>Company</h4>
@@ -276,7 +278,7 @@
             </div>
           </div>
 
-          <div class="column is-half-mobile">
+          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="700">
             <div class="single-footer-widget">
               <div class="footer-menu">
                 <h4>Legal</h4>
@@ -342,6 +344,8 @@
   </button>
   <!-- go-to-top end -->
 
+  <!-- AOS js  -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <!-- download js  -->
   <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
   <!-- clipboard js  -->

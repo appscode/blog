@@ -7,12 +7,12 @@
   <div class="container section">
     <div class="columns">
       <div class="column is-8 is-offset-2 has-text-centered">
-        <div class="author-content">
+        <div class="author-content" data-aos="fade-up" data-aos-duration="500">
           <figure class="image">
             <img src="{{ $author.profile }}">
           </figure>
-          <h3>{{ $author.name }}</h3>
-          <p>{{ $author.biography }}</p>
+          <h3 data-aos="fade-up" data-aos-duration="600">{{ $author.name }}</h3>
+          <p data-aos="fade-up" data-aos-duration="800">{{ $author.biography }}</p>
           <div class="social-link-horizontal">
             <ul>
               {{ if $author.twitter }}
@@ -61,13 +61,13 @@
           <!-- search-bar end -->
 
           <!-- categories title  -->
-          <div class="widget-title">
+          <div class="widget-title" data-aos="fade-left">
               <h3>Categories</h3>
             </div>
             <!-- categories title  -->
   
             <!-- category start  -->
-            <div class="blog-category">
+            <div class="blog-category" data-aos="fade-left">
               <ul>
                 <!-- <li><a href="#" class="is-active">All</a></li> -->
                 {{ range .Site.Taxonomies.tags.Alphabetical }}
@@ -85,7 +85,7 @@
 
           {{ range $idx, $p := .Pages }}
           <!-- single blog start  -->
-          <div class="column is-one-third-fullhd is-half-tablet is-one-third-desktop">
+          <div class="column is-one-third-fullhd is-half-tablet is-one-third-desktop" data-aos="fade-up">
             <div class="single-blog-item">
               <div class="blog-image-wrapper">
                 {{ $original := $p.Resources.GetMatch "hero.jpg" }}

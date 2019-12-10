@@ -262,6 +262,10 @@ textarea.textarea {
     padding-right: 5px;
     color: #0071bd; }
 
+.blog-heading {
+  max-width: 70%;
+  margin: 0 auto; }
+
 .author {
   font-weight: 500;
   color: #0071bd;
@@ -1085,7 +1089,6 @@ ul.nav.nav-tabs {
 .blog-heading {
   max-width: 70%;
   margin: 0 auto; }
-
 .fig-style {
   max-height: 650px;
   overflow: hidden; }
