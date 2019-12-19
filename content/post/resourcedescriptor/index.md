@@ -287,7 +287,7 @@ Today we are open sourcing this [kmodules/resource-metadata](https://github.com/
 
 - API types for ResourceDescriptors
 - API types for finding the shortest path between 2 resource types.
-- A [package of ResourceDescriptors for various common resources](https://github.com/kmodules/resource-metadata/tree/master/hub/v1alpha1). We hope to expand it to include more and more resource types. We would like to see community contribution to expand these ResourceDescriptors.
+- A [package of ResourceDescriptors for various common resources](https://github.com/kmodules/resource-metadata/tree/e176a5a32431a770180cea177c8e6523da8f6676/hub/resourcedescriptors). We hope to expand it to include more and more resource types. We would like to see community contribution to expand these ResourceDescriptors.
 - A [graph package](https://godoc.org/kmodules.xyz/resource-metadata/pkg/graph#Graph) that can return the shortest path between 2 resources and a List api to list target resources for any resources assuming there is a path between those two resource types.
 
 We also provide provide a publicly accessible server https://api.crd.builders/ using the pre-defined resource descriptors. You should be able to interact with this server using curl commands.
