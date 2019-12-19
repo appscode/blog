@@ -112,15 +112,15 @@
       border-radius: 8px;
     }
   }
-  pre {
+  pre{
     margin-bottom: 15px;
     border-radius: 4px;
-    background-color: #1c2c41;
+    background-color: #1C2C41;
     color: #fff;
     font-size: 14px;
     line-height: 22px;
   }
-  figure {
+  figure{
     border: 1px solid $border-color;
     padding: 15px;
     margin-bottom: 15px;
@@ -139,12 +139,26 @@
       &:last-child {
         margin-bottom: 0;
       }
-      code {
+      code{
         border-radius: 2px;
       }
-      pre {
+      pre{
         font-size: 14px;
         margin-left: -20px;
+      }
+    }
+  }
+  ol {
+    padding-left: 20px;
+    margin-bottom: 30px;
+    li {
+      font-size: 20px;
+      margin-bottom: 15px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+      code{
+        border-radius: 2px;
       }
     }
   }
