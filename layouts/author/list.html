@@ -20,6 +20,11 @@
                 <a href="{{ $author.twitter }}" target="_blank" rel="noopener" class="twitter" aria-label="Follow on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
               </li>
               {{ end }}
+              {{ if $author.github }}
+              <li>
+                <a href="{{ $author.github }}" target="_blank" rel="noopener" class="github" aria-label="Follow on GitHub"><i class="fa fa-github" aria-hidden="true"></i></a>
+              </li>
+              {{ end }}
               {{ if $author.linkedin }}
               <li>
                 <a href="{{ $author.linkedin }}" target="_blank" rel="noopener" class="linkedin" aria-label="Connect on Linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
