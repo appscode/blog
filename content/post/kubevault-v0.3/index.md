@@ -10,6 +10,12 @@ The KubeVault operator version [0.3.0]() is now available with more stabilities 
 
 This release adds improvements related to the following components and concepts.
 
+### CSI driver
+
+The new release also comes up with the new version of [CSI driver](https://kubernetes-csi.github.io/docs/#kubernetes-container-storage-interface-csi-documentation) compatible with Kubernetes V1.14+. Now you can mount Vault secrets in Kubernetes Pods by using the KubeVault CSI driver.
+
+![The KubeVault CSI Driver](/content/post/kubevault-v0.3/csi_driver.svg)
+
 ### SecretEngine CRD
 
 The SecretEngine CustomResourceDefinition (CRD) which is designed to automate the process of enabling and configuring secret engines in Vault in a Kubernetes native way, is introduced in this new release.
