@@ -1089,6 +1089,7 @@ ul.nav.nav-tabs {
 .blog-heading {
   max-width: 70%;
   margin: 0 auto; }
+
 .fig-style {
   max-height: 650px;
   overflow: hidden; }
@@ -1117,10 +1118,11 @@ ul.nav.nav-tabs {
   overflow: hidden;
   border: 1px solid #d1d5d9;
   border-bottom: transparent; }
-  .code-block-heading h4 {
+  .code-block-heading .code-title h4 {
     font-size: 16px;
     font-family: "Roboto", sans-serif;
-    font-weight: 400; }
+    font-weight: 400;
+    margin-bottom: 0; }
   .code-block-heading .copy-and-download .download-here,
   .code-block-heading .copy-and-download .copy-here {
     background: transparent;
@@ -1142,10 +1144,20 @@ ul.nav.nav-tabs {
     .highlight pre code {
       color: #f1f1f1; }
 
-.blog-content h2 {
-  font-size: 36px;
+.blog-content h1,
+.blog-content h2,
+.blog-content h3 {
   font-weight: 700;
   margin-bottom: 10px; }
+.blog-content h2 {
+  font-size: 36px;
+  line-height: 46px; }
+.blog-content h3 {
+  font-size: 26px;
+  line-height: 36px; }
+.blog-content h4 {
+  font-size: 22px;
+  line-height: 32px; }
 .blog-content p {
   font-size: 20px;
   margin-bottom: 20px; }
@@ -1206,6 +1218,16 @@ ul.nav.nav-tabs {
       margin-bottom: 0; }
     .blog-content ol li code {
       border-radius: 2px; }
+.blog-content ol {
+  padding-left: 20px;
+  margin-bottom: 30px; }
+  .blog-content ol li {
+    font-size: 20px;
+    margin-bottom: 15px; }
+    .blog-content ol li:last-child {
+      margin-bottom: 0; }
+    .blog-content ol li code {
+      border-radius: 2px; }
 .blog-content blockquote {
   position: relative;
   z-index: 1;
@@ -1226,7 +1248,7 @@ ul.nav.nav-tabs {
   .blog-content .bb-quote-msg p {
     font-weight: 500;
     margin-bottom: 15px;
-    color: #1C2C41; }
+    color: #1c2c41; }
   .blog-content .bb-quote-msg .quote-icon {
     position: absolute;
     left: -50px;
@@ -1248,6 +1270,14 @@ ul.nav.nav-tabs {
   margin-top: 0;
   font-size: 28px;
   line-height: 40px; }
+.blog-content table {
+  margin-bottom: 20px; }
+  .blog-content table td,
+  .blog-content table th {
+    border: 1px solid #e8e8e8;
+    padding: 10px 20px; }
+  .blog-content table th {
+    font-weight: 500; }
 
 /*=================================================================================================
                                     Responsive code start
