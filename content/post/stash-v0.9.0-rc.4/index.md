@@ -12,7 +12,7 @@ tags:
 
 We are very excited to announce Stash `v0.9.0-rc.4` which brings some cool features like batch backup and hooks. We have also added `Percona-XtraDB` addon. This version also comes with some bug fixes and general improvements.
 
-Stash by AppsCode is a data backup and recovery solution for Kubernetes workloads. If you are running production workloads in Kubernetes, you might want to take backup of your disks, databases etc. Traditional tools are too complex to setup and maintain in a dynamic compute environment like Kubernetes. Stash is a Kubernetes operator built around `[restic](https://github.com/restic/restic)` to address these issues. Using Stash, you can backup Kubernetes volumes mounted in workloads, stand-alone volumes and databases.
+Stash by AppsCode is a data backup and recovery solution for Kubernetes workloads. If you are running production workloads in Kubernetes, you might want to take backup of your disks, databases etc. Traditional tools are too complex to setup and maintain in a dynamic compute environment like Kubernetes. Stash is a Kubernetes operator built around [restic](https://github.com/restic/restic) to address these issues. Using Stash, you can backup Kubernetes volumes mounted in workloads, stand-alone volumes and databases.
 
 ## Features
 

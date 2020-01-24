@@ -45,10 +45,13 @@
   overflow: hidden;
   border: 1px solid #d1d5d9;
   border-bottom: transparent;
-  h4 {
-    font-size: 16px;
-    font-family: $font-paragraph;
-    font-weight: 400;
+  .code-title {
+    h4 {
+      font-size: 16px;
+      font-family: $font-paragraph;
+      font-weight: 400;
+      margin-bottom: 0;
+    }
   }
   .copy-and-download {
     .download-here,
@@ -78,10 +81,23 @@
   margin-bottom: 40px;
 }
 .blog-content {
-  h2 {
-    font-size: 36px;
+  h1,
+  h2,
+  h3 {
     font-weight: 700;
     margin-bottom: 10px;
+  }
+  h2 {
+    font-size: 36px;
+    line-height: 46px;
+  }
+  h3 {
+    font-size: 26px;
+    line-height: 36px;
+  }
+  h4 {
+    font-size: 22px;
+    line-height: 32px;
   }
   p {
     font-size: 20px;
@@ -112,15 +128,15 @@
       border-radius: 8px;
     }
   }
-  pre{
+  pre {
     margin-bottom: 15px;
     border-radius: 4px;
-    background-color: #1C2C41;
+    background-color: #1c2c41;
     color: #fff;
     font-size: 14px;
     line-height: 22px;
   }
-  figure{
+  figure {
     border: 1px solid $border-color;
     padding: 15px;
     margin-bottom: 15px;
@@ -139,10 +155,10 @@
       &:last-child {
         margin-bottom: 0;
       }
-      code{
+      code {
         border-radius: 2px;
       }
-      pre{
+      pre {
         font-size: 14px;
         margin-left: -20px;
       }
@@ -157,7 +173,7 @@
       &:last-child {
         margin-bottom: 0;
       }
-      code{
+      code {
         border-radius: 2px;
       }
     }
@@ -198,7 +214,7 @@
     p {
       font-weight: 500;
       margin-bottom: 15px;
-      color: #1C2C41;
+      color: #1c2c41;
     }
     .quote-icon {
       position: absolute;
@@ -218,7 +234,7 @@
       }
     }
   }
-  
+
   .tags {
     .tag {
       height: 36px;
@@ -231,6 +247,17 @@
       margin-top: 0;
       font-size: 28px;
       line-height: 40px;
+    }
+  }
+  table {
+    margin-bottom: 20px;
+    td,
+    th {
+      border: 1px solid $border-color;
+      padding: 10px 20px;
+    }
+    th {
+      font-weight: 500;
     }
   }
 }
