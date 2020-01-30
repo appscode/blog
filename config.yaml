@@ -28,3 +28,7 @@ params:
   domain_kubeform: https://kubeform.com
   github_url: https://github.com/appscode
   domain_pharmer: https://pharmer.io
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
