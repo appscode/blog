@@ -1,5 +1,9 @@
 {{ define "main" }}
 
+{{- $pctx := . -}}
+{{- if .IsHome -}}{{ $pctx = .Site }}{{- end -}}
+{{- $pages := $pctx.RegularPages -}}
+
 <!-- blog hero area start  -->
 <section class="blog-hero-area section-padding hero is-medium has-carousel">
   <div class="container section">
@@ -15,7 +19,7 @@
         </div>
         <!-- slider-button end -->
 
-        {{ range $idx, $p := .Pages.ByDate.Reverse | first 3 }}
+        {{ range $idx, $p := $pages.ByDate.Reverse | first 3 }}
         <!-- single slider start  -->
         <div class="single-blog {{if eq $idx 0}}show{{end}}">
 
@@ -116,7 +120,7 @@
       <div class="column is-9">
         <div class="columns is-multiline">
 
-          {{ range $idx, $p := .Pages.ByDate.Reverse }}
+          {{ range $idx, $p := $pages.ByDate.Reverse }}
           <!-- single blog start  -->
           <div class="column is-one-third-fullhd is-half-tablet is-one-third-desktop" data-aos="fade-up">
             <div class="single-blog-item">
