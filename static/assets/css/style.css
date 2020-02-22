@@ -490,7 +490,7 @@ body.fixed-nav #header {
       max-height: 100%; }
 
 .cta-area {
-  background-image: url(../images/bg-image/cta-bg.webp);
+  background-image: url(../images/bg-image/cta-bg.png);
   background-repeat: repeat;
   background-color: #0071bd; }
   .cta-area .section-title.is-dark-bg h2 {
@@ -898,13 +898,13 @@ ul.nav.nav-tabs {
         background-color: #333; }
 
 .blog-bg-1 {
-  background-image: url(/assets/images/slider-image/s-1.webp); }
+  background-image: url(/assets/images/slider-image/s-1.png); }
 
 .blog-bg-2 {
-  background-image: url(/assets/images/slider-image/s-2.webp); }
+  background-image: url(/assets/images/slider-image/s-2.png); }
 
 .blog-bg-3 {
-  background-image: url(/assets/images/slider-image/s-3.webp); }
+  background-image: url(/assets/images/slider-image/s-3.png); }
 
 .blog-left-sidebar {
   position: sticky;
