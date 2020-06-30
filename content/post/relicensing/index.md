@@ -38,7 +38,7 @@ Please see the table below to understand the feature difference between Stash Co
 
 If you are a Noncommercial organization as defined by the [PolyForm Noncommercial License] ](https://polyformproject.org/licenses/noncommercial/1.0.0/) or using AppsCode products for personal use, you should be able to continue to use our products as you are doing today. For commercial organizations, we are offering a 14 day trial license. This should allow you to use AppsCode Enterprise products for free in CI environments.
 
-We are also working on a hosted version of KubeDB products where customers will be able to BYOK. We hope to share more in later part of the year.
+We are also working on a hosted version of KubeDB products where customers will be able to BYOK(Bring Your Own Kubernetes). We hope to share more in later part of the year.
 
 ## Conclusion
 
