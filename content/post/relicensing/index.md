@@ -20,7 +20,7 @@ AppsCode started as a commercial entity to accelerate the adoption of Kubernetes
 
 Going forward, we will be offering two versions of our Stash and KubeDB operators. The open-sourced community version of the operators with limited features will serve the non-commercial users covered by the [PolyForm Noncommercial License](https://polyformproject.org/licenses/noncommercial/1.0.0/). The close-sourced, enterprise version of the operators with full features  will serve the licensed users. If the licensed users request the source code of the enterprise operators in some circumstances, then it will be available to them under NDA. For our other products, we will make announcements on a case by case basis in the future.
 
-## What’s included in the Enterprise Editions:
+## What’s included in the KubeDB Enterprise
 
 KubeDB Enterprise edition includes all the features (clustering, etc.) of KubeDB Community Edition and extends it with focus on automating Day 2 operations, improving security and productivity. You can see some quick demos of upcoming MySQL Enterprise features [here](https://www.youtube.com/playlist?list=PLoiT1Gv2KR1imxr13HareDzWfUvsWWtVY).
 
@@ -28,12 +28,18 @@ KubeDB Enterprise edition includes all the features (clustering, etc.) of KubeDB
 
 ![KubeDB Roadmap](kubedb-roadmap.svg)
 
+## What’s included in the Stash Enterprise
+
 Please see the table below to understand the feature difference between Stash Community edition and Stash Enterprise edition.
 
 ![Stash Feature Matrix](stash-feature-matrix.svg)
 
-## What does it mean for existing users?
+## What does it mean for existing users
 
-If you are a Noncommercial organization as defined by the [PolyForm Noncommercial License] ](https://polyformproject.org/licenses/noncommercial/1.0.0/) or using AppsCode products for personal use, you should be able to continue to use our products as you are doing today. For commercial organizations, we are offering a 32 day trial license. This should allow AppsCode products for free in CI environments. If you are interested in licensing either Stash or KubeDB, please contact us via sales@appscode.com for further discussion.
+If you are a Noncommercial organization as defined by the [PolyForm Noncommercial License] ](https://polyformproject.org/licenses/noncommercial/1.0.0/) or using AppsCode products for personal use, you should be able to continue to use our products as you are doing today. For commercial organizations, we are offering a 32 day trial license. This should allow AppsCode products for free in CI environments.
 
-We are also working on a hosted version of KubeDB products where customers will be able to BYOK. Please follow us on twitter [@AppsCodeHQ](https://twitter.com/intent/follow?screen_name=AppsCodeHQ) to stay up-to-date.
+We are also working on a hosted version of KubeDB products where customers will be able to BYOK. We hope to share more in later part of the year.
+
+## Conclusion
+
+If you are interested in licensing either Stash or KubeDB, please contact us via sales@appscode.com for further discussion. You can also set up a meeting via our [calendly link](https://calendly.com/appscode/30min). Please follow us on twitter [@AppsCodeHQ](https://twitter.com/intent/follow?screen_name=AppsCodeHQ) to stay up-to-date.
