@@ -87,9 +87,13 @@
     font-weight: 700;
     margin-bottom: 10px;
   }
-  h2 {
+  h1 {
     font-size: 36px;
-    line-height: 46px;
+    line-height: 50px;
+  }
+  h2 {
+    font-size: 28px;
+    line-height: 40px;
   }
   h3 {
     font-size: 26px;
@@ -100,7 +104,8 @@
     line-height: 32px;
   }
   p {
-    font-size: 20px;
+    font-size: 16px;
+    text-align: justify;
     margin-bottom: 20px;
     a {
       font-weight: 500;
@@ -143,13 +148,13 @@
     border-radius: 4px;
   }
   .inline-button {
-    font-size: 20px;
+    font-size: 16px;
   }
   ul {
     padding-left: 20px;
     margin-bottom: 30px;
     li {
-      font-size: 20px;
+      font-size: 16px;
       list-style: disc;
       margin-bottom: 15px;
       &:last-child {
@@ -168,7 +173,7 @@
     padding-left: 20px;
     margin-bottom: 30px;
     li {
-      font-size: 20px;
+      font-size: 16px;
       margin-bottom: 15px;
       &:last-child {
         margin-bottom: 0;
@@ -182,7 +187,7 @@
     padding-left: 20px;
     margin-bottom: 30px;
     li {
-      font-size: 20px;
+      font-size: 16px;
       margin-bottom: 15px;
       &:last-child {
         margin-bottom: 0;
@@ -222,7 +227,7 @@
       top: 10px;
     }
     .name-descriptor {
-      font-size: 20px;
+      font-size: 16px;
       margin-bottom: 20px;
       &::before {
         content: url(/assets/images/icons/line.svg);
@@ -291,7 +296,7 @@
     p,
     a,
     ul li {
-      font-size: 18px;
+      font-size: 16px;
     }
     p {
       margin-bottom: 20px;

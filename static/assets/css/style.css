@@ -1149,9 +1149,12 @@ ul.nav.nav-tabs {
 .blog-content h3 {
   font-weight: 700;
   margin-bottom: 10px; }
-.blog-content h2 {
+.blog-content h1 {
   font-size: 36px;
-  line-height: 46px; }
+  line-height: 50px; }
+.blog-content h2 {
+  font-size: 28px;
+  line-height: 40px; }
 .blog-content h3 {
   font-size: 26px;
   line-height: 36px; }
@@ -1159,7 +1162,8 @@ ul.nav.nav-tabs {
   font-size: 22px;
   line-height: 32px; }
 .blog-content p {
-  font-size: 20px;
+  font-size: 16px;
+  text-align: justify;
   margin-bottom: 20px; }
   .blog-content p a {
     font-weight: 500;
@@ -1193,12 +1197,12 @@ ul.nav.nav-tabs {
   margin-bottom: 15px;
   border-radius: 4px; }
 .blog-content .inline-button {
-  font-size: 20px; }
+  font-size: 16px; }
 .blog-content ul {
   padding-left: 20px;
   margin-bottom: 30px; }
   .blog-content ul li {
-    font-size: 20px;
+    font-size: 16px;
     list-style: disc;
     margin-bottom: 15px; }
     .blog-content ul li:last-child {
@@ -1212,7 +1216,7 @@ ul.nav.nav-tabs {
   padding-left: 20px;
   margin-bottom: 30px; }
   .blog-content ol li {
-    font-size: 20px;
+    font-size: 16px;
     margin-bottom: 15px; }
     .blog-content ol li:last-child {
       margin-bottom: 0; }
@@ -1222,7 +1226,7 @@ ul.nav.nav-tabs {
   padding-left: 20px;
   margin-bottom: 30px; }
   .blog-content ol li {
-    font-size: 20px;
+    font-size: 16px;
     margin-bottom: 15px; }
     .blog-content ol li:last-child {
       margin-bottom: 0; }
@@ -1254,7 +1258,7 @@ ul.nav.nav-tabs {
     left: -50px;
     top: 10px; }
   .blog-content .bb-quote-msg .name-descriptor {
-    font-size: 20px;
+    font-size: 16px;
     margin-bottom: 20px; }
     .blog-content .bb-quote-msg .name-descriptor::before {
       content: url(/assets/images/icons/line.svg);
@@ -1299,7 +1303,7 @@ ul.nav.nav-tabs {
   .blog-content p,
   .blog-content a,
   .blog-content ul li {
-    font-size: 18px; }
+    font-size: 16px; }
   .blog-content p {
     margin-bottom: 20px; }
   .blog-content h2 {
