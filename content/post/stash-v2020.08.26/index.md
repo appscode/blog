@@ -1,5 +1,5 @@
 ---
-title: Stash - Introducing Stash Enterprise
+title: Stash - Introducing Stash Enterprise Edition
 date: 2020-08-26
 weight: 15
 authors:
