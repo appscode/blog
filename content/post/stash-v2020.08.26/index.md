@@ -10,7 +10,7 @@ tags:
   - backup
 ---
 
-We are very excited to announce Stash `v2020.08.26`. Yes, we have changed the versioning scheme. We will explain it later in this post. This version introduces two different editions of Stash named `Stash Community Edition` and `Stash Enterprise Edition`. It also introduces `RestoreBatch` CRD for restoring data backed up using `BackupBatch`.
+We are very excited to announce Stash `v2020.08.27`. Yes, we have changed the versioning scheme. We will explain it later in this post. This version introduces two different editions of Stash named `Stash Community Edition` and `Stash Enterprise Edition`. It also introduces `RestoreBatch` CRD for restoring data backed up using `BackupBatch`.
 
 Install Stash in your cluster by following the setup guide from [here](https://stash.run/docs/latest/setup/).
 
@@ -57,6 +57,6 @@ params.stash.appscode.com/key2: value2,value3
 params.stash.appscode.com/key3: ab=123,bc=234
 ```
 
-We have also fixed some critical bugs regarding `BatchBackup` and database backup. A full changelog of this release can be found [here](https://github.com/stashed/CHANGELOG/tree/master/releases/v2020.08.26).
+We have also fixed some critical bugs regarding `BatchBackup` and database backup. A full changelog of this release can be found [here](https://github.com/stashed/CHANGELOG/tree/master/releases/v2020.08.27).
 
 Please try this release and give us your valuable feedback.
