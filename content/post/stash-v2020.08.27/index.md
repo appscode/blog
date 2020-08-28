@@ -1,6 +1,6 @@
 ---
 title: Stash - Introducing Stash Enterprise Edition
-date: 2020-08-26
+date: 2020-08-27
 weight: 15
 authors:
   - Emruz Hossain
@@ -26,7 +26,7 @@ The old versioning scheme referred to the operator version only. Furthermore, it
 
 ### Introducing Stash Enterprise Edition
 
-Building a production-grade tool for a cloud-native technology like Kubernetes is not free of cost. In the beginning, Stash was simple and required less maintenance. Over time, it has grown large and complex. Now, it demands a dedicated team behind it. A skilled Kubernetes team is not cheap. The test infrastructure requires for it is not cheap either. So, in order to ensure a sustainable future for Stash, we are introducing an enterprise edition. From now, we will be offering Stash in two different flavors. The open-sourced `Community Edition` with basic features set will serve the non-commercial users under [PolyForm-Noncommercial-1.0.0](https://github.com/stashed/stash/blob/master/LICENSE.md) license. The closed-source `Enterprise Edition` with full features set will serve the commercial users. You can find a full feature comparison between the two versions in [here](https://stash.run/docs/latest/concepts/what-is-stash/overview/).
+Building a production-grade tool for a cloud-native technology like Kubernetes is not free of cost. In the beginning, Stash was simple and required less maintenance. Over time, it has grown large and complex. Now, it demands a dedicated team behind it. A skilled Kubernetes team is not cheap. The test infrastructure required for it is not cheap either. So, in order to ensure a sustainable future for Stash, we are introducing an enterprise edition. From now, we will be offering Stash in two different flavors. The open-sourced `Community Edition` with basic features set will serve the non-commercial users under [PolyForm-Noncommercial-1.0.0](https://github.com/stashed/stash/blob/master/LICENSE.md) license. The closed-source `Enterprise Edition` with full features set will serve the commercial users. You can find a full feature comparison between the two versions in [here](https://stash.run/docs/latest/concepts/what-is-stash/overview/).
 
 ### Introducing RestoreBatch
 
