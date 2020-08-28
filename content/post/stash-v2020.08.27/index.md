@@ -26,7 +26,15 @@ The old versioning scheme referred to the operator version only. Furthermore, it
 
 ### Introducing Stash Enterprise Edition
 
-Building a production-grade tool for a cloud-native technology like Kubernetes is not free of cost. In the beginning, Stash was simple and required less maintenance. Over time, it has grown large and complex. Now, it demands a dedicated team behind it. A skilled Kubernetes team is not cheap. The test infrastructure required for it is not cheap either. So, in order to ensure a sustainable future for Stash, we are introducing an enterprise edition. From now, we will be offering Stash in two different flavors. The open-sourced `Community Edition` with basic features set will serve the non-commercial users under [PolyForm-Noncommercial-1.0.0](https://github.com/stashed/stash/blob/master/LICENSE.md) license. The closed-source `Enterprise Edition` with full features set will serve the commercial users. You can find a full feature comparison between the two versions in [here](https://stash.run/docs/latest/concepts/what-is-stash/overview/).
+Building a production-grade tool for a cloud-native technology like Kubernetes is not free of cost. In the beginning, Stash was simple and required less maintenance. Over time, it has grown large and complex. Now, it demands a dedicated team behind it. A skilled Kubernetes team is not cheap. The test infrastructure required for it is not cheap either. So, in order to ensure a sustainable future for Stash, we are introducing an enterprise edition. From now, we will be offering Stash in two different flavors. The open-sourced `Community Edition` with basic features set will serve the non-commercial users under [PolyForm-Noncommercial-1.0.0](https://github.com/stashed/stash/blob/master/LICENSE.md) license. The open core `Enterprise Edition` with full feature set will serve the commercial users.
+
+If you are upgrading from `0.9.x` to `v2020.08.27`, please note that following features are only available in Enterprise edition:
+
+- **Auto-Backup:** Auto-backup is now an enterprise feature. You won't be able to setup any new backup using auto-backup. However, your existing auto-backup resources should keep functioning.
+- **Batch Backup:** Batch backup and restore is also now an enterprise feature. You won't be able to create any new backup using batch-backup. However, your existing backup should continue to work and you would be able to restore the data that were backed up using BatchBackup.
+- **Local Backend:** Local backend now is an enterprise feature. If you are using any Kubernetes volume (i.e. NFS, PVC, HostPath, etc.) as backend, you won't be able to create any new backup using those backends. However, your existing backup that uses sidecar model should keep functioning. You have to use the Enterprise edition to restore from the backed up data.
+
+You can find a full feature comparison between the two versions in [here](https://stash.run/docs/latest/concepts/what-is-stash/overview/). If you are interested in purchasing Enterprise license, please contact us via sales@appscode.com for further discussion. You can also set up a meeting via our [calendly link](https://calendly.com/appscode/30min).
 
 ### Introducing RestoreBatch
 
