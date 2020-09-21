@@ -10,7 +10,7 @@ tags:
   - backup
 ---
 
-**Update 2020/09/21**: *Since we published this post, we have received feedback from our existing users. Based on their feedback, we have decided to reconsider the earlier decision. Going forward the `Community Edition` will be feature limited but available for anyone to use for any purposes including commercial purposes under a new [AppsCode Community License](https://github.com/appscode/licenses/raw/1.0.0/AppsCode-Community-1.0.0.md). The `Enterprise Edition` comes with 4 different pricing plans, as described here: https://stash.run/pricing/ . We have released Stash v2020.09.16 with the updated license. The similar changes will be reflected in the upcoming release of KubeDB. Thanks for using Stash & KubeDB.*
+**Update 2020/09/21**: *Since we published this post, we have received feedback from our existing users. Based on their feedback, we have decided to reconsider the earlier decision. Going forward the `Community Edition` will include the core backup/recovery functionalities and be available for anyone to use for any purposes including commercial purposes under a new [AppsCode Community License](https://github.com/appscode/licenses/raw/1.0.0/AppsCode-Community-1.0.0.md). The `Enterprise Edition` comes with 4 different pricing plans, as described here: https://stash.run/pricing/ . We have released Stash v2020.09.16 with the updated license. The similar changes will be reflected in the upcoming release of KubeDB. Thanks for using Stash & KubeDB.*
 
 <br>
 
