@@ -10,6 +10,10 @@ tags:
   - backup
 ---
 
+**Update 2020/09/21**: *Since we published this post, we have received feedback from our existing users. Based on their feedback, we have decided to reconsider the earlier decision. Going forward the `Community Edition` will be feature limited but available for anyone to use for any purposes including commercial purposes under a new [AppsCode Community License](https://github.com/appscode/licenses/raw/1.0.0/AppsCode-Community-1.0.0.md). The `Enterprise Edition` comes with 4 different pricing plans, as described here: https://stash.run/pricing/ . We have released Stash v2020.09.16 with the updated license. The similar changes will be reflected in the upcoming release of KubeDB. Thanks for using Stash & KubeDB.*
+
+<br>
+
 We are very excited to announce Stash `v2020.08.27`. Yes, we have changed the versioning scheme. We will explain it later in this post. This version introduces two different editions of Stash named `Stash Community Edition` and `Stash Enterprise Edition`. It also introduces `RestoreBatch` CRD for restoring data backed up using `BackupBatch`.
 
 [Stash](https://stash.run) by AppsCode is a cloud native data backup and recovery solution for Kubernetes workloads. If you are running production workloads in Kubernetes, you might want to take backup of your disks, databases etc. Traditional tools are too complex to setup and maintain in a dynamic compute environment like Kubernetes. Stash is a Kubernetes operator that uses [restic](https://github.com/restic/restic) or Kubernetes CSI Driver VolumeSnapshotter functionality to address these issues. Using Stash, you can backup Kubernetes volumes mounted in workloads, stand-alone volumes and databases. User may even extend Stash via [addons](https://stash.run/docs/latest/guides/latest/addons/overview/) for any custom workload. 
