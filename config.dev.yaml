@@ -28,6 +28,7 @@ params:
   domain_kubeform: https://kubeform-v1-hugo.web.app
   github_url: https://github.com/appscode
   domain_pharmer: https://pharmer-v1-hugo.web.app
+  domain_stash: https://stashed-v1-hugo.web.app
 markup:
   goldmark:
     renderer:
