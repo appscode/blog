@@ -1,13 +1,17 @@
 {
   "key": "kubeshield",
   "name": "Kubeshield",
-  "tagline": "Tools for running HashiCorp Vault on Kubernetes",
-  "summary": "",
+  "fullname": "Kubeshield by AppsCode",
+  "tagline": "Secure Kubernetes for Everyone",
+  "summary": "Secure Kubernetes for Everyone",
   "published": false,
+  "author": "AppsCode Inc.",
   "website": {
     "domainKey": "domain_kubeshield",
-    "path": ""
+    "path": "",
+    "themeColor": "#4D4DCB"
   },
+  "keywords": "kubernetes appscode kubeshield security scanner",
   "heroImage": {
     "src": "/assets/images/products/kubeshield/kubeshield-hero.png",
     "alt": "Kubeshield"
@@ -30,7 +34,6 @@
   "repoURL": "https://github.com/kubeshield/scanner",
   "starRepo": "kubeshield/scanner",
   "docRepo": "kubeshield/scanner",
-  "datasheetFormID": "",
   "badges": [
     {
       "url": "github/stars/kubeshield/scanner",
@@ -124,8 +127,16 @@
     }
   ],
   "versions": [
-    { "version": "master", "hostDocs": false, "show": true },
-    { "version": "0.1.0", "hostDocs": true, "show": true }
+    {
+      "version": "master",
+      "hostDocs": false,
+      "show": true
+    },
+    {
+      "version": "0.1.0",
+      "hostDocs": true,
+      "show": true
+    }
   ],
   "latestVersion": "0.1.0",
   "socialLinks": {
@@ -146,7 +157,7 @@
   "stripeProductID": "prod_FFhyh5Z56cmEJL",
   "plans": {
     "Community": {
-      "price": "0"
+      "price": 0
     }
   }
 }
