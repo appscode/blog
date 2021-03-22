@@ -46,4 +46,4 @@ jobs:
       - name: Check links
         run: |
           hugo server --minify --config=config.yaml &>/dev/null &
-          make check-links
+          liche -r public -d http://localhost:1313 -c 10 -p -l -x '^(.*github.com.*|.*linkedin.com.*)$' || true
