@@ -7,7 +7,7 @@ authors:
 tags:
   - kubernetes
   - kubevault
-  - secret management
+  - secret-management
   - security
   - vault
 ---
