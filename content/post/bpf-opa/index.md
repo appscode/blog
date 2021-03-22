@@ -10,7 +10,7 @@ tags:
   - bpa
   - falco
   - opa
-  - open policy agent
+  - open-policy-agent
 ---
 
 Securing Kubernetes cluster is a multi-faceted task. Runtime security is one aspect of it. It ensures that the workloads deployed in the cluster doesn't do any malicious behaviors. For runtime instrumentation, we wanted to use Extended Berkeley Packet Filter (eBPF), a core technology in the Linux kernel.

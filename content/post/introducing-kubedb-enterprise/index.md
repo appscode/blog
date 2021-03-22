@@ -5,16 +5,16 @@ weight: 16
 authors:
   - Tamal Saha
 tags:
-  - Cloud native
-  - Kubernetes
+  - cloud-native
+  - kubernetes
   - database
-  - Elasticsearch
-  - MariaDB
-  - Memcached
-  - MongoDB
-  - MySQL
-  - PostgreSQL
-  - Redis
+  - elasticsearch
+  - mariadb
+  - memcached
+  - mongodb
+  - mysql
+  - postgresql
+  - redis
 ---
 
 SAN LEANDRO, Calif. -- AppsCode, a global leader in Enterprise-grade Kubernetes-native Data Platforms, has released KubeDB Enterprise Edition, a production-grade cloud-native database management solution for Kubernetes. KubeDB Enterprise edition is the open core version of popular open source project [KubeDB](https://github.com/kubedb). It includes all the features (clustering, etc.) of KubeDB Community Edition and extends it by automating Day 2 DBA tasks, such as database backup/recovery, upgrading version, horizontal and vertical scaling, TLS/SSL support, updating configuration post provisioning, connection pooling, etc. It works on Kubernetes clusters on bare-metal or public clouds. With KubeDB, developers don’t have to become DBAs or be afraid of vendor lock-in.
@@ -27,4 +27,4 @@ KubeDB is in production and powering critical infrastructure for many enterprise
 
 **About AppsCode**
 
-AppsCode is building a universal cloud native data platform for the age of Kubernetes. AppsCode was established in 2016 by Tamal Saha, a former Google engineer. AppsCode develops a number of popular products for Kubernetes, namely KubeDB, Stash, KubeVault, Kubeform, Voyager. AppsCode is headquartered in San Leandro, CA with offices in Dhaka, Bangladesh. For more information, visit [www.appscode.com](www.appscode.com) or follow [@AppsCodeHQ](https://twitter.com/AppsCodeHQ) on Twitter.
+AppsCode is building a universal cloud native data platform for the age of Kubernetes. AppsCode was established in 2016 by Tamal Saha, a former Google engineer. AppsCode develops a number of popular products for Kubernetes, namely KubeDB, Stash, KubeVault, Kubeform, Voyager. AppsCode is headquartered in San Leandro, CA with offices in Dhaka, Bangladesh. For more information, visit [www.appscode.com](https://appscode.com) or follow [@AppsCodeHQ](https://twitter.com/AppsCodeHQ) on Twitter.

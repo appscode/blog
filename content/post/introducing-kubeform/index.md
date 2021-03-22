@@ -57,7 +57,7 @@ The Resource Creation Process of Kubeform consists of the following steps:
 Let's take a look at how can we create anp AWS `RDS` (Relational Database Service) using `Kubeform`.
 
 
-- First install the kubeform operator following the instructions [here](https://kubeform.com/docs/latest/setup/install/):
+- First install the kubeform operator following the instructions [here](https://kubeform.com/docs/latest/setup/):
 
 <ul class="nav nav-tabs" id="installerTab" role="tablist">
   <li class="nav-item">
