@@ -1,6 +1,6 @@
 ---
 title: KubeDB v2021.03.17- PostgreSQL Data Loss Fixed and Introducing MariaDB
-date: 2021-03-17
+date: 2021-03-18
 weight: 18
 authors:
   - Md Kamol Hasan
@@ -43,9 +43,9 @@ leaderElection:
    maximumLagBeforeFailover: 33554432  
 ```
 
-- **Support for latest versions:** Now, We have added support for version 13.2, 12.6, 11.11, 10.16, and 9.6.21.
+- **Support for latest versions:** Now, We have added support for version `13.2`, `12.6`, `11.11`, `10.16`, and `9.6.21`.
 - **TLS support for PostgreSQL cluster:** In our new release, we have added support for using SSL connections to encrypt client/server communications for increased security.
-- **Client authentication mode:** We have introduced SCRAM-SHA-256 authentication to verify the user's password.   And client certificate authentication methods when clusters have enabled SSL.
+- **Client authentication mode:** We have introduced `SCRAM-SHA-256` authentication to verify the user's password. And client certificate authentication methods when clusters have enabled SSL.
 - **Wal-g support has been dropped:** Now we have dropped continuous  archiving with wal-g. We are planning to move this feature to the backup solution (stash) in the future.
 
 ## MariaDB
@@ -65,8 +65,8 @@ We are very excited to announce that MariaDB support has been added to KubeDB. I
 - Update on-start script in MySQL custom docker image for fixing restart problems.
 - Introduce clone plugin from version `8.0.20-v1` to `8.0.23` for new joiner(MySQL instance) into the group replication. The clone plugin permits cloning data from other MySQL server instances at the joining time into the group. This process will be automatically triggered when the joiner gets a valid donor and the primary member's data will be greater than or equal to `128MB`.
 - Set default various environment variables for fixing memory leak issues and getting better performance. These settings are recommended and users can overwrite these by passing environment variables using the pod template args. Recommended default settings are:
-  - Reserved 256MB memory for performance schema and other processes.
-  - Then allocate 75% of the available memory for InnoDB buffer pool size.
+  - Reserved `256MB` memory for performance schema and other processes.
+  - Then allocate `75%` of the available memory for InnoDB buffer pool size.
   - Then allocate the rest of the memory for group replication cache size.
 - Improve MySQL docs: QuickStart, Concept, Clustering,  Upgrading, Scaling, TLS configuration, etc.
 - `MySQLOpsRequest` spec is now immutable i.e. the spec can't be changed once the Ops Request has been created.
