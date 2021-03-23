@@ -15,13 +15,19 @@ jobs:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
         with:
-          go-version: ^1.14
+          go-version: ^1.16
         id: go
 
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
           node-version: 10.x
+
+      - name: Install yq
+        run: |
+          curl -fsSL -o yq https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_amd64
+          chmod +x yq
+          sudo mv yq /usr/local/bin/yq
 
       - name: Install Hugo
         run: |
@@ -30,7 +36,7 @@ jobs:
 
       - name: Install Hugo Tools
         run: |
-          curl -fsSL -o hugo-tools https://github.com/appscodelabs/hugo-tools/releases/download/v0.2.15/hugo-tools-linux-amd64
+          curl -fsSL -o hugo-tools https://github.com/appscodelabs/hugo-tools/releases/download/v0.2.21/hugo-tools-linux-amd64
           chmod +x hugo-tools
           sudo mv hugo-tools /usr/local/bin/hugo-tools
 
@@ -41,6 +47,7 @@ jobs:
       - name: QA
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GOOGLE_CUSTOM_SEARCH_API_KEY: ${{ secrets.GOOGLE_CUSTOM_SEARCH_API_KEY }}
         if: startsWith(github.event.ref, 'refs/tags/') && (contains(github.ref, '-alpha.') || contains(github.ref, '-beta.'))
         run: |
           npm install
@@ -50,6 +57,7 @@ jobs:
       - name: Release
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GOOGLE_CUSTOM_SEARCH_API_KEY: ${{ secrets.GOOGLE_CUSTOM_SEARCH_API_KEY }}
         if: startsWith(github.event.ref, 'refs/tags/') && (contains(github.ref, '-alpha.') || contains(github.ref, '-beta.')) == false
         run: |
           npm install
