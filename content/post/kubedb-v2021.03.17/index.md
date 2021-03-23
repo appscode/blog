@@ -18,10 +18,6 @@ tags:
   - kubedb
 ---
 
-<p align="center">
-  <img width="100%" src="kubedb-logo.png" />
-</p>
-
 We are pleased to announce [KubeDB v2021.03.17](https://kubedb.com/docs/v2021.03.17/setup/). This document lists all the changes done in this release since `v2021.01.26`.  This release offers **MariaDB** support with Galera Clustering, Backup and Recovery, TLS and many more features. It also contains the fix for the **PostgreSQL data loss issue**. The  support for the PostgreSQL TLS configuration and the support for official **TimescaleDB** images has also been added to this release.
 
 
