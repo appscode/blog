@@ -1,6 +1,6 @@
 ---
-title: KubeDB v2021.04.16- Improved Features and Bug Fixes
-date: 2021-04-18
+title: KubeDB v2021.04.16 - Improved Features and Bug Fixes
+date: 2021-04-19
 weight: 19
 authors:
   - Shohag Rana
