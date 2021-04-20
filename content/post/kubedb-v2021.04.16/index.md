@@ -18,7 +18,7 @@ tags:
   - kubedb
 ---
 
-We are pleased to announce [KubeDB v2021.04.16](https://kubedb.com/docs/v2021.04.16/setup/). This post lists all the major changes done in this release since `v2021.03.17`.  This release offers the latest images for MySQL and MariaDB official databases. A new phase `Pending` is added to *MongoDb*, *MySQL* and *Elasticsearch* databases to specify that the `opsrequest` of that database has not been started. **Elasticsearch** and **PostgreSQL** now supports Custom User(UID). Various Bugs have been fixed in **Postgres**, **Elasticsearch**, **MongoDB**, **MariaDB** and **MySQL**.
+We are pleased to announce [KubeDB v2021.04.16](https://kubedb.com/docs/v2021.04.16/setup/). This post lists all the major changes done in this release since `v2021.03.17`.  This release offers the latest images for MySQL and MariaDB official databases. A new phase `Pending`has been added to *MongoDB*, *MySQL* and *Elasticsearch* databases to specify that the `opsrequest` of that database has not been started. **Elasticsearch** and **PostgreSQL** now supports Custom User(UID). Various Bugs have been fixed in **Postgres**, **Elasticsearch**, **MongoDB**, **MariaDB** and **MySQL**.
 
 
 ## **Postgres**
