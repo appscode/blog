@@ -1,7 +1,7 @@
 ---
 title: How to Manage Database in Openshift Using KubeDB
 date: 2021-04-19
-weight: 19
+weight: 20
 authors:
   - Shohag Rana
 tags:
@@ -17,36 +17,32 @@ tags:
   - redis
   - kubedb
 ---
-# How to manage database in Openshift using KubeDB
 
-```bash
-~ $ oc get nodes
-NAME                 STATUS   ROLES           AGE   VERSION
-crc-xl2km-master-0   Ready    master,worker   12d   v1.20.0+bafe7
-```
+## Overview
+
+1) Install KubeDB
+2) Deploy Database
+3) Install Stash
+4) Backup Using Stash
+5) Recover Using Stash
+
 ## Step 1: Installing KubeDB 
-</br>
+There are 3 steps in installing KubeDB.
 
 ### Step 1.1: Get Cluster ID
 ```bash
-~ $ oc get ns kube-system -o=jsonpath='{.metadata.uid}'
+$ oc get ns kube-system -o=jsonpath='{.metadata.uid}'
 08b1259c-5d51-4948-a2de-e2af8e6835a4 
 ```
 ###  Step 1.2: Get License
 
 Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the license.txt file. For this tutorial we will use KubeDB Enterprise Edition.
+
 ![The KubeVault Overview](licenseserver.png)
 
 ### Step 1.3 Install KubeDB
-We need [helm](https://helm.sh/docs/intro/install/) to install KubeDB. It can be installed by the following commands:
-```bash
-$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-$ chmod 700 get_helm.sh
-$ ./get_helm.sh
-```
-
-Finally we install `KubeDB`
-
+We need helm to install KubeDB. It can be installed [here](https://helm.sh/docs/intro/install/) if it is not already installed.
+Now, let's install `KubeDB`.
 ```bash
 $ helm repo add appscode https://charts.appscode.com/stable/
 $ helm repo update
@@ -70,7 +66,7 @@ $ helm install kubedb appscode/kubedb \
 ```
 Let's verify the installation:
 ```bash
-watch oc get pods --all-namespaces -l "app.kubernetes
+$ watch oc get pods --all-namespaces -l "app.kubernetes
 Every 2.0s: oc get pods --all-namespaces -l app.kubernetes.io/instance=kubedb                                                                                                      Shohag: Wed Apr 21 10:08:54 2021
 
 NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE
@@ -81,7 +77,7 @@ kube-system   kubedb-kubedb-enterprise-b658c95fc-kwqt6    1/1     Running   0   
 ```
 We can see the CRD Groups that have been registered by the operator by running the following command:
 ```bash
-oc get crd -l app.kubernetes.io/name=kubedb
+$ oc get crd -l app.kubernetes.io/name=kubedb
 ```
 
 # Step 2: Deploying Database
@@ -92,7 +88,7 @@ The databases that KubeDB support are MongoDB, Elasticsearch, MySQL, MariaDB, Po
 ## Deploying MySQL Database
 Let's first create a Namespace in which we will deploy the database.
 ```bash
-oc create ns demo
+$ oc create ns demo
 ```
 Now lets apply the following yaml file:
 ```yaml
@@ -118,13 +114,13 @@ This yaml uses MySQL CRD.
 ### Check 1: StorageClass check
 Let's First check if storageclass is available:
 ```bash
-oc get storageclass
+$ oc get storageclass
 NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION
 local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false    
 ```
 If you dont see the above output then you should run:
 ```bash
-oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+$ oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
 ```
 This will create the storage-class named local-path.
 
@@ -132,12 +128,13 @@ This will create the storage-class named local-path.
 
 If you apply the above yaml and it is stuck in provisioning state then the pvc does not have required permissions. In such a case you should run:
 ```bash
-oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-storage:local-path-provisioner-service-account
+$ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-storage:local-path-provisioner-service-account
 ```
 This command will give the required permissions. </br>
 ### Deploy MySQL CRD
 Once these are handled correctly and the MySQL CRD is deployed you will see that the following are created:
 ```bash
+$ oc get all -n demo
 NAME                     READY   STATUS    RESTARTS   AGE
 pod/mysql-quickstart-0   1/1     Running   0          31m
 
@@ -161,14 +158,44 @@ mysql.kubedb.com/mysql-quickstart   8.0.23-v1   Ready    31m
 
 To access the database through CLI we have to exec into the container:
  ```bash
-oc exec -it -n demo mysql-quickstart-0 -- bash
+$ oc exec -it -n demo mysql-quickstart-0 -- bash
  ```
  Then to login into mysql:
  ```bash
 mysql -uroot -p${MYSQL_ROOT_PASSWORD}
  ```
 Now we have entered into the MySQL CLI and we can create and delete as we want.
+let's create a database and create a table called MyGuests:
+```bash
+mysql> create database testdb;
+mysql> show databases;
 
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
+| testdb             |
++--------------------+
+5 rows in set (0.01 sec)
+mysql> use testdb
+
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+mysql> CREATE TABLE MyGuests (
+    -> id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    -> firstname VARCHAR(30) NOT NULL,
+    -> lastname VARCHAR(30) NOT NULL,
+    -> email VARCHAR(50),
+    -> reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    -> );
+Query OK, 0 rows affected, 1 warning (0.02 sec)
+
+
+```
 > This was just one example of database deployment. The other databases that KubeDB suport are MongoDB, Elasticsearch, MariaDB, PostgreSQL and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
 
 # Backup and Recover In OpenShift
@@ -178,7 +205,7 @@ Now we have entered into the MySQL CLI and we can create and delete as we want.
 ### Step 1: Install Stash
 Here we will use the kubedb license we obtained earlier.
 ```bash
-helm install stash appscode/stash             \
+$ helm install stash appscode/stash             \
   --version v2021.04.12                  \
   --namespace kube-system                       \
   --set features.enterprise=true                \
@@ -186,7 +213,7 @@ helm install stash appscode/stash             \
 ```
 verify installation:
 ```bash
-oc get pods --all-namespaces -l app.kubernetes.io/name=stash-enterprise --watch
+$ oc get pods --all-namespaces -l app.kubernetes.io/name=stash-enterprise --watch
 ```
 ### Step 2: Prepare Backend
 Stash supports various backends for storing data snapshots. It can be a cloud storage like GCS bucket, AWS S3, Azure Blob Storage etc. or a Kubernetes persistent volume like HostPath, PersistentVolumeClaim, NFS etc.
@@ -196,10 +223,10 @@ For this tutorial we are going to use gcs-bucket. You can find other setups [her
  ![My GCS bucket](gcsEmptyBucket.png)
  **Create Secret:**
  ```bash
-~ $ echo -n 'YOURPASSWORD' > RESTIC_PASSWORD
-~ $ echo -n 'ackube' > GOOGLE_PROJECT_ID
-~ $ cat /home/ac/Downloads/ackube-87e4aa631714.json > GOOGLE_SERVICE_ACCOUNT_JSON_KEY
-~ $ oc create secret generic -n demo gcs-secret \
+$ echo -n 'YOURPASSWORD' > RESTIC_PASSWORD
+$ echo -n 'ackube' > GOOGLE_PROJECT_ID
+$ cat /home/ac/Downloads/ackube-87e4aa631714.json > GOOGLE_SERVICE_ACCOUNT_JSON_KEY
+$ oc create secret generic -n demo gcs-secret \
         --from-file=./RESTIC_PASSWORD \
         --from-file=./GOOGLE_PROJECT_ID \
         --from-file=./GOOGLE_SERVICE_ACCOUNT_JSON_KEY
