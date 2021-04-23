@@ -19,6 +19,8 @@ tags:
 ---
 
 ## Overview
+The databases that KubeDB support are MongoDB, Elasticsearch, MySQL, MariaDB, PostgreSQL and Redis. You can find the guides to all the supported databases [here](https://kubedb.com/).
+In this tutorial we will deploy MySQL database. We will cover the following steps:
 
 1) Install KubeDB
 2) Deploy Database
@@ -27,21 +29,23 @@ tags:
 5) Recover Using Stash
 
 ## Step 1: Installing KubeDB 
-There are 3 steps in installing KubeDB.
+We will follow the following sub-steps to install KubeDB.
 
-### Step 1.1: Get Cluster ID
+#### Step 1.1: Get Cluster ID
+We need the cluster ID to get the KubeDB License.
+To get cluster ID we can run the following command:
 ```bash
 $ oc get ns kube-system -o=jsonpath='{.metadata.uid}'
 08b1259c-5d51-4948-a2de-e2af8e6835a4 
 ```
-###  Step 1.2: Get License
+####  Step 1.2: Get License
 
 Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the license.txt file. For this tutorial we will use KubeDB Enterprise Edition.
 
 ![The KubeVault Overview](licenseserver.png)
 
-### Step 1.3 Install KubeDB
-We need helm to install KubeDB. It can be installed [here](https://helm.sh/docs/intro/install/) if it is not already installed.
+#### Step 1.3 Install KubeDB
+We will use helm to install KubeDB.Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
 Now, let's install `KubeDB`.
 ```bash
 $ helm repo add appscode https://charts.appscode.com/stable/
@@ -78,19 +82,67 @@ kube-system   kubedb-kubedb-enterprise-b658c95fc-kwqt6    1/1     Running   0   
 We can see the CRD Groups that have been registered by the operator by running the following command:
 ```bash
 $ oc get crd -l app.kubernetes.io/name=kubedb
+NAME                                              CREATED AT
+elasticsearchautoscalers.autoscaling.kubedb.com   2021-04-21T04:05:40Z
+elasticsearches.kubedb.com                        2021-04-21T04:05:37Z
+elasticsearchopsrequests.ops.kubedb.com           2021-04-21T04:05:37Z
+elasticsearchversions.catalog.kubedb.com          2021-04-21T04:02:43Z
+etcds.kubedb.com                                  2021-04-21T04:05:38Z
+etcdversions.catalog.kubedb.com                   2021-04-21T04:02:44Z
+mariadbs.kubedb.com                               2021-04-21T04:05:38Z
+mariadbversions.catalog.kubedb.com                2021-04-21T04:02:44Z
+memcacheds.kubedb.com                             2021-04-21T04:05:38Z
+memcachedversions.catalog.kubedb.com              2021-04-21T04:02:45Z
+mongodbautoscalers.autoscaling.kubedb.com         2021-04-21T04:05:37Z
+mongodbopsrequests.ops.kubedb.com                 2021-04-21T04:05:40Z
+mongodbs.kubedb.com                               2021-04-21T04:05:38Z
+mongodbversions.catalog.kubedb.com                2021-04-21T04:02:46Z
+mysqlopsrequests.ops.kubedb.com                   2021-04-21T04:05:48Z
+mysqls.kubedb.com                                 2021-04-21T04:05:38Z
+mysqlversions.catalog.kubedb.com                  2021-04-21T04:02:46Z
+perconaxtradbs.kubedb.com                         2021-04-21T04:05:38Z
+perconaxtradbversions.catalog.kubedb.com          2021-04-21T04:02:47Z
+pgbouncers.kubedb.com                             2021-04-21T04:05:39Z
+pgbouncerversions.catalog.kubedb.com              2021-04-21T04:02:47Z
+postgreses.kubedb.com                             2021-04-21T04:05:39Z
+postgresversions.catalog.kubedb.com               2021-04-21T04:02:48Z
+proxysqls.kubedb.com                              2021-04-21T04:05:39Z
+proxysqlversions.catalog.kubedb.com               2021-04-21T04:02:49Z
+redises.kubedb.com                                2021-04-21T04:05:39Z
+redisopsrequests.ops.kubedb.com                   2021-04-21T04:05:54Z
+redisversions.catalog.kubedb.com                  2021-04-21T04:02:49Z
 ```
 
 # Step 2: Deploying Database
 
-> Now we can Install a number of common databases with the help of KubeDB.
+Now we are going to Install MySQL with the help of KubeDB.
+At first, let's create a Namespace in which we will deploy the database.
 
-The databases that KubeDB support are MongoDB, Elasticsearch, MySQL, MariaDB, PostgreSQL and Redis. You can find the guides to all the supported databases [here](https://kubedb.com/).
-## Deploying MySQL Database
-Let's first create a Namespace in which we will deploy the database.
 ```bash
 $ oc create ns demo
 ```
-Now lets apply the following yaml file:
+Now, before deploying the MySQL CRD let's perform some checks to ensure that it is deployed correctly.
+### Check 1: StorageClass check
+Let's check the availabe storage classes: 
+```bash
+$ oc get storageclass
+NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION
+local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false    
+```
+Here, you can see that I hace a storageclass named `local-path`. If you dont have a storage class you can run the follwing command:
+```bash
+$ oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+```
+This will create the storage-class named local-path.
+
+### Check 2: Correct Permissions
+
+We need to ensure that the service account has correct permissions. To ensure correct permissions we should run:
+```bash
+$ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-storage:local-path-provisioner-service-account
+```
+This command will give the required permissions. </br>
+Here is the yaml of the MySQL CRD we are going to use:
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: MySQL
@@ -109,28 +161,15 @@ spec:
         storage: 1Gi
   terminationPolicy: WipeOut
 ```
-This yaml uses MySQL CRD. In this yaml we can see in the *spec.version* field the version of MySQL. You can change and get updated version by running `oc get mysqlversions` command. Another field to notice is the *spec.storagetype* field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not. Lastly, the *spec.terminationPolicy* field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/mysql/concepts/database/#specterminationpolicy)
-> NOTE: This might fail if correct permissions and storage class is not set. Let's make some checks so that the above yaml does not fail.
-### Check 1: StorageClass check
-Let's First check if storageclass is available:
-```bash
-$ oc get storageclass
-NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION
-local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false    
-```
-If you dont see the above output then you should run:
-```bash
-$ oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
-```
-This will create the storage-class named local-path.
+Let's save this yaml configuration into MySQL.yaml. Then apply using the command
+`oc apply -f MySQL.yaml`
 
-### Check 2: Correct Permissions
+This yaml uses MySQL CRD. 
+* In this yaml we can see in the `spec.version` field the version of MySQL. You can change and get updated version by running `oc get mysqlversions` command. 
+* Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not. 
+* `spec.storage.storageClassName` contains the name of the storage class we obtained before named "local-path".
+* Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/mysql/concepts/database/#specterminationpolicy).
 
-If you apply the above yaml and it is stuck in provisioning state then the pvc does not have required permissions. In such a case you should run:
-```bash
-$ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-storage:local-path-provisioner-service-account
-```
-This command will give the required permissions. </br>
 ### Deploy MySQL CRD
 Once these are handled correctly and the MySQL CRD is deployed you will see that the following are created:
 ```bash
@@ -165,7 +204,7 @@ $ oc exec -it -n demo mysql-quickstart-0 -- bash
 mysql -uroot -p${MYSQL_ROOT_PASSWORD}
  ```
 Now we have entered into the MySQL CLI and we can create and delete as we want.
-let's create a database and create a table called MyGuests:
+let's create a database and create a test table called MyGuests:
 ```bash
 mysql> create database testdb;
 mysql> show databases;
@@ -205,10 +244,9 @@ mysql> show tables;
 ```
 > This was just one example of database deployment. The other databases that KubeDB suport are MongoDB, Elasticsearch, MariaDB, PostgreSQL and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
 
-# Backup and Recover In OpenShift
+# Backup and Recover Database Using Stash
 
-## Backup
-
+Here we are going to backup the database we deployed before using Stash.
 ### Step 1: Install Stash
 Here we will use the KubeDB license we obtained earlier.
 ```bash
@@ -228,6 +266,7 @@ Stash supports various backends for storing data snapshots. It can be a cloud st
 For this tutorial we are going to use gcs-bucket. You can find other setups [here](https://stash.run/docs/v2021.04.12/guides/latest/backends/overview/).
 
  ![My GCS bucket](gcsEmptyBucket.png)
+
  **Create Secret:**
  ```bash
 $ echo -n 'YOURPASSWORD' > RESTIC_PASSWORD
@@ -282,7 +321,7 @@ spec:
     keepLast: 5
     prune: true
 ```
-This BackupConfiguration creates a cronjob that backs up the specified database every 5 minutes.</br>
+Notice that the BackupConfiguration contains `spec.runtimeSettings.container.securitycontext` field. The user and group security context need to be changed in OpenShift to the values within 1000610000 - 1000619999. Now, this BackupConfiguration creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.</br>
 So, after 5 minutes we can see the following status:
 
 ![](backup.png)
@@ -294,16 +333,15 @@ Now if we check our GCS bucket we can see that the backup has been successful.
 > **If you reached here CONGRATULATIONS!! :confetti_ball:  :partying_face: 		:confetti_ball: The backup has been successful**. If you didn't its okay. You can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
 
 ## Recover
-Let's think of a scenario in which the database has been accidentally deleted or there was an error in the database causing it to crash.</br>
-In such a case, we have to pause the backupconfiguration so that the failed/damaged database does not get backed up into the cloud:
+Let's think of a scenario in which the database has been accidentally deleted or there was an error in the database causing it to crash.
+In such a case, we have to pause the BackupConfiguration so that the failed/damaged database does not get backed up into the cloud:
 ```bash
 oc patch backupconfiguration -n demo sample-mysql-backup --type="merge" --patch='{"spec": {"paused": true}}'
 ```
-In order to show that the recovery has been successful let's simulate accidental database deletion.
+At first let's simulate accidental database deletion.
 
 ![Delete Database](deleteDatabase.png)
 
-**Now let's start recovering the database.**
 ### Step 1: Create a RestoreSession
 ```yaml
 apiVersion: stash.appscode.com/v1beta1
@@ -327,13 +365,16 @@ spec:
   rules:
     - snapshots: [latest]
 ```
+Notice that the `securityContext` field is the same as we mentioned earlier in the BackupConfiguration. This RestoreSession specifies where the data will be restored.
 Once this is applied, a RestoreSession will be created. Once it has succeeded, the database has been successfully recovered as you can see in the images below:
 
 ![Recovery Succeeded](recoverSucceed.png)
 
+Now let's check whether the database has been correctly restored:
+
 ![Recovered Database](recoveredDB.png)
 
-> **CONGRATULATIONS!! :confetti_ball:  :partying_face: 		:confetti_ball: The recovery has been successful**. If you faced any difficulties in the recovery process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20OpenShift).
+> The recovery has been successful. If you faced any difficulties in the recovery process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20OpenShift).
 
 
 ## Support
