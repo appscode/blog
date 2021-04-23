@@ -109,7 +109,7 @@ spec:
         storage: 1Gi
   terminationPolicy: WipeOut
 ```
-This yaml uses MySQL CRD.
+This yaml uses MySQL CRD. In this yaml we can see in the *spec.version* field the version of MySQL. You can change and get updated version by running `oc get mysqlversions` command. Another field to notice is the *spec.storagetype* field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not. Lastly, the *spec.terminationPolicy* field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/mysql/concepts/database/#specterminationpolicy)
 > NOTE: This might fail if correct permissions and storage class is not set. Let's make some checks so that the above yaml does not fail.
 ### Check 1: StorageClass check
 Let's First check if storageclass is available:
@@ -231,8 +231,8 @@ For this tutorial we are going to use gcs-bucket. You can find other setups [her
  **Create Secret:**
  ```bash
 $ echo -n 'YOURPASSWORD' > RESTIC_PASSWORD
-$ echo -n 'ackube' > GOOGLE_PROJECT_ID
-$ cat /home/ac/Downloads/ackube-87e4aa631714.json > GOOGLE_SERVICE_ACCOUNT_JSON_KEY
+$ echo -n 'YOURPROJECTNAME' > GOOGLE_PROJECT_ID
+$ cat /PATH/TO/JSONKEY.json > GOOGLE_SERVICE_ACCOUNT_JSON_KEY
 $ oc create secret generic -n demo gcs-secret \
         --from-file=./RESTIC_PASSWORD \
         --from-file=./GOOGLE_PROJECT_ID \
@@ -249,11 +249,13 @@ metadata:
 spec:
   backend:
     gcs:
-      bucket: stash-shohag
+      bucket: YOURBUCKETNAME
       prefix: /demo/mysql/sample-mysql
     storageSecretName: gcs-secret
 ```
 This repository specifies the gcs-secret we created before and connects to the gcs-bucket. It also specifies the location in the bucket where we want to backup our database.
+> Don't forget to change `spec.backend.gcs.bucket` to your bucket name.
+
 ### Step 4: Create BackupConfiguration
 ```yaml
 apiVersion: stash.appscode.com/v1beta1
