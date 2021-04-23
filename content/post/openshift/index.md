@@ -1,6 +1,6 @@
 ---
 title: How to Manage Database in Openshift Using KubeDB
-date: 2021-04-19
+date: 2021-04-23
 weight: 20
 authors:
   - Shohag Rana
@@ -84,7 +84,7 @@ $ oc get crd -l app.kubernetes.io/name=kubedb
 
 > Now we can Install a number of common databases with the help of KubeDB.
 
-The databases that KubeDB support are MongoDB, Elasticsearch, MySQL, MariaDB, PostgreSQL and Redis.
+The databases that KubeDB support are MongoDB, Elasticsearch, MySQL, MariaDB, PostgreSQL and Redis. You can find the guides to all the supported databases [here](https://kubedb.com/).
 ## Deploying MySQL Database
 Let's first create a Namespace in which we will deploy the database.
 ```bash
@@ -194,6 +194,13 @@ mysql> CREATE TABLE MyGuests (
     -> );
 Query OK, 0 rows affected, 1 warning (0.02 sec)
 
+mysql> show tables;
++------------------+
+| Tables_in_testdb |
++------------------+
+| MyGuests         |
++------------------+
+1 row in set (0.02 sec)
 
 ```
 > This was just one example of database deployment. The other databases that KubeDB suport are MongoDB, Elasticsearch, MariaDB, PostgreSQL and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
@@ -203,7 +210,7 @@ Query OK, 0 rows affected, 1 warning (0.02 sec)
 ## Backup
 
 ### Step 1: Install Stash
-Here we will use the kubedb license we obtained earlier.
+Here we will use the KubeDB license we obtained earlier.
 ```bash
 $ helm install stash appscode/stash             \
   --version v2021.04.12                  \
@@ -211,7 +218,7 @@ $ helm install stash appscode/stash             \
   --set features.enterprise=true                \
   --set-file global.license=/path/to/the/license.txt
 ```
-verify installation:
+Let's verify the installation:
 ```bash
 $ oc get pods --all-namespaces -l app.kubernetes.io/name=stash-enterprise --watch
 ```
@@ -246,7 +253,7 @@ spec:
       prefix: /demo/mysql/sample-mysql
     storageSecretName: gcs-secret
 ```
-This repository specifies the gcs-secret we created before and connects to the gcs-bucket.
+This repository specifies the gcs-secret we created before and connects to the gcs-bucket. It also specifies the location in the bucket where we want to backup our database.
 ### Step 4: Create BackupConfiguration
 ```yaml
 apiVersion: stash.appscode.com/v1beta1
@@ -273,7 +280,7 @@ spec:
     keepLast: 5
     prune: true
 ```
-This BackupConfiguration creates a cronjob that backs up the specified database every 5 minutes.</br></br>
+This BackupConfiguration creates a cronjob that backs up the specified database every 5 minutes.</br>
 So, after 5 minutes we can see the following status:
 
 ![](backup.png)
@@ -285,7 +292,8 @@ Now if we check our GCS bucket we can see that the backup has been successful.
 > **If you reached here CONGRATULATIONS!! :confetti_ball:  :partying_face: 		:confetti_ball: The backup has been successful**. If you didn't its okay. You can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
 
 ## Recover
-We have to pause backup cronjob:
+Let's think of a scenario in which the database has been accidentally deleted or there was an error in the database causing it to crash.</br>
+In such a case, we have to pause the backupconfiguration so that the failed/damaged database does not get backed up into the cloud:
 ```bash
 oc patch backupconfiguration -n demo sample-mysql-backup --type="merge" --patch='{"spec": {"paused": true}}'
 ```
@@ -323,7 +331,7 @@ Once this is applied, a RestoreSession will be created. Once it has succeeded, t
 
 ![Recovered Database](recoveredDB.png)
 
-> Thus we have successfully recovered the MySQL database.
+> **CONGRATULATIONS!! :confetti_ball:  :partying_face: 		:confetti_ball: The recovery has been successful**. If you faced any difficulties in the recovery process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20OpenShift).
 
 
 ## Support
