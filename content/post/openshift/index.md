@@ -1,5 +1,5 @@
 ---
-title: How to Manage Database in Openshift Using KubeDB
+title: How to Manage MySQL in Openshift Using KubeDB
 date: 2021-04-23
 weight: 20
 authors:
