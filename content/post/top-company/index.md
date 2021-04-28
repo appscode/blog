@@ -18,11 +18,8 @@ tags:
   - kubedb
 ---
 
-We are very excited to inform you that AppsCode has been nominated as a 
-top software engineering company in San Francisco by the Startup Pill.
-The original post can be found [HERE](https://startupill.com/these-are-the-top-software-engineering-startups-in-san-francisco-2021/).
+We are very excited to inform you that AppsCode has been nominated as a top software engineering company in San Francisco by the Startup Pill. According to Startup Pill, AppsCode had exceptional performance in Innovation. The original post can be found [HERE](https://startupill.com/these-are-the-top-software-engineering-startups-in-san-francisco-2021/).
 
-According to Startup Pill, AppsCode had exceptional performance in `Innovation`.
 
 ## Get to Know AppsCode
 
@@ -60,7 +57,6 @@ Stash by AppsCode is a cloud native data backup and recovery solution for Kubern
  - Cloud & On-Prem Storage as Backend
  - Backup & Restore Databases
  - Extensibility and Customizability
- - CLI
  - Prometheus Metrics
 
 Learn more about Stash [HERE](https://stash.run/).
