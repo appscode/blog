@@ -1,5 +1,5 @@
 ---
-title: AppsCode Nominated As A Top Software Engineering Company In San Francisco
+title: A Top Software Engineering Startup In San Francisco
 date: 2021-04-27
 weight: 21
 authors:
@@ -18,16 +18,15 @@ tags:
   - kubedb
 ---
 
-
-### AppsCode was nominated as a top software engineering company in San Francisco by the Startup Pill.
-
-> The original post can be found [HERE](https://startupill.com/these-are-the-top-software-engineering-startups-in-san-francisco-2021/)
+We are very excited to inform you that AppsCode has been nominated as a 
+top software engineering company in San Francisco by the Startup Pill.
+The original post can be found [HERE](https://startupill.com/these-are-the-top-software-engineering-startups-in-san-francisco-2021/).
 
 According to Startup Pill, AppsCode had exceptional performance in `Innovation`.
 
 ## Get to Know AppsCode
 
-AppsCode is a global leader in Enterprise-grade Kubernetes-native Data Platforms. AppsCode has released KubeDB Enterprise Edition, a production-grade cloud-native database management solution for Kubernetes. AppsCode is building a universal cloud native data platform for the age of Kubernetes. AppsCode was established in 2016 by Tamal Saha, a former Google engineer. AppsCode develops a number of popular products for Kubernetes, namely KubeDB, Stash, KubeVault, Kubeform, Voyager. Learn more about [AppsCode here](https://appscode.com).
+AppsCode is a global leader in Enterprise-grade Kubernetes-native Data Platforms. AppsCode has released KubeDB, a production-grade cloud-native database management solution for Kubernetes. AppsCode is building a universal cloud native data platform for the age of Kubernetes. AppsCode was established in 2016 by Tamal Saha, a former Google engineer. AppsCode develops a number of popular products for Kubernetes, namely KubeDB, Stash, KubeVault, Kubeform, Voyager. Learn more about [AppsCode here](https://appscode.com).
 
 ## The Problem At Hand
 
@@ -36,36 +35,37 @@ Kubernetes has emerged as the de-facto way to deploy modern containerized apps o
 ## The Solution That AppsCode Provides
 
 KubeDB provides you with many familiar database engines to choose from, including PostgreSQL, MariaDB, MySQL, MongoDB, Elasticsearch, Redis and Memcached. And the list is growing. KubeDB’s native integration with Kubernetes makes a unique solution compared to competitive solutions from cloud providers and database vendors. It is also very easy to use and AppsCode support is very responsive. 
+
 ## Products Of AppsCode
-The products of AppsCode are KubeDB, Stash, KubeVault, Kubeform, Voyager. Let's have a look at the features these products provides.
+The products of AppsCode are KubeDB, Stash, KubeVault, Kubeform, Voyager. Let's have a look at the features of these products.
 
 ### KubeDB
 KubeDB by AppsCode simplifies and automates routine database tasks such as provisioning, patching, backup, recovery, failure detection, and repair for various popular databases on private and public clouds. 
 ##### Features: 
 
- - Lower administrative burden 
- - Native Kubernetes Support
- - Availability and durability
- - Performance
+ - Backup/Recovery
+ - Security Patch Upgrades
+ - Auto scaling CPU/Memory/Storage/Replicas
+ - Hashicorp Vault Integration
  - Cost-effectiveness
- - Security
- - Manageability
+ - tls- management cert manager
+
 
 Learn more about KubeDB [HERE](https://kubedb.com).
 ### Stash
 Stash by AppsCode is a cloud native data backup and recovery solution for Kubernetes workloads, volumes and databases.
 ##### Features: 
- - Declarative API
- - Backup Database
- - Backup Kubernetes Volumes
- - Cluster Snapshot
- - Volume Snapshot
- - Multiple Platforms Support
- - Multiple Architectures Support
+ - Backup & Restore Workload Data & Stand-alone PVC
+ - Schedule Backup, Instant Backup
+ - Cloud & On-Prem Storage as Backend
+ - Backup & Restore Databases
+ - Extensibility and Customizability
+ - CLI
+ - Prometheus Metrics
 
 Learn more about Stash [HERE](https://stash.run/).
 
-## Voyager
+### Voyager
 Secure HAProxy Ingress Controller for Kubernetes.
 ##### Features: 
  - Comes with built-in support for Prometheus
@@ -76,7 +76,7 @@ Secure HAProxy Ingress Controller for Kubernetes.
  - Supports HTTP and TCP load balancing.
 
 Learn more about Voyager [HERE](https://voyagermesh.com/).
-## KubeVault
+### KubeVault
 Tools for running HashiCorp Vault on Kubernetes.
 ##### Features: 
  - Automatic Initialization & Unsealing
@@ -87,7 +87,7 @@ Tools for running HashiCorp Vault on Kubernetes.
  - GCP Secret Engine
  
  Learn more about KubeVault [HERE](https://kubevault.com/)
-## Kubeform
+### Kubeform
 Provision cloud resources using <strong>Kubernetes</strong> CRDs & <strong>Terraform</strong>.
 ##### Features: 
  - Native Kubernetes Support
