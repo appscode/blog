@@ -19,6 +19,7 @@ tags:
 ---
 
 ## Overview
+
 The databases that KubeDB support are MongoDB, Elasticsearch, MySQL, MariaDB, PostgreSQL and Redis. You can find the guides to all the supported databases [here](https://kubedb.com/).
 In this tutorial we will deploy MySQL database. We will cover the following steps:
 
@@ -28,25 +29,31 @@ In this tutorial we will deploy MySQL database. We will cover the following step
 4) Backup Using Stash
 5) Recover Using Stash
 
-## Step 1: Installing KubeDB 
+## Step 1: Installing KubeDB
+
 We will follow the following sub-steps to install KubeDB.
 
-#### Step 1.1: Get Cluster ID
+### Step 1.1: Get Cluster ID
+
 We need the cluster ID to get the KubeDB License.
 To get cluster ID we can run the following command:
+
 ```bash
 $ oc get ns kube-system -o=jsonpath='{.metadata.uid}'
 08b1259c-5d51-4948-a2de-e2af8e6835a4 
 ```
-####  Step 1.2: Get License
+
+### Step 1.2: Get License
 
 Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the license.txt file. For this tutorial we will use KubeDB Enterprise Edition.
 
 ![The KubeVault Overview](licenseserver.png)
 
-#### Step 1.3 Install KubeDB
+### Step 1.3 Install KubeDB
+
 We will use helm to install KubeDB.Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
 Now, let's install `KubeDB`.
+
 ```bash
 $ helm repo add appscode https://charts.appscode.com/stable/
 $ helm repo update
@@ -68,7 +75,9 @@ $ helm install kubedb appscode/kubedb \
     --set kubedb-enterprise.enabled=true \
     --set kubedb-autoscaler.enabled=true
 ```
+
 Let's verify the installation:
+
 ```bash
 $ watch oc get pods --all-namespaces -l "app.kubernetes
 Every 2.0s: oc get pods --all-namespaces -l app.kubernetes.io/instance=kubedb                                                                                                      Shohag: Wed Apr 21 10:08:54 2021
@@ -79,7 +88,9 @@ kube-system   kubedb-kubedb-community-b6469fb9c-4hwbh     1/1     Running   0   
 kube-system   kubedb-kubedb-enterprise-b658c95fc-kwqt6    1/1     Running   0          3m28s
 
 ```
+
 We can see the CRD Groups that have been registered by the operator by running the following command:
+
 ```bash
 $ oc get crd -l app.kubernetes.io/name=kubedb
 NAME                                              CREATED AT
@@ -113,7 +124,7 @@ redisopsrequests.ops.kubedb.com                   2021-04-21T04:05:54Z
 redisversions.catalog.kubedb.com                  2021-04-21T04:02:49Z
 ```
 
-# Step 2: Deploying Database
+## Step 2: Deploying Database
 
 Now we are going to Install MySQL with the help of KubeDB.
 At first, let's create a Namespace in which we will deploy the database.
@@ -121,28 +132,38 @@ At first, let's create a Namespace in which we will deploy the database.
 ```bash
 $ oc create ns demo
 ```
+
 Now, before deploying the MySQL CRD let's perform some checks to ensure that it is deployed correctly.
+
 ### Check 1: StorageClass check
-Let's check the availabe storage classes: 
+
+Let's check the availabe storage classes:
+
 ```bash
 $ oc get storageclass
 NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION
 local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false    
 ```
+
 Here, you can see that I hace a storageclass named `local-path`. If you dont have a storage class you can run the follwing command:
+
 ```bash
 $ oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
 ```
+
 This will create the storage-class named local-path.
 
 ### Check 2: Correct Permissions
 
 We need to ensure that the service account has correct permissions. To ensure correct permissions we should run:
+
 ```bash
 $ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-storage:local-path-provisioner-service-account
 ```
+
 This command will give the required permissions. </br>
 Here is the yaml of the MySQL CRD we are going to use:
+
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: MySQL
@@ -161,17 +182,21 @@ spec:
         storage: 1Gi
   terminationPolicy: WipeOut
 ```
+
 Let's save this yaml configuration into MySQL.yaml. Then apply using the command
 `oc apply -f MySQL.yaml`
 
-This yaml uses MySQL CRD. 
+This yaml uses MySQL CRD.
+
 * In this yaml we can see in the `spec.version` field the version of MySQL. You can change and get updated version by running `oc get mysqlversions` command. 
 * Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not. 
 * `spec.storage.storageClassName` contains the name of the storage class we obtained before named "local-path".
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/mysql/concepts/database/#specterminationpolicy).
 
 ### Deploy MySQL CRD
+
 Once these are handled correctly and the MySQL CRD is deployed you will see that the following are created:
+
 ```bash
 $ oc get all -n demo
 NAME                     READY   STATUS    RESTARTS   AGE
@@ -196,15 +221,20 @@ mysql.kubedb.com/mysql-quickstart   8.0.23-v1   Ready    31m
 ## Accessing Database Through CLI
 
 To access the database through CLI we have to exec into the container:
+
  ```bash
 $ oc exec -it -n demo mysql-quickstart-0 -- bash
  ```
+
  Then to login into mysql:
+
  ```bash
 mysql -uroot -p${MYSQL_ROOT_PASSWORD}
  ```
+
 Now we have entered into the MySQL CLI and we can create and delete as we want.
 let's create a database and create a test table called MyGuests:
+
 ```bash
 mysql> create database testdb;
 mysql> show databases;
@@ -240,15 +270,18 @@ mysql> show tables;
 | MyGuests         |
 +------------------+
 1 row in set (0.02 sec)
-
 ```
+
 > This was just one example of database deployment. The other databases that KubeDB suport are MongoDB, Elasticsearch, MariaDB, PostgreSQL and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
 
-# Backup and Recover Database Using Stash
+## Backup and Recover Database Using Stash
 
 Here we are going to backup the database we deployed before using Stash.
+
 ### Step 1: Install Stash
+
 Here we will use the KubeDB license we obtained earlier.
+
 ```bash
 $ helm install stash appscode/stash             \
   --version v2021.04.12                  \
@@ -256,11 +289,15 @@ $ helm install stash appscode/stash             \
   --set features.enterprise=true                \
   --set-file global.license=/path/to/the/license.txt
 ```
+
 Let's verify the installation:
+
 ```bash
 $ oc get pods --all-namespaces -l app.kubernetes.io/name=stash-enterprise --watch
 ```
+
 ### Step 2: Prepare Backend
+
 Stash supports various backends for storing data snapshots. It can be a cloud storage like GCS bucket, AWS S3, Azure Blob Storage etc. or a Kubernetes persistent volume like HostPath, PersistentVolumeClaim, NFS etc.
 
 For this tutorial we are going to use gcs-bucket. You can find other setups [here](https://stash.run/docs/v2021.04.12/guides/latest/backends/overview/).
@@ -268,6 +305,7 @@ For this tutorial we are going to use gcs-bucket. You can find other setups [her
  ![My GCS bucket](gcsEmptyBucket.png)
 
  **Create Secret:**
+
  ```bash
 $ echo -n 'YOURPASSWORD' > RESTIC_PASSWORD
 $ echo -n 'YOURPROJECTNAME' > GOOGLE_PROJECT_ID
@@ -277,7 +315,8 @@ $ oc create secret generic -n demo gcs-secret \
         --from-file=./GOOGLE_PROJECT_ID \
         --from-file=./GOOGLE_SERVICE_ACCOUNT_JSON_KEY
  ```
- ### Step 3: Create Repository
+
+### Step 3: Create Repository
 
 ```yaml
 apiVersion: stash.appscode.com/v1alpha1
@@ -292,10 +331,12 @@ spec:
       prefix: /demo/mysql/sample-mysql
     storageSecretName: gcs-secret
 ```
+
 This repository specifies the gcs-secret we created before and connects to the gcs-bucket. It also specifies the location in the bucket where we want to backup our database.
 > Don't forget to change `spec.backend.gcs.bucket` to your bucket name.
 
 ### Step 4: Create BackupConfiguration
+
 ```yaml
 apiVersion: stash.appscode.com/v1beta1
 kind: BackupConfiguration
@@ -321,28 +362,33 @@ spec:
     keepLast: 5
     prune: true
 ```
+
 Notice that the BackupConfiguration contains `spec.runtimeSettings.container.securitycontext` field. The user and group security context need to be changed in OpenShift to the values within 1000610000 - 1000619999. Now, this BackupConfiguration creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.</br>
 So, after 5 minutes we can see the following status:
 
-![](backup.png)
+![Backup](backup.png)
 
 Now if we check our GCS bucket we can see that the backup has been successful.
 
-![](gcsSuccess.png)
+![gcsSuccess](gcsSuccess.png)
 
-> **If you reached here CONGRATULATIONS!! :confetti_ball:  :partying_face: 		:confetti_ball: The backup has been successful**. If you didn't its okay. You can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
+> **If you reached here CONGRATULATIONS!! :confetti_ball:  :partying_face: :confetti_ball: The backup has been successful**. If you didn't its okay. You can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
 
 ## Recover
+
 Let's think of a scenario in which the database has been accidentally deleted or there was an error in the database causing it to crash.
 In such a case, we have to pause the BackupConfiguration so that the failed/damaged database does not get backed up into the cloud:
+
 ```bash
 oc patch backupconfiguration -n demo sample-mysql-backup --type="merge" --patch='{"spec": {"paused": true}}'
 ```
+
 At first let's simulate accidental database deletion.
 
 ![Delete Database](deleteDatabase.png)
 
 ### Step 1: Create a RestoreSession
+
 ```yaml
 apiVersion: stash.appscode.com/v1beta1
 kind: RestoreSession
@@ -365,6 +411,7 @@ spec:
   rules:
     - snapshots: [latest]
 ```
+
 Notice that the `securityContext` field is the same as we mentioned earlier in the BackupConfiguration. This RestoreSession specifies where the data will be restored.
 Once this is applied, a RestoreSession will be created. Once it has succeeded, the database has been successfully recovered as you can see in the images below:
 
@@ -375,7 +422,6 @@ Now let's check whether the database has been correctly restored:
 ![Recovered Database](recoveredDB.png)
 
 > The recovery has been successful. If you faced any difficulties in the recovery process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20OpenShift).
-
 
 ## Support
 
