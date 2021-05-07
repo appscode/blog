@@ -79,8 +79,7 @@ $ helm install kubedb appscode/kubedb \
 Let's verify the installation:
 
 ```bash
-$ watch oc get pods --all-namespaces -l "app.kubernetes
-Every 2.0s: oc get pods --all-namespaces -l app.kubernetes.io/instance=kubedb                                                                                                      Shohag: Wed Apr 21 10:08:54 2021
+$ watch kubectl get pods --all-namespaces -l "app.kubernetes.io/instance=kubedb"
 
 NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE
 kube-system   kubedb-kubedb-autoscaler-569f66dbbc-qqmmb   1/1     Running   0          3m28s
