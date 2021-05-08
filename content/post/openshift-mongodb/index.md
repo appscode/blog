@@ -184,7 +184,7 @@ spec:
 Let's save this yaml configuration into mongoDB.yaml. Then apply using the command
 `oc apply -f mongoDB.yaml`
 
-This yaml uses MonngoDB CRD.
+This yaml uses MongoDB CRD.
 
 * In this yaml we can see in the `spec.version` field the version of MongoDB. You can change and get updated version by running `oc get mongodbversions` command.
 * Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not.
