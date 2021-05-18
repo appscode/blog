@@ -145,7 +145,7 @@ NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLO
 local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false    
 ```
 
-Here, you can see that I hace a storageclass named `local-path`. If you dont have a storage class you can run the following command:
+Here, you can see that I have a storageclass named `local-path`. If you dont have a storage class you can run the following command:
 
 ```bash
 $ oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
@@ -162,7 +162,7 @@ $ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-stor
 ```
 
 This command will give the required permissions. </br>
-Here is the yaml of the MariaDB CRD we are going to use:
+Now, let's have a look into the yaml of the MariaDB CRD we are going to use:
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -189,8 +189,7 @@ This yaml uses MariaDB CRD.
 
 * In this yaml we can see in the `spec.version` field the version of MariaDB. You can change and get updated version by running `oc get mariadbversions` command.
 * Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not.
-* `spec.storage.storageClassName` contains the name of the storage class we obtained before named "local-path".
-* Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/postgres/concepts/postgres/#specterminationpolicy).
+* Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about the fields of terminationPolicy [HERE](https://kubedb.com/docs/v2021.04.16/guides/postgres/concepts/postgres/#specterminationpolicy).
 
 ### Deploy MariaDB CRD
 
@@ -398,7 +397,7 @@ Now if we check our GCS bucket we can see that the backup has been successful.
 
 ![gcsSuccess](gcsSuccess.png)
 
-> **If you reached here CONGRATULATIONS!! :confetti_ball:  :partying_face: :confetti_ball: The backup has been successful**. If you didn't its okay. You can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
+> The backup has been successful. If you have any queries, you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
 
 ## Recover
 
