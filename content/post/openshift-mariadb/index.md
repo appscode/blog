@@ -362,7 +362,7 @@ This repository specifies the gcs-secret we created before and connects to the g
 apiVersion: stash.appscode.com/v1beta1
 kind: BackupConfiguration
 metadata:
-  name: sample-mongodb-backup
+  name: sample-mariadb-backup
   namespace: demo
 spec:
   schedule: "*/5 * * * *"
@@ -372,7 +372,7 @@ spec:
     ref:
       apiVersion: appcatalog.appscode.com/v1alpha1
       kind: AppBinding
-      name: mgo-quickstart
+      name: sample-mariadb
   runtimeSettings:
     container:
       securityContext:
@@ -458,7 +458,7 @@ Now, let's create a RestoreSession that will initiate restoring from the cloud.
 apiVersion: stash.appscode.com/v1beta1
 kind: RestoreSession
 metadata:
-  name: sample-mongodb-restore
+  name: sample-mariadb-restore
   namespace: demo
 spec:
   repository:
@@ -467,7 +467,7 @@ spec:
     ref:
       apiVersion: appcatalog.appscode.com/v1alpha1
       kind: AppBinding
-      name: mgo-quickstart
+      name: sample-mariadb
   runtimeSettings:
     container:
       securityContext:
