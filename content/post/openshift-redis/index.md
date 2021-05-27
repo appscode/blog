@@ -25,7 +25,7 @@ In this tutorial we will deploy Redis database. We will cover the following step
 
 1) Install KubeDB
 2) Deploy Redis Cluster
-3) See the Automatic Failover feature
+3) See Automatic Failover feature
 
 ## Step 1: Installing KubeDB
 
@@ -204,7 +204,7 @@ This yaml uses Redis CRD.
 Once these are handled correctly and the Redis CRD is deployed you will see that the following are created:
 
 ```bash
-~ $ oc get all -n demo
+$ oc get all -n demo
 NAME                         READY   STATUS    RESTARTS   AGE
 pod/redis-cluster-shard0-0   1/1     Running   0          27h
 pod/redis-cluster-shard0-1   1/1     Running   0          27h
@@ -245,7 +245,6 @@ redis-cluster-shard1-1 ---------- 10.217.0.43:6379
 redis-cluster-shard2-0 ---------- 10.217.0.29:6379
 redis-cluster-shard2-1 ---------- 10.217.0.21:6379
 
-
 # This command shows the roles of each of the pods of Redis:
 /data $ redis-cli -c cluster nodes
 bb690f0802a203d8106139397febfa586c707b77 10.217.0.21:6379@16379 slave c9f383c2176a9da2fbda64bab379d0680a10d972 0 1621833286000 25 connected
@@ -256,7 +255,7 @@ c9f383c2176a9da2fbda64bab379d0680a10d972 10.217.0.29:6379@16379 master - 0 16218
 d9410e5a6f9d85b32aa8d4bfd73d7007be61b3c8 10.217.0.43:6379@16379 slave e3f2085ee716bacf17a298081bfa29a1454a8a87 0 1621833285007 21 connected
 
 # connect to any node
-~ $ oc exec -it redis-cluster-shard0-0 -n demo -c redis -- sh
+$ oc exec -it redis-cluster-shard0-0 -n demo -c redis -- sh
 
 # connect to any master pod
 /data $ redis-cli -c -h 10.217.0.108
@@ -270,13 +269,13 @@ OK
  ```
 
 Now we have entered into the Redis CLI and we can create and delete as we want.
-redis stores data as key value pair. In the above commands, we set hello to "world".
+Redis stores data as key value pair. In the above commands, we set the key "hello" to the value "world".
 
-> This was just one example of database deployment. The other databases that KubeDB suport are MySQL, Postgres, Elasticsearch, MongoDB and MariaDB. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
+> This was just one example of database deployment. The other databases that KubeDB suport are MySQL, Postgres, Elasticsearch, MongoDB, Memcached and MariaDB. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
 
 ## Redis Clustering Features
 
-There are 2 main features of Clustering which are `Data Availability` and `Automatic Failover`. These are shown below:
+There are 2 main features of Clustering which are `Data Availability` and `Automatic Failover`. These are shown in the following sections.
 
 ### Data Availability
 
