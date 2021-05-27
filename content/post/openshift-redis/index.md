@@ -49,8 +49,7 @@ Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the
 
 ### Step 1.3 Install KubeDB
 
-We will use helm to install KubeDB.Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
-Now, let's install `KubeDB`.
+We will use helm to install KubeDB. Please install helm from [here](https://helm.sh/docs/intro/install/) if it is not already installed. Now, let's install `KubeDB`.
 
 ```bash
 $ helm repo add appscode https://charts.appscode.com/stable/
@@ -233,7 +232,7 @@ redis.kubedb.com/redis-cluster   6.0.6     Ready    27h
 
 ## Accessing Database Through CLI
 
-To access the database through CLI we have to connect to any redis node. Then we
+To access the database through CLI we have to connect to any redis node.
 
  ```bash
  # This command shows all the IP's of the redis pods
@@ -323,7 +322,7 @@ dcead4ade01632fe376466274345b0d9e846cfcf 10.217.0.28:6379@16379 master - 0 16219
 c9f383c2176a9da2fbda64bab379d0680a10d972 10.217.0.29:6379@16379 master - 0 1621931347000 25 connected 10923-16383
 ```
 
-Notice that 10.217.0.28 is the new master and 10.217.0.9 is the replica of 10.217.0.28. This means that the replica has noe become the master node since the previous master node crashed. Here, we notice that there has been a successful recovery from failover.
+Notice that 10.217.0.28 is the new master and 10.217.0.9 is the replica of 10.217.0.28. This means that the replica has now become the master node since the previous master node crashed. Here, we notice that there has been a successful recovery from failover.
 
 ## Support
 
