@@ -529,6 +529,7 @@ MariaDB [(none)]> select * from company.employees;
 
 MariaDB [(none)]> Bye
 1000610000@sample-mariadb-0:/$ exit
+
 ```
 
 > The recovery has been successful. If you faced any difficulties in the recovery process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20OpenShift).
