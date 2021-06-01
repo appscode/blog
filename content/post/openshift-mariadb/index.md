@@ -158,7 +158,7 @@ This will create the storage-class named local-path.
 We can ensure that the service account has correct permissions by running the following command:
 
 ```bash
-$ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-storage:local-pbraath-provisioner-service-account
+$ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-storage:local-path-provisioner-service-account
 ```
 
 OpenShift has Security Context Constraints for which the MariaDB CRD is restricted to be deployed. The above command will give the required permissions. </br>
