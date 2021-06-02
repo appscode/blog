@@ -144,7 +144,7 @@ NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLO
 local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false    
 ```
 
-Here, you can see that I hace a storageclass named `local-path`. If you dont have a storage class you can run the following command:
+Here, you can see that I have a storageclass named `local-path`. If you do not have a storage class you can run the following command:
 
 ```bash
 $ oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
@@ -161,6 +161,9 @@ $ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-stor
 ```
 
 This command will give the required permissions. </br>
+
+## Deploy MongoDB CRD
+
 Here is the yaml of the MongoDB CRD we are going to use:
 
 ```yaml
@@ -181,19 +184,15 @@ spec:
   terminationPolicy: WipeOut
 ```
 
-Let's save this yaml configuration into mongoDB.yaml. Then apply using the command
-`oc apply -f mongoDB.yaml`
-
-This yaml uses MongoDB CRD.
+Let's save this yaml configuration into mongodb.yaml. Then apply using the command
+`oc apply -f mongodb.yaml`
 
 * In this yaml we can see in the `spec.version` field the version of MongoDB. You can change and get updated version by running `oc get mongodbversions` command.
-* Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not.
+* Another field to notice is the `spec.storageType` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not.
 * `spec.storage.storageClassName` contains the name of the storage class we obtained before named "local-path".
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/mongodb/concepts/mongodb/#specterminationpolicy).
 
-### Deploy MongoDB CRD
-
-Once these are handled correctly and the MongoDB CRD is deployed you will see that the following are created:
+Once these are handled correctly and the MongoDB object is deployed you will see that the following are created:
 
 ```bash
 $ oc get all -n demo
@@ -249,7 +248,7 @@ Questions? Try the support group
  ```
 
 Now we have entered into the MongoDB CLI and we can create and delete as we want.
-Let's create a database and create a test table called movie:
+Let's create a database and create a test collection called movie:
 
 ```bash
 > show dbs
@@ -266,9 +265,9 @@ WriteResult({ "nInserted" : 1 })
 bye
 ```
 
-> This was just one example of database deployment. The other databases that KubeDB suport are MySQL, Postgres, Elasticsearch, MariaDB and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
+> This was just one example of database deployment. The other databases that KubeDB support are MySQL, Postgres, Elasticsearch, MariaDB and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
 
-## Backup and Recover Database Using Stash
+## Backup MongoDB Database Using Stash
 
 Here we are going to backup the database we deployed before using Stash.
 
@@ -374,7 +373,7 @@ Now if we check our GCS bucket we can see that the backup has been successful.
 
 > **If you reached here CONGRATULATIONS!! :confetti_ball:  :partying_face: :confetti_ball: The backup has been successful**. If you didn't its okay. You can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
 
-## Recover
+## Recover MongoDB Database Using Stash
 
 Let's think of a scenario in which the database has been accidentally deleted or there was an error in the database causing it to crash.
 In such a case, we have to pause the BackupConfiguration so that the failed/damaged database does not get backed up into the cloud:
