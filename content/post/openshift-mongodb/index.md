@@ -214,6 +214,7 @@ mongodb.kubedb.com/mgo-quickstart   4.2.3     Ready    6m
 ```
 
 > We have successfully deployed MongoDB in OpenShift. Now we can exec into the container to use the database.
+Please note that KubeDB operator has created a new Secret called `mgo-quickstart-auth` for storing the password for `mongodb` superuser. This secret contains a `username` key which contains the username for MongoDB superuser and a password key which contains the `password` for MongoDB superuser.
 
 ## Accessing Database Through CLI
 
