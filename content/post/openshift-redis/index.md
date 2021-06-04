@@ -27,11 +27,11 @@ In this tutorial we will deploy Redis database. We will cover the following step
 2) Deploy Redis Cluster
 3) See Automatic Failover feature
 
-## Step 1: Installing KubeDB
+## Install KubeDB
 
 We will follow the following sub-steps to install KubeDB.
 
-### Step 1.1: Get Cluster ID
+### Step 1: Get Cluster ID
 
 We need the cluster ID to get the KubeDB License.
 To get cluster ID we can run the following command:
@@ -41,13 +41,13 @@ $ oc get ns kube-system -o=jsonpath='{.metadata.uid}'
 08b1259c-5d51-4948-a2de-e2af8e6835a4 
 ```
 
-### Step 1.2: Get License
+### Step 2: Get License
 
 Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the license.txt file. For this tutorial we will use KubeDB Enterprise Edition.
 
 ![License Server](licenseserver.png)
 
-### Step 1.3 Install KubeDB
+### Step 3 Install KubeDB
 
 We will use helm to install KubeDB. Please install helm from [here](https://helm.sh/docs/intro/install/) if it is not already installed. Now, let's install `KubeDB`.
 
@@ -76,7 +76,7 @@ $ helm install kubedb appscode/kubedb \
 Let's verify the installation:
 
 ```bash
-$ watch oc get pods --all-namespaces -l "app.kubernetes
+$ watch oc get pods --all-namespaces -l "app.kubernetes.io/instance=kubedb"
 Every 2.0s: oc get pods --all-namespaces -l app.kubernetes.io/instance=kubedb                                                                                                      Shohag: Wed Apr 21 10:08:54 2021
 
 NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE
@@ -121,7 +121,7 @@ redisopsrequests.ops.kubedb.com                   2021-04-21T04:05:54Z
 redisversions.catalog.kubedb.com                  2021-04-21T04:02:49Z
 ```
 
-## Step 2: Deploying Database
+## Deploy Redis Cluster
 
 Now we are going to Install Redis with the help of KubeDB.
 At first, let's create a Namespace in which we will deploy the database.
@@ -130,9 +130,9 @@ At first, let's create a Namespace in which we will deploy the database.
 $ oc create ns demo
 ```
 
-Now, before deploying the Redis CRD let's perform some checks to ensure that it is deployed correctly.
+Now, before deploying the Redis CRD let's perform some checks to ensure that it will be deployed correctly.
 
-### Check 1: StorageClass check
+### Check 1: StorageClass Check
 
 Let's check the availabe storage classes:
 
@@ -142,7 +142,7 @@ NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLO
 local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false    
 ```
 
-Here, you can see that I have a storageclass named `local-path`. If you dont have a storage class you can run the following command:
+Here, we can see that I have a storageclass named `local-path`. If you do not have a storage class you can run the following command:
 
 ```bash
 $ oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
@@ -152,14 +152,15 @@ This will create the storage-class named local-path.
 
 ### Check 2: Correct Permissions
 
-We need to ensure that the service account has correct permissions. To ensure correct permissions we should run:
+We can ensure that the service account has correct permissions by running the following command:
 
 ```bash
 $ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-storage:local-path-provisioner-service-account
 ```
+### Deploy Redis CRD
 
-This command will give the required permissions. </br>
-Here is the yaml of the Redis CRD we are going to use:
+OpenShift has Security Context Constraints for which the MariaDB CRD is restricted to be deployed. The above command will give the required permissions. </br>
+Now, let's have a look into the yaml of the MariaDB CRD we are going to use:
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -192,13 +193,9 @@ spec:
 Let's save this yaml configuration into redis.yaml. Then apply using the command
 `oc apply -f redis.yaml`
 
-This yaml uses Redis CRD.
-
 * In this yaml we can see in the `spec.version` field the version of Redis. You can change and get updated version by running `oc get redisversions` command.
 * Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not.
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/redis/concepts/redis/#specterminationpolicy).
-
-### Deploy Redis CRD
 
 Once these are handled correctly and the Redis CRD is deployed you will see that the following are created:
 
@@ -230,7 +227,7 @@ redis.kubedb.com/redis-cluster   6.0.6     Ready    27h
 
 > We have successfully deployed Redis in OpenShift. Now we can exec into the container to use the database.
 
-## Accessing Database Through CLI
+### Accessing Database Through CLI
 
 To access the database through CLI we have to connect to any redis node.
 
@@ -270,7 +267,7 @@ OK
 Now we have entered into the Redis CLI and we can create and delete as we want.
 Redis stores data as key value pair. In the above commands, we set the key "hello" to the value "world".
 
-> This was just one example of database deployment. The other databases that KubeDB suport are MySQL, Postgres, Elasticsearch, MongoDB, Memcached and MariaDB. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
+> This was just one example of database deployment. The other databases that KubeDB support are MySQL, Postgres, Elasticsearch, MongoDB, Memcached and MariaDB. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
 
 ## Redis Clustering Features
 
