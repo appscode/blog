@@ -258,30 +258,6 @@ Connection closed by foreign host.
 
 > This was just one example of database deployment. The other databases that KubeDB support are MySQL, Postgres, Elasticsearch, MongoDB and MariaDB. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
 
-## Memcached Clustering Features
-
-There are 2 main features of Clustering which are `Data Availability` and `Automatic Failover`. These are shown in the following sections.
-
-### Data Availability
-
-In this section, we will see whether we can get the data from any other node (any master or replica) or not.
-We can notice the replication of data among the other pods of Redis:
-
-```bash
-# switch the connection to the replica of the current master and get the data
-/data $ redis-cli -c -h 10.217.0.28
-10.217.0.28:6379> get hello
--> Redirected to slot [866] located at 10.217.0.9:6379
-"world"
-10.217.0.9:6379> exit
-# switch the connection to any other node
-# get the data
-/data $ redis-cli -c -h 10.217.0.43
-10.217.0.43:6379> get hello
--> Redirected to slot [866] located at 10.217.0.9:6379
-"world"
-```
-
 ## Support
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
