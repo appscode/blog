@@ -254,12 +254,12 @@ Reading table information for completion of table and column names
 You can turn off this feature to get a quicker startup with -A
 
 mysql> CREATE TABLE MyGuests (
-    -> id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    -> firstname VARCHAR(30) NOT NULL,
-    -> lastname VARCHAR(30) NOT NULL,
-    -> email VARCHAR(50),
-    -> reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    -> );
+     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+     firstname VARCHAR(30) NOT NULL,
+     lastname VARCHAR(30) NOT NULL,
+     email VARCHAR(50),
+     reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+     );
 Query OK, 0 rows affected, 1 warning (0.02 sec)
 
 mysql> show tables;
