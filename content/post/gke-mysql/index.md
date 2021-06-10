@@ -352,7 +352,6 @@ spec:
     prune: true
 ```
 
-* Notice that the BackupConfiguration contains `spec.runtimeSettings.container.securitycontext` field. The user and group security context need to be changed in OpenShift to the values within 1000610000 - 1000619999.
 * This BackupConfiguration creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.
 * `spec.repository` contaiins the secret we created before called `gcs-secret`.
 * `spec.target.ref` contains the reference to the appbinding that we want to backup.
@@ -376,7 +375,7 @@ gcs-repo   true        3.670 MiB   1                2m27s                    39m
 
 Now if we check our GCS bucket we can see that the backup has been successful.
 ![gcs Success](gcsSuccess.png)
-> **If you reached here CONGRATULATIONS!! :confetti_ball:  :partying_face: :confetti_ball: The backup has been successful**. If you didn't its okay. You can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
+> We have successfully backed up the database using stash. If you had any problems throughout the process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
 
 ## Recover
 
@@ -452,7 +451,7 @@ spec:
     - snapshots: [latest]
 ```
 
-Notice that the `securityContext` field is the same as we mentioned earlier in the BackupConfiguration. This RestoreSession specifies where the data will be restored.
+This RestoreSession specifies where the data will be restored.
 Once this is applied, a RestoreSession will be created. Once it has succeeded, the database has been successfully recovered as you can see below:
 
 ```bash
