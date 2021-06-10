@@ -374,6 +374,7 @@ gcs-repo   true        3.670 MiB   1                2m27s                    39m
 ```
 
 Now if we check our GCS bucket we can see that the backup has been successful.
+
 ![gcs Success](gcsSuccess.png)
 > We have successfully backed up the database using stash. If you had any problems throughout the process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
 
