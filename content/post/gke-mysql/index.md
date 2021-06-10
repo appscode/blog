@@ -58,7 +58,7 @@ Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the
 
 ### Step 3: Install KubeDB
 
-We will use helm to install KubeDB.Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
+We will use helm to install KubeDB. Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
 Now, let's install `KubeDB`.
 
 ```bash
@@ -130,7 +130,7 @@ redisopsrequests.ops.kubedb.com                   2021-04-21T04:05:54Z
 redisversions.catalog.kubedb.com                  2021-04-21T04:02:49Z
 ```
 
-## Step 2: Deploy Standalone Database
+## Deploy Standalone Database
 
 Now we are going to Install MySQL with the help of KubeDB.
 At first, let's create a Namespace in which we will deploy the database.
@@ -175,7 +175,7 @@ This yaml uses MySQL CRD.
 Once these are handled correctly and the MySQL CRD is deployed you will see that the following are created:
 
 ```bash
-~ $ kubectl get all -n demo
+$ kubectl get all -n demo
 NAME                     READY   STATUS    RESTARTS   AGE
 pod/mysql-quickstart-0   1/1     Running   0          52s
 
@@ -261,7 +261,7 @@ mysql> show tables;
 1 row in set (0.02 sec)
 ```
 
-> This was just one example of database deployment. The other databases that KubeDB support are MongoDB, Elasticsearch, MariaDB, PostgreSQL, Memcached and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
+> This was just one example of database deployment. The other databases that KubeDB support are MongoDB, Elasticsearch, MariaDB, PostgreSQL, Memcached and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/).
 
 ## Backup and Recover Database Using Stash
 
@@ -324,7 +324,7 @@ spec:
     storageSecretName: gcs-secret
 ```
 
-This repository CRD specifies the gcs-secret we created before in the `storageSecretName`. It also specifies the location in the bucket where we want to backup our database in `spec.backend.gcs.bucket`.
+This repository CRD specifies the gcs-secret we created before in the `spec.backend.storageSecretName`. It also specifies the location in the bucket where we want to backup our database in `spec.backend.gcs.bucket`.
 > My bucket name is stash-shohag. Don't forget to change `spec.backend.gcs.bucket` to your bucket name.
 
 ### Step 4: Create BackupConfiguration
@@ -390,7 +390,7 @@ kubectl patch backupconfiguration -n demo sample-mysql-backup --type="merge" --p
 At first let's simulate accidental database deletion.
 
 ```bash
-~ $ kubectl exec -it -n demo mysql-quickstart-0 -- bash
+$ kubectl exec -it -n demo mysql-quickstart-0 -- bash
 root@mysql-quickstart-0:/# mysql -uroot -p${MYSQL_ROOT_PASSWORD}
 mysql: [Warning] Using a password on the command line interface can be insecure.
 Welcome to the MySQL monitor.  Commands end with ; or \g.
