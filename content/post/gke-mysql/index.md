@@ -58,7 +58,7 @@ Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the
 
 ### Step 3: Install KubeDB
 
-We will use helm to install KubeDB. Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
+We will use helm to install KubeDB. Please install helm from [here](https://helm.sh/docs/intro/install/) if it is not already installed.
 Now, let's install `KubeDB`.
 
 ```bash
@@ -165,8 +165,8 @@ Let's save this yaml configuration into mysql.yaml. Then apply using the command
 
 This yaml uses MySQL CRD.
 
-* In this yaml we can see in the `spec.version` field the version of MySQL. You can change and get updated version by running `kubectl get mysqlversions` command. 
-* Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not. 
+* In this yaml we can see in the `spec.version` field the version of MySQL. You can list the supported MySQL versions by running `kubectl get mysqlversions` command.
+* Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not.
 * `spec.storage.storageClassName` contains the name of the storage class we obtained before named "local-path".
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/mysql/concepts/database/#specterminationpolicy).
 
@@ -261,11 +261,11 @@ mysql> show tables;
 1 row in set (0.02 sec)
 ```
 
-> This was just one example of database deployment. The other databases that KubeDB support are MongoDB, Elasticsearch, MariaDB, PostgreSQL, Memcached and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/).
+> This was just one example of database deployment. The other databases that KubeDB support are MongoDB, Elasticsearch, MariaDB, PostgreSQL, Memcached and Redis. The tutorials on how to deploy these into the kubernetes cluster can be found [HERE](https://kubedb.com/).
 
 ## Backup and Recover Database Using Stash
 
-Here we are going to backup the database we deployed before using Stash.
+Here we are going to use Stash to backup the database we deployed before.
 
 ### Step 1: Install Stash
 
@@ -353,7 +353,7 @@ spec:
 ```
 
 * This BackupConfiguration creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.
-* `spec.repository` contaiins the secret we created before called `gcs-secret`.
+* `spec.repository` contains the secret we created before called `gcs-secret`.
 * `spec.target.ref` contains the reference to the appbinding that we want to backup.
 
 So, after 5 minutes we can see the following status:
@@ -376,7 +376,7 @@ gcs-repo   true        3.670 MiB   1                2m27s                    39m
 Now if we check our GCS bucket we can see that the backup has been successful.
 
 ![gcs Success](gcsSuccess.png)
-> We have successfully backed up the database using stash. If you had any problems throughout the process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
+> We have successfully backed up the database using stash. If you had any problems throughout the process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20GKE).
 
 ## Recover
 
@@ -493,7 +493,7 @@ mysql> show tables;
 1 row in set (0.00 sec)
 ```
 
-> The recovery has been successful. If you faced any difficulties in the recovery process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20OpenShift).
+> The recovery has been successful. If you faced any difficulties in the recovery process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20GKE).
 
 ## Support
 
