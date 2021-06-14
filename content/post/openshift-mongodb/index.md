@@ -24,16 +24,16 @@ The databases that KubeDB support are MongoDB, Elasticsearch, MySQL, MariaDB, Po
 In this tutorial we will deploy MongoDB database. We will cover the following steps:
 
 1) Install KubeDB
-2) Deploy Database
+2) Deploy Standalone Database
 3) Install Stash
 4) Backup Using Stash
 5) Recover Using Stash
 
-## Step 1: Installing KubeDB
+## Install KubeDB
 
 We will follow the following sub-steps to install KubeDB.
 
-### Step 1.1: Get Cluster ID
+### Step 1: Get Cluster ID
 
 We need the cluster ID to get the KubeDB License.
 To get cluster ID we can run the following command:
@@ -43,15 +43,15 @@ $ oc get ns kube-system -o=jsonpath='{.metadata.uid}'
 08b1259c-5d51-4948-a2de-e2af8e6835a4 
 ```
 
-### Step 1.2: Get License
+### Step 2: Get License
 
 Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the license.txt file. For this tutorial we will use KubeDB Enterprise Edition.
 
 ![License Server](licenseserver.png)
 
-### Step 1.3 Install KubeDB
+### Step 3 Install KubeDB
 
-We will use helm to install KubeDB.Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
+We will use helm to install KubeDB. Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
 Now, let's install `KubeDB`.
 
 ```bash
@@ -123,7 +123,7 @@ redisopsrequests.ops.kubedb.com                   2021-04-21T04:05:54Z
 redisversions.catalog.kubedb.com                  2021-04-21T04:02:49Z
 ```
 
-## Step 2: Deploying Database
+## Deploy Standalone Database
 
 Now we are going to Install MongoDB with the help of KubeDB.
 At first, let's create a Namespace in which we will deploy the database.
@@ -132,9 +132,9 @@ At first, let's create a Namespace in which we will deploy the database.
 $ oc create ns demo
 ```
 
-Now, before deploying the MongoDB CRD let's perform some checks to ensure that it is deployed correctly.
+Now, before deploying the MongoDB CRD let's perform some checks to ensure that it will be deployed correctly.
 
-### Check 1: StorageClass check
+### Check 1: StorageClass Check
 
 Let's check the availabe storage classes:
 
@@ -144,7 +144,7 @@ NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLO
 local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false    
 ```
 
-Here, you can see that I have a storageclass named `local-path`. If you do not have a storage class you can run the following command:
+Here, we can see that I have a storageclass named `local-path`. If you do not have a storage class you can run the following command:
 
 ```bash
 $ oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
@@ -154,13 +154,14 @@ This will create the storage-class named local-path.
 
 ### Check 2: Correct Permissions
 
-We need to ensure that the service account has correct permissions. To ensure correct permissions we should run:
+We can ensure that the service account has correct permissions by running the following command:
 
 ```bash
 $ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-storage:local-path-provisioner-service-account
 ```
 
-This command will give the required permissions. </br>
+OpenShift has Security Context Constraints for which the MariaDB CRD is restricted to be deployed. The above command will give the required permissions. </br>
+Now, let's have a look into the yaml of the MariaDB CRD we are going to use:
 
 ## Deploy MongoDB CRD
 
@@ -216,7 +217,7 @@ mongodb.kubedb.com/mgo-quickstart   4.2.3     Ready    6m
 > We have successfully deployed MongoDB in OpenShift. Now we can exec into the container to use the database.
 Please note that KubeDB operator has created a new Secret called `mgo-quickstart-auth` for storing the password for `mongodb` superuser. This secret contains a `username` key which contains the username for MongoDB superuser and a password key which contains the `password` for MongoDB superuser.
 
-## Accessing Database Through CLI
+### Accessing Database Through CLI
 
 To access the database through CLI we have to exec into the container:
 
@@ -300,7 +301,7 @@ For this tutorial we are going to use gcs-bucket. You can find other setups [her
 
  ![My Empty GCS bucket](gcsEmptyBucket.png)
 
- **Create Secret:**
+At first we need to create a secret so that we can access the gcs bucket. We can do that by the following code:
 
 ```bash
 $ echo -n 'YOURPASSWORD' > RESTIC_PASSWORD
@@ -323,15 +324,17 @@ metadata:
 spec:
   backend:
     gcs:
-      bucket: YOURBUCKETNAME
+      bucket: stash-shohag
       prefix: /demo/mongoDB/sample-mongo
     storageSecretName: gcs-secret
 ```
 
-This repository specifies the gcs-secret we created before and connects to the gcs-bucket. It also specifies the location in the bucket where we want to backup our database.
-> Don't forget to change `spec.backend.gcs.bucket` to your bucket name.
+This repository CRD specifies the gcs-secret we created before and stores the name and path to the gcs-bucket. It also specifies the location in the bucket where we want to backup our database.
+> My bucket name is stash-shohag. Don't forget to change `spec.backend.gcs.bucket` to your bucket name.
 
 ### Step 4: Create BackupConfiguration
+
+Now we need to create a BackupConfiguration file that specifies what to backup, where to backup and when to backup.
 
 ```yaml
 apiVersion: stash.appscode.com/v1beta1
@@ -359,7 +362,10 @@ spec:
     prune: true
 ```
 
-Notice that the BackupConfiguration contains `spec.runtimeSettings.container.securitycontext` field. The user and group security context need to be changed in OpenShift to the values within 1000610000 - 1000619999. Now, this BackupConfiguration creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.</br>
+* Notice that the BackupConfiguration contains `spec.runtimeSettings.container.securitycontext` field. The user and group security context need to be changed in OpenShift to the values within 1000610000 - 1000619999.
+* This BackupConfiguration creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.
+* `spec.repository` contaiins the secret we created before called `gcs-secret`.
+* `spec.target.ref` contains the reference to the appbinding that we want to backup.
 So, after 5 minutes we can see the following status:
 
 ```bash
@@ -445,7 +451,7 @@ spec:
 ```
 
 Notice that the `securityContext` field is the same as we mentioned earlier in the BackupConfiguration. This RestoreSession specifies where the data will be restored.
-Once this is applied, a RestoreSession will be created. Once it has succeeded, the database has been successfully recovered as you can see in the images below:
+Once this is applied, a RestoreSession will be created. Once it has succeeded, the database has been successfully recovered as you can see below:
 
 ```bash
 $ oc get restoresession -n demo
