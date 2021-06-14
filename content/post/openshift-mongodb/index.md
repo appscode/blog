@@ -160,8 +160,8 @@ We can ensure that the service account has correct permissions by running the fo
 $ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-storage:local-path-provisioner-service-account
 ```
 
-OpenShift has Security Context Constraints for which the MariaDB CRD is restricted to be deployed. The above command will give the required permissions. </br>
-Now, let's have a look into the yaml of the MariaDB CRD we are going to use:
+OpenShift has Security Context Constraints for which the MongoDB CRD is restricted to be deployed. The above command will give the required permissions. </br>
+Now, let's have a look into the yaml of the MongoDB CRD we are going to use:
 
 ## Deploy MongoDB CRD
 
