@@ -1,6 +1,6 @@
 baseURL: https://blog.byte.builders/
 languageCode: en-us
-title: ByteBuilders Blog
+title: Blog | ByteBuilders
 assetDir: static
 googleAnalytics: UA-62096468-4
 taxonomies:
