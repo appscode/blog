@@ -23,9 +23,14 @@ tags:
 The databases that KubeDB support are MongoDB, Elasticsearch, MySQL, MariaDB, PostgreSQL, Memcached and Redis. You can find the guides to all the supported databases [here](https://kubedb.com/).
 At first, let's confirm we are using the GKE Cluster:
 
+![GKE](gke.png)
+
 ```bash
-$ kubectl config current-context
-gke_appscode-testing_us-central1-c_kubedb-test
+$ kubectl get nodes
+NAME                                         STATUS   ROLES    AGE   VERSION
+gke-kubedb-test-default-pool-a3489f54-6mx4   Ready    <none>   78s   v1.19.9-gke.1900
+gke-kubedb-test-default-pool-a3489f54-sgrl   Ready    <none>   78s   v1.19.9-gke.1900
+gke-kubedb-test-default-pool-a3489f54-zl9b   Ready    <none>   78s   v1.19.9-gke.1900
 ```
 
 In this tutorial we will deploy MySQL database. We will cover the following steps:
