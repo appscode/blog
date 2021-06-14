@@ -1,3 +1,5 @@
+{{ $p := (index .Site.Data.products "bytebuilders") }}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,15 +27,26 @@
   <link rel="manifest" href="/assets/images/products/bytebuilders/icons/manifest.json">
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="/assets/images/products/bytebuilders/icons/ms-icon-144x144.png">
+  <!-- twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@{{ strings.TrimPrefix `https://twitter.com/` $p.socialLinks.twitter }}">
+  <meta name="twitter:title" content="{{ .Title }}">
+  <meta name="twitter:creator" content="@{{ strings.TrimPrefix `https://twitter.com/` $p.socialLinks.twitter }}">
+  <meta name="twitter:description" content="{{ $p.tagline | plainify }}">
+  <!-- facebook -->
   {{ if .Resources.GetMatch "hero.jpg" }}
     {{ $original := .Resources.GetMatch "hero.jpg" }}
     {{ $cropped := $original.Fill "1300x650" }}
-    <meta property="og:image" content="{{ $cropped.RelPermalink }}"/>
+    <meta name="twitter:image:src" content="{{ $cropped.Permalink }}"/>
+    <meta property="og:image" content="{{ $cropped.Permalink }}"/>
   {{ else }}
-    <meta property="og:image" content="/assets/images/products/bytebuilders/bytebuilders-1280x640.png"/>
+    <meta name="twitter:image:src" content="{{ $.Site.BaseURL }}assets/images/products/bytebuilders/bytebuilders-1280x640.png"/>
+    <meta property="og:image" content="{{ $.Site.BaseURL }}assets/images/products/bytebuilders/bytebuilders-1280x640.png"/>
   {{ end }}
   <meta property="og:title" content="{{ .Title }}"/>
-  <meta property="og:description" content="{{ $.Site.Title }}"/>
+  <meta property="og:description" content="{{ $p.tagline | plainify }}"/>
+  <meta property="og:site_name" content="{{ $p.fullname }}">
+  <meta property="og:type" content="article">
   <!-- font-awesome css  -->
   <link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
   <!-- AOS css  -->
