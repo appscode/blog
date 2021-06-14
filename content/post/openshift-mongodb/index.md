@@ -1,5 +1,5 @@
 ---
-title: How to Manage MongoDB in Openshift Using KubeDB
+title: Manage Production Grade MongoDB in Openshift Using KubeDB
 date: 2021-06-14
 weight: 22
 authors:
@@ -372,7 +372,7 @@ Now if we check our GCS bucket we can see that the backup has been successful.
 
 ![gcsSuccess](gcsSuccess.png)
 
-> **If you reached here CONGRATULATIONS!! :confetti_ball:  :partying_face: :confetti_ball: The backup has been successful**. If you didn't its okay. You can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
+> We have successfully backed up MongoDB using Stash. If you had any problems during the backup process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
 
 ## Recover MongoDB Database Using Stash
 
