@@ -40,10 +40,6 @@ jobs:
           chmod +x hugo-tools
           sudo mv hugo-tools /usr/local/bin/hugo-tools
 
-      - name: Install Firebase CLI
-        run: |
-          npm i -g firebase-tools
-
       - name: Install link checker
         run: |
           curl -fsSL -o liche https://github.com/appscodelabs/liche/releases/download/v0.1.0/liche-linux-amd64
@@ -63,13 +59,3 @@ jobs:
         run: |
           hugo server --minify --config=config.yaml &>/dev/null &
           liche -r public -d http://localhost:1313 -c 10 -p -l -x '^(.*github.com.*|.*linkedin.com.*)$' || true
-
-      - name: Release
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          GOOGLE_CUSTOM_SEARCH_API_KEY: ${{ secrets.GOOGLE_CUSTOM_SEARCH_API_KEY }}
-        # if: startsWith(github.event.ref, 'refs/tags/') && (contains(github.ref, '-alpha.') || contains(github.ref, '-beta.')) == false
-        run: |
-          npm install
-          make docs
-          make release
