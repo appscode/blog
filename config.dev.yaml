@@ -8,6 +8,7 @@ taxonomies:
   author: authors
 disableKinds:
 - taxonomyTerm
+enableEmoji: true
 params:
   domain_appscode: https://appscode-v3-hugo.web.app
   domain_kubedb: https://kubedb-v2-hugo.web.app
