@@ -49,7 +49,7 @@ Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the
 
 ![License Server](licenseserver.png)
 
-### Step 3 Install KubeDB
+### Step 3: Install KubeDB
 
 We will use helm to install KubeDB. Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
 Now, let's install `KubeDB`.
@@ -161,7 +161,7 @@ $ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-stor
 ```
 
 OpenShift has Security Context Constraints for which the MongoDB CRD is restricted to be deployed. The above command will give the required permissions. </br>
-Now, let's have a look into the yaml of the MongoDB CRD we are going to use:
+Now, let's have a look into the yaml of the MongoDB CRD we are going to use.
 
 ## Deploy MongoDB CRD
 
@@ -190,7 +190,6 @@ Let's save this yaml configuration into mongodb.yaml. Then apply using the comma
 
 * In this yaml we can see in the `spec.version` field the version of MongoDB. You can change and get updated version by running `oc get mongodbversions` command.
 * Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
-* `spec.storage.storageClassName` contains the name of the storage class we obtained before named "local-path".
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/mongodb/concepts/mongodb/#specterminationpolicy).
 
 Once these are handled correctly and the MongoDB object is deployed you will see that the following are created:
@@ -267,7 +266,7 @@ WriteResult({ "nInserted" : 1 })
 bye
 ```
 
-> This was just one example of database deployment. The other databases that KubeDB support are MySQL, Postgres, Elasticsearch, MariaDB and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
+> This was just one example of database deployment. The other databases that KubeDB support are MySQL, Postgres, Elasticsearch, MariaDB, Memcached and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
 
 ## Backup MongoDB Database Using Stash
 
@@ -364,7 +363,7 @@ spec:
 
 * Notice that the BackupConfiguration contains `spec.runtimeSettings.container.securitycontext` field. The user and group security context need to be changed in OpenShift to the values within 1000610000 - 1000619999.
 * This BackupConfiguration creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.
-* `spec.repository` contaiins the secret we created before called `gcs-secret`.
+* `spec.repository` contains the secret we created before called `gcs-secret`.
 * `spec.target.ref` contains the reference to the appbinding that we want to backup.
 So, after 5 minutes we can see the following status:
 
