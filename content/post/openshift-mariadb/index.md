@@ -1,7 +1,7 @@
 ---
-title: How to Manage MariaDB in Openshift Using KubeDB
-date: 2021-04-23
-weight: 22
+title: Manage MariaDB in Openshift Using KubeDB
+date: 2021-06-22
+weight: 1
 authors:
   - Shohag Rana
 tags:
@@ -31,7 +31,7 @@ In this tutorial we will deploy MariaDB database. We will cover the following st
 
 ## Install KubeDB
 
-We will follow the following sub-steps to install KubeDB.
+We will follow the following steps to install KubeDB.
 
 ### Step 1: Get Cluster ID
 
@@ -49,9 +49,9 @@ Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the
 
 ![License Server](licenseserver.png)
 
-### Step 3 Install KubeDB
+### Step 3: Install KubeDB
 
-We will use helm to install KubeDB.Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
+We will use helm to install KubeDB. Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
 Now, let's install `KubeDB`.
 
 ```bash
@@ -148,7 +148,7 @@ local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   fals
 Here, we can see that I have a storageclass named `local-path`. If you do not have a storage class you can run the following command:
 
 ```bash
-$ oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+$ oc apply -f https://gist.githubusercontent.com/tamalsaha/58fb8cb07d60f34d77db048680f6102e/raw/a15e7181ea34e447011e91ebf23cd07f2877cbdb/local-path-storage.yaml
 ```
 
 This will create the storage-class named local-path.
@@ -401,12 +401,12 @@ Now if we check our GCS bucket we can see that the backup has been successful.
 
 ![gcsSuccess](gcsSuccess.png)
 
-> The backup has been successful. If you have any queries, you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
+> **If you have reached here, CONGRATULATIONS!! :confetti_ball:  :partying_face: :confetti_ball: You have successfully backed up MariaDB using Stash.** If you had any problem during the backup process, you can reach out to us via [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
 
 ## Recover
 
 Let's think of a scenario in which the database has been accidentally deleted or there was an error in the database causing it to crash.
-In such a case, we have to pause the BackupConfiguration so that the failed/damaged database does not get backed up into the cloud:
+In such a case, we have to pause the BackupConfiguration so that the failed/damaged database does not get backed up into the cloud.
 
 ```bash
 oc patch backupconfiguration -n demo sample-mariadb-backup --type="merge" --patch='{"spec": {"paused": true}}'
