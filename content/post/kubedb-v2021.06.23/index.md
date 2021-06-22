@@ -1,6 +1,6 @@
 ---
 title: KubeDB v2021.06.23 and Stash v2021.06.23 - Latest Kubernetes Support
-date: 2021-06-21
+date: 2021-06-22
 weight: 25
 authors:
   - Shohag Rana
@@ -49,7 +49,7 @@ We are pleased to announce a dual release of [KubeDB v2021.06.23](https://kubedb
 * Now, Stash checks are skipped in Ops Request, if Stash is not installed.
 * Fixed health check.
 * Now the **heap size** of Elasticsearch node is **50% of Pod’s memory limit**.
-* Only the CPU request is set (if missing), keeping the CPU limit empty. 
+* Only the CPU request is set (if missing), keeping the CPU limit empty.
 * Various code improvements and bug fixes.
 * Klog log level issues are fixed.
 
@@ -80,11 +80,11 @@ We are pleased to announce a dual release of [KubeDB v2021.06.23](https://kubedb
 For community version:
 
 ```bash
-$ helm install stash appscode/stash          \
-  --version v2021.06.23                \
+$ helm install stash appscode/stash           \
+  --version v2021.06.23                       \
   --namespace kube-system                     \
   --set features.community=true               \
-  --set stash-community.enableAnalytics=false\
+  --set stash-community.enableAnalytics=false \
   --set-file global.license=/path/to/the/license.txt
 ```
 
@@ -92,10 +92,10 @@ For enterprise version:
 
 ```bash
 $ helm install stash appscode/stash             \
-  --version v2021.06.23                  \
+  --version v2021.06.23                         \
   --namespace kube-system                       \
-  --set features.enterprise=true                \ 
-  --set stash-enterprise.enableAnalytics=false \
+  --set features.enterprise=true                \
+  --set stash-enterprise.enableAnalytics=false  \
   --set-file global.license=/path/to/the/license.txt
 ```
 
@@ -103,8 +103,8 @@ $ helm install stash appscode/stash             \
 
 Please try the latest release and give us your valuable feedback.
 
-* If you want to install KubeDB, please follow the installation instruction from [here](https://kubedb.com/docs/v2021.03.17/setup).
-* If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](https://kubedb.com/docs/v2021.03.17/setup/upgrade/).
+* If you want to install KubeDB, please follow the installation instruction from [here](https://kubedb.com/docs/v2021.06.23/setup).
+* If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](https://kubedb.com/docs/v2021.06.23/setup/upgrade/).
 
 ## Support
 
