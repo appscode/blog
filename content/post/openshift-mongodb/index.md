@@ -147,7 +147,7 @@ local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   fals
 Here, we can see that I have a storageclass named `local-path`. If you do not have a storage class you can run the following command:
 
 ```bash
-$ oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+$ oc apply -f https://gist.githubusercontent.com/tamalsaha/58fb8cb07d60f34d77db048680f6102e/raw/a15e7181ea34e447011e91ebf23cd07f2877cbdb/local-path-storage.yaml
 ```
 
 This will create the storage-class named local-path.
