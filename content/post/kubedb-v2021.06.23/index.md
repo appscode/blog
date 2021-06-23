@@ -76,9 +76,9 @@ We are pleased to announce a dual release of [KubeDB v2021.06.23](https://kubedb
 * A bug that causes skipping backup due to name collision is now fixed. Details about the issue can be found [here](https://github.com/stashed/stash/issues/1341).
 * It also fixes a PostgreSQL addon bug where backups were failing due to missing `sslmode` in the AppBinding. For more details, please refer to [here](https://github.com/stashed/postgres/pull/801).
 
-## Non user facing Changes
+## Non user facing changes
 
-In this release, we have updated KubeDB and Stash codebase to use Kubernetes v1.21.1 client libraries. This sets us up for removing support for deprecated api versions in upcoming Kubernetes 1.22 release. In this release, we have also introduced an built-in auditor that collects analytics data for billing purposes. This will be uses in a future release to prepare usage based billing reports for our PAYG customers. This is an open-source feature. You can see how we collect the data and what we collect [HERE](https://github.com/bytebuilders/audit).
+In this release, we have updated KubeDB and Stash codebase to use Kubernetes v1.21.1 client libraries. This sets us up for removing support for deprecated api versions in upcoming Kubernetes 1.22 release. In this release, we have also introduced an built-in auditor that collects analytics data for billing purposes. This will be used in a future release to prepare usage based billing reports for our PAYG customers. This is an open-source feature. You can see how we collect the data and what we collect [HERE](https://github.com/bytebuilders/audit).
 
 ## What Next?
 
