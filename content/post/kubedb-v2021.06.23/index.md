@@ -1,5 +1,5 @@
 ---
-title: KubeDB v2021.06.23 and Stash v2021.06.23 - Latest Kubernetes Support
+title: Announcing KubeDB v2021.06.23 and Stash v2021.06.23
 date: 2021-06-23
 weight: 25
 authors:
