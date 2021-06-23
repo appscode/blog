@@ -28,6 +28,7 @@ We are pleased to announce a dual release of [KubeDB v2021.06.23](https://kubedb
 * fixed log level issue.
 * fixed some issues with pg-coordinator.
 * Only the CPU request is set (if missing), keeping the CPU limit empty.
+* Custom uid issue fixed
 
 ## **MongoDB**
 
