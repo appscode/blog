@@ -18,26 +18,7 @@ tags:
   - kubedb
 ---
 
-We are pleased to announce a dual release of [KubeDB v2021.06.23](https://kubedb.com/docs/v2021.06.23/setup/) and [Stash v2021.06.23](https://stash.run/docs/v2021.06.23/guides/latest/backends/overview/). This post lists all the major changes done in this release since `v2021.04.16`.This release offers support for the latest Kubernetes version 1.21.1. Many network traffic redundancies have been handled in multiple databases and also stash. Besides resolving some minor bugs, health check issues and klog log level issues have been resolved in all the databases. Major features in the MariaDB Ops Request have been added.
-
-## **Postgres**
-
-* Now, Stash checks are skipped in Ops Request, if Stash is not installed.
-* health check issues are now fixed.
-* Added some exciting Ops Request features including Upgrade, Vertical Scaling, Horizontal Scaling, Reconfigure Custom Configuration, Reconfigure TLS and Volume expansion.
-* fixed log level issue.
-* fixed some issues with pg-coordinator.
-* Only the CPU request is set (if missing), keeping the CPU limit empty.
-* Custom uid issue fixed
-
-## **MongoDB**
-
-* Added support for **MongoDB 4.4.2**
-* Fixed MongoDB Exporter TLS connection failure bug.
-* Now, Stash checks are skipped in Ops Request, if Stash is not installed.
-* Klog log level issues are fixed.
-* MongoDB health check issues are fixed.
-* Only the CPU request is set (if missing), keeping the CPU limit empty.
+We are pleased to announce a dual release of [KubeDB v2021.06.23](https://kubedb.com/docs/v2021.06.23/setup/) and [Stash v2021.06.23](https://stash.run/docs/v2021.06.23/guides/latest/backends/overview/). This post lists all the major changes done in this release since `v2021.04.16`. This release offers support for the latest Kubernetes version v1.21.1, MongoDB 4.4.2, Elasticsearch 7.13.2. This release adds support for automated DAy 2 operations for MariaDB and PostgreSQL databases. There has been various bug fixes across the board that improves the fault tolerance of the KubeDB operator. You can find the detailed change logs here: https://github.com/kubedb/CHANGELOG/blob/master/releases/v2021.06.23/README.md
 
 ## **Elasticsearch**
 
@@ -47,64 +28,64 @@ We are pleased to announce a dual release of [KubeDB v2021.06.23](https://kubedb
 * New ElasticsearchVersion: **xpack-7.13.2**, xpack-7.12.0-v1, xpack-7.9.1-v2, xpack-6.8.16.
 * Deprecated ElasticsearchVersion: xpack-7.9.1, xpack-7.8.0, xpack-7.7.1, xpack-7.6.2, xpack-7.5.2, xpack-7.4.2, xpack-7.3.2, xpack-7.2.1, xpack-7.1.1, xpack-6.8.10.
 * Add timeout for ElasticsearchOpsRequest.
-* Now, Stash checks are skipped in Ops Request, if Stash is not installed.
-* Fixed health check.
+* Stash checks are skipped in Ops Request, if Stash is not installed.
+* Fixed health check even with bas Elasticsearch deployments.
 * Now the **heap size** of Elasticsearch node is **50% of Pod’s memory limit**.
-* Only the CPU request is set (if missing), keeping the CPU limit empty.
-* Various code improvements and bug fixes.
-* Klog log level issues are fixed.
+* KubeDB no longer sets default cpu limits. Only cpu requests and memory limits are set by default.
+* Log level issues are fixed.
+
+## **MongoDB**
+
+* Added support for **MongoDB 4.4.2**
+* MongoDB Exporter has been updated and a TLS connection failure bug has been fixed.
+* Stash checks are skipped in Ops Request, if Stash is not installed.
+* Log level issues are fixed.
+* MongoDB health check issues are fixed.
+* KubeDB no longer sets default cpu limits. Only cpu requests and memory limits are set by default.
+
+## **PostgreSQL**
+
+* KubeDB now provisions PostgreSQL databases in  OpenShift clusters without privileged permission using fsGroup.
+* Stash checks are skipped in Ops Request, if Stash is not installed.
+* Health check issues are now fixed.
+* Added some exciting Ops Request features including Upgrade, Vertical Scaling, Horizontal Scaling, Reconfigure Custom Configuration, Reconfigure TLS and Volume expansion.
+* Log level issues are fixed.
+* pg-coordinator can now recover in case a PostgreSQL cluster loses quorum.
+* KubeDB no longer sets default cpu limits. Only cpu requests and memory limits are set by default.
 
 ## **MariaDB**
 
 * Added some exciting Ops Request features including Upgrade, Vertical Scaling, Horizontal Scaling, Reconfigure Custom Configuration and Volume expansion.
-* Now, Custom configuration for MariaDB cluster is supported.
-* MariaDB health check issues are now fixed.
-* Klog log level issues are fixed.
-* Now, Stash checks are skipped in Ops Request, if Stash is not installed.
-* Only the CPU request is set (if missing), keeping the CPU limit empty.
+* Custom configuration for MariaDB cluster is supported.
+* MariaDB health check issues are fixed.
+* Log level issues are fixed.
+* Stash checks are skipped in Ops Request, if Stash is not installed.
+* KubeDB no longer sets default cpu limits. Only cpu requests and memory limits are set by default.
 
 ## **MySQL**
 
-* Fixed Klog log level issues
-* Now, Stash checks are skipped in Ops Request, if Stash is not installed.
+* Log level issues are fixed.
+* Stash checks are skipped in Ops Request, if Stash is not installed.
 * MySQL health check issues are fixed.
-* Only the CPU request is set (if missing), keeping the CPU limit empty.
+* KubeDB no longer sets default cpu limits. Only cpu requests and memory limits are set by default.
 
 ## **Stash**
 
 * This release offers the latest Kubernetes v1.21.1.
 * ImagePullPolicy is now set to `IfNotPresent` instead of the previous `Always` which now saves valuable network traffic in the cluster.
 * A bug that causes skipping backup due to name collision is now fixed. Details about the issue can be found [here](https://github.com/stashed/stash/issues/1341).
-* It also fixes the PostgreSQL bug where backups were failing due to missing `sslmode` in the AppBinding. For more details, please refer to [here](https://github.com/stashed/postgres/pull/801).
-* Stash now has an Audit event that collects metadata about Stash resources, enabling us to add usage-based billing for PAYG users. It also enables us to better understand how Stash is being used in different environments so that we can improve the product. This is an open-source feature. You can see how we collect the data and what we collect [HERE](https://github.com/bytebuilders/audit). You can disable the feature easily. For disabling see the following code:
+* It also fixes a PostgreSQL addon bug where backups were failing due to missing `sslmode` in the AppBinding. For more details, please refer to [here](https://github.com/stashed/postgres/pull/801).
 
-For community version:
+## Non user facing Changes
 
-```bash
-$ helm install stash appscode/stash           \
-  --version v2021.06.23                       \
-  --namespace kube-system                     \
-  --set features.community=true               \
-  --set stash-community.enableAnalytics=false \
-  --set-file global.license=/path/to/the/license.txt
-```
-
-For enterprise version:
-
-```bash
-$ helm install stash appscode/stash             \
-  --version v2021.06.23                         \
-  --namespace kube-system                       \
-  --set features.enterprise=true                \
-  --set stash-enterprise.enableAnalytics=false  \
-  --set-file global.license=/path/to/the/license.txt
-```
+In this release, we have updated KubeDB and Stash codebase to use Kubernetes v1.21.1 client libraries. This sets us up for removing support for deprecated api versions in upcoming Kubernetes 1.22 release. In this release, we have also introduced an built-in auditor that collects analytics data for billing purposes. This will be uses in a future release to prepare usage based billing reports for our PAYG customers. This is an open-source feature. You can see how we collect the data and what we collect [HERE](https://github.com/bytebuilders/audit).
 
 ## What Next?
 
 Please try the latest release and give us your valuable feedback.
 
 * If you want to install KubeDB, please follow the installation instruction from [here](https://kubedb.com/docs/v2021.06.23/setup).
+
 * If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](https://kubedb.com/docs/v2021.06.23/setup/upgrade/).
 
 ## Support
