@@ -31,7 +31,7 @@ https://github.com/kubedb/CHANGELOG/blob/master/releases/v2021.06.23/README.md
 * Deprecated ElasticsearchVersion: xpack-7.9.1, xpack-7.8.0, xpack-7.7.1, xpack-7.6.2, xpack-7.5.2, xpack-7.4.2, xpack-7.3.2, xpack-7.2.1, xpack-7.1.1, xpack-6.8.10.
 * Add timeout for ElasticsearchOpsRequest.
 * Stash checks are skipped in Ops Request, if Stash is not installed.
-* Fixed health check even with bas Elasticsearch deployments.
+* Fixed health check even with bad Elasticsearch deployments.
 * Now the **heap size** of Elasticsearch node is **50% of Pod’s memory limit**.
 * KubeDB no longer sets default cpu limits. Only cpu requests and memory limits are set by default.
 * Log level issues are fixed.
@@ -78,7 +78,7 @@ https://github.com/kubedb/CHANGELOG/blob/master/releases/v2021.06.23/README.md
 * A bug that causes skipping backup due to name collision is now fixed. Details about the issue can be found [here](https://github.com/stashed/stash/issues/1341).
 * It also fixes a PostgreSQL addon bug where backups were failing due to missing `sslmode` in the AppBinding. For more details, please refer to [here](https://github.com/stashed/postgres/pull/801).
 
-## Non user facing changes
+## Non User Facing Changes
 
 In this release, we have updated KubeDB and Stash codebase to use Kubernetes v1.21.1 client libraries. This sets us up for removing support for deprecated api versions in upcoming Kubernetes 1.22 release. In this release, we have also introduced an built-in auditor that collects analytics data for billing purposes. This will be used in a future release to prepare usage based billing reports for our PAYG customers. This is an open-source feature. You can see how we collect the data and what we collect [HERE](https://github.com/bytebuilders/audit).
 
