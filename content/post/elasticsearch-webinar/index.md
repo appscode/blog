@@ -18,12 +18,29 @@ tags:
   - kubedb
 ---
 ## Summary
+
 AppsCode held a webinar on "Managing Production Grade Elasticsearch in Kubernetes Using KubeDB". This took place 24th June 2021. The contents of what took place at the webinar is shown below:
 
-1) What is production-grade Elasticsearch?
+1) What makes an Elasticsearch Cluster production-grade?
 2) Why KubeDB Managed Elasticsearch?
 3) Demo
+    * Deploy TLS secure Elasticsearch
+    * Version Upgrade
+    * Horizontal Scale up and down
+    * Delete and Restore from Backup
 4) Q & A Session
+
+From this demo we get an in depth view of how the KubeDB Elasticsearch operator works. Firstly, we can see the TLS enabled deployment of Elasticsearch. Secondly, we can see the smart upgrade operation. By smart we mean that:
+
+* It will disable the ongoing shard allocation, so that no data interrupted.
+* It will upgrade one pod at a time and will wait for it to join the cluster before moving to the next one.
+* It will restart pods in order. First, it will restart the ingest nodes, then the data nodes, and finally the master nodes.
+
+Thirdly, we can see the scale up and the scale down operations done flawlessly. It is described in the video about how the operator will scale up one pod at a time and it will wait for the pods to join the cluster. Once the pod has joined the cluster, it will move to the next one.
+Again, Scaling down is comparatively easy. For the ingest node  the operator just removes the node.
+While scaling down the master, the operator makes sure that it is removed from leader election.
+Lastly, while scaling down the data node, the operator makes sure that all the shards safely move to other data nodes before removing the node.
+In the last part of the video we can see how to backup and restore the elasticsearch cluster using Stash. All in all, it was an effective webinar.
 
 Take a deep dive into the full webinar below:
 
