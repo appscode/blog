@@ -44,7 +44,7 @@ In the last part of the video we can see how to backup and restore the elasticse
 
 Take a deep dive into the full webinar below:
 
-<iframe style="height: 500px; width: 800px" src="https://www.youtube.com/embed/0mqPs6odwKk?start=604" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe style="height: 500px; width: 800px" src="https://www.youtube.com/embed/0mqPs6odwKk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## What Next?
 
