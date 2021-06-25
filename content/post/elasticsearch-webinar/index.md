@@ -30,6 +30,8 @@ AppsCode held a webinar on "Managing Production Grade Elasticsearch in Kubernete
     * Delete and Restore from Backup
 4) Q & A Session
 
+## Description of the Webinar Demo
+
 From this demo we get an in depth view of how the KubeDB Elasticsearch operator works. Firstly, we can see the TLS enabled deployment of Elasticsearch. Secondly, we can see the smart upgrade operation. By smart we mean that:
 
 * It will disable the ongoing shard allocation, so that no data interrupted.
