@@ -36,7 +36,7 @@ From this demo we get an in depth view of how the KubeDB Elasticsearch operator 
 * It will upgrade one pod at a time and will wait for it to join the cluster before moving to the next one.
 * It will restart pods in order. First, it will restart the ingest nodes, then the data nodes, and finally the master nodes.
 
-Thirdly, we can see the scale up and the scale down operations done flawlessly. It is described in the video about how the operator will scale up one pod at a time and it will wait for the pods to join the cluster. Once the pod has joined the cluster, it will move to the next one.
+Thirdly, we can see the horizontal scale up and down operations done flawlessly. It is described in the video about how the operator will scale up one pod at a time and it will wait for the pods to join the cluster. Once the pod has joined the cluster, it will move to the next one.
 Again, Scaling down is comparatively easy. For the ingest node  the operator just removes the node.
 While scaling down the master, the operator makes sure that it is removed from leader election.
 Lastly, while scaling down the data node, the operator makes sure that all the shards safely move to other data nodes before removing the node.
