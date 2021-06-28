@@ -31,7 +31,7 @@ In this tutorial we will deploy MySQL database. We will cover the following step
 
 ## Install KubeDB
 
-We will follow the following sub-steps to install KubeDB.
+We will follow the following steps to install KubeDB.
 
 ### Step 1: Get Cluster ID
 
@@ -47,7 +47,7 @@ $ oc get ns kube-system -o=jsonpath='{.metadata.uid}'
 
 Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the license.txt file. For this tutorial we will use KubeDB Enterprise Edition.
 
-![The KubeVault Overview](licenseserver.png)
+![The License Server](licenseserver.png)
 
 ### Step 3: Install KubeDB
 
@@ -147,7 +147,7 @@ local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   fals
 Here, we can see that I have a storageclass named `local-path`. If you do not have a storage class you can run the following command:
 
 ```bash
-$ oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+$ oc apply -f https://gist.githubusercontent.com/tamalsaha/58fb8cb07d60f34d77db048680f6102e/raw/a15e7181ea34e447011e91ebf23cd07f2877cbdb/local-path-storage.yaml
 ```
 
 This will create the storage-class named local-path.
@@ -184,7 +184,7 @@ spec:
 Let's save this yaml configuration into mysql.yaml. Then apply using the command
 `oc apply -f mysql.yaml`
 
-* In this yaml we can see in the `spec.version` field the version of MySQL. You can change and get updated version by running `oc get mysqlversions` command.
+* In this object we can see in the `spec.version` field, the version of MySQL. You can list the supported versions by running `oc get mysqlversions` command.
 * Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not.
 * `spec.storage.storageClassName` contains the name of the storage class we obtained before named "local-path".
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/mysql/concepts/database/#specterminationpolicy).
@@ -381,7 +381,6 @@ spec:
 
 So, after 5 minutes we can see the following status:
 
-
 ```bash
 $ oc get backupsession -n demo
 NAME                             INVOKER-TYPE          INVOKER-NAME          PHASE       AGE
@@ -394,7 +393,6 @@ gcs-repo   true        3.670 MiB   1                2m18s                    15m
 $ oc get backupconfiguration -n demo
 NAME                  TASK   SCHEDULE      PAUSED   AGE
 sample-mysql-backup          */5 * * * *            16m
-
 ```
 
 Now if we check our GCS bucket we can see that the backup has been successful.
