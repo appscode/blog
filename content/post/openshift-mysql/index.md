@@ -1,6 +1,6 @@
 ---
 title: Manage MySQL in Openshift Using KubeDB
-date: 2021-04-23
+date: 2021-06-28
 weight: 23
 authors:
   - Shohag Rana
@@ -51,7 +51,7 @@ Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the
 
 ### Step 3: Install KubeDB
 
-We will use helm to install KubeDB.Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
+We will use helm to install KubeDB. Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
 Now, let's install `KubeDB`.
 
 ```bash
@@ -144,7 +144,7 @@ NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLO
 local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false    
 ```
 
-Here, we can see that I have a storageclass named `local-path`. If you do not have a storage class you can run the follwing command:
+Here, we can see that I have a storageclass named `local-path`. If you do not have a storage class you can run the following command:
 
 ```bash
 $ oc apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
@@ -154,7 +154,7 @@ This will create the storage-class named local-path.
 
 ### Check 2: Correct Permissions
 
-We can ensure that the service account has correct permissions.by running the following command:
+We can ensure that the service account has correct permissions by running the following command:
 
 ```bash
 $ oc adm policy add-scc-to-user privileged system:serviceaccount:local-path-storage:local-path-provisioner-service-account
@@ -173,7 +173,6 @@ spec:
   version: "8.0.23-v1"
   storageType: Durable
   storage:
-    storageClassName: "local-path"
     accessModes:
     - ReadWriteOnce
     resources:
@@ -185,10 +184,8 @@ spec:
 Let's save this yaml configuration into mysql.yaml. Then apply using the command
 `oc apply -f mysql.yaml`
 
-This yaml uses MySQL CRD.
-
-* In this yaml we can see in the `spec.version` field the version of MySQL. You can change and get updated version by running `oc get mysqlversions` command. 
-* Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not. 
+* In this yaml we can see in the `spec.version` field the version of MySQL. You can change and get updated version by running `oc get mysqlversions` command.
+* Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not.
 * `spec.storage.storageClassName` contains the name of the storage class we obtained before named "local-path".
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/mysql/concepts/database/#specterminationpolicy).
 
@@ -199,20 +196,21 @@ Once these are handled correctly and the MySQL CRD is deployed you will see that
 ```bash
 $ oc get all -n demo
 NAME                     READY   STATUS    RESTARTS   AGE
-pod/mysql-quickstart-0   1/1     Running   0          31m
+pod/mysql-quickstart-0   1/1     Running   0          2m3s
 
 NAME                            TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
-service/mysql-quickstart        ClusterIP   10.217.5.195   <none>        3306/TCP   31m
-service/mysql-quickstart-pods   ClusterIP   None           <none>        3306/TCP   31m
+service/mysql-quickstart        ClusterIP   10.217.5.152   <none>        3306/TCP   2m4s
+service/mysql-quickstart-pods   ClusterIP   None           <none>        3306/TCP   2m4s
 
 NAME                                READY   AGE
-statefulset.apps/mysql-quickstart   1/1     31m
+statefulset.apps/mysql-quickstart   1/1     2m6s
 
 NAME                                                  TYPE               VERSION   AGE
-appbinding.appcatalog.appscode.com/mysql-quickstart   kubedb.com/mysql   8.0.23    31m
+appbinding.appcatalog.appscode.com/mysql-quickstart   kubedb.com/mysql   8.0.23    2m10s
 
 NAME                                VERSION     STATUS   AGE
-mysql.kubedb.com/mysql-quickstart   8.0.23-v1   Ready    31m
+mysql.kubedb.com/mysql-quickstart   8.0.23-v1   Ready    2m13s
+
 ```
 
 > We have successfully deployed MySQL database in OpenShift. Now we can exec into the container to use the database.
@@ -223,12 +221,24 @@ To access the database through CLI we have to exec into the container:
 
  ```bash
 $ oc exec -it -n demo mysql-quickstart-0 -- bash
+root@mysql-quickstart-0:/# 
  ```
 
  Then to login into mysql:
 
  ```bash
-mysql -uroot -p${MYSQL_ROOT_PASSWORD}
+root@mysql-quickstart-0:/# mysql -uroot -p${MYSQL_ROOT_PASSWORD}
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 25
+Server version: 8.0.23 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
  ```
 
 Now we have entered into the MySQL CLI and we can create and delete as we want.
@@ -371,7 +381,21 @@ spec:
 
 So, after 5 minutes we can see the following status:
 
-![Backup](backup.png)
+
+```bash
+$ oc get backupsession -n demo
+NAME                             INVOKER-TYPE          INVOKER-NAME          PHASE       AGE
+sample-mysql-backup-1624861209   BackupConfiguration   sample-mysql-backup   Succeeded   103s
+
+$ oc get repository -n demo
+NAME       INTEGRITY   SIZE        SNAPSHOT-COUNT   LAST-SUCCESSFUL-BACKUP   AGE
+gcs-repo   true        3.670 MiB   1                2m18s                    15m
+
+$ oc get backupconfiguration -n demo
+NAME                  TASK   SCHEDULE      PAUSED   AGE
+sample-mysql-backup          */5 * * * *            16m
+
+```
 
 Now if we check our GCS bucket we can see that the backup has been successful.
 
@@ -390,7 +414,37 @@ oc patch backupconfiguration -n demo sample-mysql-backup --type="merge" --patch=
 
 At first let's simulate accidental database deletion.
 
-![Delete Database](deleteDatabase.png)
+```bash
+$ oc exec -it -n demo mysql-quickstart-0 -- bash
+root@mysql-quickstart-0:/# mysql -uroot -p${MYSQL_ROOT_PASSWORD}
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 252
+Server version: 8.0.23 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
+| testdb             |
++--------------------+
+5 rows in set (0.01 sec)
+
+mysql> drop database testdb;
+Query OK, 1 row affected (0.03 sec)
+```
 
 ### Step 1: Create a RestoreSession
 
@@ -420,11 +474,40 @@ spec:
 Notice that the `securityContext` field is the same as we mentioned earlier in the BackupConfiguration. This RestoreSession specifies where the data will be restored.
 Once this is applied, a RestoreSession will be created. Once it has succeeded, the database has been successfully recovered as you can see below:
 
-![Recovery Succeeded](recoverSucceed.png)
+```bash
+$ oc get restoresession -n demo
+NAME                   REPOSITORY   PHASE       AGE
+sample-mysql-restore   gcs-repo     Succeeded   41s
+```
 
 Now let's check whether the database has been correctly restored:
 
-![Recovered Database](recoveredDB.png)
+```bash
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
+| testdb             |
++--------------------+
+5 rows in set (0.02 sec)
+
+mysql> use testdb;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> show tables;
++------------------+
+| Tables_in_testdb |
++------------------+
+| MyGuests         |
++------------------+
+1 row in set (0.01 sec)
+```
 
 > The recovery has been successful. If you faced any difficulties in the recovery process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20OpenShift).
 
