@@ -31,7 +31,7 @@ In this tutorial we will deploy MongoDB database. We will cover the following st
 
 ## Install KubeDB
 
-We will follow the following sub-steps to install KubeDB.
+We will follow the following steps to install KubeDB.
 
 ### Step 1: Get Cluster ID
 
@@ -219,7 +219,7 @@ Questions? Try the support group
  ```
 
 Now we have entered into the MongoDB CLI and we can create and delete as we want.
-Let's create a database and create a test collection called movie:
+Let's create a database called `testdb` and create a test collection called `movie`:
 
 ```bash
 > show dbs
