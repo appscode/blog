@@ -432,6 +432,10 @@ testdb  0.000GB
 
 > The recovery has been successful. If you faced any difficulties in the recovery process, you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20GKE).
 
+We have made an in depth video on how to run production-grade MongoDB in Kubernetes cluster using KubeDB. You can have a look into the video below:
+
+<iframe style="height: 500px; width: 800px"  src="https://www.youtube.com/embed/CU2YMA9kYdA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 ## Support
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
