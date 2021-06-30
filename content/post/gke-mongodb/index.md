@@ -20,7 +20,7 @@ tags:
 
 ## Overview
 
-The databases that KubeDB support are MongoDB, Elasticsearch, MySQL, MariaDB, PostgreSQL and Redis. You can find the guides to all the supported databases [here](https://kubedb.com/).
+The databases that KubeDB support are MongoDB, Elasticsearch, MySQL, MariaDB, PostgreSQL, Memcached and Redis. You can find the guides to all the supported databases [here](https://kubedb.com/).
 In this tutorial we will deploy MongoDB database. We will cover the following steps:
 
 1) Install KubeDB
@@ -159,7 +159,6 @@ Let's save this yaml configuration into mongodb.yaml. Then apply using the comma
 
 * In this yaml we can see in the `spec.version` field the version of MongoDB. You can change and get updated version by running `kubectl get mongodbversions` command.
 * Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
-* `spec.storage.storageClassName` contains the name of the storage class we obtained before named "local-path".
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/mongodb/concepts/mongodb/#specterminationpolicy).
 
 Once these are handled correctly and the MongoDB object is deployed you will see that the following are created:
