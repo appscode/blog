@@ -31,7 +31,7 @@ In this tutorial we will deploy PostgreSQL database. We will cover the following
 
 ## Install KubeDB
 
-We will follow the following sub-steps to install KubeDB.
+We will follow the following steps to install KubeDB.
 
 ### Step 1: Get Cluster ID
 
@@ -57,18 +57,19 @@ Now, let's install `KubeDB`.
 ```bash
 $ helm repo add appscode https://charts.appscode.com/stable/
 $ helm repo update
+
 $ helm search repo appscode/kubedb
 NAME                        CHART VERSION APP VERSION DESCRIPTION
-appscode/kubedb             v2021.04.16   v2021.04.16 KubeDB by AppsCode - Production ready databases...
-appscode/kubedb-autoscaler  v0.3.0        v0.3.0      KubeDB Autoscaler by AppsCode - Autoscale KubeD...
-appscode/kubedb-catalog     v0.18.0       v0.18.0     KubeDB Catalog by AppsCode - Catalog for databa...
-appscode/kubedb-community   v0.18.0       v0.18.0     KubeDB Community by AppsCode - Community featur...
-appscode/kubedb-crds        v0.18.0       v0.18.0     KubeDB Custom Resource Definitions
-appscode/kubedb-enterprise  v0.5.0        v0.5.0      KubeDB Enterprise by AppsCode - Enterprise feat...
+appscode/kubedb             v2021.06.23   v2021.06.23 KubeDB by AppsCode - Production ready databases...
+appscode/kubedb-autoscaler  v0.4.0        v0.4.0      KubeDB Autoscaler by AppsCode - Autoscale KubeD...
+appscode/kubedb-catalog     v0.19.0       v0.19.0     KubeDB Catalog by AppsCode - Catalog for databa...
+appscode/kubedb-community   v0.19.0       v0.19.0     KubeDB Community by AppsCode - Community featur...
+appscode/kubedb-crds        v0.19.0       v0.19.0     KubeDB Custom Resource Definitions
+appscode/kubedb-enterprise  v0.6.0        v0.6.0      KubeDB Enterprise by AppsCode - Enterprise feat...
 
 # Install KubeDB Enterprise operator chart
 $ helm install kubedb appscode/kubedb \
-    --version v2021.04.16 \
+    --version v2021.06.23 \
     --namespace kube-system \
     --set-file global.license=/path/to/the/license.txt \
     --set kubedb-enterprise.enabled=true \
@@ -160,9 +161,8 @@ Let's save this yaml configuration into postgres.yaml. Then apply using the comm
 
 This yaml uses Postgres CRD.
 
-* In this yaml we can see in the `spec.version` field the version of Postgres. You can change and get updated version by running `kubectl get postgresversions` command.
+* In this object we can see in the `spec.version` field, the version of Postgres. You can list the supported versions by running `oc get postgresversions` command.
 * Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not.
-* `spec.storage.storageClassName` contains the name of the storage class we obtained before named "local-path".
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/postgres/concepts/postgres/#specterminationpolicy).
 
 ### Deploy Postgres CRD
@@ -254,7 +254,7 @@ bash-5.1$
 exit
 ```
 
-> This was just one example of database deployment. The other databases that KubeDB suport are MySQL, MongoDB, Elasticsearch, MariaDB, Memcached and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
+> This was just one example of database deployment. The other databases that KubeDB support are MySQL, MongoDB, Elasticsearch, MariaDB, Memcached and Redis. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
 
 ## Backup and Recover Database Using Stash
 
@@ -266,7 +266,7 @@ Here we will use the KubeDB license we obtained earlier.
 
 ```bash
 $ helm install stash appscode/stash             \
-  --version v2021.04.12                  \
+  --version v2021.06.23                  \
   --namespace kube-system                       \
   --set features.enterprise=true                \
   --set-file global.license=/path/to/the/license.txt
