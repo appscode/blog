@@ -79,7 +79,7 @@ $ helm install kubedb appscode/kubedb \
 Let's verify the installation:
 
 ```bash
-$ watch kubectl get pods --all-namespaces -l "app.kubernetes.io/instance=kubedb"
+$ watch oc get pods --all-namespaces -l "app.kubernetes.io/instance=kubedb"
 
 NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE
 kube-system   kubedb-kubedb-autoscaler-569f66dbbc-qqmmb   1/1     Running   0          3m28s
@@ -136,7 +136,7 @@ Now, before deploying the MySQL CRD let's perform some checks to ensure that it 
 
 ### Check 1: StorageClass Check
 
-Let's check the availabe storage classes:
+Let's check the available storage classes:
 
 ```bash
 $ oc get storageclass
@@ -186,7 +186,6 @@ Let's save this yaml configuration into mysql.yaml. Then apply using the command
 
 * In this object we can see in the `spec.version` field, the version of MySQL. You can list the supported versions by running `oc get mysqlversions` command.
 * Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not.
-* `spec.storage.storageClassName` contains the name of the storage class we obtained before named "local-path".
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/mysql/concepts/database/#specterminationpolicy).
 
 ### Deploy MySQL CRD
@@ -399,7 +398,7 @@ Now if we check our GCS bucket we can see that the backup has been successful.
 
 ![gcsSuccess](gcsSuccess.png)
 
-> **If you reached here CONGRATULATIONS!! :confetti_ball:  :partying_face: :confetti_ball: The backup has been successful**. If you didn't its okay. You can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
+> **If you reached here CONGRATULATIONS!! :confetti_ball:  :partying_face: :confetti_ball: The backup has been successful**. If you didn't, it's okay. You can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20OpenShift).
 
 ## Recover
 
