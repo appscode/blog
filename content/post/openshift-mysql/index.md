@@ -59,17 +59,18 @@ $ helm repo add appscode https://charts.appscode.com/stable/
 $ helm repo update
 
 $ helm search repo appscode/kubedb
-NAME                        CHART VERSION APP VERSION DESCRIPTION
-appscode/kubedb             v2021.04.16   v2021.04.16 KubeDB by AppsCode - Production ready databases...
-appscode/kubedb-autoscaler  v0.3.0        v0.3.0      KubeDB Autoscaler by AppsCode - Autoscale KubeD...
-appscode/kubedb-catalog     v0.18.0       v0.18.0     KubeDB Catalog by AppsCode - Catalog for databa...
-appscode/kubedb-community   v0.18.0       v0.18.0     KubeDB Community by AppsCode - Community featur...
-appscode/kubedb-crds        v0.18.0       v0.18.0     KubeDB Custom Resource Definitions
-appscode/kubedb-enterprise  v0.5.0        v0.5.0      KubeDB Enterprise by AppsCode - Enterprise feat...
+NAME                      	CHART VERSION	APP VERSION	DESCRIPTION                                       
+appscode/kubedb           	v2021.06.23  	v2021.06.23	KubeDB by AppsCode - Production ready databases...
+appscode/kubedb-autoscaler	v0.4.0       	v0.4.0     	KubeDB Autoscaler by AppsCode - Autoscale KubeD...
+appscode/kubedb-catalog   	v2021.06.23  	v2021.06.23	KubeDB Catalog by AppsCode - Catalog for databa...
+appscode/kubedb-community 	v0.19.0      	v0.19.0    	KubeDB Community by AppsCode - Community featur...
+appscode/kubedb-crds      	v2021.06.23  	v2021.06.23	KubeDB Custom Resource Definitions                
+appscode/kubedb-enterprise	v0.6.0       	v0.6.0     	KubeDB Enterprise by AppsCode - Enterprise feat...
+
 
 # Install KubeDB Enterprise operator chart
 $ helm install kubedb appscode/kubedb \
-    --version v2021.04.16 \
+    --version v2021.06.23 \
     --namespace kube-system \
     --set-file global.license=/path/to/the/license.txt \
     --set kubedb-enterprise.enabled=true \
@@ -130,6 +131,7 @@ At first, let's create a Namespace in which we will deploy the database.
 
 ```bash
 $ oc create ns demo
+namespace/demo created
 ```
 
 Now, before deploying the MySQL CRD let's perform some checks to ensure that it will be deployed correctly.
