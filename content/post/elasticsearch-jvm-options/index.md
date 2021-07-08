@@ -46,3 +46,21 @@ The CMS uses multiple garbage collector treads for garbage collection. It is des
 ```log
 [2021-07-15T08:23:27,847][WARN ][o.e.m.j.JvmGcMonitorService] [elasticsearch-client-1] [gc][400] overhead, spent [856ms] collecting in the last [1.5s] 
 ```
+
+If more than 98% of the total time is spent in garbage collection and less than 2% of the heap is recovered, an `OutOfMemoryError` will be thrown. This feature is designed to prevent applications from running for an extended period while making little or no progress because the heap is too small. If necessary, this feature can be disabled by adding the option `-XX:-UseGCOverheadLimit` to the command line.
+
+```log
+java.lang.OutOfMemoryError: Java heap space 
+
+Dumping heap to data/java_pid1.hprof ... 
+Heap dump file created [551251102 bytes in 13.508 secs] 
+ 
+Exception: java.lang.OutOfMemoryError thrown from the UncaughtExceptionHandler in thread "pool-3-thread-1" 
+```
+
+## References
+
+- [JVM Garbage Collectors](https://www.baeldung.com/jvm-garbage-collectors)
+- [OutOfMemoryError - GC overhead limit exceeded](https://www.petefreitag.com/item/746.cfm)
+- [Garbage Collectors – Serial vs. Parallel vs. CMS vs. G1 (and what’s new in Java 8)](https://www.overops.com/blog/garbage-collectors-serial-vs-parallel-vs-cms-vs-the-g1-and-whats-new-in-java-8/)
+- []()
