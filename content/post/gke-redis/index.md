@@ -57,13 +57,13 @@ $ helm repo add appscode https://charts.appscode.com/stable/
 $ helm repo update
 
 $ helm search repo appscode/kubedb
-NAME                        CHART VERSION APP VERSION DESCRIPTION
-appscode/kubedb             v2021.04.16   v2021.04.16 KubeDB by AppsCode - Production ready databases...
-appscode/kubedb-autoscaler  v0.3.0        v0.3.0      KubeDB Autoscaler by AppsCode - Autoscale KubeD...
-appscode/kubedb-catalog     v0.18.0       v0.18.0     KubeDB Catalog by AppsCode - Catalog for databa...
-appscode/kubedb-community   v0.18.0       v0.18.0     KubeDB Community by AppsCode - Community featur...
-appscode/kubedb-crds        v0.18.0       v0.18.0     KubeDB Custom Resource Definitions
-appscode/kubedb-enterprise  v0.5.0        v0.5.0      KubeDB Enterprise by AppsCode - Enterprise feat...
+NAME                       CHART VERSION APP VERSION DESCRIPTION                                       
+appscode/kubedb            v2021.06.23   v2021.06.23 KubeDB by AppsCode - Production ready databases...
+appscode/kubedb-autoscaler v0.4.0        v0.4.0      KubeDB Autoscaler by AppsCode - Autoscale KubeD...
+appscode/kubedb-catalog    v2021.06.23   v2021.06.23 KubeDB Catalog by AppsCode - Catalog for databa...
+appscode/kubedb-community  v0.19.0      v0.19.0     KubeDB Community by AppsCode - Community featur...
+appscode/kubedb-crds       v2021.06.23  v2021.06.23 KubeDB Custom Resource Definitions                
+appscode/kubedb-enterprise v0.6.0       v0.6.0     KubeDB Enterprise by AppsCode - Enterprise feat...
 
 # Install KubeDB Enterprise operator chart
 $ helm install kubedb appscode/kubedb \
@@ -91,34 +91,36 @@ We can see the CRD Groups that have been registered by the operator by running t
 ```bash
 $ kubectl get crd -l app.kubernetes.io/name=kubedb
 NAME                                              CREATED AT
-elasticsearchautoscalers.autoscaling.kubedb.com   2021-04-21T04:05:40Z
-elasticsearches.kubedb.com                        2021-04-21T04:05:37Z
-elasticsearchopsrequests.ops.kubedb.com           2021-04-21T04:05:37Z
-elasticsearchversions.catalog.kubedb.com          2021-04-21T04:02:43Z
-etcds.kubedb.com                                  2021-04-21T04:05:38Z
-etcdversions.catalog.kubedb.com                   2021-04-21T04:02:44Z
-mariadbs.kubedb.com                               2021-04-21T04:05:38Z
-mariadbversions.catalog.kubedb.com                2021-04-21T04:02:44Z
-memcacheds.kubedb.com                             2021-04-21T04:05:38Z
-memcachedversions.catalog.kubedb.com              2021-04-21T04:02:45Z
-mongodbautoscalers.autoscaling.kubedb.com         2021-04-21T04:05:37Z
-mongodbopsrequests.ops.kubedb.com                 2021-04-21T04:05:40Z
-mongodbs.kubedb.com                               2021-04-21T04:05:38Z
-mongodbversions.catalog.kubedb.com                2021-04-21T04:02:46Z
-mysqlopsrequests.ops.kubedb.com                   2021-04-21T04:05:48Z
-mysqls.kubedb.com                                 2021-04-21T04:05:38Z
-mysqlversions.catalog.kubedb.com                  2021-04-21T04:02:46Z
-perconaxtradbs.kubedb.com                         2021-04-21T04:05:38Z
-perconaxtradbversions.catalog.kubedb.com          2021-04-21T04:02:47Z
-pgbouncers.kubedb.com                             2021-04-21T04:05:39Z
-pgbouncerversions.catalog.kubedb.com              2021-04-21T04:02:47Z
-postgreses.kubedb.com                             2021-04-21T04:05:39Z
-postgresversions.catalog.kubedb.com               2021-04-21T04:02:48Z
-proxysqls.kubedb.com                              2021-04-21T04:05:39Z
-proxysqlversions.catalog.kubedb.com               2021-04-21T04:02:49Z
-redises.kubedb.com                                2021-04-21T04:05:39Z
-redisopsrequests.ops.kubedb.com                   2021-04-21T04:05:54Z
-redisversions.catalog.kubedb.com                  2021-04-21T04:02:49Z
+elasticsearchautoscalers.autoscaling.kubedb.com   2021-07-07T04:47:44Z
+elasticsearches.kubedb.com                        2021-07-07T04:47:32Z
+elasticsearchopsrequests.ops.kubedb.com           2021-07-07T04:47:39Z
+elasticsearchversions.catalog.kubedb.com          2021-07-07T04:45:47Z
+etcds.kubedb.com                                  2021-07-07T04:47:33Z
+etcdversions.catalog.kubedb.com                   2021-07-07T04:45:47Z
+mariadbopsrequests.ops.kubedb.com                 2021-07-07T04:57:22Z
+mariadbs.kubedb.com                               2021-07-07T04:47:33Z
+mariadbversions.catalog.kubedb.com                2021-07-07T04:45:47Z
+memcacheds.kubedb.com                             2021-07-07T04:47:34Z
+memcachedversions.catalog.kubedb.com              2021-07-07T04:45:48Z
+mongodbautoscalers.autoscaling.kubedb.com         2021-07-07T04:47:40Z
+mongodbopsrequests.ops.kubedb.com                 2021-07-07T04:47:45Z
+mongodbs.kubedb.com                               2021-07-07T04:47:35Z
+mongodbversions.catalog.kubedb.com                2021-07-07T04:45:48Z
+mysqlopsrequests.ops.kubedb.com                   2021-07-07T04:47:57Z
+mysqls.kubedb.com                                 2021-07-07T04:47:35Z
+mysqlversions.catalog.kubedb.com                  2021-07-07T04:45:48Z
+perconaxtradbs.kubedb.com                         2021-07-07T04:47:36Z
+perconaxtradbversions.catalog.kubedb.com          2021-07-07T04:45:49Z
+pgbouncers.kubedb.com                             2021-07-07T04:47:36Z
+pgbouncerversions.catalog.kubedb.com              2021-07-07T04:45:49Z
+postgreses.kubedb.com                             2021-07-07T04:47:37Z
+postgresopsrequests.ops.kubedb.com                2021-07-07T04:57:31Z
+postgresversions.catalog.kubedb.com               2021-07-07T04:45:49Z
+proxysqls.kubedb.com                              2021-07-07T04:47:38Z
+proxysqlversions.catalog.kubedb.com               2021-07-07T04:45:50Z
+redises.kubedb.com                                2021-07-07T04:47:39Z
+redisopsrequests.ops.kubedb.com                   2021-07-07T04:48:04Z
+redisversions.catalog.kubedb.com                  2021-07-07T04:45:50Z
 ```
 
 ## Step 2: Deploying Database
