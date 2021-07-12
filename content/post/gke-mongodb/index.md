@@ -1,6 +1,6 @@
 ---
 title: Manage MongoDB in GKE Using KubeDB
-date: 2021-06-29
+date: 2021-07-12
 weight: 22
 authors:
   - Shohag Rana
