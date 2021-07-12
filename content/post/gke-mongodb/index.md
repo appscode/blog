@@ -60,16 +60,16 @@ $ helm repo update
 
 $ helm search repo appscode/kubedb
 NAME                        CHART VERSION APP VERSION DESCRIPTION
-appscode/kubedb             v2021.04.16   v2021.04.16 KubeDB by AppsCode - Production ready databases...
-appscode/kubedb-autoscaler  v0.3.0        v0.3.0      KubeDB Autoscaler by AppsCode - Autoscale KubeD...
-appscode/kubedb-catalog     v0.18.0       v0.18.0     KubeDB Catalog by AppsCode - Catalog for databa...
-appscode/kubedb-community   v0.18.0       v0.18.0     KubeDB Community by AppsCode - Community featur...
-appscode/kubedb-crds        v0.18.0       v0.18.0     KubeDB Custom Resource Definitions
-appscode/kubedb-enterprise  v0.5.0        v0.5.0      KubeDB Enterprise by AppsCode - Enterprise feat...
+appscode/kubedb             v2021.06.23   v2021.06.23 KubeDB by AppsCode - Production ready databases...
+appscode/kubedb-autoscaler  v0.4.0        v0.4.0      KubeDB Autoscaler by AppsCode - Autoscale KubeD...
+appscode/kubedb-catalog     v0.19.0       v0.19.0     KubeDB Catalog by AppsCode - Catalog for databa...
+appscode/kubedb-community   v0.19.0       v0.19.0     KubeDB Community by AppsCode - Community featur...
+appscode/kubedb-crds        v0.19.0       v0.19.0     KubeDB Custom Resource Definitions
+appscode/kubedb-enterprise  v0.6.0        v0.6.0      KubeDB Enterprise by AppsCode - Enterprise feat...
 
 # Install KubeDB Enterprise operator chart
 $ helm install kubedb appscode/kubedb \
-    --version v2021.04.16 \
+    --version v2021.06.23 \
     --namespace kube-system \
     --set-file global.license=/path/to/the/license.txt \
     --set kubedb-enterprise.enabled=true \
@@ -82,10 +82,9 @@ Let's verify the installation:
 $ watch kubectl get pods --all-namespaces -l "app.kubernetes.io/instance=kubedb"
 
 NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE
-kube-system   kubedb-kubedb-autoscaler-569f66dbbc-qqmmb   1/1     Running   0          3m28s
-kube-system   kubedb-kubedb-community-b6469fb9c-4hwbh     1/1     Running   0          3m28s
-kube-system   kubedb-kubedb-enterprise-b658c95fc-kwqt6    1/1     Running   0          3m28s
-
+kube-system   kubedb-kubedb-autoscaler-5f8c566d5c-lcjdl   1/1     Running   0          2m42s
+kube-system   kubedb-kubedb-community-74549c9b9d-9zks9    1/1     Running   0          2m42s
+kube-system   kubedb-kubedb-enterprise-6c9dd8958-8tk4b    1/1     Running   0          2m42s
 ```
 
 We can see the CRD Groups that have been registered by the operator by running the following command:
@@ -93,34 +92,36 @@ We can see the CRD Groups that have been registered by the operator by running t
 ```bash
 $ kubectl get crd -l app.kubernetes.io/name=kubedb
 NAME                                              CREATED AT
-elasticsearchautoscalers.autoscaling.kubedb.com   2021-04-21T04:05:40Z
-elasticsearches.kubedb.com                        2021-04-21T04:05:37Z
-elasticsearchopsrequests.ops.kubedb.com           2021-04-21T04:05:37Z
-elasticsearchversions.catalog.kubedb.com          2021-04-21T04:02:43Z
-etcds.kubedb.com                                  2021-04-21T04:05:38Z
-etcdversions.catalog.kubedb.com                   2021-04-21T04:02:44Z
-mariadbs.kubedb.com                               2021-04-21T04:05:38Z
-mariadbversions.catalog.kubedb.com                2021-04-21T04:02:44Z
-memcacheds.kubedb.com                             2021-04-21T04:05:38Z
-memcachedversions.catalog.kubedb.com              2021-04-21T04:02:45Z
-mongodbautoscalers.autoscaling.kubedb.com         2021-04-21T04:05:37Z
-mongodbopsrequests.ops.kubedb.com                 2021-04-21T04:05:40Z
-mongodbs.kubedb.com                               2021-04-21T04:05:38Z
-mongodbversions.catalog.kubedb.com                2021-04-21T04:02:46Z
-mysqlopsrequests.ops.kubedb.com                   2021-04-21T04:05:48Z
-mysqls.kubedb.com                                 2021-04-21T04:05:38Z
-mysqlversions.catalog.kubedb.com                  2021-04-21T04:02:46Z
-perconaxtradbs.kubedb.com                         2021-04-21T04:05:38Z
-perconaxtradbversions.catalog.kubedb.com          2021-04-21T04:02:47Z
-pgbouncers.kubedb.com                             2021-04-21T04:05:39Z
-pgbouncerversions.catalog.kubedb.com              2021-04-21T04:02:47Z
-postgreses.kubedb.com                             2021-04-21T04:05:39Z
-postgresversions.catalog.kubedb.com               2021-04-21T04:02:48Z
-proxysqls.kubedb.com                              2021-04-21T04:05:39Z
-proxysqlversions.catalog.kubedb.com               2021-04-21T04:02:49Z
-redises.kubedb.com                                2021-04-21T04:05:39Z
-redisopsrequests.ops.kubedb.com                   2021-04-21T04:05:54Z
-redisversions.catalog.kubedb.com                  2021-04-21T04:02:49Z
+elasticsearchautoscalers.autoscaling.kubedb.com   2021-07-12T06:51:39Z
+elasticsearches.kubedb.com                        2021-07-12T06:51:44Z
+elasticsearchopsrequests.ops.kubedb.com           2021-07-12T06:51:44Z
+elasticsearchversions.catalog.kubedb.com          2021-07-12T06:49:59Z
+etcds.kubedb.com                                  2021-07-12T06:51:54Z
+etcdversions.catalog.kubedb.com                   2021-07-12T06:49:59Z
+mariadbopsrequests.ops.kubedb.com                 2021-07-12T06:52:05Z
+mariadbs.kubedb.com                               2021-07-12T06:51:55Z
+mariadbversions.catalog.kubedb.com                2021-07-12T06:50:00Z
+memcacheds.kubedb.com                             2021-07-12T06:51:55Z
+memcachedversions.catalog.kubedb.com              2021-07-12T06:50:00Z
+mongodbautoscalers.autoscaling.kubedb.com         2021-07-12T06:51:36Z
+mongodbopsrequests.ops.kubedb.com                 2021-07-12T06:51:49Z
+mongodbs.kubedb.com                               2021-07-12T06:51:49Z
+mongodbversions.catalog.kubedb.com                2021-07-12T06:50:00Z
+mysqlopsrequests.ops.kubedb.com                   2021-07-12T06:52:00Z
+mysqls.kubedb.com                                 2021-07-12T06:51:59Z
+mysqlversions.catalog.kubedb.com                  2021-07-12T06:50:01Z
+perconaxtradbs.kubedb.com                         2021-07-12T06:52:00Z
+perconaxtradbversions.catalog.kubedb.com          2021-07-12T06:50:01Z
+pgbouncers.kubedb.com                             2021-07-12T06:51:54Z
+pgbouncerversions.catalog.kubedb.com              2021-07-12T06:50:01Z
+postgreses.kubedb.com                             2021-07-12T06:52:02Z
+postgresopsrequests.ops.kubedb.com                2021-07-12T06:52:15Z
+postgresversions.catalog.kubedb.com               2021-07-12T06:50:02Z
+proxysqls.kubedb.com                              2021-07-12T06:52:03Z
+proxysqlversions.catalog.kubedb.com               2021-07-12T06:50:02Z
+redises.kubedb.com                                2021-07-12T06:52:03Z
+redisopsrequests.ops.kubedb.com                   2021-07-12T06:52:09Z
+redisversions.catalog.kubedb.com                  2021-07-12T06:50:02Z
 ```
 
 ## Deploy Standalone Database
@@ -131,7 +132,6 @@ At first, let's create a Namespace in which we will deploy the database.
 ```bash
 $ kubectl create ns demo
 namespace/demo created
-
 ```
 
 Here is the yaml of the MongoDB CRD we are going to use:
@@ -159,7 +159,7 @@ Let's save this yaml configuration into mongodb.yaml. Then apply using the comma
 
 * In this yaml we can see in the `spec.version` field the version of MongoDB. You can change and get updated version by running `kubectl get mongodbversions` command.
 * Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
-* Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/mongodb/concepts/mongodb/#specterminationpolicy).
+* Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.06.23/guides/mongodb/concepts/mongodb/#specterminationpolicy).
 
 Once these are handled correctly and the MongoDB object is deployed you will see that the following are created:
 
@@ -247,7 +247,7 @@ Here we will use the KubeDB license we obtained earlier.
 
 ```bash
 $ helm install stash appscode/stash             \
-  --version v2021.04.12                  \
+  --version v2021.06.23                  \
   --namespace kube-system                       \
   --set features.enterprise=true                \
   --set-file global.license=/path/to/the/license.txt
@@ -268,7 +268,7 @@ kube-system   stash-stash-enterprise-6979884d85-7hdfm   2/2     Running         
 
 Stash supports various backends for storing data snapshots. It can be a cloud storage like GCS bucket, AWS S3, Azure Blob Storage etc. or a Kubernetes persistent volume like HostPath, PersistentVolumeClaim, NFS etc.
 
-For this tutorial we are going to use gcs-bucket. You can find other setups [here](https://stash.run/docs/v2021.04.12/guides/latest/backends/overview/).
+For this tutorial we are going to use gcs-bucket. You can find other setups [here](https://stash.run/docs/v2021.06.23/guides/latest/backends/overview/).
 
  ![My Empty GCS bucket](gcsEmptyBucket.png)
 
