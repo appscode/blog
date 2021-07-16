@@ -10,11 +10,11 @@ tags:
   - secret-management
   - security
   - vault
-  - Raft
-  - Elasticsearch
+  - raft
+  - elasticsearch
   - hashicorp
-  - Enterprise
-  - Community
+  - enterprise
+  - community
 ---
 
 We are very excited to announce KubeVault Enterprise Edition with the release `v2021.07.17`. The KubeVault `v2021.07.17` contains various feature improvements and bug fixes for a better user experience. It also comes with a KubeVault Community Edition which is **free of cost** but only limited to the `default` namespace.
@@ -23,7 +23,7 @@ We are very excited to announce KubeVault Enterprise Edition with the release `v
 
 [KubeVault](https://kubevault.com) is a Kubernetes operator for [HashiCorp Vault](https://www.vaultproject.io/). The Vault is a tool for secrets management, encryption as a service, and privileged access management. The KubeVault operator makes it easy to deploy, maintain and manage Vault servers in Kubernetes. It also supports various secret engines management, policy management in the Kubernetes native way.
 
-In this post, we are going to highlight the major changes. You can find the complete changelog [here](https://github.com/kubevault/CHANGELOG)
+In this post, we are going to highlight the major changes. You can find the complete changelog [here](https://github.com/kubevault/CHANGELOG).
 
 ## What's new in this release?
 
