@@ -97,7 +97,7 @@ In this post, we are going to highlight the major changes. You can find the comp
 
 - **Disable TLS**
 
-  Now the Vault Server can be deployed with both TLS enabled (ie. `https://` ) and disabled (ie. `http://` ) modes. The TLS disabled mode is handy when comes to testing and it is recommended not to use it in the production environment.
+  Now the Vault Server can be deployed with both TLS enabled (ie. `https://` ) or disabled (ie. `http://` ) modes. The TLS disabled mode is handy when comes to testing and it is recommended not to use it in the production environment.
 
 ## Why Enterprise Edition?
 
