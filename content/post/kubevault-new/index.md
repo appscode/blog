@@ -1,6 +1,6 @@
 ---
 title: Introducing KubeVault Enterprise
-date: 2021-07-17 
+date: 2021-07-16 
 weight: 25
 authors:
   - Md Kamol Hasan
