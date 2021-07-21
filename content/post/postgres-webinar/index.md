@@ -1,6 +1,6 @@
 ---
 title: Managing Production Grade PostgreSQL in Kubernetes Using KubeDB - Webinar
-date: 2021-07-16
+date: 2021-07-21
 weight: 25
 authors:
   - Shohag Rana
