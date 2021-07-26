@@ -1,6 +1,6 @@
 ---
 title: Manage PostgreSQL in GKE Using KubeDB
-date: 2021-07-01
+date: 2021-07-27
 weight: 22
 authors:
   - Shohag Rana
