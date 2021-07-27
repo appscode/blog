@@ -7,22 +7,34 @@ authors:
 tags:
   - cloud-native
   - kubernetes
-  - database
-  - elasticsearch
-  - mariadb
-  - memcached
-  - mongodb
-  - mysql
-  - postgresql
-  - redis
-  - kubedb
+  - on-prem
+  - kubeform
+  - terraform
+  - gcp
+  - linode
+  - aws
+  - azure
+  - equinix-metal
 ---
 
 We are happy to announce Kubeform v2021.07.13. This post lists all the changes and features this release brings to you.
 
+* Kubeform Enterprise
+* Re-designed the Architecture of Kubeform
+* No Dependency on Terraform CLI
+* Accidental Deletion Protection
+* Update Policy
+* Sensitive Secret Watcher
+* New Status and Conditions
+* Dropped support for Terraform Module
+
+## What is Kubeform?
+
+Kubeform by AppsCode is a Kubernetes controller provisioning cloud or on-prem resources using Terraform providers. Kubeform provides Kubernetes CRDs for Terraform resources so that you can manage any cloud infrastructure in a Kubernetes native way. You just write a CRD for your cloud infrastructure, apply it and Kubeform will create it for you! Kubeform currently supports 5 top cloud platforms. These are AWS, Google Cloud, Azure, DigitalOcean, and Linode.
+
 ## Kubeform Enterprise
 
-In this release, we are announcing the Kubeform Enterprise edition. Currently, In the Kubeform community edition, you can do everything the enterprise edition does, but you will be limited to only the `default` namespace. We plan to bring some exciting new features in the enterprise edition that will not be available to the community edition in the future release. Please see the What’s Next section to get an idea of the upcoming features.
+In this release, we are announcing the Kubeform Enterprise edition. Currently, In the Kubeform community edition, you can do everything the enterprise edition does, but you will be limited to only the `default` namespace. We plan to bring some exciting new features in the enterprise edition that will not be available to the community edition in the future release. Please see the "Upcoming Features" section to get an idea of the upcoming features.
 
 ## Re-designed the Architecture of Kubeform
 
@@ -30,19 +42,19 @@ In this release, we have re-designed the Kubeform architecture. Kubeform control
 
 ## No Dependency on Terraform CLI
 
-We’ve removed dependency from the Terraform CLI. Previously, we’ve used the terraform CLI in the Kubeform controller to provision the cloud resources. But, from this release, we are not using the Terraform CLI anymore, instead, we are using the respective resource APIs to manage the resources via the Kubeform controllers.
+We removed dependency from the Terraform CLI. Previously, we used the terraform CLI in the Kubeform controller to provision the cloud resources. But, from this release, we are not using the Terraform CLI anymore, instead, we are using the respective resource APIs to manage the resources via the Kubeform controllers.
 
 ## Accidental Deletion Protection
 
-This release adds TerminationPolicy to protect the resource against accidental deletion. You can provide `DoNotTerminate` as the `TerminationPolicy` of your resource. When you delete the resource that has DoNotTerminate set as its TerminationPolicy, you’ll get an error message from the validation webhook saying that, the resource can’t be terminated when TerminationPolicy is set to DoNotTerminate. So, this protects you from the accidental deletion of the resource. If you want to terminate the resource, you can update the TerminationPolicy as Delete. Then, the resource will be terminated successfully without any error.
+This release adds TerminationPolicy to protect the resource against accidental deletion. You can provide `DoNotTerminate` as the `TerminationPolicy` of your resource. When you delete the resource that has DoNotTerminate set as its TerminationPolicy, you will get an error message from the validation webhook saying that, the resource can not be terminated when TerminationPolicy is set to DoNotTerminate. So, this protects you from the accidental deletion of the resource. If you want to terminate the resource, you can update the TerminationPolicy as Delete. Then, the resource will be terminated successfully without any error.
 
 ## Update Policy
 
-We’ve added UpdatePolicy to ensure that, the resource doesn’t get deleted without your approval while updating the resource. If the user sets the UpdatePolicy as DoNotDestroy, the resource won’t get deleted in the process of updating. The kubeform resource will be in the Failed state. To recover from this, the user will have to change the UpdatePolicy to Destroy or the field that will cause the resource to be deleted and then re-created again. We plan to add this in the validation webhook so that the user gets the error while applying the resource.
+We added UpdatePolicy to ensure that the resource does not get deleted without your approval while updating the resource. If the user sets the UpdatePolicy as DoNotDestroy, the resource will not get deleted in the process of updating. The kubeform resource will be in the Failed state. To recover from this, the user will have to change the UpdatePolicy to Destroy or the field that will cause the resource to be deleted and then re-created again. We plan to add this in the validation webhook so that the user gets the error while applying the resource.
 
 ## Sensitive Secret Watcher
 
-We’ve added a sensitive secret watcher. So, whenever there is a change in the sensitive secret, the kubeform resource will be reconciled by the controller and the corresponding cloud resource will be updated.
+We added a sensitive secret watcher. So, whenever there is a change in the sensitive secret, the kubeform resource will be reconciled by the controller and the corresponding cloud resource will be updated.
 
 ## New Status and Conditions
 
@@ -53,11 +65,11 @@ Kubeform resources now have 4 status phases. These are:
 * Terminating: It means the resource is currently in the process of deleting.
 * Failed: It means the resource has encountered some error while reconciling.
 
-Also, we’ve added conditions in the kubeform resources.
+We also added conditions in the kubeform resources.
 
 ## Dropped support for Terraform Module
 
-In this release, We’ve dropped support for the Terraform module.
+In this release, We dropped support for the Terraform module.
 
 ## Upcoming Features
 
@@ -71,16 +83,16 @@ In this release, We’ve dropped support for the Terraform module.
 
 Please try the latest release and give us your valuable feedback.
 
-* If you want to install KubeDB, please follow the installation instruction from [here](https://kubedb.com/docs/v2021.06.23/setup).
+* If you want to install Kubeform, please follow the installation instruction from [here](kubeform.com/docs/latest/setup).
 
-* If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](https://kubedb.com/docs/v2021.06.23/setup/upgrade/).
+* If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](kubeform.com/docs/latest/setup/upgrade).
 
 ## Support
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To join public discussions with the KubeDB community, join us in the [Kubernetes Slack team](https://kubernetes.slack.com/messages/C8149MREV/) channel `#kubedb`. To sign up, use our [Slack inviter](http://slack.kubernetes.io/).
+To join public discussions with the Kubeform community, join us in the [Kubernetes Slack team](https://appscode.slack.com/messages/C8NCX6N23/details/) channel `#kubeform`. To sign up, use our [Slack inviter](https://slack.appscode.com/).
 
-To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
+To receive product announcements, follow us on [Twitter](https://twitter.com/kubeform).
 
-If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
+If you have found a bug with Kubeform or want to request for new features, please [file an issue](https://github.com/kubeform/kubeform/issues/new).
