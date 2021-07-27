@@ -40,6 +40,8 @@ In this release, we are announcing the Kubeform Enterprise edition. Currently, I
 
 ![Kubeform Architecture](kubeform-architecture.jpg)
 
+In this release, we have re-designed the Kubeform architecture. Kubeform controller is now divided into 5 different controllers, one controller for each cloud provider.
+
 1) At first, a user creates a provider secret with access credentials of the Cloud provider where the resource will be created.
 2) Then, he creates a sensitive secret with sensitive fields of the cloud resource that he wants to create. This is optional, if a user do not create a sensitive secret then kfc will create a sensitive secret if the cloud resource has any sensitive field.
 3) Then, he creates a CRD of the resource that specifies the information of the Cloud Resource. The CRD also points to the secrets that he created.
@@ -51,8 +53,6 @@ In this release, we are announcing the Kubeform Enterprise edition. Currently, I
 9) If the resource is being Deleted then the resource phase is Terminating.
 10) The KubeForm Controller (KFC) deletes the resource after the respective cloud resource get destroyed.
 
-In this release, we have re-designed the Kubeform architecture. Kubeform controller is now divided into 5 different controllers, one controller for each cloud provider. Kubeform currently supports 5 major cloud providers, Google, AWS, Azure, Linode & DigitalOcean.
-
 ## No Dependency on Terraform CLI
 
 We removed dependency from the Terraform CLI. Previously, we used the terraform CLI in the Kubeform controller to provision the cloud resources. But, from this release, we are not using the Terraform CLI anymore, instead, we are using the respective resource APIs to manage the resources via the Kubeform controllers.
@@ -63,7 +63,7 @@ This release adds TerminationPolicy to protect the resource against accidental d
 
 ## Update Policy
 
-We added UpdatePolicy to ensure that the resource does not get deleted without your approval while updating the resource. If the user sets the UpdatePolicy as DoNotDestroy, the resource will not get deleted in the process of updating. The kubeform resource will be in the Failed state. To recover from this, the user will have to change the UpdatePolicy to Destroy or the field that will cause the resource to be deleted and then re-created again. We plan to add this in the validation webhook so that the user gets the error while applying the resource.
+There are some fields which are mutable and some are immutable in cloud provider resources. If we change mutable fields and update the resource it will get updated but if we change immutable fields and update then first the existing resource will get deleted and then it will be recreated with the latest values. We have added `UpdatePolicy` to ensure that the resource doesn’t get deleted without your approval while updating the resource. If the user sets the UpdatePolicy as `DoNotDestroy`, the resource will not get deleted in the process of updating. The kubeform resource will be in the Failed state. To recover from this, the user will have to change the UpdatePolicy to Destroy or the field that will cause the resource to be deleted and then recreated again. We plan to add this in the validation webhook so that the user gets the error while applying the resource.
 
 ## Sensitive Secret Watcher
 
@@ -73,10 +73,10 @@ We added a sensitive secret watcher. So, whenever there is a change in the sensi
 
 Kubeform resources now have 4 status phases. These are:
 
-* InProgress: It means the resource is now reconciling.
-* Current: It means the resource is reconciled successfully and the corresponding cloud resource is updated.
-* Terminating: It means the resource is currently in the process of deleting.
-* Failed: It means the resource has encountered some error while reconciling.
+* **InProgress**: It means the resource is now reconciling.
+* **Current**: It means the resource is reconciled successfully and the corresponding cloud resource is updated.
+* **Terminating**: It means the resource is currently in the process of deleting.
+* **Failed**: It means the resource has encountered some error while reconciling.
 
 We also added conditions in the kubeform resources.
 
@@ -96,9 +96,9 @@ In this release, We dropped support for the Terraform module.
 
 Please try the latest release and give us your valuable feedback.
 
-* If you want to install Kubeform, please follow the installation instruction from [here](kubeform.com/docs/latest/setup).
+* If you want to install Kubeform, please follow the installation instruction from [here](http://www.kubeform.com/docs/latest/setup).
 
-* If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](kubeform.com/docs/latest/setup/upgrade).
+* If you want to upgrade Kubeform from a previous version, please follow the upgrade instruction from [here](http://www.kubeform.com/docs/latest/setup/upgrade).
 
 ## Support
 
