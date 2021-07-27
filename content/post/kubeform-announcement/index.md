@@ -20,6 +20,7 @@ tags:
 We are happy to announce Kubeform v2021.07.13. This post lists all the changes and features this release brings to you.
 
 * Kubeform Enterprise
+* Support for Equinix Metal
 * Re-designed the Architecture of Kubeform
 * No Dependency on Terraform CLI
 * Accidental Deletion Protection
@@ -30,28 +31,21 @@ We are happy to announce Kubeform v2021.07.13. This post lists all the changes a
 
 ## What is Kubeform?
 
-Kubeform by AppsCode is a Kubernetes controller provisioning cloud or on-prem resources using Terraform providers. Kubeform provides Kubernetes CRDs for Terraform resources so that you can manage any cloud infrastructure in a Kubernetes native way. You just write a CRD for your cloud infrastructure, apply it and Kubeform will create it for you! Kubeform currently supports 5 top cloud platforms. These are AWS, Google Cloud, Azure, DigitalOcean, and Linode.
+Kubeform by AppsCode is a Kubernetes controller provisioning cloud or on-prem resources using Terraform providers. Kubeform provides Kubernetes CRDs for Terraform resources so that you can manage any cloud infrastructure in a Kubernetes native way. You just write a CRD for your cloud infrastructure, apply it and Kubeform will create it for you! Kubeform currently supports 6 top cloud platforms. These are AWS, Google Cloud, Azure, DigitalOcean, Linode and Equinix Metal. To know more about Kubeform you can visit the main website[here](https://kubeform.com/).
 
 ## Kubeform Enterprise
 
 In this release, we are announcing the Kubeform Enterprise edition. Currently, In the Kubeform community edition, you can do everything the enterprise edition does, but you will be limited to only the `default` namespace. We plan to bring some exciting new features in the enterprise edition that will not be available to the community edition in the future release. Please see the "Upcoming Features" section to get an idea of the upcoming features.
 
+## Support for Equinix Metal
+
+In this release, we have added support for the [Equinix Metal](http://equinix.com) cloud provider.
+
 ## Re-designed the Architecture of Kubeform
 
 ![Kubeform Architecture](kubeform-architecture.jpg)
 
-In this release, we have re-designed the Kubeform architecture. Kubeform controller is now divided into 5 different controllers, one controller for each cloud provider.
-
-1) At first, a user creates a provider secret with access credentials of the Cloud provider where the resource will be created.
-2) Then, he creates a sensitive secret with sensitive fields of the cloud resource that he wants to create. This is optional, if a user do not create a sensitive secret then kfc will create a sensitive secret if the cloud resource has any sensitive field.
-3) Then, he creates a CRD of the resource that specifies the information of the Cloud Resource. The CRD also points to the secrets that he created.
-4) The KubeForm Controller (KFC) watches the created CRD and also the sensitive secret continuously.
-5) If the KubeForm Controller (KFC) get any new changes in sensitive secret or in the CRD it starts reconciling and the resource enters into InProgress phase.
-6) The KubeForm Controller (KFC) Create, Update or Delete the respective cloud resource through the Resource CRUD API.
-7) If the resource is being Created or Updated the resource enters into InProgress phase. When the reconciling process ends and resource successfully created or updated theen the phase is Current.
-8) The KubeForm Controller (KFC) update the resource spec.state after successfully creating or updating the resource.
-9) If the resource is being Deleted then the resource phase is Terminating.
-10) The KubeForm Controller (KFC) deletes the resource after the respective cloud resource get destroyed.
+In this release, we have re-designed the Kubeform architecture. Kubeform controller is now divided into 6 different controllers, one controller for each cloud provider. You can see the details [here](http://kubeform.com/docs/latest/concepts/what-is-kubeform/architecture).
 
 ## No Dependency on Terraform CLI
 
