@@ -43,7 +43,7 @@ In this release, we have added support for the [Equinix Metal](http://equinix.co
 
 ## Re-designed the Architecture of Kubeform
 
-![Kubeform Architecture](Kubeform-architecture.jpg)
+![Kubeform Architecture](kubeform-architecture.jpg)
 
 In this release, we have re-designed the Kubeform architecture. Kubeform operator is now divided into 6 different controllers, one controller for each cloud provider. You can see the details [here](http://kubeform.com/docs/latest/concepts/what-is-Kubeform/architecture).
 
