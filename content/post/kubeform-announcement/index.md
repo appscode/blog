@@ -1,6 +1,6 @@
 ---
-title: Introducing Kubeform v2021.07.13
-date: 2021-07-27
+title: Introducing Kubeform v2021.07.28
+date: 2021-07-28
 weight: 25
 authors:
   - Shohag Rana
@@ -17,7 +17,7 @@ tags:
   - equinix-metal
 ---
 
-We are happy to announce Kubeform v2021.07.13. This post lists all the changes and features this release brings to you.
+We are happy to announce **Kubeform v2021.07.28**. This post lists all the changes and features this release brings to you.
 
 * Kubeform Enterprise
 * Support for Equinix Metal
@@ -35,11 +35,11 @@ Kubeform by AppsCode is a Kubernetes controller provisioning cloud or on-prem re
 
 ## Kubeform Enterprise
 
-In this release, we are announcing the Kubeform Enterprise edition. Currently, In the Kubeform community edition, you can do everything the enterprise edition does, but you will be limited to only the `default` namespace. We plan to bring some exciting new features in the enterprise edition that will not be available to the community edition in the future release. Please see the "Upcoming Features" section to get an idea of the upcoming features.
+In this release, we are announcing the **Kubeform Enterprise** edition. Currently, In the **Kubeform community** edition, you can do everything the enterprise edition does, but you will be limited to only the `default` namespace. We plan to bring some exciting new features in the enterprise edition that will not be available to the community edition in the future release. Please see the **Upcoming Features** section to get an idea of the upcoming features.
 
 ## Support for Equinix Metal
 
-In this release, we have added support for the [Equinix Metal](http://equinix.com) cloud provider.
+In this release, we have added support for the [Equinix Metal](http://equinix.com) cloud provider. To provision an Equinix Metal Device using Kubeform, Please follow the guide [here](https://kubeform.com/docs/latest/guides/equinixmetal).
 
 ## Re-designed the Architecture of Kubeform
 
@@ -53,11 +53,11 @@ We removed dependency from the Terraform CLI. Previously, we used the terraform 
 
 ## Accidental Deletion Protection
 
-This release adds TerminationPolicy to protect the resource against accidental deletion. You can provide `DoNotTerminate` as the `TerminationPolicy` of your resource. When you delete the resource that has DoNotTerminate set as its TerminationPolicy, you will get an error message from the validation webhook saying that, the resource can not be terminated when TerminationPolicy is set to DoNotTerminate. So, this protects you from the accidental deletion of the resource. If you want to terminate the resource, you can update the TerminationPolicy as Delete. Then, the resource will be terminated successfully without any error.
+This release adds `TerminationPolicy` to protect the resource against accidental deletion. You can provide `DoNotTerminate` as the `TerminationPolicy` of your resource. When you delete the resource that has `DoNotTerminate` set as its `TerminationPolicy`, you will get an error message from the validation webhook saying that, the resource can not be terminated when TerminationPolicy is set to DoNotTerminate. So, this protects you from the accidental deletion of the resource. If you want to terminate the resource, you can update the `TerminationPolicy` as `Delete`. Then, the resource will be terminated successfully without any error.
 
 ## Update Policy
 
-There are some fields which are mutable and some are immutable in cloud provider resources. If we change mutable fields and update the resource it will get updated but if we change immutable fields and update then first the existing resource will get deleted and then it will be recreated with the latest values. We have added `UpdatePolicy` to ensure that the resource doesn’t get deleted without your approval while updating the resource. If the user sets the UpdatePolicy as `DoNotDestroy`, the resource will not get deleted in the process of updating. The kubeform resource will be in the Failed state. To recover from this, the user will have to change the UpdatePolicy to Destroy or the field that will cause the resource to be deleted and then recreated again. We plan to add this in the validation webhook so that the user gets the error while applying the resource.
+There are some fields which are mutable and some are immutable in cloud provider resources. If we change mutable fields and update the resource it will get updated but if we change immutable fields and update then first the existing resource will get deleted and then it will be recreated with the latest values. We have added `UpdatePolicy` to ensure that the resource doesn’t get deleted without your approval while updating the resource. If the user sets the UpdatePolicy as `DoNotDestroy`, the resource will not get deleted in the process of updating. The kubeform resource will be in the `Failed` state. To recover from this, the user will have to change the `UpdatePolicy` to `Destroy` or the field that will cause the resource to be deleted and then recreated again. We plan to add this in the validation webhook so that the user gets the error while applying the resource.
 
 ## Sensitive Secret Watcher
 
@@ -98,7 +98,7 @@ Please try the latest release and give us your valuable feedback.
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To join public discussions with the Kubeform community, join us in the [Kubernetes Slack team](https://appscode.slack.com/messages/C8NCX6N23/details/) channel `#kubeform`. To sign up, use our [Slack inviter](https://slack.appscode.com/).
+To join public discussions with the Kubeform community, join us in the [AppsCode Slack team](https://appscode.slack.com/messages/C8NCX6N23/details/) channel `#kubeform`. To sign up, use our [Slack inviter](https://slack.appscode.com/).
 
 To receive product announcements, follow us on [Twitter](https://twitter.com/kubeform).
 
