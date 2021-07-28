@@ -125,7 +125,7 @@ redisopsrequests.ops.kubedb.com                   2021-06-29T05:10:03Z
 redisversions.catalog.kubedb.com                  2021-06-29T05:07:40Z
 ```
 
-## Step 2: Deploy Standalone Database
+## Deploy Standalone Database
 
 Now we are going to Install PostgreSQL with the help of KubeDB.
 At first, let's create a Namespace in which we will deploy the database.
