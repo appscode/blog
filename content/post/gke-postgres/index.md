@@ -1,6 +1,6 @@
 ---
 title: Manage PostgreSQL in GKE Using KubeDB
-date: 2021-07-27
+date: 2021-07-28
 weight: 22
 authors:
   - Shohag Rana
@@ -481,6 +481,10 @@ exit
 ```
 
 > The recovery has been successful. If you faced any difficulties in the recovery process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20GKE).
+
+## Webinar
+
+A webinar was held by AppsCode on "Managing Production Grade PostgreSQL in Kubernetes Using KubeDB". You can find details of the webinar [HERE](https://blog.byte.builders/post/postgres-webinar/).
 
 ## Support
 
