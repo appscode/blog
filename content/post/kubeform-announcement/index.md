@@ -31,7 +31,7 @@ We are happy to announce Kubeform v2021.07.13. This post lists all the changes a
 
 ## What is Kubeform?
 
-Kubeform by AppsCode is a Kubernetes controller provisioning cloud or on-prem resources using Terraform providers. Kubeform provides Kubernetes CRDs for Terraform resources so that you can manage any cloud infrastructure in a Kubernetes native way. You just write a CRD for your cloud infrastructure, apply it and Kubeform will create it for you! Kubeform currently supports 6 top cloud platforms. These are AWS, Google Cloud, Azure, DigitalOcean, Linode and Equinix Metal. To know more about Kubeform you can visit the main website[here](https://kubeform.com/).
+Kubeform by AppsCode is a Kubernetes controller provisioning cloud or on-prem resources using Terraform providers. Kubeform provides Kubernetes CRDs for Terraform resources so that you can manage any cloud infrastructure in a Kubernetes native way. You just write a CRD for your cloud infrastructure, apply it and Kubeform will create it for you! Kubeform currently supports 6 top cloud platforms. These are AWS, Google Cloud, Azure, DigitalOcean, Linode and Equinix Metal. To know more about Kubeform you can visit the main website [here](https://kubeform.com/).
 
 ## Kubeform Enterprise
 
