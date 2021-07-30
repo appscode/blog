@@ -17,6 +17,7 @@ tags:
   - redis
   - kubedb
 ---
+
 ## Summary
 
 AppsCode held a webinar on "Managing Cloud Infrastructure in Kubernetes using Kubeform". This took place 29th July 2021. The contents of what took place at the webinar are shown below:
@@ -31,19 +32,19 @@ AppsCode held a webinar on "Managing Cloud Infrastructure in Kubernetes using Ku
 5) Upcoming Features
 6) Q & A Session
 
-## Description of the Webinar Demo
+## Overview
 
-From this demo we get an in depth view of what kubeform is and how kubeform works. Firstly, we can see the new and improved features of kubeform and also the new four status phases `InProgress`,`Current`,`Terminating` and `Failed`. Secondly, we can see the latest architecture of kubeform:
+From this demo we get an in depth view of what Kubeform is and how Kubeform works. Firstly, we can see the new and improved features of Kubeform and also the new four status phases `InProgress`,`Current`,`Terminating` and `Failed`. Secondly, we can see the latest architecture of Kubeform:
 
 ![Kubeform Architecture](kubeform-architecture.jpg)
 
 In the demo part we can see:
 
-* How to install kubeform
-* Manage Linode instance
-* Manage Equinix Metal device
+* How to install Kubeform
+* Provision a Linode instance using Kubeform `linode` provider
+* Provision an Equinix Metal device using Kubeform `equinixmetal` provider
 
-Lastly, we can see the upcoming features and the question and answer session. All in all, it was an effective webinar.
+Lastly, we can see the upcoming features and the question and answer session.
 
 Take a deep dive into the full webinar below:
 
@@ -61,6 +62,6 @@ To speak with us, please leave a message on [our website](https://appscode.com/c
 
 To join public discussions with the Kubeform community, join us in the [AppsCode Slack team](https://appscode.slack.com/messages/C8NCX6N23/details/) channel `#Kubeform`. To sign up, use our [Slack inviter](https://slack.appscode.com/).
 
-To receive product announcements, follow us on [Twitter](https://twitter.com/Kubeform).
+To receive product announcements, follow us on [Twitter](https://twitter.com/kubeform).
 
-If you have found a bug with Kubeform or want to request for new features, please [file an issue](https://github.com/Kubeform/Kubeform/issues/new).
+If you have found a bug with Kubeform or want to request for new features, please [file an issue](https://github.com/kubeform/kubeform/issues/new).
