@@ -9,14 +9,14 @@ docs:
 	find ./data -name "*.json" -exec sed -i 's/https:\/\/cdn.appscode.com\/images/\/assets\/images/g' {} \;
 
 .PHONY: gen
-gen:
+gen-draft:
 	rm -rf public
-	@yqq w -i config.dev.yaml params.search_api_key --tag '!!str' $(GOOGLE_CUSTOM_SEARCH_API_KEY)
-	hugo --config=config.dev.yaml --buildDrafts --buildFuture
-	@yqq w -i config.dev.yaml params.search_api_key --tag '!!str' '_replace_'
+	@yqq w -i config.yaml params.search_api_key --tag '!!str' $(GOOGLE_CUSTOM_SEARCH_API_KEY)
+	hugo --config=config.yaml --buildDrafts --buildFuture
+	@yqq w -i config.yaml params.search_api_key --tag '!!str' '_replace_'
 
 .PHONY: qa
-qa: gen
+qa: gen-draft
 	firebase use default
 	firebase deploy
 
