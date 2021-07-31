@@ -1,6 +1,6 @@
 ---
-title: Introducing KubeVault Enterprise
-date: 2021-07-16 
+title: Introducing KubeVault v2021.08.02
+date: 2021-08-02 
 weight: 25
 authors:
   - Md Kamol Hasan
@@ -17,7 +17,7 @@ tags:
   - community
 ---
 
-We are very excited to announce KubeVault Enterprise Edition with the release `v2021.07.17`. The KubeVault `v2021.07.17` contains various feature improvements and bug fixes for a better user experience. It also comes with a KubeVault Community Edition which is **free of cost** but only limited to the `default` namespace.
+We are very excited to announce KubeVault Enterprise Edition with the release `v2021.08.02`. The KubeVault `v2021.08.02` contains various feature improvements and bug fixes for a better user experience. It also comes with a KubeVault Community Edition which is **free of cost** but only limited to the `default` namespace.
 
 - [Install KubeVault](https://kubevault.com/docs/v2020.07.17/setup/)
 
@@ -107,7 +107,7 @@ AppsCode started as a commercial entity to accelerate the adoption of Kubernetes
 
 Please try the latest release and give us your valuable feedback.
 
-- If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2021.07.17/setup).
+- If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2021.08.02/setup).
 
 ## Support
 
