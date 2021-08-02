@@ -1,16 +1,17 @@
 ---
-title: Stash v2021.08.02 - Introducing Redis Addon and Kubernetes 1.22 support
+title: Stash v2021.08.02 - Introducing Redis Addon and Kubernetes 1.22 Support
 date: 2021-08-02
 weight: 15
 authors:
   - Emruz Hossain
-  - Sohag Rana
+  - Shohag Rana
 tags:
   - kubernetes
   - stash
   - backup
+  - redis
 aliases:
-  - /post/stash-v20201.08.02/
+  - /post/stash-v2021.08.02/
 ---
 
 We are very excited to announce Stash `v2021.08.02`. In this release, we are introducing Redis addon for Stash. We have also added support for Kubernetes version 1.22.
@@ -22,6 +23,7 @@ In this post, we are going to highlight the major changes. You can find the comp
 In this release, we have added Redis to our Stash addons family. Now, you can backup your Redis database running inside Kubernetes using Stash. We have added two addons versioned `6.2.5` and `5.0.13` for Redis. You should be able to backup your Redis `6.x` and `5.x` series Redis databases using those addons.
 
 Related resources:
+
 - [How the Redis backup works in Stash](https://stash.run/docs/v2021.08.02/addons/redis/overview/).
 - [Step by step guide to backup Redis databases managed by Helm](https://stash.run/docs/v2021.08.02/addons/redis/helm/).
 - [Using Stash Auto-backup with Redis](https://stash.run/docs/v2021.08.02/addons/redis/auto-backup/).
@@ -29,12 +31,13 @@ Related resources:
 
 ### Bug Fix and Enhancements
 
-We have also squashed few bugs and added few enhancements in this release. Here is the some of the highlighting fixes & enhancements.
+We have also squashed a few bugs and added few enhancements in this release. Here are some of the highlighting fixes & enhancements.
 
-- **Fix High Memory Usage Issue:** Some of our users were seeing spike in memory usage by Stash backup process after upgrading to Stash `v2021.06.23`. We have fix the issue in this release. Your memory usage should be stable again after upgrading to `v2021.08.02`.
+- **Fix High Memory Usage Issue:** Some of our users were seeing spike in memory usage by Stash backup process after upgrading to Stash `v2021.06.23`. We have fixed the issue in this release. Your memory usage should be stable again after upgrading to `v2021.08.02`.
 - **Support Kubernetes 1.22.x:** We have upgraded the underlying libraries to support Kubernetes 1.22.x. Now, Stash should work flawlessly with Kubernetes 1.22.x.
-- **Fix Region Issue with S3 Backend:** Some of our user were facing issue with custom region in S3 backend. We have fix this issue. Now, Stash should work with custom region for S3 and S3 compatible backends.
+- **Fix Region Issue with S3 Backend:** Some of our users were facing issues with custom region in S3 backend. We have fixed this issue. Now, Stash should work with custom region for S3 and S3 compatible backends.
 - **Added Duration Column:** We have added `DURATION` column in `kubectl get` output for BackupSession and RestoreSession. You can now check how much time it took to complete the backup and restore process directly in `kubectl get` output. Here, is an example:
+
 ```bash
 # BackupSession
 ❯ kubectl get backupsession -n demo
