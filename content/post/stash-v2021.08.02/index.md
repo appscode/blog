@@ -4,7 +4,6 @@ date: 2021-08-02
 weight: 15
 authors:
   - Emruz Hossain
-  - Shohag Rana
 tags:
   - kubernetes
   - stash
