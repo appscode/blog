@@ -48,7 +48,7 @@ jobs:
         run: |
           npm install
           make docs
-          make gen-prod
+          make gen-draft
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
