@@ -17,6 +17,8 @@ tags:
   - equinix-metal
 ---
 
+> We have released `Kubeform v2021.08.02` with support for additional cloud services. You can find the full list [here](https://kubeform.com/pricing/). To try for FREE, visit our [installer webpage](https://kubeform.com/docs/v2021.08.02/setup/). Enjoy! 
+
 We are happy to announce **Kubeform v2021.07.28**. This post lists all the changes and features this release brings to you.
 
 * Kubeform Enterprise
