@@ -366,12 +366,12 @@ Now if we check our GCS bucket we can see that the backup has been successful.
 
 ![gcsSuccess](gcsSuccess.png)
 
-> **If you reached here CONGRATULATIONS!! :confetti_ball:  :partying_face: :confetti_ball: The backup has been successful**. If you didn't its okay. You can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20GKE).
+> **If you reached here CONGRATULATIONS!! :confetti_ball:  :partying_face: :confetti_ball: The backup has been successful**. If you didn't its okay. You can reach out to us via [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20GKE).
 
 ## Recover
 
-Let's think of a scenario in which the database has been accidentally deleted or there was an error in the database causing it to crash.
-In such a case, we have to pause the BackupConfiguration so that the failed/damaged database does not get backed up into the cloud:
+Let's think of a scenario in which the database has been **accidentally deleted** or there was an error in the database causing it to crash.
+In such a case, we have to **pause** the `BackupConfiguration` so that the **failed/damaged database does not get backed up** into the cloud:
 
 ```bash
 kubectl patch backupconfiguration -n demo demo-postgres-backup --type="merge" --patch='{"spec": {"paused": true}}'
@@ -482,7 +482,7 @@ bash-5.1$
 exit
 ```
 
-> The recovery has been **successful**. If you faced any difficulties in the recovery process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20GKE).
+> The recovery has been **successful**. If you faced any difficulties in the recovery process you can reach out to us via [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20GKE).
 
 ## Webinar
 
