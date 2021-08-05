@@ -1,6 +1,6 @@
 ---
 title: Manage PostgreSQL in GKE Using KubeDB
-date: 2021-07-28
+date: 2021-08-05
 weight: 22
 authors:
   - Shohag Rana
@@ -161,7 +161,7 @@ Let's save this yaml configuration into postgres.yaml. Then apply using the comm
 
 This yaml uses Postgres CRD.
 
-* In this object we can see in the `spec.version` field, the version of Postgres. You can list the supported versions by running `oc get postgresversions` command.
+* In this object we can see in the `spec.version` field, the version of Postgres. You can list the supported versions by running `kubectl get postgresversions` command.
 * Another field to notice is the `spec.storagetype` field. This can be Durable or Ephemeral depending on the requirements of the database to be persistent or not.
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.04.16/guides/postgres/concepts/postgres/#specterminationpolicy).
 
@@ -266,7 +266,7 @@ Here we will use the KubeDB license we obtained earlier.
 
 ```bash
 $ helm install stash appscode/stash             \
-  --version v2021.06.23                  \
+  --version v2021.08.02                  \
   --namespace kube-system                       \
   --set features.enterprise=true                \
   --set-file global.license=/path/to/the/license.txt
@@ -291,7 +291,9 @@ For this tutorial we are going to use gcs-bucket. You can find other setups [her
 
  ![My GCS bucket](gcsEmptyBucket.png)
 
- **Create Secret:**
+### Step 3: Create Secret
+
+We need to create a secret in order to access the gcs-bucket. We will call it `gcs-secret`.
 
 ```bash
 $ echo -n 'YOURPASSWORD' > RESTIC_PASSWORD
@@ -303,7 +305,7 @@ $ kubectl create secret generic -n demo gcs-secret \
         --from-file=./GOOGLE_SERVICE_ACCOUNT_JSON_KEY
  ```
 
-### Step 3: Create Repository
+### Step 4: Create Repository
 
 ```yaml
 apiVersion: stash.appscode.com/v1alpha1
@@ -346,7 +348,7 @@ spec:
 ```
 
 * BackupConfiguration creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.
-* `spec.repository` contaiins the secret we created before called `gcs-secret`.
+* `spec.repository` contains the secret we created before called `gcs-secret`.
 * `spec.target.ref` contains the reference to the appbinding that we want to backup.
 
 So, after 5 minutes we can see the following status:
@@ -435,8 +437,8 @@ spec:
     - snapshots: [latest]
 ```
 
-This RestoreSession specifies where the data will be restored.
-Once this is applied, a RestoreSession will be created. Once it has succeeded, the database has been successfully recovered as you can see below:
+This `RestoreSession` specifies where the data will be restored.
+Once this is applied, a `RestoreSession` will be created. Once it has succeeded, the database has been successfully recovered as you can see below:
 
 ```bash
 $ kubectl get restoresession -n demo
@@ -480,11 +482,11 @@ bash-5.1$
 exit
 ```
 
-> The recovery has been successful. If you faced any difficulties in the recovery process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20GKE).
+> The recovery has been **successful**. If you faced any difficulties in the recovery process you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20GKE).
 
 ## Webinar
 
-A webinar was held by AppsCode on "Managing Production Grade PostgreSQL in Kubernetes Using KubeDB". You can find details of the webinar [HERE](https://blog.byte.builders/post/postgres-webinar/).
+A webinar was held by AppsCode on **"Managing Production Grade PostgreSQL in Kubernetes Using KubeDB"**. You can find details of the webinar [HERE](https://blog.byte.builders/post/postgres-webinar/).
 
 ## Support
 
