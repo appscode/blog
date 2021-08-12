@@ -1,5 +1,5 @@
 ---
-title: Introducing Panopticon, a new kubernetes generic state metrics exporter
+title: Introducing Panopticon, A Generic Kubernetes State Metrics Exporter
 date: 2021-08-16
 weight: 22
 authors:
@@ -15,27 +15,27 @@ tags:
   - kubernetes-exporter
 ---
 
-We are highly excited to introduce `Panopticon`, a generic kubernetes resource state metrics exporter. It comes with a lot of exciting features and customization options.
+We are highly excited to introduce `Panopticon`, a generic Kubernetes resource state metrics exporter. It comes with a lot of exciting features and customization options.
 
 ## What is Panopticon?
-Panopticon is a generic state metrics exporter for Kubernetes resources. It can generate metrics from both kubernetes native and custom resources. Generated metrics are exposed  in `/metrics` path according to prometheus metrics format.
+Panopticon is a generic state metrics exporter for Kubernetes resources. It can generate Prometheus metrics from both Kubernetes native and custom resources. Generated metrics are exposed in `/metrics` path for the Prometheus server to scrape them.
 
 ## Background
-When we wanted to collect state metrics from our product's (KubeDB, Stash and so many) custom resource, we didn't find any extising tool that would accomplish our needs. Kubernetes has a project called `kube-state-metrics` but we didn't find any features for collecting metrics from kubernetes custom resources then. Moreover it's metrics for kubernetes native resources were predefined and there was hardly any customization option that couldn't fulfill our demands.
+When we wanted to collect state metrics from our product's (KubeDB, Stash and so many) custom resources, we didn't find any existing tool that would accomplish our needs. Kubernetes has a project called `kube-state-metrics` but it does not support collecting metrics from Kubernetes custom resources. Moreover, the metrics for Kubernetes native resources were predefined and there was hardly any customization option.
 
-Then we decided to build our own generic resource metrics exporter and named it `Panopticon` which can collect metrics from any kind of kubernetes resources. There is an interesting story about the name `Panopticon`. You can learn about that from this wikipedia [page](https://en.wikipedia.org/wiki/Panopticon).
+So, we decided to build our own generic resource metrics exporter and named `Panopticon` which can collect metrics from any kind of Kubernetes resources. There is an interesting story about the name `Panopticon`. You can learn about that from this Wikipedia [page](https://en.wikipedia.org/wiki/Panopticon).
 
 ## How Panopticon works
-Panopticon watches a custom resource called `MetricsConfiguration` which holds the necessary configuration for generating our desired metrics. This custom resource consists of mainly two parts. One is `targetRef` which defines the targeted kubernetes resource for metrics collection. Another is `metrics` which holds our desired metrics that we want to generate from that targeted resources. We'll discuss about the custom resource breifly in the later section.
+Panopticon watches a custom resource called `MetricsConfiguration` which holds the necessary configuration for generating our desired metrics. This custom resource consists of mainly two parts. The first one is `targetRef` which defines the targeted Kubernetes resource for metrics collection. The other is `metrics` which holds desired metrics that we want to generate from that targeted resources. We'll discuss the custom resource briefly in the later section.
 
-So, when a new `MetricsConfiguration` object is created, Panopticon gets the event and generates defined metrics for the targeted resources. It stores those metrics in an in-memory store say `metrics store`. When the `MetricsConfiguration` object is updated/deleted or any new targeted resource is created/updated/deleted, Panopticon syncs the new changes with it's metrics store. So metrics store always holds the updated information according to `MetricsConfiguration` object.
+When a new `MetricsConfiguration` object is created, Panopticon gets the event and generates defined metrics for the targeted resources. It stores those metrics in an in-memory store say `metrics store`. When the `MetricsConfiguration` object is updated/deleted or any new instance of the targeted resource is created/updated/deleted, Panopticon syncs the new changes with its metrics store. So metrics store always holds the updated information according to the `MetricsConfiguration` object.
 
-So, when `/metrics` path is hit, Panopticon serves the metrics from metrics store that is  already generated. In this way, Panopticon can serve metrics in an efficient way with low latency.
+When the `/metrics` path is hit, Panopticon serves the metrics from metrics store that is already generated. In this way, Panopticon efficiently serves metrics with low latency.
 
 ## How to generate metrics using Panopticon
-Now let's see how can we generate metrics using Panopticon. At first, we need to deploy Panopticon helm chart which will be found [here](https://github.com/kubeops/installer).
+Now let's see how can we generate metrics using Panopticon. At first, we need to deploy the Panopticon helm chart which will be found [here](https://github.com/kubeops/installer).
 
-After that, let's see a simple `MetricsConfiguration` object for our MongoDB custom resource.
+After that, let's see a sample `MetricsConfiguration` object for our MongoDB custom resource.
 
 ```yaml
 apiVersion: metrics.appscode.com/v1alpha1
@@ -93,11 +93,13 @@ spec:
               valueFromExpression: "int(phase == 'DataRestoring')"
 ```
 
-Here apiVersion, kind and metadata is specified as usual. Let's focus on spec section. In `targetRef`, we specified the apiVersion and kind of our targeted resource `MongoDB` from which we want to generate our metrics. After that, there is a list of metrics. 
+Like other Kubernetes native resources, it has `TypeMeta`, `ObjectMeta`, and `Spec` sections. However, it doesn't have a `Status` section. Let's focus on the `spec` section. In `targetRef`, we specified the `apiVersion` and `kind` of our targeted resource `MongoDB` from which we want to generate our metrics. The `metrics` section specifies the list of metrics we want to collect.
 
-Here each metrics contains three mandatory fields. They are `name`, `help` and `type`. Here `name` defines the metrics name, `help` holds a short description about the metrics and `type` denotes the Prometheus type of the metrics. You'll find the details custom resource defination [here](https://github.com/kmodules/custom-resources/blob/master/apis/metrics/v1alpha1/metricsconfiguration_types.go).  
+// TODO: field list
 
-Let's see a MongoDB manifest file for better understanding.
+Here each metrics contains three mandatory fields. They are `name`, `help`, and `type`. Here `name` defines the metrics name, `help` holds a short description about the metrics and `type` denotes the Prometheus type of the metrics. You'll find the details of custom resource definition [here](https://github.com/kmodules/custom-resources/blob/master/apis/metrics/v1alpha1/metricsconfiguration_types.go).  
+
+Let's see a sample MongoDB manifest file for better understanding.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -118,11 +120,11 @@ spec:
   terminationPolicy: WipeOut
 ```
 
-First metrics `kubedb_mongodb_info` in MetricsConfiguration, will collect some basic information from above MongoDB instance and will set them as labels. As prometheus metrics must contain a metrics value, we set the value as 1 here.
+From the above MongoDB instance, the first metrics `kubedb_mongodb_info` in MetricsConfiguration will collect some basic information and will set them as labels. As Prometheus metrics must contain a metrics value, we set the value as 1 here.
 
-Next metrics `kubedb_mongodb_status_phase` is more interesting. This metrics will represent MongoDB instance current phase. The interesting part here, MongoDB instance can have six different phase called 'Ready', 'Critical', 'NotReady' etc. So, to understand the MongoDB instance current phase properly, we need individual metrics for all of those phases. 
+Next metrics `kubedb_mongodb_status_phase` is more interesting. This metrics will represent the MongoDB instance's current phase. The interesting part here, MongoDB instance can have six different phases called 'Ready', 'Critical', 'NotReady' etc. So, to understand the MongoDB instance's current phase properly, we need metrics for all of those phases.
 
-To handle same kind of scenario, there is one field in MetricsConfiguration called 'states' which holds the label key and all possible label values. It also contains the corresponding configuration to find the metrics value. `metricsValue` can have three different fields. One is `value` which denotes the direct value of that metrics like first metrics. Another one is `valueFromPath` which denotes the json path of resource instance. Final one is `valueFromExpression` which is used in this metrics. It contains a predefined function which will take the necessary parameters from the `params` field and will calculate the metrics value accordingly. Here if phase matches with the given phase, 'int' function will return 1 otherwise 0. You'll get expression functions and their uses [here](https://github.com/kmodules/custom-resources/blob/master/apis/metrics/v1alpha1/metricsconfiguration_types.go). Finally we will have six different metrics similar like below:
+To handle this type of scenario, there is one field in MetricsConfiguration called 'states' which holds the label key and all possible label values. It also contains the corresponding configuration to find the value of the metrics. `metricsValue` can have three different fields. One is `value` which denotes the direct value of that metrics like the first metrics. Another one is `valueFromPath` which denotes the json path of the resource instance. The final one is `valueFromExpression` which is used in this metrics. It contains a predefined function that will take the necessary parameters from the `params` field and will calculate the value of the metrics accordingly. Here if the phase matches with the given phase, the 'int' function will return 1 otherwise 0. You'll get expression functions and their uses [here](https://github.com/kmodules/custom-resources/blob/master/apis/metrics/v1alpha1/metricsconfiguration_types.go). Finally we will have six different metrics similar to below:
 
 ```
 kubedb_mongodb_status_phase { ..., phase="Ready"}          1
@@ -132,9 +134,12 @@ kubedb_mongodb_status_phase { ..., phase="Critical"}       0
 kubedb_mongodb_status_phase { ..., phase="NotReady"}       0
 kubedb_mongodb_status_phase { ..., phase="DataRestoring"}  0
 ```
-Note: Here, we assume MongoDB instanse's phase as "Ready".
+Note: Here, we assume MongoDB instance's phase as "Ready".
 
-In similar way, we can collect various kind of metrics not only from our custom resources but also from any kubernetes native resources with just a MetricsConfiguration object.
+Similarly, we can collect various kinds of metrics not only from our custom resources but also from any Kubernetes native resources with just a MetricsConfiguration object.
+
+## What's next
+// TODO
 
 ## Support
 To speak with us, please leave a message on our [website](https://appscode.com/contact/).
