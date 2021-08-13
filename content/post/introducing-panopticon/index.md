@@ -255,6 +255,21 @@ Note: Here, we assume MongoDB instance's phase as "Ready".
 
 Similarly, we can collect various kinds of metrics not only from our custom resources but also from any Kubernetes native resources with just a MetricsConfiguration object.
 
+## Available expression evaluation functions
+| Function Defination | Description |
+|---|---|
+| int(expression) | Returns 1 if the expression is true otherwise 0. Example: int(phase == 'Running'), here `phase` is an argument which holds the `phase` of a Kubernetes resource|
+| percentage(arg0, arg1) | Returns the value of (arg0 * arg1%). Example: To get the maximum number of unavailable replicas of a deployment in the time of rolling update, we can use percentage(replicas, maxUnavailable). Here, `replicas` represents the number of spec replica count and `maxUnavaiable` represents the percentage of unavailable replicas of a deployment. |
+| cpu_cores(arg) | Returns the CPU value in core. Let, cpuVal=500m then cpu_core(cpuVal) will return 0.5. |
+| bytes(arg) | Returns the memory value in byte. Let, memVal=1 ki then bytes(memVal) will return 1024. |
+| unix (arg) | Converts the DateTime string into unix and returns it. |
+| *resource_replicas(obj) | Takes Kubernetes object as input and returns it's replica count. |
+| *resource_mode(obj) | Takes Kubernetes object as input and returns it's mode. To get the MongoDB's mode(Standalone/ReplicaSet/Sharded): `resource_mode(MongoDB resource object)` |
+| *total_resource_limits(obj, resourceType) | Takes Kubernetes object as input and returns it's resource limits according to `resourceType`. `resourceType` can be `cpu`, `memory`, and `storage`. To get the MongoDB memory limit: `total_resource_limits(MongoDB resource object, "memory")`. |
+| *total_resource_requests(obj, resourceType) | Takes Kubernetes object as input and returns it's resource requests according to `resourceType`. `resourceType` can be `cpu`, `memory`, and `storage`. To get the MongoDB cpu request: `total_resource_limits(MongoDB resource object, "cpu")`. |
+
+*Support all Kubernetes native resources and only KubeDB's custom resources for now.
+
 ## What's next
 // TODO
 
