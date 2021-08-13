@@ -32,6 +32,20 @@ When a new `MetricsConfiguration` object is created, Panopticon gets the event a
 
 When the `/metrics` path is hit, Panopticon serves the metrics from metrics store that is already generated. In this way, Panopticon efficiently serves metrics with low latency.
 
+Let's know about `metrics` fields briefly.
+
+| Field  | Required?  | Has SubFields? | Description  |
+|---|---|---|---|
+| name | yes  | no |`name` defines the metrics name. `name` should be in snake case. Example: `name: kube_deployment_spec_replicas`  |
+| help | yes  | no |`help` is used to describe the metrics. For `kube_deployment_spec_replicas`, the `help` string can be "Number of desired pods for a deployment.  |
+| type | yes  |  no |`type` defines the Prometheus type of the metrics. For Kubernetes based objects, `type` can only be "gauge" |
+| field | no | yes | `field` defines the metric value path of the manifest file and the type of that value |
+| labels | no  | yes | `labels` defines the metric labels as a key-value pair |
+| params | no  | yes  | `params` is the list of parameters configuration used in expression evaluation |
+| states | conditionally required | yes | `states` handle metrics with label cardinality. `states` specify the possible states for a label and their corresponding MetricValue configuration. `metrics` must contain either `states` or `metricValue`. If both are specified, `metricsValue` will be ignored. |
+| metricValue | conditionally required | yes | `metricValue` defines the configuration to obtain metric value. `metrics` must contain either States or MetricValue. If both are specified, `metricValue` will be ignored. |
+
+
 ## How to generate metrics using Panopticon
 Now let's see how can we generate metrics using Panopticon. At first, we need to deploy the Panopticon helm chart which will be found [here](https://github.com/kubeops/installer).
 
@@ -47,6 +61,15 @@ spec:
     apiVersion: kubedb.com/v1alpha2
     kind: MongoDB
   metrics:
+    - name: kubedb_mongodb_created
+      help: "MongoDB creation timestamp in unix"
+      type: gauge
+      field:
+        type: DateTime
+        path: .metadata.creationTimestamp
+      metricValue:
+        valueFromPath: .metadata.creationTimestamp
+
     - name: kubedb_mongodb_info
       help: "Kubedb mongodb instance info"
       type: gauge
@@ -61,6 +84,16 @@ spec:
           valuePath: .spec.version
       metricValue:
         value: 1
+    
+    - name: kubedb_mongodb_replicas
+      help: "Number of available replicas for MongoDB"
+      type: gauge
+      params:
+        - key: obj
+          valuePath: .
+      metricValue:
+        valueFromExpression: resource_replicas(obj)
+
     - name: kubedb_mongodb_status_phase
       help: "Mongodb instance current phase"
       type: gauge
@@ -91,6 +124,90 @@ spec:
           - labelValue: DataRestoring
             metricValue:
               valueFromExpression: "int(phase == 'DataRestoring')"
+
+    - name: kubedb_mongodb_resource_request_cpu
+      help: "Requested CPU by MongoDB in core"
+      type: gauge
+      labels:
+        - key: unit
+          value: core
+      params:
+        - key: obj
+          valuePath: .
+        - key: resourceType
+          value: cpu
+      metricValue:
+        valueFromExpression: total_resource_requests(obj, resourceType)
+
+    - name: kubedb_mongodb_resource_request_memory
+      help: "Requested memory by MongoDB in byte"
+      type: gauge
+      labels:
+        - key: unit
+          value: byte
+      params:
+        - key: obj
+          valuePath: .
+        - key: resourceType
+          value: memory
+      metricValue:
+        valueFromExpression: total_resource_requests(obj, resourceType)
+
+    - name: kubedb_mongodb_resource_request_storage
+      help: "Requested storage by MongoDB in byte"
+      type: gauge
+      labels:
+        - key: unit
+          value: byte
+      params:
+        - key: obj
+          valuePath: .
+        - key: resourceType
+          value: storage
+      metricValue:
+        valueFromExpression: total_resource_requests(obj, resourceType)
+
+    - name: kubedb_mongodb_resource_limit_cpu
+      help: "CPU limit for MongoDB in core"
+      type: gauge
+      labels:
+        - key: unit
+          value: core
+      params:
+        - key: obj
+          valuePath: .
+        - key: resourceType
+          value: cpu
+      metricValue:
+        valueFromExpression: total_resource_limits(obj, resourceType)
+
+    - name: kubedb_mongodb_resource_limit_memory
+      help: "Memory limit for MongoDB in byte"
+      type: gauge
+      labels:
+        - key: unit
+          value: byte
+      params:
+        - key: obj
+          valuePath: .
+        - key: resourceType
+          value: memory
+      metricValue:
+        valueFromExpression: total_resource_limits(obj, resourceType)
+
+    - name: kubedb_mongodb_resource_limit_storage
+      help: "Storage limit for MongoDB in byte"
+      type: gauge
+      labels:
+        - key: unit
+          value: byte
+      params:
+        - key: obj
+          valuePath: .
+        - key: resourceType
+          value: storage
+      metricValue:
+        valueFromExpression: total_resource_limits(obj, resourceType)
 ```
 
 Like other Kubernetes native resources, it has `TypeMeta`, `ObjectMeta`, and `Spec` sections. However, it doesn't have a `Status` section. Let's focus on the `spec` section. In `targetRef`, we specified the `apiVersion` and `kind` of our targeted resource `MongoDB` from which we want to generate our metrics. The `metrics` section specifies the list of metrics we want to collect.
