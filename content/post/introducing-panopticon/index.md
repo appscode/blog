@@ -100,15 +100,6 @@ spec:
           valuePath: .spec.version
       metricValue:
         value: 1
-    
-    - name: kubedb_mongodb_replicas
-      help: "Number of available replicas for MongoDB"
-      type: gauge
-      params:
-        - key: obj
-          valuePath: .
-      metricValue:
-        valueFromExpression: resource_replicas(obj)
 
     - name: kubedb_mongodb_status_phase
       help: "Mongodb instance current phase"
@@ -140,6 +131,15 @@ spec:
           - labelValue: DataRestoring
             metricValue:
               valueFromExpression: "int(phase == 'DataRestoring')"
+    
+    - name: kubedb_mongodb_replicas
+      help: "Number of available replicas for MongoDB"
+      type: gauge
+      params:
+        - key: obj
+          valuePath: .
+      metricValue:
+        valueFromExpression: resource_replicas(obj)
 
     - name: kubedb_mongodb_resource_request_cpu
       help: "Requested CPU by MongoDB in core"
@@ -228,10 +228,6 @@ spec:
 
 Like other Kubernetes native resources, it has `TypeMeta`, `ObjectMeta`, and `Spec` sections. However, it doesn't have a `Status` section. Let's focus on the `spec` section. In `targetRef`, we specified the `apiVersion` and `kind` of our targeted resource `MongoDB` from which we want to generate our metrics. The `metrics` section specifies the list of metrics we want to collect.
 
-// TODO: field list
-
-Here each metrics contains three mandatory fields. They are `name`, `help`, and `type`. Here `name` defines the metrics name, `help` holds a short description about the metrics and `type` denotes the Prometheus type of the metrics. You'll find the details of custom resource definition [here](https://github.com/kmodules/custom-resources/blob/master/apis/metrics/v1alpha1/metricsconfiguration_types.go).  
-
 Let's see a sample MongoDB manifest file for better understanding.
 
 ```yaml
@@ -253,11 +249,11 @@ spec:
   terminationPolicy: WipeOut
 ```
 
-From the above MongoDB instance, the first metrics `kubedb_mongodb_info` in MetricsConfiguration will collect some basic information and will set them as labels. As Prometheus metrics must contain a metrics value, we set the value as 1 here.
+From the above MongoDB instance, the first metrics `kubedb_mongodb_created` in MetricsConfiguration will collect the MongoDB resource creation time in unix. the second one, `kubedb_mongodb_info` in MetricsConfiguration will collect some basic information and will set them as labels. As Prometheus metrics must contain a metrics value, we set the value as 1 here.
 
 Next metrics `kubedb_mongodb_status_phase` is more interesting. This metrics will represent the MongoDB instance's current phase. The interesting part here, MongoDB instance can have six different phases called 'Ready', 'Critical', 'NotReady' etc. So, to understand the MongoDB instance's current phase properly, we need metrics for all of those phases.
 
-To handle this type of scenario, there is one field in MetricsConfiguration called 'states' which holds the label key and all possible label values. It also contains the corresponding configuration to find the value of the metrics. `metricsValue` can have three different fields. One is `value` which denotes the direct value of that metrics like the first metrics. Another one is `valueFromPath` which denotes the json path of the resource instance. The final one is `valueFromExpression` which is used in this metrics. It contains a predefined function that will take the necessary parameters from the `params` field and will calculate the value of the metrics accordingly. Here if the phase matches with the given phase, the 'int' function will return 1 otherwise 0. You'll get expression functions and their uses [here](https://github.com/kmodules/custom-resources/blob/master/apis/metrics/v1alpha1/metricsconfiguration_types.go). Finally we will have six different metrics similar to below:
+To handle this type of scenario, there is one field in MetricsConfiguration called 'states' which holds the label key and all possible label values. It also contains the corresponding configuration to find the value of the metrics. Here if the resource actual phase matches with the given phase, the 'int' function will return 1 otherwise 0. Finally we will have six different metrics similar to below:
 
 ```
 kubedb_mongodb_status_phase { ..., phase="Ready"}          1
@@ -269,11 +265,21 @@ kubedb_mongodb_status_phase { ..., phase="DataRestoring"}  0
 ```
 Note: Here, we assume MongoDB instance's phase as "Ready".
 
+The next metrics `kubedb_mongodb_replica` represents MongoDB replica count. It will calculate the number of replicas according to the given MongoDB object. Here, we send the full MongoDB object in the `params` and `resource_replicas` function to calculate the total number of replicas according to its mode(Standalone/Replicaset/Sharded).
+
+The next metrics `kubedb_mongodb_resource_request_cpu` represents the requested CPU value by MongoDB in core. `total_resource_requests` function will get the full MongoDB object and `resourceType` from `params`. Then it will calculate the requested amount of that resource accordingly.
+
+The next metrics `kubedb_mongodb_resource_request_memory` represents the requested memory value by MongoDB in byte. In this case, we also use `total_resource_requests` function but this time in `params` resourceType is specified as 'memory".
+
+The next metrics `kubedb_mongodb_resource_request_storage` is similar to the previous two metrics. In this case, we have to specify `resourceType` as "storage"
+
+To calculate the next three metrics `kubedb_mongodb_resource_limit_cpu`, `kubedb_mongodb_resource_limit_memory`, and `kubedb_mongodb_resource_limit_storage`, we use `total_resource_limits` function. This function takes the full MongoDB object and resource type in `params` and calculates the resource limit according to the resource type.
+
 Similarly, we can collect various kinds of metrics not only from our custom resources but also from any Kubernetes native resources with just a MetricsConfiguration object.
 
 
 ## What's next
-// TODO
+
 
 ## Support
 To speak with us, please leave a message on our [website](https://appscode.com/contact/).
