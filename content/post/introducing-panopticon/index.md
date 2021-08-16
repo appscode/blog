@@ -39,12 +39,28 @@ Let's know about `metrics` fields briefly.
 | name | yes  | no |`name` defines the metrics name. `name` should be in snake case. Example: `name: kube_deployment_spec_replicas`  |
 | help | yes  | no |`help` is used to describe the metrics. For `kube_deployment_spec_replicas`, the `help` string can be "Number of desired pods for a deployment.  |
 | type | yes  |  no |`type` defines the Prometheus type of the metrics. For Kubernetes based objects, `type` can only be "gauge" |
-| field | no | yes | `field` defines the metric value path of the manifest file and the type of that value |
-| labels | no  | yes | `labels` defines the metric labels as a key-value pair |
-| params | no  | yes  | `params` is the list of parameters configuration used in expression evaluation |
-| states | conditionally required | yes | `states` handle metrics with label cardinality. `states` specify the possible states for a label and their corresponding MetricValue configuration. `metrics` must contain either `states` or `metricValue`. If both are specified, `metricsValue` will be ignored. |
-| metricValue | conditionally required | yes | `metricValue` defines the configuration to obtain metric value. `metrics` must contain either States or MetricValue. If both are specified, `metricValue` will be ignored. |
+| field | no | yes | `field` contains the information of the field for which metric is collected. It has two sub-fields: `path` and `type`. `path` defines the json path of the object. Example: For deployment spec replica count, the path will be `.spec.replicas`. `type` defines the type of the value in the given `path`. `type` can be "Integer" for integer value like `.spec.replicas`, "DateTime" for time stamp value like `.metadata.creationTimestamp`. "Array" for array field like `.spec.containers`. "String" for string field like .statue.phase (for pod status). When some labels are collected with metric value 1 and the values are not from an array then `field` can be skipped. Otherwise, `field` must be specified. |
+| labels | no  | yes | `labels` contains the information of a metric label. Given labels are always added in the metrics along with resource name and namespace. Resource's name and namespace are always added to the labels by default. No configuration is needed for name and namespace labels. It has three subfields. They are `key`, `value`, `valuePath`. `key` defines the label key. `value` defines the hardcoded label value. `valuePath` defines the label value path. Either `value` or `valuePath` must be specified for a Label.  If both are specified, `valuePath` is ignored. Note that, if a `valuePath` doesn't exist for a label key, the label will be ignored. |
+| params | no  | yes  | `params` is the list of parameters configuration used in expression evaluation. The parameter should contain a user-defined `key` and corresponding `value` or `valuePath`. Either `value` or `valuePath` must be specified. If both are specified, `valuePath` will be ignored.|
+| states | conditionally required | yes | `states` contains the configuration for generating all the time series of a metric with label cardinality is greater than 1. `states` specify the possible states for a label and their corresponding MetricValue configuration. `metrics` must contain either `states` or `metricValue`. If both are specified, `metricsValue` will be ignored. It contains `labelKey` and `values`. `values` contain the list of state values. The size of the list is always equal to the cardinality of that label.|
+| metricValue | conditionally required | yes | `metricValue` defines the configuration to obtain the metric value. `metricValue` contains only one of following fields: `value`, `valueFromPath`, and `valueFromExpression`. If multiple fields are assigned then only one field is considered and other fields are ignored. The priority rule is: "Value > ValueFromPath > ValueFromExpression". `value` contains the metric value. It is defined as "1" when some information of the object is collected as labels but there is no specific metric value. `valueFromPath` contains the field path of the manifest file of an object. `valueFromPath` is used when the metric value is coming from any specific json path of the object. Example: For metrics "kube_deployment_spec_replicas", the `metricValue` is coming from a specific path `.spec.replicas`. In this case, valueFromPath is defined as `valueFromPath: .spec.replicas`. `valueFromExpression` contains an expression function to evaluate the metric value. `params` is used to evaluate the expression.|
 
+Available expression evaluation functions are:
+
+| Function Definition | Description |
+|---|---|
+| int(expression) | Returns 1 if the expression is true otherwise 0. Example: int(phase == 'Running'), here `phase` is an argument which holds the `phase` of a Kubernetes resource|
+| percentage(arg0, arg1) | Returns the value of (arg0 * arg1%). Example: To get the maximum number of unavailable replicas of a deployment in the time of rolling update, we can use percentage(replicas, maxUnavailable). Here, `replicas` represents the number of spec replica count and `maxUnavaiable` represents the percentage of unavailable replicas of a deployment. |
+| cpu_cores(arg) | Returns the CPU value in core. Let, cpuVal=500m then cpu_core(cpuVal) will return 0.5. |
+| bytes(arg) | Returns the memory value in byte. Let, memVal=1 ki then bytes(memVal) will return 1024. |
+| unix (arg) | Converts the DateTime string into unix and returns it. |
+| resource_replicas(obj) | Takes Kubernetes object as input and returns it's replica count. |
+| resource_mode(obj) | Takes Kubernetes object as input and returns it's mode. To get the MongoDB's mode(Standalone/ReplicaSet/Sharded): `resource_mode(MongoDB resource object)` |
+| total_resource_limits(obj, resourceType) | Takes Kubernetes object as input and returns it's resource limits according to `resourceType`. `resourceType` can be `cpu`, `memory`, and `storage`. To get the MongoDB memory limit: `total_resource_limits(MongoDB resource object, "memory")`. |
+| total_resource_requests(obj, resourceType) | Takes Kubernetes object as input and returns it's resource requests according to `resourceType`. `resourceType` can be `cpu`, `memory`, and `storage`. To get the MongoDB cpu request: `total_resource_limits(MongoDB resource object, "cpu")`. |
+
+
+Note: To know about CRD defination and evaluation functions in details, please visit [here](https://github.com/kmodules/custom-resources/blob/master/apis/metrics/v1alpha1/metricsconfiguration_types.go).
 
 ## How to generate metrics using Panopticon
 Now let's see how can we generate metrics using Panopticon. At first, we need to deploy the Panopticon helm chart which will be found [here](https://github.com/kubeops/installer).
@@ -255,20 +271,6 @@ Note: Here, we assume MongoDB instance's phase as "Ready".
 
 Similarly, we can collect various kinds of metrics not only from our custom resources but also from any Kubernetes native resources with just a MetricsConfiguration object.
 
-## Available expression evaluation functions
-| Function Defination | Description |
-|---|---|
-| int(expression) | Returns 1 if the expression is true otherwise 0. Example: int(phase == 'Running'), here `phase` is an argument which holds the `phase` of a Kubernetes resource|
-| percentage(arg0, arg1) | Returns the value of (arg0 * arg1%). Example: To get the maximum number of unavailable replicas of a deployment in the time of rolling update, we can use percentage(replicas, maxUnavailable). Here, `replicas` represents the number of spec replica count and `maxUnavaiable` represents the percentage of unavailable replicas of a deployment. |
-| cpu_cores(arg) | Returns the CPU value in core. Let, cpuVal=500m then cpu_core(cpuVal) will return 0.5. |
-| bytes(arg) | Returns the memory value in byte. Let, memVal=1 ki then bytes(memVal) will return 1024. |
-| unix (arg) | Converts the DateTime string into unix and returns it. |
-| *resource_replicas(obj) | Takes Kubernetes object as input and returns it's replica count. |
-| *resource_mode(obj) | Takes Kubernetes object as input and returns it's mode. To get the MongoDB's mode(Standalone/ReplicaSet/Sharded): `resource_mode(MongoDB resource object)` |
-| *total_resource_limits(obj, resourceType) | Takes Kubernetes object as input and returns it's resource limits according to `resourceType`. `resourceType` can be `cpu`, `memory`, and `storage`. To get the MongoDB memory limit: `total_resource_limits(MongoDB resource object, "memory")`. |
-| *total_resource_requests(obj, resourceType) | Takes Kubernetes object as input and returns it's resource requests according to `resourceType`. `resourceType` can be `cpu`, `memory`, and `storage`. To get the MongoDB cpu request: `total_resource_limits(MongoDB resource object, "cpu")`. |
-
-*Support all Kubernetes native resources and only KubeDB's custom resources for now.
 
 ## What's next
 // TODO
