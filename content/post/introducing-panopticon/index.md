@@ -51,7 +51,7 @@ Available expression evaluation functions are:
 |---|---|
 | int(expression) | Returns 1 if the expression is true otherwise 0. Example: int(phase == 'Running'), here `phase` is an argument which holds the `phase` of a Kubernetes resource|
 | percentage(arg0, arg1) | Returns the value of (arg0 * arg1%). Example: To get the maximum number of unavailable replicas of a deployment in the time of rolling update, we can use percentage(replicas, maxUnavailable). Here, `replicas` represents the number of spec replica count and `maxUnavaiable` represents the percentage of unavailable replicas of a deployment. |
-| cpu_cores(arg) | Returns the CPU value in core. Let, cpuVal=500m then cpu_core(cpuVal) will return 0.5. |
+| cpu_cores(arg) | Returns the CPU value in core. Let, cpuVal=500m then cpu_cores(cpuVal) will return 0.5. |
 | bytes(arg) | Returns the memory value in byte. Let, memVal=1 ki then bytes(memVal) will return 1024. |
 | unix (arg) | Converts the DateTime string into unix and returns it. |
 | resource_replicas(obj) | Takes Kubernetes object as input and returns it's replica count. |
@@ -131,7 +131,7 @@ spec:
           - labelValue: DataRestoring
             metricValue:
               valueFromExpression: "int(phase == 'DataRestoring')"
-    
+
     - name: kubedb_mongodb_replicas
       help: "Number of available replicas for MongoDB"
       type: gauge
@@ -249,6 +249,93 @@ spec:
   terminationPolicy: WipeOut
 ```
 
+After deploying, let's get the yaml using below command:
+
+```bash
+$ kubectl get mongodb mongodb-demo -n demo -oyaml
+```
+You'll find something like below. Some irrelavent fields are not shown here.
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: MongoDB
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"kubedb.com/v1alpha2","kind":"MongoDB","metadata":{"annotations":{},"name":"mongodb-demo","namespace":"demo"},"spec":{"storage":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"1Gi"}},"storageClassName":"standard"},"storageType":"Durable","terminationPolicy":"WipeOut","version":"4.2.3"}}
+  creationTimestamp: "2021-08-16T11:37:13Z"
+  finalizers:
+  - kubedb.com
+  generation: 2
+  ...
+  ...
+  name: mongodb-demo
+  namespace: demo
+  resourceVersion: "169783"
+  uid: 1c7f3eaa-c038-40a9-8745-07d2b5f6aaf2
+spec:
+  authSecret:
+    name: mongodb-demo-auth
+  podTemplate:
+    controller: {}
+    metadata: {}
+    spec:
+      ...
+      ...
+      resources:
+        limits:
+          memory: 1Gi
+        requests:
+          cpu: 500m
+          memory: 1Gi
+      serviceAccountName: mongodb-demo
+  replicas: 1
+  sslMode: disabled
+  storage:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: standard
+  storageEngine: wiredTiger
+  storageType: Durable
+  terminationPolicy: WipeOut
+  version: 4.2.3
+status:
+  conditions:
+  - lastTransitionTime: "2021-08-16T11:37:13Z"
+    message: "The KubeDB operator has started the provisioning of MongoDB: demo/mongodb-demo"
+    reason: DatabaseProvisioningStartedSuccessfully
+    status: "True"
+    type: ProvisioningStarted
+  - lastTransitionTime: "2021-08-16T11:37:26Z"
+    message: "All desired replicas are ready."
+    reason: AllReplicasReady
+    status: "True"
+    type: ReplicaReady
+  - lastTransitionTime: "2021-08-16T11:37:57Z"
+    message: "The MongoDB: demo/mongodb-demo is accepting client requests."
+    observedGeneration: 2
+    reason: DatabaseAcceptingConnectionRequest
+    status: "True"
+    type: AcceptingConnection
+  - lastTransitionTime: "2021-08-16T11:37:57Z"
+    message: "The MongoDB: demo/mongodb-demo is ready."
+    observedGeneration: 2
+    reason: ReadinessCheckSucceeded
+    status: "True"
+    type: Ready
+  - lastTransitionTime: "2021-08-16T11:37:57Z"
+    message: "The MongoDB: demo/mongodb-demo is successfully provisioned."
+    observedGeneration: 2
+    reason: DatabaseSuccessfullyProvisioned
+    status: "True"
+    type: Provisioned
+  observedGeneration: 2
+  phase: Ready
+```
+
 From the above MongoDB instance, the first metrics `kubedb_mongodb_created` in MetricsConfiguration will collect the MongoDB resource creation time in unix. the second one, `kubedb_mongodb_info` in MetricsConfiguration will collect some basic information and will set them as labels. As Prometheus metrics must contain a metrics value, we set the value as 1 here.
 
 Next metrics `kubedb_mongodb_status_phase` is more interesting. This metrics will represent the MongoDB instance's current phase. The interesting part here, MongoDB instance can have six different phases called 'Ready', 'Critical', 'NotReady' etc. So, to understand the MongoDB instance's current phase properly, we need metrics for all of those phases.
@@ -277,8 +364,6 @@ To calculate the next three metrics `kubedb_mongodb_resource_limit_cpu`, `kubedb
 
 Similarly, we can collect various kinds of metrics not only from our custom resources but also from any Kubernetes native resources with just a MetricsConfiguration object.
 
-
-## What's next
 
 
 ## Support
