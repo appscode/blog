@@ -21,14 +21,14 @@ We are highly excited to introduce `Panopticon`, a generic Kubernetes resource s
 Panopticon is a generic state metrics exporter for Kubernetes resources. It can generate Prometheus metrics from both Kubernetes native and custom resources. Generated metrics are exposed in `/metrics` path for the Prometheus server to scrape them.
 
 ## Background
-When we wanted to collect state metrics from our product's (KubeDB, Stash and so many) custom resources, we didn't find any existing tool that would accomplish our needs. Kubernetes has a project called `kube-state-metrics` but it does not support collecting metrics from Kubernetes custom resources. Moreover, the metrics for Kubernetes native resources were predefined and there was hardly any customization option.
+When we wanted to collect state metrics from our product's (KubeDB, Stash and so many) custom resources, we didn't find any existing tool that would accomplish our needs. Kubernetes has a project called [kube-state-metrics](https://github.com/kubeops/panopticon) but it does not support collecting metrics from Kubernetes custom resources. Moreover, the metrics for Kubernetes native resources were predefined and there was hardly any customization option.
 
 So, we decided to build our own generic resource metrics exporter and named `Panopticon` which can collect metrics from any kind of Kubernetes resources. There is an interesting story about the name `Panopticon`. You can learn about that from this Wikipedia [page](https://en.wikipedia.org/wiki/Panopticon).
 
 ## How Panopticon works
 Panopticon watches a custom resource called `MetricsConfiguration` which holds the necessary configuration for generating our desired metrics. This custom resource consists of mainly two parts. The first one is `targetRef` which defines the targeted Kubernetes resource for metrics collection. The other is `metrics` which holds desired metrics that we want to generate from that targeted resources. We'll discuss the custom resource briefly in the later section.
 
-When a new `MetricsConfiguration` object is created, Panopticon gets the event and generates defined metrics for the targeted resources. It stores those metrics in an in-memory store say `metrics store`. When the `MetricsConfiguration` object is updated/deleted or any new instance of the targeted resource is created/updated/deleted, Panopticon syncs the new changes with its metrics store. So metrics store always holds the updated information according to the `MetricsConfiguration` object.
+When a new `MetricsConfiguration` object is created, Panopticon gets the event and generates defined metrics for the targeted resources. It stores those metrics in an in-memory store say "metrics store". When the `MetricsConfiguration` object is updated/deleted or any new instance of the targeted resource is created/updated/deleted, Panopticon syncs the new changes with its metrics store. So metrics store always holds the updated information according to the `MetricsConfiguration` object.
 
 When the `/metrics` path is hit, Panopticon serves the metrics from metrics store that is already generated. In this way, Panopticon efficiently serves metrics with low latency.
 
@@ -260,9 +260,6 @@ You'll find something like below. Some irrelavent fields are not shown here.
 apiVersion: kubedb.com/v1alpha2
 kind: MongoDB
 metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"kubedb.com/v1alpha2","kind":"MongoDB","metadata":{"annotations":{},"name":"mongodb-demo","namespace":"demo"},"spec":{"storage":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"1Gi"}},"storageClassName":"standard"},"storageType":"Durable","terminationPolicy":"WipeOut","version":"4.2.3"}}
   creationTimestamp: "2021-08-16T11:37:13Z"
   finalizers:
   - kubedb.com
@@ -340,7 +337,7 @@ From the above MongoDB instance, the first metrics `kubedb_mongodb_created` in M
 
 Next metrics `kubedb_mongodb_status_phase` is more interesting. This metrics will represent the MongoDB instance's current phase. The interesting part here, MongoDB instance can have six different phases called 'Ready', 'Critical', 'NotReady' etc. So, to understand the MongoDB instance's current phase properly, we need metrics for all of those phases.
 
-To handle this type of scenario, there is one field in MetricsConfiguration called 'states' which holds the label key and all possible label values. It also contains the corresponding configuration to find the value of the metrics. Here if the resource actual phase matches with the given phase, the 'int' function will return 1 otherwise 0. Finally we will have six different metrics similar to below:
+To handle this type of scenario, there is one field in MetricsConfiguration called `states` which holds the label key and all possible label values. It also contains the corresponding configuration to find the value of the metrics. Here if the resource actual phase matches with the given phase, the `int` function will return 1 otherwise 0. Finally we will have six different metrics similar to below:
 
 ```
 kubedb_mongodb_status_phase { ..., phase="Ready"}          1
@@ -362,9 +359,137 @@ The next metrics `kubedb_mongodb_resource_request_storage` is similar to the pre
 
 To calculate the next three metrics `kubedb_mongodb_resource_limit_cpu`, `kubedb_mongodb_resource_limit_memory`, and `kubedb_mongodb_resource_limit_storage`, we use `total_resource_limits` function. This function takes the full MongoDB object and resource type in `params` and calculates the resource limit according to the resource type.
 
+Now let's see a sample `MetricsConfiguration` object for Kubernetes native resource `Deployment`. All metrics for Deployment collected by "kube-state-metrics" are collected below using "Panopticon". You can see "kube-state-metrics" project's configuration for deployment [here](https://github.com/kubernetes/kube-state-metrics/blob/master/internal/store/deployment.go).
+
+```yaml
+apiVersion: metrics.appscode.com/v1alpha1
+kind: MetricsConfiguration
+metadata:
+  name: apps-v1-deployment
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+  metrics:
+    - name: kube_deployment_created
+      help: "Unix creation timestamp"
+      type: gauge
+      field:
+        path: .metadata.creationTimestamp
+        type: DateTime
+      metricValue:
+        valueFromPath: .metadata.creationTimestamp
+
+    - name: kube_deployment_status_replicas
+      help: "The number of replicas per deployment"
+      type: gauge
+      field:
+        path: .status.replicas
+        type: Integer
+      metricValue:
+        valueFromPath: .status.replicas
+
+    - name: kube_deployment_status_replicas_ready
+      help: "The number of available replicas per deployment."
+      type: gauge
+      field: 
+        path: .status.readyReplicas
+        type: Integer
+      metricValue: 
+        valueFromPath: .status.readyReplicas
+
+    - name: kube_deployment_status_replicas_available
+      help: "The number of available replicas per deployment."
+      type: gauge
+      field: 
+        path: .status.availableReplicas
+        type: Integer
+      metricValue:
+        valueFromPath: .status.availableReplicas
+
+    - name: kube_deployment_status_replicas_updated
+      help: "The number of updated replicas per deployment."
+      type: gauge
+      field: 
+        path: .status.updatedReplicas
+        type: Integer
+      metricValue:
+        valueFromPath: .status.updatedReplicas
+
+    - name: kube_deployment_status_observed_generation
+      help: "The generation observed by the deployment controller."
+      type: gauge
+      field:
+        path: .status.observedGeneration
+        type: Integer
+      metricValue:
+        valueFromPath: .status.observedGeneration
+
+    - name: kube_deployment_status_condition
+      help: "The current status conditions of a deployment."
+      type: gauge
+      field:
+        path: .status.conditions
+        type: Array
+      labels:
+        - key: type
+          valuePath: .status.conditions[*].type
+        - key: status
+          valuePath: .status.conditions[*].status
+      metricValue:
+        value: 1
+
+    - name: kube_deployment_spec_replicas
+      help: "Number of desired pods for a deployment."
+      type: gauge
+      field:
+        path: .spec.replicas
+        type: Integer
+      metricValue:
+        valueFromPath: .spec.replicas
+
+    - name: kube_deployment_spec_paused
+      help: "Whether the deployment is paused and will not be processed by the deployment controller."
+      type: gauge
+      params:
+        - key: paused
+          valuePath: .spec.paused
+      metricValue:
+        valueFromExpression: int(paused == 'true')
+
+    - name: kube_deployment_spec_strategy_rollingupdate_max_unavailable
+      help: "Maximum number of unavailable replicas during a rolling update of a deployment."
+      type: gauge
+      params: 
+        - key: replicas
+          valuePath: .spec.replicas
+        - key: maxUnavailable
+          valuePath: .spec.strategy.rollingUpdate.maxUnavailable
+      metricValue:
+        valueFromExpression: percentage(replicas, maxUnavailable)
+
+    - name: kube_deployment_spec_strategy_rollingupdate_max_surge
+      help: "Maximum number of replicas that can be scheduled above the desired number of replicas during a rolling update of a deployment."
+      type: gauge
+      params: 
+        - key: replicas
+          valuePath: .spec.replicas
+        - key: maxSurge
+          valuePath: .spec.strategy.rollingUpdate.maxSurge
+      metricValue:
+        valueFromExpression: percentage(replicas, maxSurge)
+
+    - name: kube_deployment_metadata_generation
+      help: "Sequence number representing a specific generation of the desired state."
+      type: gauge
+      field:
+        path: .metadata.generation
+        type: Integer
+      metricValue: 
+        valueFromPath: .metadata.generation
+```
+
 Similarly, we can collect various kinds of metrics not only from our custom resources but also from any Kubernetes native resources with just a MetricsConfiguration object.
-
-
 
 ## Support
 To speak with us, please leave a message on our [website](https://appscode.com/contact/).
