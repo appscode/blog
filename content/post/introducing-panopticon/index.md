@@ -1,6 +1,6 @@
 ---
 title: Introducing Panopticon, A Generic Kubernetes State Metrics Exporter
-date: 2021-08-16
+date: 2021-08-23
 weight: 22
 authors:
   - Pulak Kanti Bhowmick
@@ -43,7 +43,7 @@ Let's know about `metrics` fields briefly.
 | help | yes  | no |`help` is used to describe the metrics. For `kube_deployment_spec_replicas`, the `help` string can be "Number of desired pods for a deployment.  |
 | type | yes  |  no |`type` defines the Prometheus type of the metrics. For Kubernetes based objects, `type` can only be "gauge" |
 | field | no | yes | `field` contains the information of the field for which metric is collected. It has two sub-fields: `path` and `type`. `path` defines the json path of the object. Example: For deployment spec replica count, the path will be `.spec.replicas`. `type` defines the type of the value in the given `path`. `type` can be "Integer" for integer value like `.spec.replicas`, "DateTime" for time stamp value like `.metadata.creationTimestamp`. "Array" for array field like `.spec.containers`. "String" for string field like .statue.phase (for pod status). When some labels are collected with metric value 1 and the values are not from an array then `field` can be skipped. Otherwise, `field` must be specified. |
-| labels | no  | yes | `labels` contains the information of a metric label. Given labels are always added in the metrics along with resource name and namespace. Resource's name and namespace are always added to the labels by default. No configuration is needed for name and namespace labels. It has three subfields. They are `key`, `value`, `valuePath`. `key` defines the label key. `value` defines the hardcoded label value. `valuePath` defines the label value path. Either `value` or `valuePath` must be specified for a Label.  If both are specified, `valuePath` is ignored. Note that, if a `valuePath` doesn't exist for a label key, the label will be ignored. |
+| labels | no  | yes | `labels` contains the information of a metric label. Given labels are always added in the metrics along with resource name and namespace. Resource's name and namespace are always added to the labels by default. No configuration is needed for name and namespace labels. It has three subfields. They are `key`, `value`, `valuePath`. `key` defines the label key. `value` defines the hardcoded label value. `valuePath` defines the label value path. Either `value` or `valuePath` must be specified for a Label.  If both are specified, `valuePath` is ignored. Note that, if `key` is not specified for a label and the given `valuePath` is invalid or doesn't exist for the resource, the label will be ignored. |
 | params | no  | yes  | `params` is the list of parameters configuration used in expression evaluation. The parameter should contain a user-defined `key` and corresponding `value` or `valuePath`. Either `value` or `valuePath` must be specified. If both are specified, `valuePath` will be ignored.|
 | states | conditionally required | yes | `states` contains the configuration for generating all the time series of a metric with label cardinality is greater than 1. `states` specify the possible states for a label and their corresponding MetricValue configuration. `metrics` must contain either `states` or `metricValue`. If both are specified, `metricsValue` will be ignored. It contains `labelKey` and `values`. `values` contain the list of state values. The size of the list is always equal to the cardinality of that label.|
 | metricValue | conditionally required | yes | `metricValue` defines the configuration to obtain the metric value. `metricValue` contains only one of following fields: `value`, `valueFromPath`, and `valueFromExpression`. If multiple fields are assigned then only one field is considered and other fields are ignored. The priority rule is: "Value > ValueFromPath > ValueFromExpression". `value` contains the metric value. It is defined as "1" when some information of the object is collected as labels but there is no specific metric value. `valueFromPath` contains the field path of the manifest file of an object. `valueFromPath` is used when the metric value is coming from any specific json path of the object. Example: For metrics "kube_deployment_spec_replicas", the `metricValue` is coming from a specific path `.spec.replicas`. In this case, valueFromPath is defined as `valueFromPath: .spec.replicas`. `valueFromExpression` contains an expression function to evaluate the metric value. `params` is used to evaluate the expression.|
@@ -508,6 +508,13 @@ spec:
 ```
 
 Similarly, we can collect various kinds of metrics not only from our custom resources but also from any Kubernetes native resources with just a MetricsConfiguration object.
+
+## Webinar
+
+We are delighted to announce a webinar on 26 August 2021. In this webinar, our experts of AppsCode will talk on “Panopticon: A Generic Kubernetes State Metrics Exporter” and demonstrate how to generate Prometheus metrics from Kubernetes native and custom resources.
+
+Check here for details: https://appscode.com/webinar and don’t forget to register!
+
 
 ## Support
 
