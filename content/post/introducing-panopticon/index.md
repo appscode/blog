@@ -76,7 +76,7 @@ helm repo update
 
 helm install panopticon appscode/panopticon \
     -n kubeops --create-namespace \
-    --set license=/path/to/license.txt
+    --set-file license=/path/to/license.txt
 ```
 
 ## How to generate metrics using Panopticon
