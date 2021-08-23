@@ -383,7 +383,7 @@ Now let's see a sample `MetricsConfiguration` object for Kubernetes native resou
 apiVersion: metrics.appscode.com/v1alpha1
 kind: MetricsConfiguration
 metadata:
-  name: apps-v1-deployment
+  name: apps-deployment
 spec:
   targetRef:
     apiVersion: apps/v1
