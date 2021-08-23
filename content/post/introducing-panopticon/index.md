@@ -15,22 +15,25 @@ tags:
   - kubernetes-exporter
 ---
 
-We are highly excited to introduce `Panopticon`, a generic Kubernetes resource state metrics exporter. It comes with a lot of exciting features and customization options.
+We are excited to introduce `Panopticon`, a generic Kubernetes resource state metrics exporter. It comes with a lot of features and customization options.
 
 ## What is Panopticon?
-Panopticon is a generic state metrics exporter for Kubernetes resources. It can generate Prometheus metrics from both Kubernetes native and custom resources. Generated metrics are exposed in `/metrics` path for the Prometheus server to scrape them.
+
+Panopticon is a generic state metrics exporter for Kubernetes resources. It can generate Prometheus metrics from both Kubernetes native and custom resources. Generated metrics are exposed in `/metrics` path for the Prometheus server to scrape.
 
 ## Background
-When we wanted to collect state metrics from our product's (KubeDB, Stash and so many) custom resources, we didn't find any existing tool that would accomplish our needs. Kubernetes has a project called [kube-state-metrics](https://github.com/kubeops/panopticon) but it does not support collecting metrics from Kubernetes custom resources. Moreover, the metrics for Kubernetes native resources were predefined and there was hardly any customization option.
 
-So, we decided to build our own generic resource metrics exporter and named `Panopticon` which can collect metrics from any kind of Kubernetes resources. There is an interesting story about the name `Panopticon`. You can learn about that from this Wikipedia [page](https://en.wikipedia.org/wiki/Panopticon).
+We wanted to collect state metrics from our various products (eg, KubeDB, Stash and other). But we didn't find any existing tool that would accomplish our needs. Kubernetes has a project called [kube-state-metrics](https://github.com/kubeops/panopticon) but it does not support collecting metrics from Kubernetes custom resources. Moreover, the metrics for Kubernetes native resources were predefined and there was hardly any customization options.
+
+So, we decided to build our own generic resource metrics exporter, named `Panopticon`, which can collect metrics from any kind of Kubernetes resources. Like the real [Panopticon](https://en.wikipedia.org/wiki/Panopticon), `Panopticon` is a Kubernetes controller that watches Kubernetes resources passively and exports Prometheus metrics.
 
 ## How Panopticon works
-Panopticon watches a custom resource called `MetricsConfiguration` which holds the necessary configuration for generating our desired metrics. This custom resource consists of mainly two parts. The first one is `targetRef` which defines the targeted Kubernetes resource for metrics collection. The other is `metrics` which holds desired metrics that we want to generate from that targeted resources. We'll discuss the custom resource briefly in the later section.
 
-When a new `MetricsConfiguration` object is created, Panopticon gets the event and generates defined metrics for the targeted resources. It stores those metrics in an in-memory store say "metrics store". When the `MetricsConfiguration` object is updated/deleted or any new instance of the targeted resource is created/updated/deleted, Panopticon syncs the new changes with its metrics store. So metrics store always holds the updated information according to the `MetricsConfiguration` object.
+Panopticon introduces a custom resource called `MetricsConfiguration` which holds the necessary configuration for generating metrics. This custom resource consists of mainly two parts. The first one is `targetRef` which defines the targeted Kubernetes resource for metrics collection. The other is `metrics` which holds desired metrics that we want to generate from that targeted resources. We'll discuss the custom resource briefly in the later section.
 
-When the `/metrics` path is hit, Panopticon serves the metrics from metrics store that is already generated. In this way, Panopticon efficiently serves metrics with low latency.
+When a new `MetricsConfiguration` object is created, Panopticon gets the event and generates defined metrics for the targeted resources. It stores those metrics in an in-memory metrics store. When the `MetricsConfiguration` object is updated/deleted or any new instance of the targeted resource kind is created/updated/deleted, Panopticon syncs the new changes with its metrics store. So metrics store always holds the updated information according to the `MetricsConfiguration` object.
+
+When the `/metrics` path is scraped, Panopticon serves the metrics from metrics store that is already generated. In this way, Panopticon efficiently serves metrics with low latency.
 
 Let's know about `metrics` fields briefly.
 
@@ -52,20 +55,33 @@ Available expression evaluation functions are:
 | int(expression) | Returns 1 if the expression is true otherwise 0. Example: int(phase == 'Running'), here `phase` is an argument which holds the `phase` of a Kubernetes resource|
 | percentage(arg0, arg1) | Returns the value of (arg0 * arg1%). Example: To get the maximum number of unavailable replicas of a deployment in the time of rolling update, we can use percentage(replicas, maxUnavailable). Here, `replicas` represents the number of spec replica count and `maxUnavaiable` represents the percentage of unavailable replicas of a deployment. |
 | cpu_cores(arg) | Returns the CPU value in core. Let, cpuVal=500m then cpu_cores(cpuVal) will return 0.5. |
-| bytes(arg) | Returns the memory value in byte. Let, memVal=1 ki then bytes(memVal) will return 1024. |
+| bytes(arg) | Returns the memory value in byte. Let, memVal=1 Ki then bytes(memVal) will return 1024. |
 | unix (arg) | Converts the DateTime string into unix and returns it. |
 | resource_replicas(obj) | Takes Kubernetes object as input and returns it's replica count. |
-| resource_mode(obj) | Takes Kubernetes object as input and returns it's mode. To get the MongoDB's mode(Standalone/ReplicaSet/Sharded): `resource_mode(MongoDB resource object)` |
-| total_resource_limits(obj, resourceType) | Takes Kubernetes object as input and returns it's resource limits according to `resourceType`. `resourceType` can be `cpu`, `memory`, and `storage`. To get the MongoDB memory limit: `total_resource_limits(MongoDB resource object, "memory")`. |
-| total_resource_requests(obj, resourceType) | Takes Kubernetes object as input and returns it's resource requests according to `resourceType`. `resourceType` can be `cpu`, `memory`, and `storage`. To get the MongoDB cpu request: `total_resource_limits(MongoDB resource object, "cpu")`. |
+| resource_mode(obj) | Takes Kubernetes object as input and returns it's mode. To get the MongoDB's mode(Standalone/ReplicaSet/Sharded), use: `resource_mode(MongoDB resource object)` |
+| total_resource_limits(obj, resourceType) | Takes Kubernetes object as input and returns it's resource limits according to `resourceType`. `resourceType` can be `cpu`, `memory`, and `storage`. To get the MongoDB memory limit, use: `total_resource_limits(MongoDB resource object, "memory")`. |
+| total_resource_requests(obj, resourceType) | Takes Kubernetes object as input and returns it's resource requests according to `resourceType`. `resourceType` can be `cpu`, `memory`, and `storage`. To get the MongoDB cpu request, use: `total_resource_limits(MongoDB resource object, "cpu")`. |
+| app_resource_limits(obj, resourceType) | Takes Kubernetes object as input and returns the main application containers (excluding supporting sidecars like Prometheus exporters, etc.) resource limits according to `resourceType`. `resourceType` can be `cpu`, `memory`, and `storage`. To get the MongoDB database memory limit, use: `app_resource_limits(MongoDB resource object, "memory")`. |
+| app_resource_requests(obj, resourceType) | Takes Kubernetes object as input and returns the main application containers (excluding supporting sidecars like Prometheus exporters, etc.) resource requests according to `resourceType`. `resourceType` can be `cpu`, `memory`, and `storage`. To get the MongoDB database cpu request, use: `app_resource_limits(MongoDB resource object, "cpu")`. |
 
+Note: To know about CRD definition and evaluation functions in details, please visit [here](https://github.com/kmodules/custom-resources/blob/master/apis/metrics/v1alpha1/metricsconfiguration_types.go).
 
-Note: To know about CRD defination and evaluation functions in details, please visit [here](https://github.com/kmodules/custom-resources/blob/master/apis/metrics/v1alpha1/metricsconfiguration_types.go).
+## How to install Panopticon
+
+At first, we need to deploy the Panopticon helm chart which will be found [here](https://github.com/kubeops/installer). You will need to get a license key that can be found [here](https://license-issuer.appscode.com/?p=panopticon-enterprise).
+
+```bash
+helm repo add appscode https://charts.appscode.com/stable/
+helm repo update
+
+helm install panopticon appscode/panopticon \
+    -n kubeops --create-namespace \
+    --set license=/path/to/license.txt
+```
 
 ## How to generate metrics using Panopticon
-Now let's see how can we generate metrics using Panopticon. At first, we need to deploy the Panopticon helm chart which will be found [here](https://github.com/kubeops/installer).
 
-After that, let's see a sample `MetricsConfiguration` object for our MongoDB custom resource.
+Now, let's see a sample `MetricsConfiguration` object for our MongoDB custom resource.
 
 ```yaml
 apiVersion: metrics.appscode.com/v1alpha1
@@ -226,7 +242,7 @@ spec:
         valueFromExpression: total_resource_limits(obj, resourceType)
 ```
 
-Like other Kubernetes native resources, it has `TypeMeta`, `ObjectMeta`, and `Spec` sections. However, it doesn't have a `Status` section. Let's focus on the `spec` section. In `targetRef`, we specified the `apiVersion` and `kind` of our targeted resource `MongoDB` from which we want to generate our metrics. The `metrics` section specifies the list of metrics we want to collect.
+Like other Kubernetes native resources, `MetricsConfiguration` has `TypeMeta`, `ObjectMeta`, and `Spec` sections. However, it doesn't have a `Status` section. It is a cluster scoped resource and we recommend naming the object with the `{targetGroup}-{targetResourceSingular}`. Let's focus on the `spec` section. In `spec.targetRef`, we specified the `apiVersion` and `kind` of our targeted resource `MongoDB` from which we want to generate our metrics. The `spec.metrics` section specifies the list of metrics we want to collect.
 
 Let's see a sample MongoDB manifest file for better understanding.
 
@@ -252,9 +268,10 @@ spec:
 After deploying, let's get the yaml using below command:
 
 ```bash
-$ kubectl get mongodb mongodb-demo -n demo -oyaml
+kubectl get mongodb mongodb-demo -n demo -o yaml
 ```
-You'll find something like below. Some irrelavent fields are not shown here.
+
+You'll find something like below. Some irrelevant fields are not shown here.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -337,7 +354,7 @@ From the above MongoDB instance, the first metrics `kubedb_mongodb_created` in M
 
 Next metrics `kubedb_mongodb_status_phase` is more interesting. This metrics will represent the MongoDB instance's current phase. The interesting part here, MongoDB instance can have six different phases called 'Ready', 'Critical', 'NotReady' etc. So, to understand the MongoDB instance's current phase properly, we need metrics for all of those phases.
 
-To handle this type of scenario, there is one field in MetricsConfiguration called `states` which holds the label key and all possible label values. It also contains the corresponding configuration to find the value of the metrics. Here if the resource actual phase matches with the given phase, the `int` function will return 1 otherwise 0. Finally we will have six different metrics similar to below:
+To handle this type of scenario, there is one field in MetricsConfiguration called `states` which holds the label key and all possible label values. It also contains the corresponding configuration to find the value of the metrics. Here if the actual phase of an resource matches with the given phase, the `int` function will return 1 otherwise 0. Finally we will have six different metrics similar to below:
 
 ```
 kubedb_mongodb_status_phase { ..., phase="Ready"}          1
@@ -347,6 +364,7 @@ kubedb_mongodb_status_phase { ..., phase="Critical"}       0
 kubedb_mongodb_status_phase { ..., phase="NotReady"}       0
 kubedb_mongodb_status_phase { ..., phase="DataRestoring"}  0
 ```
+
 Note: Here, we assume MongoDB instance's phase as "Ready".
 
 The next metrics `kubedb_mongodb_replica` represents MongoDB replica count. It will calculate the number of replicas according to the given MongoDB object. Here, we send the full MongoDB object in the `params` and `resource_replicas` function to calculate the total number of replicas according to its mode(Standalone/Replicaset/Sharded).
@@ -359,7 +377,7 @@ The next metrics `kubedb_mongodb_resource_request_storage` is similar to the pre
 
 To calculate the next three metrics `kubedb_mongodb_resource_limit_cpu`, `kubedb_mongodb_resource_limit_memory`, and `kubedb_mongodb_resource_limit_storage`, we use `total_resource_limits` function. This function takes the full MongoDB object and resource type in `params` and calculates the resource limit according to the resource type.
 
-Now let's see a sample `MetricsConfiguration` object for Kubernetes native resource `Deployment`. All metrics for Deployment collected by "kube-state-metrics" are collected below using "Panopticon". You can see "kube-state-metrics" project's configuration for deployment [here](https://github.com/kubernetes/kube-state-metrics/blob/master/internal/store/deployment.go).
+Now let's see a sample `MetricsConfiguration` object for Kubernetes native resource `Deployment`. All metrics for Deployment collected by "kube-state-metrics" are collected below using `Panopticon`. You can see "kube-state-metrics" project's configuration for deployment [here](https://github.com/kubernetes/kube-state-metrics/blob/master/internal/store/deployment.go).
 
 ```yaml
 apiVersion: metrics.appscode.com/v1alpha1
@@ -492,6 +510,7 @@ spec:
 Similarly, we can collect various kinds of metrics not only from our custom resources but also from any Kubernetes native resources with just a MetricsConfiguration object.
 
 ## Support
+
 To speak with us, please leave a message on our [website](https://appscode.com/contact/).
 
 To receive product announcements, follow us on [Twitter](https://twitter.com/AppsCodeHQ).
