@@ -37,7 +37,7 @@ In this release, we’ve added some exciting features in KubeDB CLI. The CLI now
 ## **Elasticsearch**
 
 * Elasticsearch versions support: `xpack-7.14.0`, `opendistro-1.13.2`
-* KubeDB managed Elasticsearch now provides Elasticsearch docker images with pre-installed snapshot plugins: repository-s3, repository-azure, repository-hdfs, and repository-gcs. ElasticsearchVersion with snapshot plugins:  `kubedb-xpack-7.14.0`, `kubedb-xpack-7.13.2`, `kubedb-xpack-7.12.0`, and `kubedb-xpack-7.9.1`.
+* KubeDB managed Elasticsearch now provides Elasticsearch docker images with pre-installed snapshot plugins: repository-s3, repository-azure, repository-hdfs, and repository-gcs. ElasticsearchVersion with snapshot plugins:  `kubedb-xpack-7.14.0`, `kubedb-xpack-7.13.2`, `kubedb-xpack-7.12.0`, and `kubedb-xpack-7.9.1`. You can find a detailed tutorial [here](https://kubedb.com/docs/v2021.08.23/guides/elasticsearch/plugins-backup/overview/).
 * While using plugins to take snapshots, users need to provide secure settings. KubeDB allows you to provide secure settings through a k8s secret. Now, users can also provide `KEYSTORE_PASSWORD` to secure the `elasticsearch.keystore`.
 
 ```bash
