@@ -61,9 +61,9 @@ Previously, the MongoDB database docker image was maintained by KubeDB as we had
 
 Please try the latest release and give us your valuable feedback.
 
-* If you want to install KubeDB, please follow the installation instruction from [here](https://kubedb.com/docs/v2021.06.23/setup).
+* If you want to install KubeDB, please follow the installation instruction from [here](https://kubedb.com/docs/latest/setup).
 
-* If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](https://kubedb.com/docs/v2021.06.23/setup/upgrade/).
+* If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](https://kubedb.com/docs/latest/setup/upgrade/).
 
 ## Support
 
