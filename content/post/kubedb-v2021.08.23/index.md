@@ -55,7 +55,8 @@ KubeDB managed Redis now provides `Password Authentication` for Default user.
 
 ## **MongoDB**
 
-Previously, the MongoDB database docker image was maintained by KubeDB as we had to insert some scripts inside the official MongoDB image. But to give our users a more reliable experience, we decided to use the MongoDB official images without any modifications. From this release, we are using `MongoDB official docker images` for the provisioning of the MongoDB database using KubeDB.
+* Previously, the MongoDB database docker image was maintained by KubeDB as we had to insert some scripts inside the official MongoDB image. But to give our users a more reliable experience, we decided to use the MongoDB official images without any modifications. From this release, we are using `MongoDB official docker images` for the provisioning of the MongoDB database using KubeDB.
+* Previously, KubeDB enterprise operator printed the intermediate logs of a `MongoDBOpsRequest` which flooded the KubeDB enterprise operator logs with unnecessary logs. Now, we’ve changed the log verbosity of the intermediate logs. So, the intermediate logs of the `MongoDBOpsRequest` don’t get printed anymore. If you want to see the intermediate logs, you can change the log level of KubeDB enterprise operator to `4`.
 
 ## What Next?
 
