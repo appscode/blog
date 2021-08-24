@@ -68,7 +68,7 @@ Kubernetes v2021.08.23 Community Edition will manage database custom resources i
 
 ## Deprecating Previous KubeDB Releases
 
-KubeDB as a product has evolved quite a bit since our decision to adopt an open/core model for the project last year and provide a sustainable future for the project. With this release, we are announcing the deprecation of all prior KubeDB releases. The previous version of KubeDB operators will become unavailable by Dec 31, 2021. So, we encourage users to upgrade to latest version of KubeDB.
+KubeDB as a product has evolved quite a bit since [our decision to adopt an open/core model](https://blog.byte.builders/post/relicensing/) for the project last year and provide a sustainable future for the project. With this release, we are announcing the deprecation of all prior KubeDB releases. The previous versions of KubeDB operator will become unavailable by Dec 31, 2021. So, we encourage users to upgrade to the latest version of KubeDB.
 
 ## What Next?
 
