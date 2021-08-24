@@ -53,7 +53,7 @@ Available expression evaluation functions are:
 | Function Definition | Description |
 |---|---|
 | int(expression) | Returns 1 if the expression is true otherwise 0. Example: int(phase == 'Running'), here `phase` is an argument which holds the `phase` of a Kubernetes resource|
-| percentage(arg0, arg1) | Returns the value of (arg0 * arg1%). Example: To get the maximum number of unavailable replicas of a deployment in the time of rolling update, we can use percentage(replicas, maxUnavailable). Here, `replicas` represents the number of spec replica count and `maxUnavaiable` represents the percentage of unavailable replicas of a deployment. |
+| percentage(percent, total, roundUp) | `percent` can represent a percent(%) value or can be an Integer value. In the case of the percent(%) value, it will return the value of `(percent * total%)` and for the Integer value, it will simply return `percent` without any modification. `roundUp` is optional and contains a boolean value. By default its value is `false`. If the `roundUp` is `true`, the resultant value will be rounded up otherwise not.  Example: To get the maximum number of unavailable replicas of a deployment at the time of rolling update, we can use `percentage(maxUnavailable, replicas, false)` or `percentage(maxUnavailable, replicas)`. Here, the value of `maxUnavaiable` will be obtained from `.spec.strategy.rollingUpdate.maxUnavailable` path of the deployment and `replicas` represents the number of spec replica count |
 | cpu_cores(arg) | Returns the CPU value in core. Let, cpuVal=500m then cpu_cores(cpuVal) will return 0.5. |
 | bytes(arg) | Returns the memory value in byte. Let, memVal=1 Ki then bytes(memVal) will return 1024. |
 | unix (arg) | Converts the DateTime string into unix and returns it. |
@@ -484,7 +484,7 @@ spec:
         - key: maxUnavailable
           valuePath: .spec.strategy.rollingUpdate.maxUnavailable
       metricValue:
-        valueFromExpression: percentage(replicas, maxUnavailable)
+        valueFromExpression: percentage(maxUnavailable, replicas, false)
 
     - name: kube_deployment_spec_strategy_rollingupdate_max_surge
       help: "Maximum number of replicas that can be scheduled above the desired number of replicas during a rolling update of a deployment."
@@ -495,7 +495,7 @@ spec:
         - key: maxSurge
           valuePath: .spec.strategy.rollingUpdate.maxSurge
       metricValue:
-        valueFromExpression: percentage(replicas, maxSurge)
+        valueFromExpression: percentage(maxSurge, replicas, true)
 
     - name: kube_deployment_metadata_generation
       help: "Sequence number representing a specific generation of the desired state."
