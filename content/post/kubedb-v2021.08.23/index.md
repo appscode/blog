@@ -22,7 +22,7 @@ We are pleased to announce the release of KubeDB v2021.08.23. This post lists al
 
 ## **Kubernetes 1.22**
 
-As you may know, Kubernetes 1.22 removed several deprecated beta APIs that are used by KubeDB. So, we have updated KubeDB project to use the corresponding GA version of those APIs. With this change, KubeDB v2021.08.23 supports Kubernetes 1.16 - 1.22 .
+As you may know, [Kubernetes 1.22 removed several deprecated beta APIs](https://kubernetes.io/blog/2021/07/14/upcoming-changes-in-kubernetes-1-22/) that were used by KubeDB. So, we have updated KubeDB project to use the corresponding GA version of those APIs. With this change, KubeDB v2021.08.23 supports Kubernetes 1.16 - 1.22 .
 
 ## **KubeDB CLI**
 
