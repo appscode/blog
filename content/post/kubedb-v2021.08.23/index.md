@@ -62,6 +62,14 @@ KubeDB managed Redis now provides `Password Authentication` for Default user.
 * Previously, the MongoDB database docker image was maintained by KubeDB as we had to insert some scripts inside the official MongoDB image. But to give our users a more reliable experience, we decided to use the MongoDB official images without any modifications. From this release, we are using `MongoDB official docker images` for the provisioning of the MongoDB database using KubeDB.
 * Previously, KubeDB enterprise operator printed the intermediate logs of a `MongoDBOpsRequest` which flooded the KubeDB enterprise operator logs with unnecessary logs. Now, we’ve changed the log verbosity of the intermediate logs. So, the intermediate logs of the `MongoDBOpsRequest` don’t get printed anymore. If you want to see the intermediate logs, you can change the log level of KubeDB enterprise operator to `--v=4`.
 
+## Introducing Panopticon
+
+We wanted to collect state metrics from our various products (eg, KubeDB, Stash and other). But we didn't find any existing tool that would accomplish our needs. Kubernetes has a project called [kube-state-metrics](https://github.com/kubeops/panopticon) but it does not support collecting metrics from Kubernetes custom resources. Moreover, the metrics for Kubernetes native resources were predefined and there was hardly any customization options. So, we decided to build our own generic resource metrics exporter, named `Panopticon`, which can collect metrics from any kind of Kubernetes resources. `Panopticon` is a Kubernetes controller that watches Kubernetes resources passively and exports Prometheus metrics. You can find more details [here](https://blog.byte.builders/post/introducing-panopticon/). The `MetricsConfiguration` for KubeDB resources are published via [`kubedb-metrics`](https://github.com/kubedb/installer/tree/master/charts/kubedb-metrics) chart.
+
+## KubeDB Operator uses `kubedb` namespace
+
+In previous releases, the KubeDB documentation will show KubeDB operator deployed in `kube-system` namespace. From this release, we have updated the documentation to use the `kubedb` namespace for installing the operator. This is generally recommended to deploy operators in their own namespace instead of `kube-system` namespace. But you can still deploy KubeDB is the `kube-system` namespace or any other namespace you like using Helm.
+
 ## Changes to Community Edition
 
 Kubernetes v2021.08.23 Community Edition will manage database custom resources in Kubernetes `demo` namespace. Community Edition is feature limited and with this change we are making it clear to end users that Community Edition is primarily targeted for demo use-cases and the Enterprise Edition is targeted for production usage. To manage databases in any namespace, please try the Enterprise Edition.
@@ -69,10 +77,6 @@ Kubernetes v2021.08.23 Community Edition will manage database custom resources i
 ## Deprecating Previous KubeDB Releases
 
 KubeDB as a product has evolved quite a bit since [our decision to adopt an open/core model](https://blog.byte.builders/post/relicensing/) for the project last year and provide a sustainable future for the project. With this release, we are announcing the deprecation of all prior KubeDB releases. The previous versions of KubeDB operator will become unavailable by Dec 31, 2021. So, we encourage users to upgrade to the latest version of KubeDB.
-
-## KubeDB Operator uses `kubedb` namespace
-
-In previous releases, the KubeDB documentation will show KubeDB operator deployed in `kube-system` namespace. From this release, we have updated the documentation to use the `kubedb` namespace for installing the operator. This is generally recommended to deploy operators in their own namespace instead of `kube-system` namespace. But you can still deploy KubeDB is the `kube-system` namespace or any other namespace you like using Helm.
 
 ## What Next?
 
