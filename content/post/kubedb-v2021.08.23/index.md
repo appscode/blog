@@ -18,7 +18,7 @@ tags:
   - kubedb
 ---
 
-We are pleased to announce the release of KubeDB v2021.08.23. This post lists all the major changes done in this release since `v2021.06.23`. This release offers support for the latest `Kubernetes version 1.22`. The `KubeDB CLI` now has exciting new features. `MongoDB` now uses the official docker images. `Elasticsearch` supports the latest **xpack and opendistro versions** and provides pre-built Docker images with snapshot plugins. KubeDB managed `Redis` now provides Password Authentication for the default user. KubeDB v2021.08.23 brings further changes to the Community Edition and deprecates prior releases of KubeDB operators.
+We are pleased to announce the release of KubeDB v2021.08.23. This post lists all the major changes done in this release since `v2021.06.23`. This release offers support for the latest `Kubernetes version 1.22`. The `KubeDB CLI` now has exciting new features. `MongoDB` now uses the official docker images. `Elasticsearch` supports the latest **xpack and opendistro versions** and provides pre-built Docker images with snapshot plugins. KubeDB managed `Redis` now provides Password Authentication for the default user. KubeDB v2021.08.23 brings further changes to the Community Edition and deprecates prior releases of KubeDB operators. The detailed commit by commit changelog can be found [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2021.08.23/README.md).
 
 ## **Kubernetes 1.22**
 
@@ -69,6 +69,10 @@ Kubernetes v2021.08.23 Community Edition will manage database custom resources i
 ## Deprecating Previous KubeDB Releases
 
 KubeDB as a product has evolved quite a bit since [our decision to adopt an open/core model](https://blog.byte.builders/post/relicensing/) for the project last year and provide a sustainable future for the project. With this release, we are announcing the deprecation of all prior KubeDB releases. The previous versions of KubeDB operator will become unavailable by Dec 31, 2021. So, we encourage users to upgrade to the latest version of KubeDB.
+
+## KubeDB Operator uses `kubedb` namespace
+
+In previous releases, the KubeDB documentation will show KubeDB operator deployed in `kube-system` namespace. From this release, we have updated the documentation to use the `kubedb` namespace for installing the operator. This is generally recommended to deploy operators in their own namespace instead of `kube-system` namespace. But you can still deploy KubeDB is the `kube-system` namespace or any other namespace you like using Helm.
 
 ## What Next?
 
