@@ -28,9 +28,9 @@ AppsCode held a webinar on **"Manage HashiCorp Vault in Kubernetes Native Way Us
 5) Operator over Helm charts
 6) KubeVault Introduction & Features
 7) Demo
-    * Deploy & Enable SecretEngine
-    * Mount Credential in a Pod
-    * High Availability & Disaster Recovery
+    * Deploy VaultServer using KubeVault Operator
+    * Enable & Configure Database SecretEngine
+    * Mount Dynamically generated credentials in a Pod using CSI Driver
 8) Q & A Session
 
 ## Description of the Webinar
@@ -69,8 +69,8 @@ Please try the latest release and give us your valuable feedback.
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To join public discussions with the KubeDB community, join us in the [Kubernetes Slack team](https://kubernetes.slack.com/messages/C8149MREV/) channel `#kubedb`. To sign up, use our [Slack inviter](http://slack.kubernetes.io/).
+To join public discussions with the KubeVault community, join us in the [Kubernetes Slack team](https://kubernetes.slack.com/messages/C8149MREV/) channel `#kubedb`. To sign up, use our [Slack inviter](http://slack.kubernetes.io/).
 
 To receive product announcements, follow us on [Twitter](https://twitter.com/KubeVault).
 
-If you have found a bug with KubeDB or want to request new features, please [file an issue](https://github.com/kubevault/project/issues/new).
+If you have found a bug with KubeVault or want to request new features, please [file an issue](https://github.com/kubevault/project/issues/new).
