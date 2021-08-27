@@ -22,10 +22,10 @@ tags:
 ---
 ## Summary
 
-AppsCode held a webinar on **"Panopticon: A Generic Kubernetes State Metrics Exporter"**. This took place 26th August 2021. The contents of what took place at the webinar is shown below:
+AppsCode held a webinar on **"Panopticon: A Generic Kubernetes State Metrics Exporter"**. This took place on 26th August 2021. The contents of what took place at the webinar are shown below:
 
 1) What is Panopticon?
-2) Backgound story of Panopticon?
+2) Background story of Panopticon?
 3) Key features of Panopticon.
 4) Comparison between Panopticon and kube-state-metrics
 5) Demo
@@ -35,7 +35,7 @@ AppsCode held a webinar on **"Panopticon: A Generic Kubernetes State Metrics Exp
 
 ## Description of the Webinar
 
-At present there are `no available state metrics exporter` for Kubernetes custom resources. Also, Exporter(kube-state-metrics) is available for Kubernetes native resources but `users have no control over the metrics`. Besides, `No available generic exporter that is highly configurable` for any kind of Kubernetes resources. This is where **Panopticon** comes in. `Panopticon` is a Kubernetes Controller that watches Kubernetes resources passively and exports Prometheus metrics. In this webinar, the speaker continues on to describe the `architecture` of Panopticon and how it works. After that, he states the `key features` of panopticon and how it is a `different from kube-state-metrics`. Ater this the `Demo` portion of the webinar starts.
+At present there are `no available state metrics exporter` for Kubernetes custom resources. Also, Exporter(kube-state-metrics) is available for Kubernetes native resources but `users have no control over the metrics`. Besides, `No available generic exporter that is highly configurable` for any kind of Kubernetes resources. This is where **Panopticon** comes in. `Panopticon` is a Kubernetes Controller that watches Kubernetes resources passively and exports Prometheus metrics. In this webinar, the speaker continues on to describe the `architecture` of Panopticon and how it works. After that, he states the `key features` of Panopticon and how it is `different from kube-state-metrics`. Ater this the `Demo` portion of the webinar starts.
 
 From this demo we get an in depth view of how the Panopticon works. At first, it is shown how to `install Panopticon`. After that, the speaker shows how to generate metrics for `KubeDB MongoDB custom resource` using Panopticon. The demo portion ends with showing how to generate metrics for `Deployment` using Panopticon. The webinar ends with a Q&A session.
 All in all, it was an effective webinar.
