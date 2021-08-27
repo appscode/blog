@@ -31,6 +31,7 @@ AppsCode held a webinar on **"Manage HashiCorp Vault in Kubernetes Native Way Us
     * Deploy VaultServer using KubeVault Operator
     * Enable & Configure Database SecretEngine
     * Mount Dynamically generated credentials in a Pod using CSI Driver
+    * High Availability & Disaster Recovery
 8) Q & A Session
 
 ## Description of the Webinar
