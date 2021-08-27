@@ -19,7 +19,7 @@ tags:
 ---
 ## Summary
 
-AppsCode held a webinar on "Manage HashiCorp Vault in Kubernetes Native Way Using KubeVault". This took place on 12th August 2021. The contents of what took place at the webinar are shown below:
+AppsCode held a webinar on **"Manage HashiCorp Vault in Kubernetes Native Way Using KubeVault"**. This took place on 12th August 2021. The contents of what took place at the webinar are shown below:
 
 1) What is a secret?
 2) Managing secrets in Kubernetes.
@@ -28,13 +28,28 @@ AppsCode held a webinar on "Manage HashiCorp Vault in Kubernetes Native Way Usin
 5) Operator over Helm charts
 6) KubeVault Introduction & Features
 7) Demo
-    <!-- * Deploy TLS secure Elasticsearch
-    * Version Upgrade
-    * Horizontal Scale up and down
-    * Delete and Restore from Backup -->
+    * Deploy & Enable SecretEngine
+    * Mount Credential in a Pod
+    * High Availability & Disaster Recovery
 8) Q & A Session
 
 ## Description of the Webinar
+
+The webinar starts with describing how to manage secrets in Kubernetes and the lackings that kubernetes has in doing so. Then, it is described why operators are preferred over Helm/YAML. After that, the description of what KubeVault is and the features of it are shown. The features are:
+
+* Auto Initialization & Unsealing of Vault
+* Dynamic Phase Reflections
+* Accidental Deletion Prevention
+* Vault Policy Control
+* Multiple Authentication Method (TLS, Userpass, Token etc.)
+* Multiple Storage Backends Support
+* Multiple Secret Engines Support
+
+After showing the different features of KubeVault the `demo` portion of the webinar started. In the demo, at first it was shown how to `install KubeVault, Secrets Store CSI Driver and Vault Specific CSI Provider`. An `Elasticsearch database` using `KubeDB` operator by AppsCode was used.
+
+After that, it was shown how `VaultServer` can be deployed using `Raft Storage Backend`. `GCP bucket` was used to store the `Vault root-token & the unseal-keys`. Besides this, Enabling & Configuring SecretEngine using KubeVault was shown. Finally, in the demo, it was shown how to generate Dynamic Elasticsearch credentials & Mounted them in a Pod using Secrets Store CSI drive. During the Demo, different CRD of KubeVault were also discussed.
+
+At the last part of the demo, different scenario to show the `High Availability & Disater Recovery` capability of KubeVault were simulated. Finally, the `Q&A session` was held and the webinar was finished. All in all, it was and effective webinar which showed the importance and contribution of KubeVault and how we can use it effectively.
 
 Take a deep dive into the full webinar below:
 
@@ -44,9 +59,9 @@ Take a deep dive into the full webinar below:
 
 Please try the latest release and give us your valuable feedback.
 
-* If you want to install KubeDB, please follow the installation instruction from [here](https://kubedb.com/docs/v2021.06.23/setup).
+* If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/latest/setup/).
 
-* If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](https://kubedb.com/docs/v2021.06.23/setup/upgrade/).
+* If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](https://kubevault.com/docs/latest/setup/upgrade/).
 
 ## Support
 
@@ -54,6 +69,6 @@ To speak with us, please leave a message on [our website](https://appscode.com/c
 
 To join public discussions with the KubeDB community, join us in the [Kubernetes Slack team](https://kubernetes.slack.com/messages/C8149MREV/) channel `#kubedb`. To sign up, use our [Slack inviter](http://slack.kubernetes.io/).
 
-To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
+To receive product announcements, follow us on [Twitter](https://twitter.com/KubeVault).
 
-If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
+If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubevault/project/issues/new).
