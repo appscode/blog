@@ -61,7 +61,7 @@ Please try the latest release and give us your valuable feedback.
 
 * If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/latest/setup/).
 
-* If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](https://kubevault.com/docs/latest/setup/upgrade/).
+* If you want to upgrade KubeVault from a previous version, please follow the upgrade instruction from [here](https://kubevault.com/docs/latest/setup/upgrade/).
 
 ## Support
 
