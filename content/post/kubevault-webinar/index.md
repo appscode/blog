@@ -5,17 +5,16 @@ weight: 25
 authors:
   - Shohag Rana
 tags:
-  - cloud-native
   - kubernetes
-  - database
+  - kubevault
+  - secret-management
+  - security
+  - vault
+  - raft
   - elasticsearch
-  - mariadb
-  - memcached
-  - mongodb
-  - mysql
-  - postgresql
-  - redis
-  - kubedb
+  - hashicorp
+  - enterprise
+  - community
 ---
 ## Summary
 
