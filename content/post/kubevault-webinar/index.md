@@ -61,6 +61,8 @@ Please try the latest release and give us your valuable feedback.
 
 * If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/latest/setup/).
 
+* Step by step guide & the manifest files used in the demo can be found [here](https://github.com/kubevault/demo/tree/master/webinar-08-12-21).
+
 * If you want to upgrade KubeVault from a previous version, please follow the upgrade instruction from [here](https://kubevault.com/docs/latest/setup/upgrade/).
 
 ## Support
