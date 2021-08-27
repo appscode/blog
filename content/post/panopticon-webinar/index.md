@@ -22,7 +22,7 @@ tags:
 ---
 ## Summary
 
-AppsCode held a webinar on "Panopticon: A Generic Kubernetes State Metrics Exporter". This took place 26th August 2021. The contents of what took place at the webinar is shown below:
+AppsCode held a webinar on **"Panopticon: A Generic Kubernetes State Metrics Exporter"**. This took place 26th August 2021. The contents of what took place at the webinar is shown below:
 
 1) What is Panopticon?
 2) Backgound story of Panopticon?
