@@ -1,6 +1,6 @@
 ---
 title: Manage HashiCorp Vault in Kubernetes Native Way Using KubeVault - Webinar
-date: 2021-08-12
+date: 2021-08-30
 weight: 25
 authors:
   - Shohag Rana
