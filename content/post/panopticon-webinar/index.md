@@ -1,7 +1,7 @@
 ---
 title: Panopticon, A Generic Kubernetes State Metrics Exporter - Webinar
-date: 2021-08-26
-weight: 25
+date: 2021-08-30
+weight: 20
 authors:
   - Shohag Rana
 tags:
