@@ -72,7 +72,7 @@ In previous releases, the KubeDB documentation will show KubeDB operator deploye
 
 ## Changes to Community Edition
 
-Kubernetes v2021.08.23 Community Edition will manage database custom resources in Kubernetes `demo` namespace. Community Edition is feature limited and with this change we are making it clear to end users that Community Edition is primarily targeted for demo use-cases and the Enterprise Edition is targeted for production usage. To manage databases in any namespace, please try the Enterprise Edition.
+Kubernetes v2021.08.23 Community Edition will manage database custom resources in Kubernetes `demo` namespace. Community Edition is feature limited and with this change we are making it clear to end users that Community Edition is primarily targeted for demo use-cases and the Enterprise Edition is targeted for production and/or sustained usage. To manage databases in any namespace, please try the Enterprise Edition.
 
 ## Deprecating Previous KubeDB Releases
 
