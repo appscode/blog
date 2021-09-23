@@ -34,6 +34,7 @@ h6 {
   color: $heading-color;
   font-weight: 600;
 }
+
 h1 a,
 h2 a,
 h3 a,
@@ -47,6 +48,7 @@ h6 a {
   color: $heading-color;
   font-weight: 700;
 }
+
 hr {
   margin: 30px 0;
   background: #e2e2e2;
@@ -66,6 +68,7 @@ a {
 a:hover {
   color: lighten($primary-color, 3%);
 }
+
 .disable-select {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -102,10 +105,12 @@ h6 {
   font-size: 14px;
   line-height: 24px;
 }
+
 .inline-button {
   font-size: 14px;
   font-weight: 500;
   position: relative;
+
   &:after {
     position: absolute;
     content: "";
@@ -117,25 +122,31 @@ h6 {
     border-radius: 50px;
     transition: 0.3s ease-in-out;
   }
+
   &:hover.inline-button:after {
     width: 100%;
   }
 }
+
 .button.is-primary {
   background: $primary-color;
   color: $white-color;
 }
+
 .button.is-primary.is-hovered,
 .button.is-primary:hover {
   background-color: darken($primary-color, 5%);
 }
+
 .is-light.is-primary {
   background: lighten($primary-color, 51%);
   color: $primary-color;
 }
+
 .is-light.is-primary:hover {
   background: lighten($primary-color, 46%);
 }
+
 .button {
   padding: 10px 30px;
   border-radius: 4px;
@@ -147,35 +158,44 @@ h6 {
   font-size: 16px;
   padding: 27px 60px;
 }
+
 .button.is-white-hoverable {
   &:hover {
     background-color: scale-color($primary-color, $lightness: 90%);
   }
 }
+
 .button.is-medium {
   padding: 24px 65px;
   font-size: 16px;
 }
+
 .button.is-sm-medium {
   padding: 24px 50px;
 }
+
 .button.btn-transparent {
   background: transparent;
   border: none;
 }
+
 button.button {
   padding: 10px 35px;
   height: auto;
 }
+
 .section-padding {
   padding: 100px 0;
 }
+
 .section-padding-60 {
   padding: 60px 0;
 }
+
 .short-section-padding {
   padding: 50px 0;
 }
+
 .section-title {
   h2 {
     font-weight: 700;
@@ -183,23 +203,27 @@ button.button {
     font-size: 36px;
     margin-bottom: 25px;
   }
+
   p {
     font-size: 16px;
   }
 }
+
 .container.section {
-  padding-top: 0;
-  padding-bottom: 0;
+  padding: 0;
 }
+
 .d-table {
   display: table;
   width: 100%;
   height: 100%;
 }
+
 .d-table-cell {
   display: table-cell;
   vertical-align: middle;
 }
+
 .button:active,
 .button:focus,
 .file-cta:active,
@@ -251,20 +275,24 @@ textarea:focus,
   border-color: $primary-color;
   border-radius: 4px;
 }
+
 .slider:focus {
   outline: none;
   border: none;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
+
 button:focus {
   outline: none;
 }
+
 input.input,
 textarea.textarea {
   box-shadow: none;
   border-radius: 4px;
 }
+
 ::-moz-selection {
   /* Code for Firefox */
   color: $white-color;
@@ -280,33 +308,40 @@ textarea.textarea {
 .meta-date {
   display: inline-block;
   font-size: 14px;
+
   i {
     padding-right: 5px;
     color: $primary-color;
   }
 }
+
 .blog-heading {
   max-width: 70%;
   margin: 0 auto;
 }
+
 .author {
   font-weight: 500;
   color: $primary-color;
   margin-bottom: 20px;
+
   span {
     color: $paragraph-color;
     font-weight: 400;
     padding-right: 3px;
   }
 }
+
 .meta-author {
   a {
     display: inline-block;
+
     span {
       padding-right: 5px;
     }
   }
 }
+
 //vertical social link style
 .social-link-vertical,
 .social-link-horizontal {
@@ -314,9 +349,11 @@ textarea.textarea {
     li {
       display: block;
       margin-bottom: 25px;
+
       &:last-child {
         margin-bottom: 0;
       }
+
       a {
         font-size: 20px;
         display: inline-block;
@@ -327,28 +364,35 @@ textarea.textarea {
         border-radius: 50%;
         border: 1px solid#1C2C41;
         color: #1c2c41;
+
         &.is-static {
           cursor: default;
           background-color: #1c2c41;
           color: #fff;
         }
+
         &:hover {
           color: $white-color;
           background: #1c2c41;
+
           &.linkedin {
             background-color: #0e76a8;
             border: 1px solid #0e76a8;
           }
+
           &.twitter {
             background-color: #1da1f2;
             border: 1px solid #1da1f2;
           }
+
           &.facebook {
             background-color: #3b5998;
             border: 1px solid #3b5998;
           }
+
           i {
             animation: icon-animation 0.9s both;
+
             &.fa-share-alt {
               animation: none;
             }
@@ -358,15 +402,18 @@ textarea.textarea {
     }
   }
 }
+
 .social-link-horizontal {
   ul {
     li {
       display: inline-block;
       margin-right: 10px;
       margin-bottom: 0;
+
       &:last-child {
         margin-right: 0;
       }
+
       a {
         font-size: 15px;
         display: block;
@@ -378,6 +425,7 @@ textarea.textarea {
     }
   }
 }
+
 //animation
 @-webkit-keyframes arrowAnimate {
   0%,
@@ -387,9 +435,11 @@ textarea.textarea {
   100% {
     -webkit-transform: translateX(0);
   }
+
   40% {
     -webkit-transform: translateX(-30px);
   }
+
   60% {
     -webkit-transform: translateX(-15px);
   }
@@ -403,9 +453,11 @@ textarea.textarea {
   100% {
     transform: translateX(0);
   }
+
   40% {
     transform: translateX(-30px);
   }
+
   60% {
     transform: translateX(-15px);
   }
@@ -414,9 +466,11 @@ textarea.textarea {
 .pt-0 {
   padding-top: 0;
 }
+
 .pb-0 {
   padding-bottom: 0;
 }
+
 /* ======================
   Global CSS End
 ========================*/
@@ -435,6 +489,9 @@ textarea.textarea {
                   Widescreen Between 1216px and 1407px
 **************************************************************** */
 @media (min-width: 1216px) and (max-width: 1407px) {
+  .container.section {
+    padding: 0 15px;
+  }
   .button.is-large {
     font-size: 16px;
     padding: 27px 50px;
@@ -445,22 +502,32 @@ textarea.textarea {
                   Desktop Between 1024px and 1215px
 **************************************************************** */
 @media (min-width: 1024px) and (max-width: 1215px) {
+  .container.section {
+    padding: 0 15px;
+  }
   .button.is-large {
     font-size: 16px;
     padding: 27px 35px;
   }
 }
+
 /**************************************************************** 
                   Tablet Between 769px and 1023px
 **************************************************************** */
 @media (min-width: 769px) and (max-width: 1023px) {
+  .container.section {
+    padding: 0 15px;
+  }
+
   .button.is-sm-medium {
     padding: 20px 30px;
     font-size: 14px;
   }
+
   .section-padding-60 {
     padding: 40px 0;
   }
+
   .button.is-large {
     font-size: 16px;
     padding: 27px 50px;
@@ -471,17 +538,24 @@ textarea.textarea {
                     Mobile Up to 768px. 
 **************************************************************** */
 @media only screen and (min-width: 100px) and (max-width: 768px) {
+  .container.section {
+    padding: 0 15px;
+  }
+
   .button.is-large {
     padding: 20px 25px;
     font-size: 14px;
   }
+
   .button.is-sm-medium {
     padding: 20px 30px;
     font-size: 14px;
   }
+
   .section-padding-60 {
     padding: 30px 0;
   }
+
   .section-padding {
     padding: 50px 0;
   }
