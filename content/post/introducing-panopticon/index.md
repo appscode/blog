@@ -23,7 +23,7 @@ Panopticon is a generic state metrics exporter for Kubernetes resources. It can 
 
 ## Background
 
-We wanted to collect state metrics from our various products (eg, KubeDB, Stash and other). But we didn't find any existing tool that would accomplish our needs. Kubernetes has a project called [kube-state-metrics](https://github.com/kubeops/panopticon) but it does not support collecting metrics from Kubernetes custom resources. Moreover, the metrics for Kubernetes native resources were predefined and there was hardly any customization options.
+We wanted to collect state metrics from our various products (eg, KubeDB, Stash and other). But we didn't find any existing tool that would accomplish our needs. Kubernetes has a project called [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics) but it does not support collecting metrics from Kubernetes custom resources. Moreover, the metrics for Kubernetes native resources were predefined and there was hardly any customization options.
 
 So, we decided to build our own generic resource metrics exporter, named `Panopticon`, which can collect metrics from any kind of Kubernetes resources. Like the real [Panopticon](https://en.wikipedia.org/wiki/Panopticon), `Panopticon` is a Kubernetes controller that watches Kubernetes resources passively and exports Prometheus metrics.
 
