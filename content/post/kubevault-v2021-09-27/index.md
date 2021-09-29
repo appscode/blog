@@ -168,6 +168,7 @@ In this post, we are going to highlight the major changes. You can find the comp
     vaultRoleName: k8s.-.demo.srb-dev-secret-r-binding
   ```
 
+`VaultPolicyBinding.spec.vaultRoleName` is the role name which will be bound of the policies. This role may be used during the creation of [SecretProviderClass](https://secrets-store-csi-driver.sigs.k8s.io/concepts.html#secretproviderclass) for using the [Secrets-store CSI Driver](https://secrets-store-csi-driver.sigs.k8s.io/introduction.html). This defaults to following format: `k8s.${cluster or -}.${metadata.namespace}.${metadata.name}`
 
 ## What Next?
 
