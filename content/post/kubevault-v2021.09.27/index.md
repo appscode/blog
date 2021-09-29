@@ -1,6 +1,6 @@
 ---
 title: Introducing KubeVault v2021.09.27
-date: 2021-09-27 
+date: 2021-09-27
 weight: 25
 authors:
   - Sakib Alamin
@@ -19,21 +19,20 @@ tags:
   - community
 ---
 
-We are very excited to announce KubeVault Enterprise Edition with the release `v2021.09.27`. The KubeVault `v2021.09.27` contains major rework of the CRDs for self-service mode usage with [KubeDB](https://kubedb.com) or GitOps use-cases. It makes managing user privileges extremely easy for `KubeDB` managed databases or any other databases as long as user provides necessary connection information. It also comes with a KubeVault Community Edition which is **free of cost** but only limited to the `demo` namespace.
+We are very excited to announce the release of KubeVault v2021.09.27 Edition. The KubeVault `v2021.09.27` contains major rework of the CRDs for self-service mode usage with [KubeDB](https://kubedb.com) or GitOps use-cases. It makes managing user privileges extremely easy for `KubeDB` managed databases or any other databases as long as users provide necessary connection information.
 
 - [Install KubeVault](https://kubevault.com/docs/v2021.09.27/setup/)
 
 [KubeVault](https://kubevault.com) is a Kubernetes operator for [HashiCorp Vault](https://www.vaultproject.io/). The Vault is a tool for secrets management, encryption as a service, and privileged access management. The KubeVault operator makes it easy to deploy, maintain and manage Vault servers in Kubernetes. It also supports various secret engines management, policy management in the Kubernetes native way.
 
-In this post, we are going to highlight the major changes. You can find the complete changelog [here](https://github.com/kubevault/CHANGELOG).
+In this post, we are going to highlight the major changes. You can find the complete commit by commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2021.09.27/README.md).
 
 ## What's new in this release?
   
 - **A more generic SecretAccessRequest**
   
-  The support for a more generic way to make secret access requests has been added in this release. Now, only the `SecretAccessRequest` CRD will be used to make request for all the supported `SecretEngine` and roles created in them e.g: `GCPRole`, `AWSRole`, `ElasticsearchRole`, `MongoDBRole`, etc. instead of separate CRDs e.g: `GCPAccessRequest`, `AWSAccessRequest`, `DatabaseAccessRequest`, etc. 
+  The support for a more generic way to make secret access requests has been added in this release. Now, only the `SecretAccessRequest` CRD will be used to make request for all the supported `SecretEngine`s and roles created in them e.g: `GCPRole`, `AWSRole`, `ElasticsearchRole`, `MongoDBRole`, etc. instead of separate CRDs e.g: `GCPAccessRequest`, `AWSAccessRequest`, `DatabaseAccessRequest`, etc. 
   Making access request has never been this easy before using KubeVault.
-
 
   ```yaml
     kind: SecretAccessRequest
@@ -48,14 +47,13 @@ In this post, we are going to highlight the major changes. You can find the comp
         - kind: ServiceAccount
           name: test-user-account 
           namespace: test
-
   ```
 
 <p class="has-text-centered">
   <img src="secret-access-request.svg" alt="SecretAccessRequest Flowchart" style="border: none">
 </p>
 
-  `SecretAccessRequest` has three different phases e.g: `WaitingForApproval`, `Approved`, `Denied`. Credential secret will only be issued if the phase is `Approved`. An approved `SecretAccessRequest.status` may look like this:
+  `SecretAccessRequest` has three different phases e.g: `WaitingForApproval`, `Approved`, `Denied`. A credential secret will only be issued if the phase is `Approved`. An approved `SecretAccessRequest.status` may look like this:
 
   ```yaml
   status:
@@ -77,7 +75,7 @@ In this post, we are going to highlight the major changes. You can find the comp
     secret:
       name: aws-cred-req-92m0n9
       namespace: dev
-  ``` 
+  ```
 
 - **Managing user privilege using SecretRoleBinding**
   
@@ -96,7 +94,6 @@ In this post, we are going to highlight the major changes. You can find the comp
           - kind: ServiceAccount
             name: test-user-account 
             namespace: test
-
   ```
 
 <p class="has-text-centered">
@@ -173,7 +170,7 @@ In this post, we are going to highlight the major changes. You can find the comp
     vaultRoleName: k8s.-.demo.srb-dev-secret-r-binding
   ```
 
-`VaultPolicyBinding.spec.vaultRoleName` is the role name which will be bound of the policies. This role may be used during the creation of [SecretProviderClass](https://secrets-store-csi-driver.sigs.k8s.io/concepts.html#secretproviderclass) for using the [Secrets-store CSI Driver](https://secrets-store-csi-driver.sigs.k8s.io/introduction.html). This defaults to following format: `k8s.${cluster or -}.${metadata.namespace}.${metadata.name}`
+`VaultPolicyBinding.spec.vaultRoleName` is the role name which will be bound to the policies. This role may be used during the creation of [SecretProviderClass](https://secrets-store-csi-driver.sigs.k8s.io/concepts.html#secretproviderclass) for using the [Secrets-store CSI Driver](https://secrets-store-csi-driver.sigs.k8s.io/introduction.html). This defaults to following format: `k8s.${cluster or -}.${metadata.namespace}.${metadata.name}`
 
 ## What Next?
 
