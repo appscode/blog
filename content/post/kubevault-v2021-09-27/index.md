@@ -3,7 +3,7 @@ title: Introducing KubeVault v2021.09.27
 date: 2021-09-27 
 weight: 25
 authors:
-  - Md Kamol Hasan
+  - Sakib Alamin
 tags:
   - kubevault
   - kubedb
@@ -51,7 +51,7 @@ In this post, we are going to highlight the major changes. You can find the comp
 
   ```
 
-  `SecretAccessRequest` has three different phases e.g: `WaitingForApproval`, `Approved`, `Denied`. Credential secret will only be issued if the phase is `Approved`. 
+  `SecretAccessRequest` has three different phases e.g: `WaitingForApproval`, `Approved`, `Denied`. Credential secret will only be issued if the phase is `Approved`. An approved `SecretAccessRequest.status` may look like this:
 
   ```yaml
   status:
