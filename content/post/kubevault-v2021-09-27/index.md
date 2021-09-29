@@ -52,7 +52,7 @@ In this post, we are going to highlight the major changes. You can find the comp
   ```
 
 <p class="has-text-centered">
-  <img src="secret-access-request.svg" alt="Secret Access Request Flow chart" style="border: none">
+  <img src="secret-access-request.svg" alt="SecretAccessRequest Flowchart" style="border: none">
 </p>
 
   `SecretAccessRequest` has three different phases e.g: `WaitingForApproval`, `Approved`, `Denied`. Credential secret will only be issued if the phase is `Approved`. An approved `SecretAccessRequest.status` may look like this:
@@ -98,6 +98,11 @@ In this post, we are going to highlight the major changes. You can find the comp
             namespace: test
 
   ```
+
+<p class="has-text-centered">
+  <img src="secret-role-binding.svg" alt="SecretRoleBinding Flowchart" style="border: none">
+</p>
+
   A Successful `SecretAccessRequest.status` with created `policyRef` and `policyBindingRef` may look like this:
 
   ```yaml
