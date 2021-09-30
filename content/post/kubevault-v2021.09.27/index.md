@@ -28,10 +28,10 @@ We are very excited to announce the release of KubeVault v2021.09.27 Edition. Th
 In this post, we are going to highlight the major changes. You can find the complete commit by commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2021.09.27/README.md).
 
 ## What's new in this release?
-  
+
 - **A more generic SecretAccessRequest**
-  
-  The support for a more generic way to make secret access requests has been added in this release. Now, only the `SecretAccessRequest` CRD will be used to make request for all the supported `SecretEngine`s and roles created in them e.g: `GCPRole`, `AWSRole`, `ElasticsearchRole`, `MongoDBRole`, etc. instead of separate CRDs e.g: `GCPAccessRequest`, `AWSAccessRequest`, `DatabaseAccessRequest`, etc. 
+
+  The support for a more generic way to make secret access requests has been added in this release. Now, only the `SecretAccessRequest` CRD will be used to make request for all the supported `SecretEngine`s and roles created in them e.g: `GCPRole`, `AWSRole`, `ElasticsearchRole`, `MongoDBRole`, etc. instead of separate CRDs e.g: `GCPAccessRequest`, `AWSAccessRequest`, `DatabaseAccessRequest`, etc.
   Making access request has never been this easy before using KubeVault.
 
   ```yaml
@@ -45,7 +45,7 @@ In this post, we are going to highlight the major changes. You can find the comp
         name: aws-role
       subjects:
         - kind: ServiceAccount
-          name: test-user-account 
+          name: test-user-account
           namespace: test
   ```
 
@@ -78,7 +78,7 @@ In this post, we are going to highlight the major changes. You can find the comp
   ```
 
 - **Managing user privilege using SecretRoleBinding**
-  
+
   Managing user privilege has been made simpler with the newly introduced `SecretRoleBinding` CRD. Now Admin can bind a set of `roles` to a set of `users` to grant them specific privilege using `SecretRoleBinding`, and on success of which the KubeVautl operator will create the necessary `VaultPolicy` and `VaultPolicyBinding`.
 
   ```yaml
@@ -92,7 +92,7 @@ In this post, we are going to highlight the major changes. You can find the comp
           name: aws-role
         subjects:
           - kind: ServiceAccount
-            name: test-user-account 
+            name: test-user-account
             namespace: test
   ```
 
@@ -132,7 +132,7 @@ In this post, we are going to highlight the major changes. You can find the comp
         status: "True"
         type: SecretRoleBindingSuccess
   ```
-  
+
   `VaultPolicy` created by a successful `SecretRoleBinding` will create the necessary policy documents which is shown below:
 
   ```yaml
@@ -150,7 +150,7 @@ In this post, we are going to highlight the major changes. You can find the comp
     vaultRef:
       name: vault
   ```
-  
+
   `VaultPolicyBinding` created by a successful `SecretRoleBinding` will contain the references to the policies and subjects which is shown below:
 
   ```yaml
@@ -174,9 +174,9 @@ In this post, we are going to highlight the major changes. You can find the comp
 
 ## What Next?
 
-Please try the latest release and give us your valuable feedback.
+Please try the latest release and give us your valuable feedback. If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2021.09.27/setup).
 
-- If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2021.09.27/setup).
+We are demoing these features in our upcoming webinar on Oct 13, 2021 9:30 AM PST. Please [register here](https://appscode.com/webinar/) to attend!
 
 ## Support
 
@@ -185,4 +185,3 @@ To speak with us, please leave a message on [our website](https://appscode.com/c
 To receive product announcements, follow us on [Twitter](https://twitter.com/KubeVault).
 
 If you have found a bug with KubeVault or want to request new features, please [file an issue](https://github.com/kubevault/project/issues/new).
-  
