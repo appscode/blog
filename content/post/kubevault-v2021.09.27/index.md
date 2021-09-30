@@ -176,7 +176,7 @@ In this post, we are going to highlight the major changes. You can find the comp
 
 Please try the latest release and give us your valuable feedback. If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2021.09.27/setup).
 
-We are demoing these features in our upcoming webinar on Oct 13, 2021 9:30 AM PST. Please [register here](https://appscode.com/webinar/) to attend!
+We are going to demo these features in our upcoming webinar on Oct 13, 2021 9:30 AM PST. Please [register here](https://appscode.com/webinar/) to attend!
 
 ## Support
 
