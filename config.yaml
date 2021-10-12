@@ -28,7 +28,7 @@ params:
   contact_phone: +1(650)241-8486
   domain_kubeform: https://kubeform.com
   github_url: https://github.com/appscode
-  domain_pharmer: https://pharmer.cloud
+  domain_pharmer: https://pharmer.dev
   domain_stash: https://stash.run
 markup:
   goldmark:
