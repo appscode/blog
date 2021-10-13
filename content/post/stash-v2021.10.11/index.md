@@ -1,5 +1,5 @@
 ---
-title: Stash v2021.11.10 - Introducing NATS and ETCD Addons
+title: Stash v2021.10.11 - Introducing NATS & ETCD Addons
 date: 2021-10-11
 weight: 15
 authors:
