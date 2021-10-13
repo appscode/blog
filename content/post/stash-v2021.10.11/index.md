@@ -1,5 +1,5 @@
 ---
-title: Stash v2021.10.11 - Introducing NATS & ETCD Addons
+title: Stash v2021.10.11 - Introducing NATS & ETCD Add-ons
 date: 2021-10-11
 weight: 15
 authors:
@@ -12,13 +12,13 @@ tags:
   - etcd
 ---
 
-We are very excited to announce Stash v2021.10.11. In this release, we are introducing NATS and ETCD addons for Stash. We have also added TLS support for Redis Addon.
+We are very excited to announce Stash v2021.10.11. In this release, we are introducing NATS and ETCD add-ons for Stash. We have also added TLS support for Redis Add-on.
 
 In this post, we are going to highlight the major changes. You can find the complete changelog [here.](https://github.com/stashed/CHANGELOG/blob/master/releases/v2021.10.11/README.md)
 
-## Introducing NATS Addon
+## Introducing NATS Add-on
 
-In this release, we have added NATS to our Stash addons family. Now, you can backup your NATS Jetstream server running inside Kubernetes using Stash. We have added the addon version 2.6.1 for NATS. You should be able to backup any NATS server of 2.x.x series.
+In this release, we have added NATS to our Stash add-ons family. Now, you can backup your NATS Jetstream server running inside Kubernetes using Stash. We have added the add-on version 2.6.1 for NATS. You should be able to backup any NATS server of 2.x.x series.
 
 Related resources:
 
@@ -32,9 +32,9 @@ Related resources:
 * [Step by step guide to backup TLS secured NATS.](https://stash.run/docs/v2021.10.11/addons/nats/tls/)
 * [Customizing the backup and restore process according to your environment.](https://stash.run/docs/v2021.10.11/addons/nats/customization/)
 
-## Introducing ETCD Addon
+## Introducing ETCD Add-on
 
-In this release, we have also added ETCD addon. Now, you can backup your ETCD database running inside Kubernetes using Stash. We have added the addon versioned 3.5.0 for ETCD. You should be able to backup your ETCD 3.x.x series ETCD database using this addon.
+In this release, we have also added ETCD add-on. Now, you can backup your ETCD database running inside Kubernetes using Stash. We have added the add-on versioned 3.5.0 for ETCD. You should be able to backup your ETCD 3.x.x series ETCD database using this add-on.
 
 ## Bug Fix and Enhancements
 
@@ -103,9 +103,9 @@ We have also squashed a few bugs and added a few enhancements in this release. H
 
 * **Update restic docker image in Stash kubectl plugin:** We have upgraded the underlying restic docker image used by Stash kubectl plugin.
 
-* **TLS support in Redis addon:** We have added the TLS support for redis addon in this release.
+* **TLS support in Redis add-on:** We have added the TLS support for redis add-on in this release.
 
-* **MongoDB 5.0.3 and PostgreSQL 14.0 support:** We have added support for MongoDB 5.0.3. Now, you can backup your MongoDB 5.x.x using this addon. We have also added support for PostgreSQL 14.0.
+* **MongoDB 5.0.3 and PostgreSQL 14.0 support:** We have added support for MongoDB 5.0.3. Now, you can backup your MongoDB 5.x.x using this add-on. We have also added support for PostgreSQL 14.0.
 
 ### What Next?
 
