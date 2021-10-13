@@ -14,7 +14,7 @@ tags:
 
 We are very excited to announce Stash v2021.10.11. In this release, we are introducing NATS and ETCD addons for Stash. We have also added TLS support for Redis Addon.
 
-In this post, we are going to highlight the major changes. You can find the complete changelog [here.](https://github.com/stashed/CHANGELOG)
+In this post, we are going to highlight the major changes. You can find the complete changelog [here.](https://github.com/stashed/CHANGELOG/blob/master/releases/v2021.10.11/README.md)
 
 ## Introducing NATS Addon
 
