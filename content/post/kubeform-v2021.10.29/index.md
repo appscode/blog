@@ -89,6 +89,7 @@ This will generate `main.tf` and `terraform.tfstate` files of the given resource
 
 ## Upcoming Features
 
+* Terraform Module Support in Kubeform.
 * A CLI command to check the execution plan of the Kubeform resources. Using this plan, you will know the configuration of a resource that will be created by Kubeform, the changes in a resource when updating the resource configuration, etc.
 * Halt and Resume resources. Using this feature, you can keep a resource in the Kubernetes, but terminate the actual cloud resource. Then, when you need the resource again, you can just resume the resource and the same resource will be created again!
 * Seamless integration with KubeDB. KubeDB is a product by AppsCode that simplifies and automates routine database tasks such as provisioning, patching, backup, recovery, failure detection, and repair for various popular databases on private and public clouds. This integration will allow users to provision cloud buckets, deploy databases in Kubernetes, then take backups in the bucket and configure VPC/Firewall settings as appropriate using Kubernetes custom resources.
