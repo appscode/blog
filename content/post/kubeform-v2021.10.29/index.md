@@ -33,7 +33,7 @@ In this release, we have added remote backend support for the Kubeform resources
 
 If we want to provision and manage a Linode Instance using Kubeform remote backend then the steps will be as like below: 
 
-At first, We need to provide the configuration of the remote backend in a Kubernetes secret, letter we will refer this secret from the resource configuration. Here, We are using an AWS `S3` bucket. The Configuration is:
+At first, We need to provide the configuration of the remote backend in a Kubernetes secret, later we will refer this secret from the resource configuration. Here, We are using an AWS `S3` bucket. The Configuration is:
 ```yaml
 apiVersion: v1
 kind: Secret
