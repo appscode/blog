@@ -18,7 +18,7 @@ tags:
   - azure
 ---
 
-> We have an upcoming webinar titled "Introducing Kubeform CLI & Remote Backend" on 10th November 2021, 12:30 PM ET. **Register** [here](https://appscode.com/webinar/)
+> We have an upcoming webinar titled "Introducing Kubeform CLI & Remote Backend" on 10th November 2021, 12:30 PM ET. **Register** [here](https://appscode.com/webinar/) .
 
 We are happy to announce the release of **Kubeform v2021.10.29**. In this release, we are introducing Kubeform CLI and Remote Backend.
 
