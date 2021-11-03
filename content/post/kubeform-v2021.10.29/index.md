@@ -83,7 +83,7 @@ In this release, We have introduced the Kubeform CLI. Currently, We have added t
 
 #### Example
 
-`Kubectl kf get-tf <resource> <resource_name> -n <resource_namespace> -d <path_to_store_generated_files>`
+`kubectl kf get-tf <resource> <resource_name> -n <resource_namespace> -d <path_to_store_generated_files>`
 
 This will generate `main.tf` and `terraform.tfstate` files of the given resource in the given path.
 
