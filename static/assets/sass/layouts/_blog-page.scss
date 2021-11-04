@@ -1,5 +1,8 @@
 //blog hero area start
 .blog-hero-area {
+  &.section-padding {
+    padding: 160px 0 100px;
+  }
   .blog-slider-wrapper {
     position: relative;
     z-index: 1;
@@ -21,7 +24,7 @@
       z-index: 1;
       .slider-button {
         position: absolute;
-        right: 42.5%;
+        right: 42.6%;
         bottom: 0px;
         z-index: 2;
         .slide {
@@ -360,7 +363,7 @@
 @media (min-width: 769px) and (max-width: 1023px) {
   .blog-hero-area {
     &.section-padding {
-      padding-top: 100px;
+      padding-top: 160px;
       padding-bottom: 0;
     }
     .blog-slider-wrapper {
@@ -410,7 +413,7 @@
 @media only screen and (min-width: 100px) and (max-width: 768px) {
   .blog-hero-area {
     &.section-padding {
-      padding-top: 100px;
+      padding-top: 160px;
       padding-bottom: 0;
     }
     .blog-slider-wrapper {
