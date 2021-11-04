@@ -1,23 +1,21 @@
 ---
-title: Neo Jezek v2021.10.11 - Introducing NATS & ETCD Add-ons
-date: 2021-10-12
+title: User Feedback: Setup KubeDB on Minikube - The fast way
+date: 2021-11-4
 weight: 15
 authors:
   - Neo Jezek
 tags:
   - kubernetes
-  - stash
-  - backup
-  - nats
-  - etcd
+  - KubeDB
+  - Database
+  - Elasticsearch
+  
 ---
 
 
-# User Feedback `by Neo Jezek`
 
-![Neo Jezek](./jan.png)
+![Neo Jezek](./hero.jpg)
 
-# Setup KubeDB (on Minikube) - The fast way
 
 
 ## Install Minikube
@@ -244,6 +242,7 @@ helm install stash appscode/stash  \
   --set features.community=true    \
   --set-file global.license=/path/to/the/license.txt
 ```
+>>>>>>>>>>>>>Continue...
 
                             
                                     
