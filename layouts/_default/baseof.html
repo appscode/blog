@@ -113,6 +113,7 @@
                   let startDate = new Date().getTime();
                   let timeRemaining = parseInt((endDate - startDate) / 1000);
                   if (timeRemaining >= 0) {
+                    document.querySelector('#notification-area div div p').innerHTML = "Upcoming Webinar: \""+result.title+"\". <a href=\"https://appscode.com/webinar\">Register here</a>!";
                     document.querySelector('#notification-area').style.display = 'block';
                   }
                 }
