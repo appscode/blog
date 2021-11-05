@@ -1,26 +1,19 @@
 ---
-title: User Feedback: Setup KubeDB on Minikube - The fast way
-date: 2021-11-4
+title: Deploy PostGIS database in Kubernetes using KubeDB
+date: 2021-11-04
 weight: 15
 authors:
-  - Neo Jezek
+  - Jan Jezek
 tags:
   - kubernetes
   - KubeDB
   - Database
   - Elasticsearch
-  
 ---
-
-
-
-![Neo Jezek](./hero.jpg)
-
-
 
 ## Install Minikube
 
-Create a Minikube (or Kind) cluster with 
+Create a Minikube (or Kind) cluster with
 
 - at least 2 CPUs
 - nailed down to Kubernetes version 1.21.x
@@ -243,6 +236,3 @@ helm install stash appscode/stash  \
   --set-file global.license=/path/to/the/license.txt
 ```
 >>>>>>>>>>>>>Continue...
-
-                            
-                                    

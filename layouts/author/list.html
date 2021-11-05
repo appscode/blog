@@ -40,6 +40,11 @@
                 <a href="mailto:{{ $author.email }}"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
               </li>
               {{ end }}
+              {{ if $author.web }}
+              <li>
+                <a href="{{ $author.web }}" target="_blank" rel="noopener" aria-label="Website"><i class="fa fa-globe" aria-hidden="true"></i></a>
+              </li>
+              {{ end }}
             </ul>
           </div>
         </div>
