@@ -4,9 +4,6 @@
   z-index: 99;
   top: 0;
   transition: 0.1s ease;
-  .header-top {
-    padding: 10px 15px;
-  }
 }
 body.fixed-nav #header {
   position: fixed;
@@ -45,7 +42,7 @@ body.fixed-nav #header {
       position: absolute;
       content: "";
       left: 0;
-      top: -10px;
+      top: 0px;
       width: 100%;
       height: 0;
       background: $primary-color;

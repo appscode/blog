@@ -423,6 +423,52 @@ textarea.textarea {
   height: 30px;
 }
 
+.notification-area {
+  display: block;
+  cursor: pointer;
+}
+
+.notification-area.notification {
+  padding: 0;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+.notification-area.notification .delete {
+  right: 15px;
+  top: 11px;
+}
+
+.notification-area.notification .notification-inner {
+  min-height: 45px;
+  padding: 8px 0;
+  overflow: hidden;
+}
+
+.notification-area.notification .notification-inner p {
+  font-size: 16px;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.notification-area.notification .notification-inner p a {
+  font-weight: 600 !important;
+  padding: 0 5px;
+  font-family: Roboto;
+}
+
+.notification-area.is-primary {
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#00a651+0,1971bd+100 */
+  background: #00a651;
+  /* Old browsers */
+  /* FF3.6-15 */
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(45deg, #00a651 0%, #1971bd 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00a651', endColorstr='#1971bd',GradientType=1 );
+  /* IE6-9 fallback on horizontal gradient */
+}
+
 @-webkit-keyframes arrowAnimate {
   0%,
   20%,
@@ -557,10 +603,6 @@ textarea.textarea {
   transition: 0.1s ease;
 }
 
-#header .header-top {
-  padding: 10px 15px;
-}
-
 body.fixed-nav #header {
   position: fixed;
   top: 0;
@@ -599,7 +641,7 @@ body.fixed-nav #header {
   position: absolute;
   content: "";
   left: 0;
-  top: -10px;
+  top: 0px;
   width: 100%;
   height: 0;
   background: #0071bd;
@@ -1098,6 +1140,10 @@ ul.nav.nav-tabs li {
   opacity: 1;
 }
 
+.blog-hero-area.section-padding {
+  padding: 160px 0 100px;
+}
+
 .blog-hero-area .blog-slider-wrapper {
   position: relative;
   z-index: 1;
@@ -1124,7 +1170,7 @@ ul.nav.nav-tabs li {
 
 .blog-hero-area .blog-slider-wrapper .blog-slider-inner .slider-button {
   position: absolute;
-  right: 42.5%;
+  right: 42.6%;
   bottom: 0px;
   z-index: 2;
 }
@@ -1460,7 +1506,7 @@ ul.nav.nav-tabs li {
 **************************************************************** */
 @media (min-width: 769px) and (max-width: 1023px) {
   .blog-hero-area.section-padding {
-    padding-top: 100px;
+    padding-top: 160px;
     padding-bottom: 0;
   }
   .blog-hero-area .blog-slider-wrapper .blog-slider-inner .single-blog .blog-content-wrapper .blog-content-inner {
@@ -1490,7 +1536,7 @@ ul.nav.nav-tabs li {
 **************************************************************** */
 @media only screen and (min-width: 100px) and (max-width: 768px) {
   .blog-hero-area.section-padding {
-    padding-top: 100px;
+    padding-top: 160px;
     padding-bottom: 0;
   }
   .blog-hero-area .blog-slider-wrapper .blog-slider-inner .slider-button {
@@ -1527,6 +1573,10 @@ ul.nav.nav-tabs li {
 /*=================================================================================================
                                     Responsive code end
 =================================================================================================*/
+.blog-heading-area.section-padding {
+  padding-top: 160px;
+}
+
 .blog-details-area {
   padding-bottom: 100px;
 }
@@ -1569,7 +1619,7 @@ ul.nav.nav-tabs li {
 .sticky-social-menu {
   position: -webkit-sticky;
   position: sticky;
-  top: 100px;
+  top: 130px;
 }
 
 .code-block-heading {
@@ -1880,7 +1930,7 @@ ul.nav.nav-tabs li {
 **************************************************************** */
 @media only screen and (min-width: 100px) and (max-width: 768px) {
   .blog-heading-area {
-    padding-top: 100px;
+    padding-top: 160px;
   }
   .blog-heading-area .blog-heading h1 {
     font-size: 30px;
@@ -1919,7 +1969,7 @@ ul.nav.nav-tabs li {
                                     Responsive code end
 =================================================================================================*/
 .author-hero-area {
-  padding: 120px 0 40px;
+  padding: 160px 0 40px;
   border-bottom: 1px solid #eaebf5;
 }
 
