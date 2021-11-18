@@ -18,7 +18,7 @@ tags:
   - kubedb
 ---
 
-We are pleased to announce the release of KubeDB `v2021.11.18`. This post lists all the major changes done in this release since `v2021.09.30`. The headline features of this release are `OpenSearch` support, Innodb Cluster support for MySQL, Support for PostgreSQL version 14.1, etc.
+We are pleased to announce the release of KubeDB `v2021.11.18`. This post lists all the major changes done in this release since `v2021.09.30`. The headline features of this release are `OpenSearch` support, `Innodb Cluster` support for MySQL, Support for PostgreSQL version `14.1`, etc.
 
 
 ## ElasticSearch
