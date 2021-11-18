@@ -154,94 +154,96 @@ We are pleased to announce the release of KubeDB `v2021.11.18`. This post lists 
 
 - **Replicaset Configuration**: In this release, we've added support for configuring replicaSet using custom configSecret. Previously, we only supported the file-based configuration i.e. `mongod.conf` file. Now, you can use a key `replicaset.json` to configure the replicaSet configuration. Also, you can reconfigure it by using the `Reconfiguration` ops request. Below is an example of the configSecret which includes both replicaset configuration and `mongod.conf` configuration file.
 
-	```yaml
-	apiVersion: v1
-	kind: Secret
-	type: Opaque
-	metadata:
-	  name: custom-config
-	  namespace: demo
-	stringData:
-	  mongod.conf: |
-	    net:
-	       maxIncomingConnections: 50000
-	  replicaset.json: |
-	    {
-	      "settings" : {
-	        "electionTimeoutMillis" : 5000
-	      }
-	    }
-	```
+  ```yaml
+  apiVersion: v1
+  kind: Secret
+  type: Opaque
+  metadata:
+    name: custom-config
+    namespace: demo
+  stringData:
+    mongod.conf: |
+      net:
+          maxIncomingConnections: 50000
+    replicaset.json: |
+      {
+        "settings" : {
+          "electionTimeoutMillis" : 5000
+        }
+      }
+  ```
+
 - **Custom Labels/Annotations Support**: Now, you can provide custom labels and annotations to the pods, statefulsets, and services associated with the database. Below is an example MongoDB replicaSet yaml, that shows how to provide the custom labels for pods, statefulsets, and services.
 
-	```yaml
-	apiVersion: kubedb.com/v1alpha2
-	kind: MongoDB
-	metadata:
-	  name: mg-sh
-	  namespace: demo
-	spec:
-	  version: "4.4.6"
-	  shardTopology:
-	    configServer:
-	      replicas: 3
-	      storage:
-	        resources:
-	          requests:
-	            storage: 1Gi
-	      podTemplate:
-	        controller:
-	          labels:
-	            sts-label: "config"
-	        metadata:
-	          labels:
-	            pod-label: "config"
-	    mongos:
-	      replicas: 1
-	      podTemplate:
-	        controller:
-	          labels:
-	            sts-label: "mongos"
-	        metadata:
-	          labels:
-	            pod-label: "mongos"
-	    shard:
-	      replicas: 3
-	      shards: 2
-	      storage:
-	        resources:
-	          requests:
-	            storage: 1Gi
-	      podTemplate:
-	        controller:
-	          labels:
-	            sts-label: "shard"
-	        metadata:
-	          labels:
-	            pod-label: "shard"
-	  storageType: Durable
-	  monitor:
-	    agent: prometheus.io/operator
-	    prometheus:
-	      serviceMonitor:
-	        labels:
-	          release: prometheus
-	        interval: 10s
-	  serviceTemplates:
-	  - alias: primary
-	    metadata:
-	      labels:
-	        svc-label: primary
-	      annotations:
-	        svc-annotations: primary
-	  - alias: stats
-	    metadata:
-	      labels:
-	        svc-label: stats 
-	      annotations:
-	        svc-annotations: stats    
-	  terminationPolicy: WipeOut
-	```
+  ```yaml
+  apiVersion: kubedb.com/v1alpha2
+  kind: MongoDB
+  metadata:
+    name: mg-sh
+    namespace: demo
+  spec:
+    version: "4.4.6"
+    shardTopology:
+      configServer:
+        replicas: 3
+        storage:
+          resources:
+            requests:
+              storage: 1Gi
+        podTemplate:
+          controller:
+            labels:
+              sts-label: "config"
+          metadata:
+            labels:
+              pod-label: "config"
+      mongos:
+        replicas: 1
+        podTemplate:
+          controller:
+            labels:
+              sts-label: "mongos"
+          metadata:
+            labels:
+              pod-label: "mongos"
+      shard:
+        replicas: 3
+        shards: 2
+        storage:
+          resources:
+            requests:
+              storage: 1Gi
+        podTemplate:
+          controller:
+            labels:
+              sts-label: "shard"
+          metadata:
+            labels:
+              pod-label: "shard"
+    storageType: Durable
+    monitor:
+      agent: prometheus.io/operator
+      prometheus:
+        serviceMonitor:
+          labels:
+            release: prometheus
+          interval: 10s
+    serviceTemplates:
+    - alias: primary
+      metadata:
+        labels:
+          svc-label: primary
+        annotations:
+          svc-annotations: primary
+    - alias: stats
+      metadata:
+        labels:
+          svc-label: stats 
+        annotations:
+          svc-annotations: stats    
+    terminationPolicy: WipeOut
+  ```
+
 - **Bug Fix**: Previously, MongoDB compute autoscaler was generating recommendations too frequently for the sharded cluster. In this release, we've fixed that bug. Now, MongoDB compute autoscaler generates recommendations as expected. Also, we've fixed some other minor bugs in KubeDB MongoDB.
 
 
