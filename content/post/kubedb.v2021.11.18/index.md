@@ -242,7 +242,6 @@ We are pleased to announce the release of KubeDB `v2021.11.18`. This post lists 
 	        svc-annotations: stats    
 	  terminationPolicy: WipeOut
 	```
-
 - **Bug Fix**: Previously, MongoDB compute autoscaler was generating recommendations too frequently for the sharded cluster. In this release, we've fixed that bug. Now, MongoDB compute autoscaler generates recommendations as expected. Also, we've fixed some other minor bugs in KubeDB MongoDB.
 
 
