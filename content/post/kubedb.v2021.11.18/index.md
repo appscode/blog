@@ -348,12 +348,11 @@ We are very excited to announce Stash `v2021.11.24`. In this release, we have ma
 
 ### Remove Google Analytics
 
-Previously, we were using Google Analytics to identify the usage pattern of Stash. In this release, we have removed the Google Analytics and replaced it with our in-house open sourced auditor library. This helps us to ensure that our customers' data are not shared with any third-party organization.
+Previously, we were using Google Analytics to identify the usage pattern of Stash. In this release, we have removed the Google Analytics and replaced it with our in-house open sourced auditor library. This helps us to ensure that our customer's information is not shared with any third-party organization.
 
-At the beginning of operator startup, Stash sends some basic information such as Stash version, Kubernetes version, cluster size, Stash license info etc. You can find what information we send from [here](https://github.com/kmodules/custom-resources/blob/master/apis/auditor/v1alpha1/siteinfo_types.go). We use [this](https://github.com/bytebuilders/audit) library to send this information.
+Now, at the startup of the operator, Stash sends some basic information such as Stash version, Kubernetes version, cluster size, Stash license info etc. You can find what information we send from [here](https://github.com/kmodules/custom-resources/blob/master/apis/auditor/v1alpha1/siteinfo_types.go). We use [this](https://github.com/bytebuilders/audit) library to send this information.
 
 Here, is a sample data that we collect:
-
 
 ```json
 {
