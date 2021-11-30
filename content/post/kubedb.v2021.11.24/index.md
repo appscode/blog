@@ -31,6 +31,50 @@ We now have Grafana Dashboards for all KubeDB and Stash resource types. Please r
 ## ElasticSearch
 
 - **OpenSearch**:  KubeDB supports `OpenSearch` version `1.1.0`. Now you can deploy and manage the OpenSearch cluster in the Kubernetes native way.
+- **Custom Labels/Annotations Support**: Now you can provide custom labels/annotations to the pods, pod’s controller (ie. StatefulSets), and services.
+
+  **Sample Elasticsearch Yaml:**
+
+  ```yaml
+  apiVersion: kubedb.com/v1alpha2
+  kind: Elasticsearch
+  metadata:
+  name: es
+  namespace: demo
+  spec:
+  serviceTemplates:
+  - alias: primary
+    metadata:
+      labels:
+        elasticsearch.com/custom-svc-label: set
+      annotations:
+        passTo: service
+  podTemplate:
+    metadata:
+      labels:
+        elasticsearch.com/custom-pod-label: set
+      annotations:
+        pass-to: pods
+    controller:
+      labels:
+        elasticsearch.com/custom-sts-label: set
+      annotations:
+        pass-to: statefulset
+  version: opensearch-1.1.0
+  storageType: Durable
+  terminationPolicy: WipeOut
+  monitor:
+    agent: prometheus.io
+  replicas: 3
+  storage:
+    storageClassName: "standard"
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  ```
+  
 - **Exporter**: Elasticsearch exporter images are upgraded to `v1.3.0`.
 
   **Sample Elasticsearch Yaml:**
