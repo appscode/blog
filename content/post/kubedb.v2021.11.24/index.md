@@ -1,6 +1,6 @@
 ---
-title: Announcing KubeDB v2021.11.24
-date: 2021-11-18
+title: Announcing KubeDB & Stash v2021.11.24
+date: 2021-11-30
 weight: 25
 authors:
   - Tamal Saha
@@ -18,14 +18,16 @@ tags:
   - kubedb
 ---
 
-We are pleased to announce the release of KubeDB `v2021.11.24`. This post lists all the major changes done in this release since `v2021.09.30`. The headline features of this release are `OpenSearch` support, `Innodb Cluster` support for MySQL, Support for PostgreSQL version `14.1`, etc.
+We are pleased to announce the release of KubeDB and Stash `v2021.11.24`. This post lists all the major changes done in this release since `v2021.09.30`. The headline features of this release are `OpenSearch` support, `InnoDB Cluster` support for MySQL, support for PostgreSQL version `14.1` and `PostGIS`.
 
+## General API Improvements
+
+- **Custom Labels/Annotations Support**: Now you can provide custom labels/annotations to the pods, pod’s controller (ie. StatefulSets), and services for any supported databases. Labels applied to the KubeDB custom resources will be passed down to all offshoots including the database pods. But you can also set labels to database pods or controllers (StatefulSets) via the PodTemplate and to the services via the ServiceTemplates.
 
 ## ElasticSearch
 
 - **OpenSearch**:  KubeDB supports `OpenSearch` version `1.1.0`. Now you can deploy and manage the OpenSearch cluster in the Kubernetes native way.
 - **Exporter**: Elasticsearch exporter images are upgraded to `v1.3.0`.
-- **Custom Labels/Annotations Support**: Now you can provide custom labels/annotations to the pods, pod’s controller (ie. StatefulSets), and services.
 
   **Sample Elasticsearch Yaml:**
 
@@ -69,7 +71,7 @@ We are pleased to announce the release of KubeDB `v2021.11.24`. This post lists 
         storage: 1Gi
   ```
 
-- **Reconfigure Ops Request**: Now users can apply/change configuration to a running Elasticsearch cluster without downtime. While reconfiguring, the operator also executes  `security-admin.sh` script to reload the security index. 
+- **Reconfigure Ops Request**: Now users can apply/change configuration to a running Elasticsearch cluster without downtime. While reconfiguring, the operator also executes `security-admin.sh` script to reload the security index.
 
   ```yaml
   apiVersion: ops.kubedb.com/v1alpha1
@@ -93,10 +95,10 @@ We are pleased to announce the release of KubeDB `v2021.11.24`. This post lists 
   databaseRef:
     name: sample-es
   ```
-- Collect metrics from all type of Elasticsearch node
+
+- Prometheus exporter sidecar collects metrics from all types of Elasticsearch nodes.
 
 ## MariaDB
-
 
 - Exporter: MySQL/MariaDB exporter is up to date with the latest `mysqld-exporter` release `v0.13.0`.
 - Custom Labels/Annotations Support: Now you can provide custom labels/annotations to the pods, pod’s controller (ie. StatefulSets), and services.
@@ -148,7 +150,6 @@ We are pleased to announce the release of KubeDB `v2021.11.24`. This post lists 
           storage: 1Gi
   terminationPolicy: WipeOut
   ```
-
 
 ## MongoDB
 
@@ -244,15 +245,47 @@ We are pleased to announce the release of KubeDB `v2021.11.24`. This post lists 
     terminationPolicy: WipeOut
   ```
 
-- **Bug Fix**: Previously, MongoDB compute autoscaler was generating recommendations too frequently for the sharded cluster. In this release, we've fixed that bug. Now, MongoDB compute autoscaler generates recommendations as expected. Also, we've fixed some other minor bugs in KubeDB MongoDB.
-
+- **Bug Fix**: Previously, MongoDB compute autoscaler would generate recommendations too frequently for sharded clusters. In this release, we've fixed that bug. Now, MongoDB compute autoscaler generates recommendations as expected. Also, we've fixed some other minor bugs in KubeDB MongoDB operators.
 
 ## MySQL
 
-- **Failover** : Fixed crash recovery  . Now kubedb can recover from a single node failover, multiple node failover and complete cluster failover.
-- **Process Restart**: Added support for mysqld process restart on MySQL server failure. If the mysqld process stops or is killed by OOM killer Kubedb can restart the mysqld process.
-- **Memory Management**: Improve MySQL server Internal memory management Configuration based On MySQL documentation.We have adjusted `innodb_buffer_pool_size` and `group_replication_message_cache _size` based on requested resources.
-**Custom Labels/Annotations support**: Now you can provide custom labels/ annotations to the pod and the pod’s controller (ie. StatefulSets) and services.
+If you are a current user of KubeDB, then you will need to run `MySQLOpsRequest` to upgrade the database versions as we have changed the coordinator sidecar and Prometheus exporter sidecar. If you are using the following versions, then please upgrade accordingly. You can find the currently supported versoins [here](https://github.com/kubedb/installer/blob/v2021.11.24/catalog/active_versions.json#L89-L94).
+
+| Current Version | Mode | Upgraded Version  	|
+|---	|---	|---	|---	|---	|---	|---	|---	|
+| 5.7.x | Standalone/Group replication | 5.7.36  	|
+| 8.0.3 | Standalone | 8.0.3-v4   	|
+| 8.0.3 | Group Replication | 8.0.17   	|
+| 8.0.x | Standalone / Group Replication | 8.0.27   	|
+
+- If you would like to upgrade to MySQL 5.7.x to 8.x, please first upgrade from 5.7.x to 5.7.36 and then upgrade from 5.7.36 to 8.0.27. This 2 step process is required to ensure that TLS communication works among the MySQL nodes during the upgrade process.
+- If you are using 8.0.3 (Non-GA) Group Replicated cluster, now you will be able to upgrade to the 8.0.17 version and then upgrade to the latest 8.0.27. . This 2 step process is required to ensure that TLS communication works among the MySQL nodes during the upgrade process. We recommend upgrading to the 8.0.27 version because it has support for the clone plugin.
+- If you are using 8.0.3 (Non-GA) Standalone cluster, then we are not able to automatically upgrade to a GA version of MySQL 8 instance. Because during the upgrade process, we need to empty the PVC so that the data files can be written in the correct format for MySQL 8 GA versions. You have 2 choices here currently:
+  - Upgrade to `8.0.3-v4` which will use the updated sidecar and init containers.
+  - Take a backup and restore into a blank MySQL 8.0.27 cluster.
+- If you are starting with a new MySQL 8 instance, we recommend using MySQL 8.0.27 . We recommend against using 8.0.17 for new instances. 8.0.17 support is added so that 8.0.3 clusters can be upgraded to 8.0.27 eventually.
+- To run the upgrade operation you can use an ops request like below. We always recommend taking a full database backup before running upgrade commands.
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: MySQLOpsRequest
+metadata:
+  name: myopsreq-group
+  namespace: demo
+spec:
+  type: Upgrade
+  databaseRef:
+    name: my-group
+  upgrade:
+    targetVersion: "8.0.20"
+```
+
+If you have any questions, please reach out via our existing chat channels or support@appscode.com email.
+
+- **Memory Management**: Improved MySQL server memory management to avoid OOM errors for small, medium and large instances. Now, the operator will calculate default values for `innodb_buffer_pool_size` and `group_replication_message_cache _size` for MySQL instances with memory size 1G, 1G < Memory < 4G and > 4G.
+- **Failover** : We have replaced the old replication mode detector sidecar with a new mysql-coordinator sidecar. This sidecar can recover from a single node failover, multiple node failover and complete cluster failover ensuring the MySQL node with the highest LSN is always the new primary after recovery.
+- **Process Restart**: Added support for mysqld process restart on MySQL pod restart. If the mysqld process stops or is killed by OOM killer KubeDB will restart the mysqld process.
+- **Custom Labels/Annotations support**: Now you can provide custom labels/ annotations to the pod and the pod’s controller (ie. StatefulSets) and services.
 
   **Sample MySQL Yaml**
 
@@ -260,54 +293,102 @@ We are pleased to announce the release of KubeDB `v2021.11.24`. This post lists 
   apiVersion: kubedb.com/v1alpha2
   kind: MySQL
   metadata:
-    name: mysql
+    name: m1
     namespace: demo
+    labels:
+      passMe: ToAllOffshootsIncludingPods
   spec:
-    serviceTemplates:
-      - alias: primary
-        metadata:
-          labels:
-            kubedb.com/svc: primary
-            svc-label: primary
-          annotations:
-            passTo: service
-      - alias: stats
-        metadata:
-          labels:
-            kubedb.com/svc: stats
-            svc-label: stats
-          annotations:
-            passTo: stats-service
-    podTemplate:
-        metadata:
-          labels:
-            pass-to: pod
-          annotations:
-            annotate-to: pod
-        controller:
-          labels:
-            controller-label : custom-label
-          annotations:
-            controller-annotation : custom-annotation
-    version: "5.7.36"
-    replicas: 3
+    version: "8.0.27"
     topology:
       mode: GroupReplication
-    storageType: Durable
+      group:
+        name: "dc002fc3-c412-4d18-b1d4-66c1fbfbbc9b"
+    authSecret:
+      name: m1-auth
+    storageType: "Durable"
     storage:
       storageClassName: "standard"
       accessModes:
-        - ReadWriteOnce
+      - ReadWriteOnce
       resources:
         requests:
           storage: 1Gi
-    terminationPolicy: WipeOut
+    init:
+      script:
+        configMap:
+          name: mg-init-script
+    monitor:
+      agent: prometheus.io/operator
+      prometheus:
+        serviceMonitor:
+          labels:
+            app: kubedb
+          interval: 10s
+    requireSSL: true
+    tls:
+      issuerRef:
+        apiGroup: cert-manager.io
+        kind: Issuer
+        name: mysql-issuer
+      certificates:
+      - alias: server
+        subject:
+          organizations:
+          - kubedb:server
+        dnsNames:
+        - localhost
+        ipAddresses:
+        - "127.0.0.1"
+    configSecret:
+      name: my-custom-config
+    podTemplate:
+      metadata:
+        labels:
+          passMe: ToDatabasePod
+        annotations:
+          passMe: ToDatabasePod
+      controller:
+        labels:
+          passMe: ToStatefulSet
+        annotations:
+          passMe: ToStatefulSet
+      spec:
+        serviceAccountName: my-service-account
+        schedulerName: my-scheduler
+        nodeSelector:
+          disktype: ssd
+        imagePullSecrets:
+        - name: myregistrykey
+        args:
+        - --character-set-server=utf8mb4
+        env:
+        - name: MYSQL_DATABASE
+          value: myDB
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+    serviceTemplates:
+    - alias: primary
+      metadata:
+        labels:
+          passMe: ToService
+        annotations:
+          passMe: ToService
+      spec:
+        type: NodePort
+        ports:
+        - name:  http
+          port:  9200
   ```
 
-- **Exporter** : MySQL/MariaDB exporter is up to date with the latest `mysqld-exporter` release `v0.13.0`.
-- **Innodb Cluster**: We have added new support for Innodb Cluster which will enhance your experience with mysql group replication.We’ve also added support for MySQL Router for Innodb Cluster which acts  as a load balancer. Innodb cluster itself supports the MySQL shell for which enables you to work with MySQL AdminAPI which allows you to work with InnoDB Cluster, InnoDB ClusterSet, and InnoDB ReplicaSet.
+- **Exporter** : MySQL/MariaDB exporter has been replaced with a custom KubeDB managed exporter fork which exports necessary metrics for Group replication.
+- **InnoDB Cluster**: We have added support for [MySQL InnoDB Cluster](https://dev.mysql.com/doc/refman/8.0/en/mysql-innodb-cluster-introduction.html) which will enhance your experience with mysql group replication. We’ve also added support for MySQL Router for InnoDB Cluster which acts  as a load balancer. InnoDB cluster itself supports the MySQL shell for which enables you to work with MySQL AdminAPI. `mysqlsh` allows you to work with InnoDB Cluster, InnoDB ClusterSet, and InnoDB ReplicaSet. Please consider InnoDB cluster support beta quality. There are a few known issues that we are looking to address in the next release. These issues include if multiple replicas try to clone data at the same time clone operator might fail and TLS reconfiguration support.
 
-  **Sample MySQL Innodb Yaml**
+  **Sample MySQL InnoDB Yaml**
 
   ```yaml
   apiVersion: kubedb.com/v1alpha2
@@ -337,109 +418,30 @@ We are pleased to announce the release of KubeDB `v2021.11.24`. This post lists 
 ## PostgreSQL
 
 - Add support for PostgreSQL new Versions: `14.1`, `13.5`, `12.9`, `11.14`, `10.19`, `9.6.24`.
-- Few fixes regarding pg-coordinator which will improve the postgres performance.
+- Added support for PostGIS distribution.
+- Added support for TimescaleDB 14.1 release.
+- **Process Restart**: Added support for postgres process restart on Postgres pod restart. If the postgres process stops or is killed by OOM killer KubeDB will restart the postgres process.
+- Few fixes regarding pg-coordinator which will improve the postgres performance and stability.
 
 ## Redis
-Fix The custom-config support for redis 
+
+Fixed The custom-config support for redis.
 
 ## Introducing Stash `v2021.11.24`
 
-We are very excited to announce Stash `v2021.11.24`. In this release, we have made a few enhancements for Stash. You can find the complete changelog here. Here, we are going to highlight the major changes.
-
-### Remove Google Analytics
-
-Previously, we were using Google Analytics to identify the usage pattern of Stash. In this release, we have removed the Google Analytics and replaced it with our in-house open sourced auditor library. This helps us to ensure that our customer's information is not shared with any third-party organization.
-
-Now, at the startup of the operator, Stash sends some basic information such as Stash version, Kubernetes version, cluster size, Stash license info etc. You can find what information we send from [here](https://github.com/kmodules/custom-resources/blob/master/apis/auditor/v1alpha1/siteinfo_types.go). We use [this](https://github.com/bytebuilders/audit) library to send this information.
-
-Here, is a sample data that we collect:
-
-```json
-{
- "items": [
-   {
-     "key": "events.s106.user.537.k8s.c45ac3e2-ba76-4dce-879c-c8955ce74f27.product.stash-enterprise.group.YXVkaXRvci5hcHBzY29kZS5jb20=.resource.siteinfos.year.2021.month.11.day.25",
-     "values": [
-       {
-         "resource": {
-           "apiVersion": "auditor.appscode.com/v1alpha1",
-           "kind": "SiteInfo",
-           "kubernetes": {
-             "clusterUID": "c45ac3e2-ba76-4dce-879c-c8955ce74f27",
-             "controlPlane": {
-               "notAfter": "2022-11-25T05:38:43Z",
-               "notBefore": "2021-11-25T05:38:43Z"
-             },
-             "nodeStats": {
-               "allocatable": {
-                 "cpu": "4",
-                 "memory": "16275088Ki"
-               },
-               "capacity": {
-                 "cpu": "4",
-                 "memory": "16275088Ki"
-               },
-               "count": 1
-             },
-             "version": {
-               "buildDate": "2021-05-21T23:01:33Z",
-               "compiler": "gc",
-               "gitCommit": "5e58841cce77d4bc13713ad2b91fa0d961e69192",
-               "gitTreeState": "clean",
-               "gitVersion": "v1.21.1",
-               "goVersion": "go1.16.4",
-               "major": "1",
-               "minor": "21",
-               "platform": "linux/amd64"
-             }
-           },
-           "metadata": {
-             "creationTimestamp": null,
-             "name": "5319394310677458003.stash-enterprise,kubedb-ext-stash"
-           },
-           "product": {
-             "licenseID": "5319394310677458003",
-             "productName": "stash-enterprise,kubedb-ext-stash",
-             "productOwnerName": "appscode",
-             "version": {
-               "commitHash": "85b094e24a78ec970e00c1e0f0116fb4da74077e",
-               "commitTimestamp": "2021-11-24T10:19:26",
-               "compiler": "gcc",
-               "gitBranch": "HEAD",
-               "gitTag": "v0.17.0",
-               "goVersion": "go1.17.3",
-               "platform": "linux/amd64",
-               "version": "v0.17.0",
-               "versionStrategy": "tag"
-             }
-           }
-         },
-         "resourceID": {
-           "group": "auditor.appscode.com",
-           "version": "v1alpha1",
-           "name": "siteinfos",
-           "kind": "SiteInfo",
-           "scope": "Cluster"
-         },
-         "licenseID": "5319394310677458003",
-         "version": 184545,
-         "timestamp": 1637819145
-       }
-     ]
-   }
- ]
-}
-```
+We are very excited to announce Stash `v2021.11.24`. In this release, we have made a few enhancements for Stash. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2021.11.24/README.md). Here, we are going to highlight the major changes.
 
 ### Added Elasticsearch 7.14.0 support
 
 We have added support for Elasticsearch 7.14.0 in Stash. Now, you can backup and restore your Elasticsearch 7.x.x and the equivalent OpenSearch versions using this Stash addon.
 
-
 ### Apply runtime settings to the CronJob properly
 
 Previously, Stash only supported applying runtime settings to the backup sidecar/Job. It did not pass those runtime settings to the respective backup triggering CronJob properly. As a result, some users were not able to force the CronJob to run on a particular node. Now, we pass all the pod level runtime settings to the CronJob. This will allow you to configure nodeSelector, securityContext etc. for the CronJob.
 
+## Remove Google Analytics
+
+Previously, we were using Google Analytics to count active users of Stash and KubeDB. In this release, we have removed the Google Analytics and replaced it with our in-house open source [auditor](https://github.com/bytebuilders/audit) library. This helps us to ensure that our customer's information is not shared with any third-party organization. The new analytics solution sends some basic information such as Product version, Kubernetes version and provider, Number of nodes in a cluster info etc. These information is used count number of active users and auditing billing information.
 
 ## What Next?
 
