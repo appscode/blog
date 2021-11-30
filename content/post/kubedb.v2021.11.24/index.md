@@ -24,6 +24,10 @@ We are pleased to announce the release of KubeDB and Stash `v2021.11.24`. This p
 
 - **Custom Labels/Annotations Support**: Now you can provide custom labels/annotations to the pods, pod’s controller (ie. StatefulSets), and services for any supported databases. Labels applied to the KubeDB custom resources will be passed down to all offshoots including the database pods. But you can also set labels to database pods or controllers (StatefulSets) via the PodTemplate and to the services via the ServiceTemplates.
 
+## Grafana Dashboards
+
+We now have Grafana Dashboards for all KubeDB and Stash resource types. Please reach out to us if you are an Enterprise customer on how to setup these dashboards in your clusters.
+
 ## ElasticSearch
 
 - **OpenSearch**:  KubeDB supports `OpenSearch` version `1.1.0`. Now you can deploy and manage the OpenSearch cluster in the Kubernetes native way.
