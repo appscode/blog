@@ -74,7 +74,7 @@ We now have Grafana Dashboards for all KubeDB and Stash resource types. Please r
       requests:
         storage: 1Gi
   ```
-  
+
 - **Exporter**: Elasticsearch exporter images are upgraded to `v1.3.0`.
 
   **Sample Elasticsearch Yaml:**
@@ -300,7 +300,7 @@ We now have Grafana Dashboards for all KubeDB and Stash resource types. Please r
 If you are a current user of KubeDB, then you will need to run `MySQLOpsRequest` to upgrade the database versions as we have changed the coordinator sidecar and Prometheus exporter sidecar. If you are using the following versions, then please upgrade accordingly. You can find the currently supported versoins [here](https://github.com/kubedb/installer/blob/v2021.11.24/catalog/active_versions.json#L89-L94).
 
 | Current Version | Mode | Upgraded Version  	|
-|---	|---	|---	|---	|---	|---	|---	|---	|
+|---	|---	|---	|
 | 5.7.x | Standalone/Group replication | 5.7.36  	|
 | 8.0.3 | Standalone | 8.0.3-v4   	|
 | 8.0.3 | Group Replication | 8.0.17   	|
