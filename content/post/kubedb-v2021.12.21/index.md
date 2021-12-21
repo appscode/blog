@@ -1,5 +1,5 @@
 ---
-title: Announcing KubeDB v2021.12.21 (log4j CVEs fixed)
+title: Announcing KubeDB v2021.12.21 (Includes Log4j CVE Fixes)
 date: 2021-12-21
 weight: 25
 authors:
@@ -58,6 +58,24 @@ spec:
   monitor:
     agent: prometheus.io
   terminationPolicy: "WipeOut"
+```
+
+## Upgrade from Older Version
+
+Say, you are using Elasticsearch from OpenSearch distribution with version `opensearch-1.1.0`. To upgrade to the latest `opensearch-1.2.2`, use `ElasticsearchOpsRequest`:
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: ElasticsearchOpsRequest
+metadata:
+  name: sample-es-upgrade
+  namespace: demo
+spec:
+  type: Upgrade
+  databaseRef:
+    name: sample-es
+  upgrade:
+    targetVersion: opensearch-1.2.2
 ```
 
 ## What Next?
