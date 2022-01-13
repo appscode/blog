@@ -46,7 +46,7 @@ Lastly, it's shown how `KubeVault CLI` can `Revoke` a user privileges by using a
 
   Take a deep dive into the full webinar below:
 
-<iframe style="height: 500px; width: 800px" src="https://youtu.be/dLW4ZX3vcJI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe style="height: 500px; width: 800px" src="https://youtube.com/embed/dLW4ZX3vcJI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## What Next?
 
