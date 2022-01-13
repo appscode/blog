@@ -21,12 +21,12 @@ tags:
 ## Summary
 
 AppsCode held a webinar on **"Secure Secrets: A Cloud-Native Approach made simple with KubeVault"**. This took place on 12th Jan 2022. The contents of what took place at the webinar are shown below:
-1) Deploy TLS Secured VaultServer
-2) Enable SecretEngine
-3) Create Database Roles
-4) Manage User Privileges
-5) KubeVault CLI in Action
-6) Q & A Session
+- Deploy TLS Secured VaultServer 
+- Enable SecretEngine
+- Create Database Roles
+- Manage User Privileges
+- KubeVault CLI in Action
+- Q & A Session
 
 ## Description of the Webinar
 
