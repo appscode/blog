@@ -42,7 +42,7 @@ After that, it's shown how to manage user privileges using two different ways. F
 
 Then, it's demonstrated how microservices can be made more secure using the `Dynamic Secrets` by Vault, where a microservice is deployed that reads mounted credentials, logs into the DB and makes queries. DB secrets are mounted on directories with the help of Secrets store CSI Driver & Vault CSI Provider. 
 
-Lastly, it's shown how `KubeVault CLI` can `Revoke` a user privileges by using a simple command.
+Lastly, it's shown how `KubeVault CLI` can be used to `Revoke` a user privileges by using a simple command.
 
   Take a deep dive into the full webinar below:
 
