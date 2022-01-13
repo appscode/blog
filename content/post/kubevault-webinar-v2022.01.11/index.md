@@ -1,5 +1,5 @@
 ---
-title: Secure Secrets: A Cloud-Native Approach made simple with KubeVault
+title: Secure Secrets - A Cloud-Native Approach made simple with KubeVault
 date: 2022-01-13
 weight: 20
 authors:
