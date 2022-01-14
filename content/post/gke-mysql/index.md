@@ -8,6 +8,7 @@ tags:
   - Cloud-native platform
   - Kubernetes
   - Database
+  - Kubernetes MySQL
   - Run Production-grade Database
   - Elasticsearch
   - MariaDB
@@ -279,11 +280,12 @@ Bye
 
 ## Backup MySQL Database Using Stash
 
-Here, Here we are going to use Stash to backup the database we deployed before.
+Here, we are going to use Stash to backup the database we deployed before.
 
 ### Step 1: Install Stash
 
-Here we will use the Stash Enterprise license that we obtained.
+Go to [Appscode License Server](https://license-issuer.appscode.com/) again to get the Stash Enterprise license.
+Here, we will use the Stash Enterprise license that we obtained.
 
 ```bash
 $ helm install stash appscode/stash              \
@@ -324,7 +326,7 @@ tasks.stash.appscode.com                  2022-01-12T06:48:56Z
 
 Stash supports various backends for storing data snapshots. It can be a cloud storage like GCS bucket, AWS S3, Azure Blob Storage etc. or a Kubernetes persistent volume like HostPath, PersistentVolumeClaim, NFS etc.
 
-For this tutorial we are going to use gcs-bucket. You can find other setups [here](https://stash.run/docs/v2021.06.23/guides/latest/backends/overview/).
+For this tutorial we are going to use gcs-bucket. You can find other setups [here](https://stash.run/docs/v2021.11.24/guides/latest/backends/overview/).
 
  ![My Empty GCS bucket](GoogleCloudEmpty.png)
 
@@ -385,7 +387,7 @@ spec:
 ```
 
 * BackupConfiguration creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.
-* `spec.repository` contaiins the secret we created before called `gcs-secret`.
+* `spec.repository` contains the secret we created before called `gcs-secret`.
 * `spec.target.ref` contains the reference to the appbinding that we want to backup. So, after 5 minutes we can see the following status:
 
 ```bash
@@ -529,7 +531,7 @@ mysql> SHOW DATABASES;
 5 rows in set (0.00 sec)
 ```
 
-> The recovery of MySQL Database has been successful. If you faced any difficulties in the recovery process, you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20GKE).
+> You can see the Database `Music` has been restored. The recovery of MySQL Database has been successful. If you faced any difficulties in the recovery process, you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20GKE).
 
 We have made an in depth video on how to Run & Manage production-grade MySQL Database in Kubernetes cluster using KubeDB. You can have a look into the video below:
 
