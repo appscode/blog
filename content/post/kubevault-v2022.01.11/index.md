@@ -59,22 +59,98 @@ In this post, we are going to highlight the major changes. You can find the comp
     
   ```
 
-  iii. You can now get the `decrypted` value of `vault-root-token` simply using the `get-root-token` command by `KubeVault CLI` instead of going through the tedious process of manually retrieving and decrypting from the major cloud providers storages e.g, `GCS`, `AWS`, `Azure` or even from `K8s Secret`.
+  iii. You can now get, delete & set the value of `vault-root-token` simply using `KubeVault CLI` instead of going through the tedious process of manually retrieving and decrypting from the major cloud providers storages e.g, `GCS`, `AWS`, `Azure` or even from `K8s Secret`.
   
   ```bash
-  # command to get vault root-token 
-  $ kubectl vault get-root-token vaultserver -n <ns> <name>
+  # GET root-token
+  # get the decrypted root-token of a vaultserver with name vault in demo namespace
+  $ kubectl vault root-token get vaultserver vault -n demo
+  
+  # pass the --value-only flag to get only the decrypted value
+  $ kubectl vault root-token get vaultserver vault -n demo --value-only
+  
+  # pass the --token-name flag to get only the decrypted root-token value with a specific token name
+  $ kubectl vault root-token get vaultserver vault -n demo --token-name <token-name> --value-only 
 
-  # command to get vault root-token for vaultserver with name vault in demo namespace
-  $ kubectl vault get-root-token vaultserver -n demo vault 
-  k8s.kubevault.com.demo.vault-root-token: s.9WeTJ2YgcM1fLD44tKPK9rdO
+  ```
+  
+  ```bash
+  # SET root-token
+  # set the root-token with name --token-name flag & value --token-value flag
+  $ kubectl vault root-token set vaultserver vault -n demo --token-name <name> --token-value <value>
 
-  # you can pass flag --value-only to get only the value of the root-token
-  $ kubectl vault get-root-token vaultserver -n demo vault --value-only
-  s.9WeTJ2YgcM1fLD44tKPK9rdO
+  # default name for root-token will be used if --token-name flag is not provided
+  # default root-token naming format: k8s.{cluster-name or UID}.{vault-namespace}.{vault-name}-root-token
+  $ kubectl vault root-token set vaultserver vault -n demo --token-value <value>
+
+  ```
+  
+  ```bash
+  # DELETE root-token
+  # delete the root-token with name set by --token-name flag
+  $ kubectl vault root-token delete vaultserver vault -n demo --token-name <name>
+  
+  # default name for root-token will be used if --token-name flag is not provided
+  # default root-token naming format: k8s.{cluster-name or UID}.{vault-namespace}.{vault-name}-root-token
+  $ kubectl vault root-token delete vaultserver vault -n demo 
   
   ```
   
+  iv. You can also get, delete, set & list the value of `vault-unseal-key` simply using `KubeVault CLI` instead of going through the tedious process of manually retrieving and decrypting from the major cloud providers storages e.g, `GCS`, `AWS`, `Azure` or even from `K8s Secret`.
+
+  ```bash
+  # GET unseal-key
+  # get the decrypted unseal-key of a vaultserver with name vault in demo namespace with --key-id flag
+  # default unseal-key format: k8s.{cluster-name or UID}.{vault-namespace}.{vault-name}-unseal-key-{id}
+  $ kubectl vault unseal-key get vaultserver vault -n demo --key-id <id>
+  
+  # pass the --key-name flag to get only the decrypted unseal-key value with a specific key name
+  $ kubectl vault unseal-key get vaultserver vault -n demo --key-name <name>  
+  
+  ```
+  
+  ```bash
+  # SET unseal-key
+  # set the unseal-key with name --key-name flag & value --key-value flag
+  $ kubectl vault unseal-key set vaultserver vault -n demo --key-name <name> --key-value <value>
+  
+  # pass the --key-id flag to set the default unseal-key with given <id>
+  $ kubectl vault unseal-key set vaultserver vault -n demo --key-id <id> --key-value <value>
+  
+  # default name for unseal-key will be used if --key-name flag is not provided
+  # default unseal-key naming format: k8s.{cluster-name or UID}.{vault-namespace}.{vault-name}-unseal-key-{id}
+  $ kubectl vault unseal-key set vaultserver vault -n demo --key-id <id> --key-value <value>
+  
+  ```
+  
+  ```bash
+  # DELETE unseal-key
+  # delete the unseal-key with name set by --key-name flag
+  $ kubectl vault unseal-key delete vaultserver vault -n demo --key-name <name>
+  
+  # delete the unseal-key with name set by --key-id flag
+  $ kubectl vault unseal-key delete vaultserver vault -n demo --key-id <id>
+  
+  ```
+  
+  ```bash
+  # LIST unseal-key
+  # list the vault unseal-keys
+  $ kubectl vault unseal-key list vaultserver vault -n demo
+  
+  ```
+
+  v. You can use the **sync** command to update the naming format of your vaultserver `root-token` & `unseal-keys`.
+  
+  ```bash
+  # sync the vaultserver root-token & unseal-keys
+  # old naming conventions: vault-root-token, vault-unseal-key-0, vault-unseal-key-1, etc.
+  # new naming convention for root-token: k8s.{cluster-name or UID}.{vault-namespace}.{vault-name}-root-token
+  # new naming convention for unseal-key: k8s.{cluster-name or UID}.{vault-namespace}.{vault-name}-unseal-key-{id}
+  # example: kubectl vault sync vaultserver <vault-name> -n <vault-namespace>
+  $ kubectl vault sync vaultserver vault -n demo
+
+  ```
 
 - **Cert-manager managed TLS**
   Now, `VaultServer` TLS can be managed with `cert-manager` along with existing `self-signed` certificate generation process. 
@@ -107,6 +183,7 @@ In this post, we are going to highlight the major changes. You can find the comp
 - **GCS ServiceAccount token cleanup**
   `GCS Service Account` token cleanup issue on delete & expiration has been fixed in this release. 
 
+> Note: It's suggested that you use the `sync` command to update your vault `root-token` & `unseal-key` naming formats.
 
 ## What's Next?
 
