@@ -16,6 +16,7 @@ tags:
   - postgresql
   - redis
   - kubedb
+  - openshift
 ---
 
 ## Overview
