@@ -143,12 +143,17 @@ In this post, we are going to highlight the major changes. You can find the comp
   v. You can use the **sync** command to update the naming format of your vaultserver `root-token` & `unseal-keys`.
   
   ```bash
+  # SYNC
   # sync the vaultserver root-token & unseal-keys
-  # old naming conventions: vault-root-token, vault-unseal-key-0, vault-unseal-key-1, etc.
+  # old naming conventions: vault-root-token
   # new naming convention for root-token: k8s.{cluster-name or UID}.{vault-namespace}.{vault-name}-root-token
+  # example: kubectl vault root-token sync vaultserver <vault-name> -n <vault-namespace>
+  $ kubectl vault root-token sync vaultserver vault -n demo
+  
+  # old naming conventions: vault-unseal-key-0, vault-unseal-key-1, etc.
   # new naming convention for unseal-key: k8s.{cluster-name or UID}.{vault-namespace}.{vault-name}-unseal-key-{id}
-  # example: kubectl vault sync vaultserver <vault-name> -n <vault-namespace>
-  $ kubectl vault sync vaultserver vault -n demo
+  # example: kubectl vault unseal-key sync vaultserver <vault-name> -n <vault-namespace>
+  $ kubectl vault unseal-key sync vaultserver vault -n demo
 
   ```
 
