@@ -10,9 +10,14 @@
         <div class="blog-heading">
           <p data-aos="fade-up" class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> {{ .Date.Format "2-Jan-2006" }}</p>
           <h1 data-aos="fade-up" data-aos-duration="500">{{ .Title }}</h1>
-          {{ range $author := .Params.authors }}
-          <p data-aos="fade-up" data-aos-duration="600" class="author"><span>by </span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a></p>
+          <p data-aos="fade-up" data-aos-duration="600" class="author"><span>by </span>
+          {{ range $author := first 1 .Params.authors }}
+            <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
           {{ end }}
+          {{ range $author := after 1 .Params.authors }}
+            <span>&amp;</span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
+          {{ end }}
+          </p>
         </div>
         <!-- blog heading end -->
 
