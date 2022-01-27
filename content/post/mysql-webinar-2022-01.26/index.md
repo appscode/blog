@@ -1,9 +1,10 @@
 ---
 title: MySQL Read Replica and Multi tenancy Support by KubeDB
-date: 2022-01-13
+date: 2022-01-27
 weight: 20
 authors:
   - Mehedi Hasan
+  - Tasdidur Rahman
 tags:
   - kubeDB
   - MySQL
@@ -26,11 +27,11 @@ tags:
 ## Summary
 
 On 26th Jan 2020 Appscode held a webinar on **"MySQL Read Replica and Multi tanancy Support by KubeDB"**. Key contents of the webinars are:
+
 - MySQL Read Replica
 - Creating and Managing Read Replicas using kubeDB
-- Multi Tanancy
-- Creating and managing Multi Tanant Database Schemas using KubeDB schema Manager.
-- Q & A Session
+- Multi Tenancy
+- Creating and managing Multi Tenant Database Schemas using KubeDB Schema Manager.
 
 
 ## Description of the Webinar
@@ -45,7 +46,7 @@ Lastly they talked about their Upcoming features `Semi-Synchronous` Replication 
 
   Take a deep dive into the full webinar below:
 
-<iframe style="height: 500px; width: 800px" src="<link>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe style="height: 500px; width: 800px" src="https://youtu.be/egzPGc6Yk_A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## What Next?
 
