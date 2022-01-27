@@ -55,9 +55,14 @@
                   <p data-aos="fade-up" class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i>
                     {{ $p.Date.Format "2-Jan-2006" }}</p>
                   <h1 data-aos="fade-up" data-aos-duration="600"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h1>
-                  {{ range $author := $p.Params.authors }}
-                  <p data-aos="fade-up" data-aos-duration="700" class="author"><span>by </span><a href="/authors/{{ $author | urlize }}" target="_blank" rel="noopener">{{ $author }}</a></p>
+                  <p data-aos="fade-up" data-aos-duration="700" class="author"><span>by </span>
+                  {{ range $author := first 1 $p.Params.authors }}
+                    <a href="/authors/{{ $author | urlize }}" target="_blank" rel="noopener">{{ $author }}</a>
                   {{ end }}
+                  {{ range $author := after 1 $p.Params.authors }}
+                    <span>&amp;</span><a href="/authors/{{ $author | urlize }}" target="_blank" rel="noopener">{{ $author }}</a>
+                  {{ end }}
+                  </p>
                   <p data-aos="fade-up" data-aos-duration="800" class="description">{{ $p.Summary }}</p>
                   <a data-aos="fade-up" data-aos-duration="1000" href="{{ $p.RelPermalink }}" class="inline-button">Read More</a>
                 </div>
