@@ -46,7 +46,7 @@ Lastly they talked about their Upcoming features `Semi-Synchronous` Replication 
 
   Take a deep dive into the full webinar below:
 
-<iframe style="height: 500px; width: 800px" src="https://youtu.be/egzPGc6Yk_A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="800" height="500" src="https://www.youtube.com/embed/egzPGc6Yk_A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## What Next?
 
@@ -55,6 +55,9 @@ Please try the latest release and give us your valuable feedback.
 * If you want to install **KubeDB**, please follow the installation instruction from [here](https://kubedb.com/docs/v2021.12.21/welcome/).
 
 * If you want to install **KubeVault**, please follow the installation instruction from [here](https://kubevault.com/docs/v2022.01.11/setup/).
+ 
+* If you want to install **Stash**, please follow the installation instruction from [here](https://stash.run/docs/v2021.11.24/setup/).
+
 
 
 ## Support
