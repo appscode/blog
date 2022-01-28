@@ -29,7 +29,7 @@ tags:
 
 ## Overview
 
-The databases that KubeDB support are MariaDB, MySQL, Elasticsearch, MongoDB, PostgreSQL, Redis, Percona XtraDB, ProxySQL, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/).
+The databases that KubeDB supports are MariaDB, MySQL, Elasticsearch, MongoDB, PostgreSQL, Redis, Percona XtraDB, ProxySQL, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/).
 In this tutorial we will deploy MariaDB database. We will cover the following steps:
 
 1) Install KubeDB
@@ -169,19 +169,19 @@ spec:
   terminationPolicy: WipeOut
 ```
 
-Let's save this yaml configuration into mariadb.yaml 
-Then create the above MariaDB CRD
+Let's save this yaml configuration into `mariadb.yaml` 
+Then create the above MariaDB CRO
 
 ```bash
 $ kubectl create -f mariadb.yaml
 mariadb.kubedb.com/sample-mariadb created
 ```
 
-* In this yaml we can see in the `spec.version` field the version of MariaDB. You can list the KubeDB supported versions of MariaDB by running `kubectl get mariadbversion` command.
+* In this yaml we can see in the `spec.version` field specifies the version of MariaDB. You can list the KubeDB supported versions of MariaDB by running `kubectl get mariadbversion` command.
 * Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.12.21/guides/mariadb/concepts/mariadb/#specterminationpolicy).
 
-Once these are handled correctly and the MariaDB object is deployed you will see that the following are created:
+Once these are handled correctly and the MariaDB object is deployed, you will see that the following are created:
 
 ```bash
 $ kubectl get all -n demo
@@ -202,7 +202,7 @@ NAME                                VERSION   STATUS   AGE
 mariadb.kubedb.com/sample-mariadb   10.6.4    Ready    7m21s
 ```
 
-> We have successfully deployed MariaDB in GKE. Now we can exec into the container to use the database.
+> We have successfully deployed MariaDB Standalone in GKE. Now we can exec into the container to use the database.
 
 ### Accessing Database Through CLI
 
@@ -213,8 +213,7 @@ $ kubectl get secrets -n demo sample-mariadb-auth -o jsonpath='{.data.username}'
 root
 $ kubectl get secrets -n demo sample-mariadb-auth -o jsonpath='{.data.password}' | base64 -d
 P~C9(DozpBJCGj&t
-$ kubectl exec -it sample-mariadb-0 -n demo -- bash
-Defaulted container "mariadb" out of: mariadb, mariadb-init (init) 
+$ kubectl exec -it sample-mariadb-0 -n demo -c mariadb -- bash 
 ```
 
 Then login into MariaDB:
@@ -387,7 +386,9 @@ spec:
 
 * BackupConfiguration creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.
 * `spec.repository` contains the secret we created before called `gcs-secret`.
-* `spec.target.ref` contains the reference to the appbinding that we want to backup. So, after 5 minutes we can see the following status:
+* `spec.target.ref` contains the reference to the appbinding that we want to backup. 
+* To learn more about `AppBinding`, click here [AppBinding](https://kubedb.com/docs/v2021.12.21/guides/mariadb/concepts/appbinding/). 
+So, after 5 minutes we can see the following status:
 
 ```bash
 $ kubectl get backupsession -n demo
