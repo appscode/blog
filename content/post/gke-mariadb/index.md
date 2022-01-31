@@ -148,7 +148,7 @@ $ kubectl create ns demo
 namespace/demo created
 ```
 
-Here is the yaml of the MariaDB CRD we are going to use:
+Here is the yaml of the MariaDB CRO we are going to use:
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -356,7 +356,7 @@ spec:
     storageSecretName: gcs-secret
 ```
 
-This repository CRD specifies the gcs-secret we created before and stores the name and path to the gcs-bucket. It also specifies the location in the bucket where we want to backup our database.
+This repository CRO specifies the gcs-secret we created before and stores the name and path to the gcs-bucket. It also specifies the location in the bucket where we want to backup our database.
 > Here, My bucket name is stash-backup-dipta. Don't forget to change `spec.backend.gcs.bucket` to your bucket name.
 
 ### Step 4: Create BackupConfiguration
