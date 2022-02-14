@@ -29,7 +29,7 @@ tags:
 
 ## Overview
 
-The databases that KubeDB supports are Elasticsearch, MySQL, MariaDB, MongoDB, PostgreSQL, Redis, Percona XtraDB, ProxySQL, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/). Elasticsearch has many distributions like ElasticStack, OpenSearch, SearchGuard, OpenDistro etc. KubeDB provides all of the distribution's support under the Elasticsearch CR of KubeDB. In this tutorial we will deploy OpenSearch cluster. We will cover the following steps:
+The databases that KubeDB supports are Elasticsearch, MySQL, MariaDB, MongoDB, PostgreSQL, Redis, Percona XtraDB, ProxySQL, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/). Elasticsearch has many distributions like `ElasticStack`, `OpenSearch`, `SearchGuard`, `OpenDistro` etc. **KubeDB provides all of the distribution's support under the Elasticsearch CR of KubeDB**. In this tutorial we will deploy OpenSearch cluster. We will cover the following steps:
 
 1) Install KubeDB
 2) Deploy OpenSearch Cluster
@@ -138,7 +138,7 @@ redisversions.catalog.kubedb.com                  2022-02-10T04:31:43Z
 
 ## Deploy OpenSearch Cluster
 
-Now we are going to Install OpenSearch with the help of KubeDB.
+Now we are going to Install OpenSearch with the help of KubeDB managed Elasticsearch CR.
 At first, let's create a Namespace in which we will deploy the cluster.
 
 ```bash
@@ -156,6 +156,7 @@ metadata:
   namespace: demo
 spec:
   version: opensearch-1.2.2
+  enableSSL: true
   replicas: 3
   storageType: Durable
   storage:
@@ -169,6 +170,7 @@ spec:
 ```
 * In this yaml, we can see in the `spec.version` field specifies the version of OpenSearch. Here, we are using `opensearch-1.2.2` version. You can list the KubeDB supported versions of Elasticsearch CR by running `kubectl get elasticsearchversions` command.
 * Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
+* Also, we can see in the `spec.enableSSL` field is `true`. Which specifies that http layer connection is secured.
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.12.21/guides/elasticsearch/concepts/elasticsearch/#specterminationpolicy).
 
 Let's save this yaml configuration into `sample-opensearch.yaml` 
@@ -179,7 +181,7 @@ $ kubectl create -f sample-opensearch.yaml
 elasticsearch.kubedb.com/sample-opensearch created
 ```
 
-Once these are handled correctly and the OpenSearch object is deployed, you will see that the following are created:
+Once these are handled correctly and the OpenSearch cluster is deployed, you will see that the following are created:
 
 ```bash
 $ kubectl get all -n demo -l 'app.kubernetes.io/instance=sample-opensearch'
@@ -261,7 +263,7 @@ $ kubectl get secret -n demo sample-opensearch-admin-cred -o jsonpath='{.data.pa
 Then login and insert some data into OpenSearch:
 
 ```bash
-$ curl -XPOST --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/bands/_doc?pretty" -H 'Content-Type: application/json' -d'
+$ curl -XPOST -k --user 'admin:9aHT*ZhEK_qjPS~v' "https://localhost:9200/bands/_doc?pretty" -H 'Content-Type: application/json' -d'
 {
     "Name": "Backstreet Boys",
     "Album": "Millennium",
@@ -273,7 +275,7 @@ $ curl -XPOST --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/bands/_doc?
 Now, let’s verify that the index have been created successfully.
 
 ```bash
-$ curl -XGET --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/_cat/indices?v&s=index&pretty"
+$ curl -XGET -k --user 'admin:9aHT*ZhEK_qjPS~v' "https://localhost:9200/_cat/indices?v&s=index&pretty"
 health status index                        uuid                   pri rep docs.count docs.deleted store.size pri.store.size
 green  open   .opendistro_security         ARYAKuVwQsKel2_0Fl3H2w   1   2          9            0    150.3kb         59.9kb
 green  open   bands                        1z6Moj6XS12tpDwFPZpqYw   1   1          1            0     10.4kb          5.2kb
@@ -282,7 +284,7 @@ green  open   security-auditlog-2022.02.10 j8-mj4o_SKqCD1g-Nz2PAA   1   1       
 Also, let’s verify the data in the indexes:
 
 ```bash
-$ curl -XGET --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/bands/_search?pretty"
+$ curl -XGET -k --user 'admin:9aHT*ZhEK_qjPS~v' "https://localhost:9200/bands/_search?pretty"
 {
   "took" : 183,
   "timed_out" : false,
@@ -487,7 +489,7 @@ stash-trigger-sample-opensearch-backup   */5 * * * *   True      0        4m42s 
 At first, let's simulate an accidental database deletion. Here, we are going to delete the `bands` index that we have created earlier.
 
 ```bash
-$ curl -XDELETE --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/bands?pretty"
+$ curl -XDELETE -k --user 'admin:9aHT*ZhEK_qjPS~v' "https://localhost:9200/bands?pretty"
 {
   "acknowledged" : true
 }
@@ -495,7 +497,7 @@ $ curl -XDELETE --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/bands?pre
 Now, let’s verify that the indexes have been deleted from the database,
 
 ```bash
-$ curl -XGET --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/_cat/indices?v&s=index&pretty"
+$ curl -XGET -k --user 'admin:9aHT*ZhEK_qjPS~v' "https://localhost:9200/_cat/indices?v&s=index&pretty"
 health status index                        uuid                   pri rep docs.count docs.deleted store.size pri.store.size
 green  open   .opendistro_security         ARYAKuVwQsKel2_0Fl3H2w   1   2          9            0    150.3kb         59.9kb
 green  open   security-auditlog-2022.02.10 j8-mj4o_SKqCD1g-Nz2PAA   1   1         28            0    384.5kb        192.2kb
@@ -550,7 +552,7 @@ sample-opensearch-restore   gcs-repo     Succeeded   10s        4m1s
 Now, let's check whether the database has been correctly restored:
 
 ```bash
-$ curl -XGET --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/_cat/indices?v&s=index&pretty"
+$ curl -XGET -k --user 'admin:9aHT*ZhEK_qjPS~v' "https://localhost:9200/_cat/indices?v&s=index&pretty"
 health status index                        uuid                   pri rep docs.count docs.deleted store.size pri.store.size
 green  open   .opendistro_security         ARYAKuVwQsKel2_0Fl3H2w   1   2          9            0    150.3kb         59.9kb
 green  open   bands                        9uk_Gn19TSqyYByv8JK42w   1   1          1            0     10.4kb          5.2kb
@@ -559,7 +561,7 @@ green  open   security-auditlog-2022.02.10 j8-mj4o_SKqCD1g-Nz2PAA   1   1       
 Also, let’s verify the data in the indexes:
 
 ```bash
-$ curl -XGET --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/bands/_search?pretty"
+$ curl -XGET -k --user 'admin:9aHT*ZhEK_qjPS~v' "https://localhost:9200/bands/_search?pretty"
 {
   "took" : 14,
   "timed_out" : false,
