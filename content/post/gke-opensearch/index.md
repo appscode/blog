@@ -1,5 +1,5 @@
 ---
-title: Run & Manage Elasticsearch in Google Kubernetes Engine (GKE) Using KubeDB
+title: Run & Manage OpenSearch in Google Kubernetes Engine (GKE) Using KubeDB
 date: 2022-02-14
 weight: 14
 authors:
@@ -8,7 +8,7 @@ tags:
   - Cloud-native platform
   - Kubernetes
   - Database
-  - Kubernetes Elasticsearch
+  - Kubernetes OpenSearch
   - Run Production-grade Database
   - Elasticsearch
   - MariaDB
@@ -29,14 +29,13 @@ tags:
 
 ## Overview
 
-The databases that KubeDB supports are Elasticsearch, MySQL, MariaDB MongoDB, PostgreSQL, Redis, Percona XtraDB, ProxySQL, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/).
-In this tutorial we will deploy Elasticsearch cluster. We will cover the following steps:
+The databases that KubeDB supports are Elasticsearch, MySQL, MariaDB MongoDB, PostgreSQL, Redis, Percona XtraDB, ProxySQL, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/). Elasticsearch has many distributions like ElasticStack, OpenSearch, SearchGuard, OpenDistro etc. KubeDB provides all of the distribution's support under the Elasticsearch CR of KubeDB. In this tutorial we will deploy OpenSearch cluster. We will cover the following steps:
 
 1) Install KubeDB
-2) Deploy Elasticsearch Cluster
+2) Deploy OpenSearch Cluster
 3) Install Stash
-4) Backup Elasticsearch Database Using Stash
-5) Recover Elasticsearch Database Using Stash
+4) Backup OpenSearch Using Stash
+5) Recover OpenSearch Using Stash
 
 ## Install KubeDB
 
@@ -137,9 +136,9 @@ redissentinels.kubedb.com                         2022-02-10T04:35:01Z
 redisversions.catalog.kubedb.com                  2022-02-10T04:31:43Z
 ```
 
-## Deploy Elasticsearch Cluster
+## Deploy OpenSearch Cluster
 
-Now we are going to Install Elasticsearch with the help of KubeDB.
+Now we are going to Install OpenSearch with the help of KubeDB.
 At first, let's create a Namespace in which we will deploy the cluster.
 
 ```bash
@@ -147,13 +146,13 @@ $ kubectl create ns demo
 namespace/demo created
 ```
 
-Here is the yaml of the Elasticsearch CRD we are going to use:
+Here is the yaml of we are going to use:
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: Elasticsearch
 metadata:
-  name: sample-elastic
+  name: sample-opensearch
   namespace: demo
 spec:
   version: opensearch-1.2.2
@@ -168,84 +167,84 @@ spec:
         storage: 1Gi
   terminationPolicy: WipeOut
 ```
-* In this yaml we can see in the `spec.version` field specifies the version of Elasticsearch. Here, we are using `opensearch-1.2.2` version. You can list the KubeDB supported versions of Elasticsearch by running `kubectl get elasticsearchversions` command.
+* In this yaml we can see in the `spec.version` field specifies the version of OpenSearch. Here, we are using `opensearch-1.2.2` version. You can list the KubeDB supported versions of Elasticsearch CR by running `kubectl get elasticsearchversions` command.
 * Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.12.21/guides/elasticsearch/concepts/elasticsearch/#specterminationpolicy).
 
-Let's save this yaml configuration into `sample-elastic.yaml` 
-Then create the above Elasticsearch CRD
+Let's save this yaml configuration into `sample-opensearch.yaml` 
+Then create the above CRD
 
 ```bash
-$ kubectl create -f sample-elastic.yaml
-elasticsearch.kubedb.com/sample-elastic created
+$ kubectl create -f sample-opensearch.yaml
+elasticsearch.kubedb.com/sample-opensearch created
 ```
 
-Once these are handled correctly and the Elasticsearch object is deployed, you will see that the following are created:
+Once these are handled correctly and the OpenSearch object is deployed, you will see that the following are created:
 
 ```bash
-$ kubectl get all -n demo -l 'app.kubernetes.io/instance=sample-elastic'
-NAME                   READY   STATUS    RESTARTS   AGE
-pod/sample-elastic-0   1/1     Running   0          4m28s
-pod/sample-elastic-1   1/1     Running   0          3m42s
-pod/sample-elastic-2   1/1     Running   0          2m51s
+$ kubectl get all -n demo -l 'app.kubernetes.io/instance=sample-opensearch'
+NAME                      READY   STATUS    RESTARTS   AGE
+pod/sample-opensearch-0   1/1     Running   0          4m28s
+pod/sample-opensearch-1   1/1     Running   0          3m42s
+pod/sample-opensearch-2   1/1     Running   0          2m51s
 
-NAME                            TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
-service/sample-elastic          ClusterIP   10.48.14.99   <none>        9200/TCP   4m33s
-service/sample-elastic-master   ClusterIP   None          <none>        9300/TCP   4m33s
-service/sample-elastic-pods     ClusterIP   None          <none>        9200/TCP   4m33s
+NAME                               TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
+service/sample-opensearch          ClusterIP   10.48.14.99   <none>        9200/TCP   4m33s
+service/sample-opensearch-master   ClusterIP   None          <none>        9300/TCP   4m33s
+service/sample-opensearch-pods     ClusterIP   None          <none>        9200/TCP   4m33s
 
-NAME                              READY   AGE
-statefulset.apps/sample-elastic   3/3     4m31s
+NAME                                 READY   AGE
+statefulset.apps/sample-opensearch   3/3     4m31s
 
-NAME                                                TYPE                       VERSION   AGE
-appbinding.appcatalog.appscode.com/sample-elastic   kubedb.com/elasticsearch   1.2.2     4m32s
+NAME                                                   TYPE                       VERSION   AGE
+appbinding.appcatalog.appscode.com/sample-opensearch   kubedb.com/elasticsearch   1.2.2     4m32s
 ```
 
-> We have successfully deployed Elasticsearch cluster in GKE. Now we can insert some data to our database.
+> We have successfully deployed OpenSearch cluster in GKE. Now we can insert some data to our database.
 
 ### Insert Sample Data
 
-In this section, we are going to create few indexes in the deployed Elasticsearch. At first, we are going to port-forward the respective Service so that we can connect with the database from our local machine. Then, we are going to insert some data into the Elasticsearch.
+In this section, we are going to create few indexes in the deployed OpenSearch. At first, we are going to port-forward the respective Service so that we can connect with the database from our local machine. Then, we are going to insert some data into the OpenSearch.
 
 #### Port-forward the Service
 
-KubeDB will create few Services to connect with the database. Let’s see the Services created by KubeDB for our Elasticsearch,
+KubeDB will create few Services to connect with the database. Let’s see the Services created by KubeDB for our OpenSearch,
 
 ```bash
 $ kubectl get service -n demo
-NAME                            TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
-sample-elastic                  ClusterIP   10.48.14.99   <none>        9200/TCP   4m33s
-sample-elastic-master           ClusterIP   None          <none>        9300/TCP   4m33s
-sample-elastic-pods             ClusterIP   None          <none>        9200/TCP   4m33s
+NAME                               TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
+sample-opensearch                  ClusterIP   10.48.14.99   <none>        9200/TCP   4m33s
+sample-opensearch-master           ClusterIP   None          <none>        9300/TCP   4m33s
+sample-opensearch-pods             ClusterIP   None          <none>        9200/TCP   4m33s
 ```
-Here, we are going to use the `sample-elastic` Service to connect with the database. Now, let’s port-forward the `sample-elastic` Service.
+Here, we are going to use the `sample-opensearch` Service to connect with the database. Now, let’s port-forward the `sample-opensearch` Service.
 
 ```bash
 # Port-forward the service to local machine
-$ kubectl port-forward -n demo svc/sample-elastic 9200
+$ kubectl port-forward -n demo svc/sample-opensearch 9200
 Forwarding from 127.0.0.1:9200 -> 9200
 Forwarding from [::1]:9200 -> 9200
 ```
 
 #### Export the Credentials
 
-KubeDB will create some Secrets for the database. Let’s check which Secrets have been created by KubeDB for our `sample-elastic`.
+KubeDB will create some Secrets for the database. Let’s check which Secrets have been created by KubeDB for our `sample-opensearch`.
 
 ```bash
-$ kubectl get secret -n demo | grep sample-elastic
-sample-elastic-admin-cert             kubernetes.io/tls                     3      10m
-sample-elastic-admin-cred             kubernetes.io/basic-auth              2      10m
-sample-elastic-ca-cert                kubernetes.io/tls                     2      10m
-sample-elastic-config                 Opaque                                3      10m
-sample-elastic-kibanaro-cred          kubernetes.io/basic-auth              2      10m
-sample-elastic-kibanaserver-cred      kubernetes.io/basic-auth              2      10m
-sample-elastic-logstash-cred          kubernetes.io/basic-auth              2      10m
-sample-elastic-readall-cred           kubernetes.io/basic-auth              2      10m
-sample-elastic-snapshotrestore-cred   kubernetes.io/basic-auth              2      10m
-sample-elastic-token-zbn46            kubernetes.io/service-account-token   3      10m
-sample-elastic-transport-cert         kubernetes.io/tls                     3      10m
+$ kubectl get secret -n demo | grep sample-opensearch
+sample-opensearch-admin-cert             kubernetes.io/tls                     3      10m
+sample-opensearch-admin-cred             kubernetes.io/basic-auth              2      10m
+sample-opensearch-ca-cert                kubernetes.io/tls                     2      10m
+sample-opensearch-config                 Opaque                                3      10m
+sample-opensearch-kibanaro-cred          kubernetes.io/basic-auth              2      10m
+sample-opensearch-kibanaserver-cred      kubernetes.io/basic-auth              2      10m
+sample-opensearch-logstash-cred          kubernetes.io/basic-auth              2      10m
+sample-opensearch-readall-cred           kubernetes.io/basic-auth              2      10m
+sample-opensearch-snapshotrestore-cred   kubernetes.io/basic-auth              2      10m
+sample-opensearch-token-zbn46            kubernetes.io/service-account-token   3      10m
+sample-opensearch-transport-cert         kubernetes.io/tls                     3      10m
 ```
-Here, `sample-elastic-admin-cred` contains the credentials require to connect with the database.
+Now, we can connect to the database with any of these secret that have the prefix `cred`. Here, we are using `sample-opensearch-admin-cred` which contains the admin level credentials to connect with the database.
 
 
 ### Accessing Database Through CLI
@@ -253,13 +252,13 @@ Here, `sample-elastic-admin-cred` contains the credentials require to connect wi
 To access the database through CLI, we have to get the credentials to access. Let’s export the credentials as environment variable to our current shell :
 
 ```bash
-$ kubectl get secret -n demo sample-elastic-admin-cred -o jsonpath='{.data.username}' | base64 -d
+$ kubectl get secret -n demo sample-opensearch-admin-cred -o jsonpath='{.data.username}' | base64 -d
 admin
-$ kubectl get secret -n demo sample-elastic-admin-cred -o jsonpath='{.data.password}' | base64 -d
+$ kubectl get secret -n demo sample-opensearch-admin-cred -o jsonpath='{.data.password}' | base64 -d
 9aHT*ZhEK_qjPS~v
 ```
 
-Then login and insert some data into Elasticsearch:
+Then login and insert some data into OpenSearch:
 
 ```bash
 $ curl -XPOST --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/bands/_doc?pretty" -H 'Content-Type: application/json' -d'
@@ -316,9 +315,9 @@ $ curl -XGET --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/bands/_searc
 }
 
 ```
-> This was just one example of Elasticsearch database deployment. The other databases that KubeDB supports are MariaDB, MongoDB, MySQL, PostgreSQL, Redis, Percona XtraDB, ProxySQL, Memcached and PgBouncer. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
+> This was just one example of OpenSearch deployment. KubeDB also supports are MariaDB, MongoDB, MySQL, Elasticsearch, PostgreSQL, Redis, Percona XtraDB, ProxySQL, Memcached and PgBouncer. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
 
-## Backup Elasticsearch Database Using Stash
+## Backup OpenSearch Using Stash
 
 Here, we are going to use Stash to backup the database we deployed before.
 
@@ -394,7 +393,7 @@ spec:
   backend:
     gcs:
       bucket: stash-backup-dipta
-      prefix: /sample-elastic
+      prefix: /sample-opensearch
     storageSecretName: gcs-secret
 ```
 
@@ -409,7 +408,7 @@ Now we need to create a `BackupConfiguration` file that specifies what to backup
 apiVersion: stash.appscode.com/v1beta1
 kind: BackupConfiguration
 metadata:
-  name: sample-elastic-backup
+  name: sample-opensearch-backup
   namespace: demo
 spec:
   schedule: "*/5 * * * *"
@@ -419,7 +418,7 @@ spec:
     ref:
       apiVersion: appcatalog.appscode.com/v1alpha1
       kind: AppBinding
-      name: sample-elastic
+      name: sample-opensearch
   retentionPolicy:
     name: keep-last-5
     keepLast: 5
@@ -427,28 +426,27 @@ spec:
 ```
 
 * `spec.schedule` specifies that we want to backup the database every 5th minutes.
-* `BackupConfiguration` creates a cronjob that backs up the specified database (`spec.target.ref.name`).
+* `BackupConfiguration` creates a cronjob that backs up the specified database `spec.target.ref.name`.
 * `spec.repository.name` contains the secret we created before called `gcs-secret`.
 * `spec.target.ref` contains the reference to the appbinding that we want to backup. 
 * To learn more about `AppBinding`, click here [AppBinding](https://kubedb.com/docs/v2021.12.21/guides/elasticsearch/concepts/appbinding/). 
 
-#### Verify CronJob
+### Verify CronJob
 If everything goes well, Stash will create a CronJob with the schedule specified in the `spec.schedule` field of `BackupConfiguration` object.
-
 Verify that the CronJob has been created using the following command,
 
 ```bash
 $ kubectl get cronjob -n demo
-NAME                                  SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
-stash-trigger-sample-elastic-backup   */5 * * * *   False     0        <none>          104s
+NAME                                     SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+stash-trigger-sample-opensearch-backup   */5 * * * *   False     0        <none>          104s
 ```
-The `stash-trigger-sample-elastic-backup` CronJob will trigger a backup on each scheduled slot by creating a `BackupSession` object.
+The `stash-trigger-sample-opensearch-backup` CronJob will trigger a backup on each scheduled slot by creating a `BackupSession` object.
 Now, wait for a schedule to appear. Run the following command to watch for a `BackupSession` object. So, after 5 minutes we can see the following status:
 
 ```bash
 $ watch kubectl get backupsession -n demo
-NAME                               INVOKER-TYPE          INVOKER-NAME            PHASE       DURATION   AGE
-sample-elastic-backup-1644484802   BackupConfiguration   sample-elastic-backup   Succeeded   21s        4m4s
+NAME                                  INVOKER-TYPE          INVOKER-NAME               PHASE       DURATION   AGE
+sample-opensearch-backup-1644484802   BackupConfiguration   sample-opensearch-backup   Succeeded   21s        4m4s
 
 $ watch kubectl get repository -n demo
 NAME       INTEGRITY   SIZE        SNAPSHOT-COUNT   LAST-SUCCESSFUL-BACKUP   AGE
@@ -459,31 +457,31 @@ Now if we check our GCS bucket we can see that the backup has been successful.
 
 ![gcsSuccess](GoogleCloudSuccess.png)
 
-> **If you have reached here, CONGRATULATIONS!! :confetti_ball: :confetti_ball: :confetti_ball: You have successfully backed up Elasticsearch Database using Stash.** If you had any problem during the backup process, you can reach out to us via [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20GKE).
+> **If you have reached here, CONGRATULATIONS!! :confetti_ball: :confetti_ball: :confetti_ball: You have successfully backed up OpenSearch Database using Stash.** If you had any problem during the backup process, you can reach out to us via [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20GKE).
 
-## Recover Elasticsearch Database Using Stash
+## Recover OpenSearch Using Stash
 
 Let's think of a scenario in which the database has been accidentally deleted or there was an error in the database causing it to crash.
 In such a case, we have to pause the BackupConfiguration so that the failed/damaged database does not get backed up into the cloud:
 
 ```bash
-$ kubectl patch backupconfiguration -n demo sample-elastic-backup --type="merge" --patch='{"spec": {"paused": true}}'
+$ kubectl patch backupconfiguration -n demo sample-opensearch-backup --type="merge" --patch='{"spec": {"paused": true}}'
 ```
 
 Verify that the `BackupConfiguration` has been paused,
 
 ```bash
-$ kubectl get backupconfiguration -n demo sample-elastic-backup
-NAME                    TASK   SCHEDULE      PAUSED   AGE
-sample-elastic-backup          */5 * * * *   true     15m
+$ kubectl get backupconfiguration -n demo sample-opensearch-backup
+NAME                       TASK   SCHEDULE      PAUSED   AGE
+sample-opensearch-backup          */5 * * * *   true     15m
 ```
 Notice the `PAUSED` column. Value `true` for this field means that the `BackupConfiguration` has been paused.
 Stash will also suspend the respective CronJob.
 
 ```bash
 $ kubectl get cronjob -n demo
-NAME                                  SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
-stash-trigger-sample-elastic-backup   */5 * * * *   True      0        4m42s           17m
+NAME                                     SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+stash-trigger-sample-opensearch-backup   */5 * * * *   True      0        4m42s           17m
 ```
 
 At first let's simulate an accidental database deletion. Here, we are going to delete the `bands` index that we have created earlier.
@@ -513,7 +511,7 @@ Below, is the contents of YAML file of the `RestoreSession` object that we are g
 apiVersion: stash.appscode.com/v1beta1
 kind: RestoreSession
 metadata:
-  name: sample-elastic-restore
+  name: sample-opensearch-restore
   namespace: demo
 spec:
   repository:
@@ -522,7 +520,7 @@ spec:
     ref:
       apiVersion: appcatalog.appscode.com/v1alpha1
       kind: AppBinding
-      name: sample-elastic
+      name: sample-opensearch
   rules:
     - snapshots: [latest]
 ```
@@ -530,14 +528,14 @@ spec:
 Here,
 
 * `.spec.repository.name` specifies the Repository object that holds the backend information where our backed up data has been stored.
-* `.spec.target.ref` refers to the respective `AppBinding` of the `sample-elastic` database.
+* `.spec.target.ref` refers to the respective `AppBinding` of the `sample-opensearch` database.
 * `.spec.rules` specifies that we are restoring data from the latest backup snapshot of the database.
 
 Now, let's create `RestoreSession` that will initiate restoring from the cloud.
 
 ```bash
-$ kubectl create -f sample-elastic-restore.yaml
-restoresession.stash.appscode.com/sample-elastic-restore created
+$ kubectl create -f sample-opensearch-restore.yaml
+restoresession.stash.appscode.com/sample-opensearch-restore created
 ```
 
 This `RestoreSession` specifies where the data will be restored.
@@ -545,11 +543,11 @@ Once this is applied, a `RestoreSession` will be created. Once it has succeeded,
 
 ```bash
 $ kubectl get restoresession -n demo
-NAME                     REPOSITORY   PHASE       DURATION   AGE
-sample-elastic-restore   gcs-repo     Succeeded   10s        4m1s
+NAME                        REPOSITORY   PHASE       DURATION   AGE
+sample-opensearch-restore   gcs-repo     Succeeded   10s        4m1s
 ```
 
-Now let's check whether the database has been correctly restored:
+Now, let's check whether the database has been correctly restored:
 
 ```bash
 $ curl -XGET --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/_cat/indices?v&s=index&pretty"
@@ -594,29 +592,29 @@ $ curl -XGET --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/bands/_searc
 }
 ```
 
-> You can see the index `Bands` has been restored. The recovery of Elasticsearch Database has been successful. If you faced any difficulties in the recovery process, you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20GKE).
+> You can see the index `bands` has been restored. The recovery of OpenSearch has been successful. If you faced any difficulties in the recovery process, you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20GKE).
 
 ### Resume Backup
 Since our data has been restored successfully we can now resume our usual backup process. Resume the `BackupConfiguration` using following command,
 
 ```bash
-$ kubectl patch backupconfiguration -n demo sample-elastic-backup --type="merge" --patch='{"spec": {"paused": false}}'
-backupconfiguration.stash.appscode.com/sample-elastic-backup patched
+$ kubectl patch backupconfiguration -n demo sample-opensearch-backup --type="merge" --patch='{"spec": {"paused": false}}'
+backupconfiguration.stash.appscode.com/sample-opensearch-backup patched
 ```
 Verify that the `BackupConfiguration` has been resumed,
 
 ```bash
-$ kubectl get backupconfiguration -n demo sample-elastic-backup
-NAME                    TASK   SCHEDULE      PAUSED   AGE
-sample-elastic-backup          */5 * * * *   false    46m
+$ kubectl get backupconfiguration -n demo sample-opensearch-backup
+NAME                       TASK   SCHEDULE      PAUSED   AGE
+sample-opensearch-backup          */5 * * * *   false    46m
 ```
 Here, `false` in the `PAUSED` column means the backup has been resume successfully. 
 We can see that the `CronJob` has also been resumed.
 
 ```bash
 $ kubectl get cronjob -n demo
-NAME                                  SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
-stash-trigger-sample-elastic-backup   */5 * * * *   False     0        3m53s           46m
+NAME                                     SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+stash-trigger-sample-opensearch-backup   */5 * * * *   False     0        3m53s           46m
 ```
 
 Here, `False` in the `SUSPEND` column means the CronJob is no longer suspended and will trigger in the next schedule.
