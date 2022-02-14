@@ -29,7 +29,7 @@ tags:
 
 ## Overview
 
-The databases that KubeDB supports are Elasticsearch, MySQL, MariaDB MongoDB, PostgreSQL, Redis, Percona XtraDB, ProxySQL, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/). Elasticsearch has many distributions like ElasticStack, OpenSearch, SearchGuard, OpenDistro etc. KubeDB provides all of the distribution's support under the Elasticsearch CR of KubeDB. In this tutorial we will deploy OpenSearch cluster. We will cover the following steps:
+The databases that KubeDB supports are Elasticsearch, MySQL, MariaDB, MongoDB, PostgreSQL, Redis, Percona XtraDB, ProxySQL, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/). Elasticsearch has many distributions like ElasticStack, OpenSearch, SearchGuard, OpenDistro etc. KubeDB provides all of the distribution's support under the Elasticsearch CR of KubeDB. In this tutorial we will deploy OpenSearch cluster. We will cover the following steps:
 
 1) Install KubeDB
 2) Deploy OpenSearch Cluster
@@ -146,7 +146,7 @@ $ kubectl create ns demo
 namespace/demo created
 ```
 
-Here is the yaml of we are going to use:
+Here is the yaml we are going to use:
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -167,7 +167,7 @@ spec:
         storage: 1Gi
   terminationPolicy: WipeOut
 ```
-* In this yaml we can see in the `spec.version` field specifies the version of OpenSearch. Here, we are using `opensearch-1.2.2` version. You can list the KubeDB supported versions of Elasticsearch CR by running `kubectl get elasticsearchversions` command.
+* In this yaml, we can see in the `spec.version` field specifies the version of OpenSearch. Here, we are using `opensearch-1.2.2` version. You can list the KubeDB supported versions of Elasticsearch CR by running `kubectl get elasticsearchversions` command.
 * Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2021.12.21/guides/elasticsearch/concepts/elasticsearch/#specterminationpolicy).
 
@@ -315,7 +315,7 @@ $ curl -XGET --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/bands/_searc
 }
 
 ```
-> This was just one example of OpenSearch deployment. KubeDB also supports are MariaDB, MongoDB, MySQL, Elasticsearch, PostgreSQL, Redis, Percona XtraDB, ProxySQL, Memcached and PgBouncer. The tutorials on how to deploy these into the cluster can be found [HERE](https://kubedb.com/)
+> This was just one example of OpenSearch deployment. KubeDB also supports are MariaDB, MongoDB, MySQL, Elasticsearch, PostgreSQL, Redis, Percona XtraDB, ProxySQL, Memcached and PgBouncer. The tutorials can be found [HERE](https://kubedb.com/)
 
 ## Backup OpenSearch Using Stash
 
@@ -402,7 +402,7 @@ This repository CRD specifies the gcs-secret we created before and stores the na
 
 ### Step 4: Create BackupConfiguration
 
-Now we need to create a `BackupConfiguration` file that specifies what to backup, where to backup and when to backup. Then, Stash will create a CronJob to periodically trigger a backup of the database.
+Now, we need to create a `BackupConfiguration` file that specifies what to backup, where to backup and when to backup. Then, Stash will create a CronJob to periodically trigger a backup of the database.
 
 ```yaml
 apiVersion: stash.appscode.com/v1beta1
@@ -457,12 +457,12 @@ Now if we check our GCS bucket we can see that the backup has been successful.
 
 ![gcsSuccess](GoogleCloudSuccess.png)
 
-> **If you have reached here, CONGRATULATIONS!! :confetti_ball: :confetti_ball: :confetti_ball: You have successfully backed up OpenSearch Database using Stash.** If you had any problem during the backup process, you can reach out to us via [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20GKE).
+> **If you have reached here, CONGRATULATIONS!! :confetti_ball: :confetti_ball: :confetti_ball: You have successfully backed up OpenSearch using Stash.** If you had any problem during the backup process, you can reach out to us via [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20GKE).
 
 ## Recover OpenSearch Using Stash
 
 Let's think of a scenario in which the database has been accidentally deleted or there was an error in the database causing it to crash.
-In such a case, we have to pause the BackupConfiguration so that the failed/damaged database does not get backed up into the cloud:
+In such a case, we have to pause the `BackupConfiguration` so that the failed/damaged database does not get backed up into the cloud:
 
 ```bash
 $ kubectl patch backupconfiguration -n demo sample-opensearch-backup --type="merge" --patch='{"spec": {"paused": true}}'
@@ -484,7 +484,7 @@ NAME                                     SCHEDULE      SUSPEND   ACTIVE   LAST S
 stash-trigger-sample-opensearch-backup   */5 * * * *   True      0        4m42s           17m
 ```
 
-At first let's simulate an accidental database deletion. Here, we are going to delete the `bands` index that we have created earlier.
+At first, let's simulate an accidental database deletion. Here, we are going to delete the `bands` index that we have created earlier.
 
 ```bash
 $ curl -XDELETE --user 'admin:9aHT*ZhEK_qjPS~v' "http://localhost:9200/bands?pretty"
@@ -609,7 +609,7 @@ NAME                       TASK   SCHEDULE      PAUSED   AGE
 sample-opensearch-backup          */5 * * * *   false    46m
 ```
 Here, `false` in the `PAUSED` column means the backup has been resume successfully. 
-We can see that the `CronJob` has also been resumed.
+We can see that the CronJob has also been resumed.
 
 ```bash
 $ kubectl get cronjob -n demo
