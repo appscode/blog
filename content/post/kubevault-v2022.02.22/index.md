@@ -66,7 +66,7 @@ In this post, we are going to highlight the major changes. You can find the comp
   
   ```
 
-  iv. You can also get, delete, set & list the value of `vault-unseal-key` simply using `KubeVault CLI` instead of going through the tedious process of manually retrieving and decrypting from the major cloud providers storages e.g, `GCS`, `AWS`, `Azure` or even from `K8s Secret`.
+  ii. You can also get, delete, set & list the value of `vault-unseal-key` simply using `KubeVault CLI` instead of going through the tedious process of manually retrieving and decrypting from the major cloud providers storages e.g, `GCS`, `AWS`, `Azure` or even from `K8s Secret`.
 
   ```bash
   # GET unseal-key
@@ -110,7 +110,7 @@ In this post, we are going to highlight the major changes. You can find the comp
   
   ```
 
-  v. You can use the **sync** command to update the naming format of your vaultserver `root-token` & `unseal-keys`.
+  iii. You can use the **sync** command to update the naming format of your vaultserver `root-token` & `unseal-keys`.
 
   ```bash
   # SYNC
