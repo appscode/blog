@@ -23,7 +23,7 @@ We are very excited to announce the release of KubeVault v2022.02.22 Edition. Th
 
 [KubeVault](https://kubevault.com) is a Kubernetes operator for [HashiCorp Vault](https://www.vaultproject.io/). The Vault is a tool for secrets management, encryption as a service, and privileged access management. The KubeVault operator makes it easy to deploy, maintain and manage Vault servers in Kubernetes. It also supports various secret engines management, policy management in the Kubernetes native way.
 
-In this post, we are going to highlight the major changes. You can find the complete commit by commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2022.01.11/README.md).
+In this post, we are going to highlight the major changes. You can find the complete commit by commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2022.02.22/README.md).
 
 ## What's new in this release?
 
@@ -133,7 +133,7 @@ In this post, we are going to highlight the major changes. You can find the comp
 
 Please try the latest release and give us your valuable feedback.
 
-- If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2022.01.11/setup).
+- If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2022.02.22/setup).
 
 ## Support
 
