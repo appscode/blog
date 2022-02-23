@@ -21,7 +21,7 @@ tags:
   - schema-manager
 ---
 
-We are pleased to announce the release of [KubeDB v2022.02.22](https://kubedb.com/docs/v2022.02.22/setup/). This post lists all the major changes done in this release since the last release. This release offers support for the **Schema Manager for multi-tenancy**, **MySQL read replica**, **ElasticsearchDashboard (Kibana)**, Elasticsearch configurable JVM heap, MongoDB reprovision opsRequest, MongoDB configurable ephemeral storage, MongoDB JS file support in reconfigure opsRequest, MariaDB storage and compute autoscaling, MariaDB offline volume expansion, MariaDB reconfigure opsRequest, Postgres offline volume expansion, etc.
+We are pleased to announce the release of [KubeDB v2022.02.22](https://kubedb.com/docs/v2022.02.22/setup/). This post lists all the major changes done in this release since the last release. This release offers support for the **Schema Manager for multi-tenancy**, **MySQL read replica**, **ElasticsearchDashboard (Kibana)**, Elasticsearch configurable JVM heap, MongoDB reprovision opsRequest, MongoDB configurable ephemeral storage, MongoDB JS file support in reconfigure opsRequest, MariaDB storage and compute autoscaling, MariaDB offline volume expansion, MariaDB reconfigure opsRequest, Postgres offline volume expansion, Redis disable authentication, etc.
 
 You can find the detailed change logs here: https://github.com/kubedb/CHANGELOG/blob/master/releases/v2022.02.22/README.md
 
@@ -155,12 +155,12 @@ We are very excited to announce that Dashboard support has been added to KubeDB.
 - **New Version Support:** In this release, We are happy to introduce the support for Percona MongoDB `4.4.10`.
 - **Configure Ephemeral Storage:** We’ve added `ephermeralStorage` field to configure Ephemeral Storage. For example, if you want to configure the ephemeral storage of a `replicaSet`, you can configure it using the following YAML:
 
-```yaml
-spec:
-  ephemeralStorage:
-    sizeLimit: "1Gi"
-    medium: Memory
-```
+  ```yaml
+  spec:
+    ephemeralStorage:
+      sizeLimit: "1Gi"
+      medium: Memory
+  ```
 
 - **Reprovision Ops Request:** We have introduced a new ops request `Reprovision`. Using this ops request, you can newly provision a database, if there is any failure. Please note that, if you are using `Ephemeral` or `InMemory` database, your data will be lost. Sample reprovision YAML:
 
@@ -341,6 +341,29 @@ spec:
 
 - **Bug fixes and Improvement:** It contains various bug fixes and codebase improvement in reconfigureTLS ops request.
 
+## Redis
+
+- **Disable Authentication for Redis Cluster:** In some cases, users want to configure their Redis cluster without enabling Authentication to avoid complexity regarding authentication as it’s not necessary in some use cases. So, We have Added Support to Disable Authentication for Redis Cluster.
+
+  ```yaml
+  apiVersion: kubedb.com/v1alpha2
+  kind: RedisSentinel
+  metadata:
+    name: sen
+    namespace: demo
+  spec:
+    version: 6.2.5
+    disableAuth: true
+    storageType: Durable
+    storage:
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: "standard"
+      accessModes:
+      - ReadWriteOnce
+    terminationPolicy: WipeOut
+  ```
 
 ## What Next?
 
