@@ -280,31 +280,31 @@ We are very excited to announce that Dashboard support has been added to KubeDB.
   apiVersion: kubedb.com/v1alpha2
   kind: MySQL
   metadata:
-  name: mysql-source
-  namespace: demo
+    name: mysql-source
+    namespace: demo
   spec:
-  version: "8.0.27"
-  replicas: 3
-  topology:
-    mode: GroupReplication
-  allowedReadReplicas:
-    namespaces:
-      from: Selector
+    version: "8.0.27"
+    replicas: 3
+    topology:
+      mode: GroupReplication
+    allowedReadReplicas:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.type: readReplica
       selector:
         matchLabels:
-          kubernetes.io/metadata.type: readReplica
-    selector:
-      matchLabels:
-        kubedb.com/instance_name: ReadReplica
-  storageType: Durable
-  storage:
-    storageClassName: "standard"
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 10Gi
-  terminationPolicy: WipeOut
+          kubedb.com/instance_name: ReadReplica
+    storageType: Durable
+    storage:
+      storageClassName: "standard"
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+    terminationPolicy: WipeOut
   ```
 
 - **Read-Replica Sample:** For creating a read replica, you need to mention the topology `ReadReplica` and  the `sourceRef` . Here, we are referring to a group replicated cluster, `mysql-source` as a source. You can create a read replica from a standalone instance or replicated cluster.
@@ -313,28 +313,28 @@ We are very excited to announce that Dashboard support has been added to KubeDB.
   apiVersion: kubedb.com/v1alpha2
   kind: MySQL
   metadata:
-  name: mysql-read
-  namespace: demo
-  labels:
-    kubedb.com/instance_name: ReadReplica
+    name: mysql-read
+    namespace: demo
+    labels:
+      kubedb.com/instance_name: ReadReplica
   spec:
-  version: "8.0.27"
-  topology:
-    mode: ReadReplica
-    readReplica:
-      sourceRef:
-          name: mysql-source
-          namespace: demo
-  replicas: 1
-  storageType: Durable
-  storage:
-    storageClassName: "standard"
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 10Gi
-  terminationPolicy: WipeOut
+    version: "8.0.27"
+    topology:
+      mode: ReadReplica
+      readReplica:
+        sourceRef:
+            name: mysql-source
+            namespace: demo
+    replicas: 1
+    storageType: Durable
+    storage:
+      storageClassName: "standard"
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+    terminationPolicy: WipeOut
   ```
 
 - **Bug fixes and Improvement:** It contains various bug fixes and codebase improvement in reconfigureTLS ops request.
