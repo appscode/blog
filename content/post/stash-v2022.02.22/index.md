@@ -14,80 +14,175 @@ tags:
   - cli
   - docs
 ---
-We are very excited to announce Stash v2022.02.22. In this release, we have made many enhancements for Stash. You can find the complete changelog here. We are going to highlight the major changes in this post.
 
-## Cross-namespace Repository
-We are introducing cross-namespace Repository in this release. We brought a few changes to our Repository spec. We added `spec.usagePolicy` to the Repository CRD.  From now, you can take backup of your target or restore the target in any namespace you wish by creating only one Repository. We implemented double opt-in checking in the Repository usagePolicy. You can control from which namespaces your Repository can be referred. If you refer to a Repository from a restricted namespace, Stash will not complete that backup/restore process.
+We are very excited to announce Stash `v2022.02.22`. In this release, we have introduced some exciting features and fixed some bugs. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2022.02.22/README.md). We are going to highlight the major changes in this post.
 
-For example,
-The following spec of a Repository will allow Stash to take backup or restore in any namespace of a cluster by using this Repository. 
+## New Features
+
+Here, we are going to highlight the new features that have been introduced in this release.
+
+### Support cross-namespace Repository reference
+
+We are introducing support for cross-namespace Repository reference. Now, you can refer to a Repository in BackupConfiguration and RestoreSession from different namespaces. So, you can now easily restore into different namespaces without copying the Repository or you can keep your Repository and backend Secret isolated from the application namespaces where the backup happens.
+
+To support this feature, we are introducing the `spec.usagePolicy` field in the Repository CRD. This lets you control which namespaces are allowed to use the Repository and which are not. If you refer to a Repository from a restricted namespace, Stash will reject creating the respective BackupConfiguration/RestoreSession from validating webhook.
+
+You can use the `usagePolicy` to allow only the same namespace, a subset of namespaces, or all the namespaces to refer to the Repository.
+
+For example, here is the sample YAML of a Repository that allows referencing it from all namespaces.
+
 ```yaml
+apiVersion: stash.appscode.com/v1alpha1
+kind: Repository
+metadata:
+  name: s3-repo
+  namespace: demo
 spec:
+  backend:
+    s3:
+      endpoint: s3.amazonaws.com
+      bucket: stash-demo
+      region: us-west-1
+      prefix: /backup/demo/deployment/stash-demo
+    storageSecretName: s3-secret
   usagePolicy:
     allowedNamespaces:
       from: All
 ```
-But, this Repository spec from below won’t allow referring this Repository from any namespace other than the same namespace of the Repository. 
+
+Here, is the example of a Repository that allows referencing it only from the same namespace.
+
 ```yaml
+apiVersion: stash.appscode.com/v1alpha1
+kind: Repository
+metadata:
+  name: s3-repo
+  namespace: demo
 spec:
+  backend:
+    s3:
+      endpoint: s3.amazonaws.com
+      bucket: stash-demo
+      region: us-west-1
+      prefix: /backup/demo/deployment/stash-demo
+    storageSecretName: s3-secret
   usagePolicy:
     allowedNamespaces:
-      from: All
+      from: Same
 ```
 
-## BackupConfiguration Phase
-We have added a new field to BackupConfiguration. This Phase can be of any three values at a moment. They are:
-Invalid: Invalid indicates that the BackupConfiguration is referring to any restricted object or resource for the current namespace
-Not Ready: This indicates that either the BackupConfiguration is doing it’s intermediate processing before getting Ready or creating the Cronjob or this BackupConfiguration could not discover any of the referred Reposiroty/Secret/other CRD.
-Ready: This Phase indicates that the BackupConfiguration is now ready to take backup and created Cronjob as well.
+Finally, here is the example of a Repository that allows referencing it only from `prod` and `staging` namespaces.
 
+```yaml
+apiVersion: stash.appscode.com/v1alpha1
+kind: Repository
+metadata:
+  name: s3-repo
+  namespace: demo
+spec:
+  backend:
+    s3:
+      endpoint: s3.amazonaws.com
+      bucket: stash-demo
+      region: us-west-1
+      prefix: /backup/demo/deployment/stash-demo
+    storageSecretName: s3-secret
+  usagePolicy:
+    allowedNamespaces:
+      from: Selector
+      selector:
+        matchExpressions:
+        - key: "kubernetes.io/metadata.name"
+          operator: In
+          values: ["prod","staging"]
+```
 
-## Add `Invalid` Phase to RestoreSession Phase
-If the Restoresession object refers to any object that is restricted for that respective namespace, the RestoreSession Phase will go into the `Invalid` phase and will not proceed with the restoration process until the RestoreSession Phase turns into `Running` 
+### Introducing `phase` in BackupConfiguration status
 
-## AppBinding serviceReference cross-namespace support 
-Stash now supports serviceReference from any namespace in a cluster for Appbinding. Along with that, Stash now accepts URL to resolve service connections. With these changes, a user can take backup or restore in any namespace where the service can be referred. By URL support, Stash can take backup or restore databases outside of Kubernetes as well.
+We have added a `phase` field to the BackupConfiguration status. This can help you understand the backup setup status.
 
-## Show Snapshot ID in kubectl list command
-From this release, if you run the Spanshot listing command like `kubectl list snapshots -n demo`,  we will display the first 8 characters of our Snapshot ID in a separate column. This will make restoring/deleting a specific Snapshot convenient. 
+Currently, the `phase` field accepts the following values:
 
-## Add commands to Stash CLI
-We have added two useful commands to our Stash CLI. The newly added commands are:
-kubectl-stash pause: Pause Stash backup temporarily
-kubectl-stash resume: Resume stash resources
-Both of the above commands have several flags to enhance the user capabilities. 
+- **Invalid:** It indicates that the BackupConfiguration has failed the validation check. It can happen when the BackupConfiguration refers to a Repository of a different namespace and the current namespace is not allowed by the `usagePolicy` of the Repository.
 
-## Fixes and upgrades into Stash CLI
-We have upgraded and fixed known issues of Stash CLI in this release. Some of them are:
-Released cli for darwin/arm64
-Used stashed/restic image for darwin/arm64 support
-Fixed stash broken cli 
+- **NotReady:** It indicates that the backup setup is not completed yet. It can happen when some dependency (i.e. Repository, backend Secret, etc.) are missing, or Stash hasn't completed processing the BackupConfiguration yet. You can describe the BackupConfiguration to check why it is in the `NotReady` state.
 
+- **Ready:** It indicates that the backup setup was completed successfully and the backup will be triggered from the next schedules.
 
-## Add Grafana dashboards
-We have added Grafana dashboards to Stash. Now you can monitor Stash CRDs through Grafana dashboards. We have added support for custom Pushgateway as well. 
+### Introducing `Invalid` phase in RestoreSession status
 
+We have added an `Invalid` phase in the RestoreSession status. It indicates that the RestoreSession has failed the validation check. This can happen when the RestoreSession references a Repository of a restricted namespace.
 
-## Updated documentation
-Cleaned up deprecated documentation
-Add docs for newly introduced changes
-Added troubleshooting guides in the documentation
-Updated documentation for Stash CLI and Restoresession customization
+### Support cross-namespace Service reference in AppBinding
 
-## Updated Stash Addons
-Updated all Stash addons to cope with the newly introduced changes in this release. 
-Refactored Addons implementation for improved performance
+AppBinding now supports referencing Services of a different namespace. This can help you to backup a database from a different namespace.
 
-## Made the operator ready for arm64 nodes
-Stash operator now supports arm64 nodes 
+### Support URL in the AppBinding
 
-## Always keep the last completed BackupSession
-Now, Stash will always keep the last completed BackupSession  when `backuphistorylimit>0`. It will keep the last completed BackupSession even if it exceeds the history limit. 
+Stash now supports referencing your application via a URL in AppBinding. This allows you to backup/restore databases located outside of your Kubernetes cluster.
 
-## Bug fixes and improvements
-We have also squashed a few bugs caught in the testing process that will make Stash more resilient. We refactored the API and the controller logic for boosting the performance and ensuring the extendability of Stash. We cleaned up the legacy implementations that were no longer used.  We have updated dependencies in the Stash UI server.
+### Custom Pushgateway support
 
-### What Next?
+You can now use your custom pushgateway to push Stash metrics. If you use a custom pushgateway, Stash will not inject the pushgateway sidecar to the operator. You can now pass the following helm flag during installation to use the custom pushgateway.
+
+ ```bash
+ # For community edition
+ --set stash-community.pushgateway.customURL=<your pushgateway url>
+
+ # For enterprise edition
+ --set stash-enterprise.pushgateway.customURL=<your pushgateway url>
+ ```
+
+### Show Snapshot ID in `kubectl get snapshots` command
+
+We have added Snapshot ID in the response to the `kubectl get snapshots` command. This helps you easily identify the Snapshot ID which is necessary to restore a particular Snapshot.
+
+### Add `pause` and `resume` commands to Stash `kubectl` plugin
+
+We have added two useful commands to our Stash `kubectl` plugin. You can now easily pause and resume your backup using the commands.
+
+For example, to pause a backup, you can run:
+
+```bash
+kubectl stash pause --backupconfig=sample-mongo-backup -n demo
+```
+
+To resume the backup, you can run:
+
+```bash
+kubectl stash resume --backupconfig=sample-mongo-backup -n demo
+```
+
+### Support for M1 Mac in Stash kubectl plugin
+
+We have added support M1 Mac in our Stash kubectl plugin.
+
+## Bug Fixes
+
+Now, here are a few bugs we have squashed in this release.
+
+### Fix broken `download` command in Stash kubectl plugin
+
+You can now again run the `kubectl stash download` command to download a snapshot to your local machine.
+
+### Always keep the last completed BackupSession
+
+Now, Stash will always keep the last completed BackupSession when `backuphistorylimit>0`. It will keep the last completed BackupSession even if it exceeds the history limit. This will help to keep the backup history when a backup gets skipped due to another running backup.
+
+## Deprecation and Cleanup
+
+In this release, we have removed the deprecated v1alpha1 APIs. This means the `Restic` and `Recovery` CRDs are no longer available in Stash.
+
+## Documentation Improvements
+
+Now, here are a few improvements we made on the documentation side.
+
+- Removed deprecated documentation
+- Add docs for cross namespace Repository reference.
+- Added troubleshooting guides that show how to identify and fix common Stash issues.
+- Improved addon documentations
+
+## What Next?
 
 Please try the latest release and give us your valuable feedback.
 
