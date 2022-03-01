@@ -248,7 +248,7 @@ sample-redis        ClusterIP   10.8.1.16    <none>        6379/TCP   7m52s
 sample-redis-pods   ClusterIP   None         <none>        6379/TCP   7m52s
 
 ```
-Here, we have to use the service `sample-redis` and secret `sample-redis-auth` to connect with the database, and we are going to use `PASSWORD` to authenticate and insert the sample data.
+Now, we are going to use `PASSWORD` to authenticate and insert some sample data.
 At first, let’s export the `PASSWORD` as environment variables to make further commands re-usable.
 
 ```bash
@@ -295,11 +295,9 @@ $ helm install stash appscode/stash             \
 Let's verify the installation:
 
 ```bash
-
 $ kubectl get pods --all-namespaces -l app.kubernetes.io/name=stash-enterprise --watch
 NAMESPACE     NAME                                      READY   STATUS    RESTARTS   AGE
 kube-system   stash-stash-enterprise-5fd6c4bf8c-j9bpd   2/2     Running   0          5m43s
-
 ```
 
 Now, to confirm CRD groups have been registered by the operator, run the following command:
@@ -383,7 +381,7 @@ spec:
     prune: true
 ```
 
-* BackupConfiguration creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.
+* `BackupConfiguration` creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.
 * `spec.repository` contains the secret we created before called `gcs-secret`.
 * `spec.target.ref` contains the reference to the appbinding that we want to backup. 
 * To learn more about `AppBinding`, click here [AppBinding](https://kubedb.com/docs/v2022.02.22/guides/redis/concepts/appbinding/). 
@@ -408,14 +406,17 @@ Now if we check our GCS bucket we can see that the backup has been successful.
 ## Recover Redis Using Stash
 
 Let's think of a scenario in which the database has been accidentally deleted or there was an error in the database causing it to crash.
-In such a case, we have to pause the `BackupConfiguration` so that the failed/damaged database does not get backed up into the cloud:
+
+#### Temporarily pause backup
+
+At first, let’s stop taking any further backup of the database so that no backup runs after we delete the sample data. We are going to pause the `BackupConfiguration` object. Stash will stop taking any further backup when the `BackupConfiguration` is paused.
 
 ```bash
 $ kubectl patch backupconfiguration -n demo sample-redis-backup --type="merge" --patch='{"spec": {"paused": true}}'
 backupconfiguration.stash.appscode.com/sample-redis-backup patched
 ```
 
-At first let's simulate accidental database deletion.
+Now, we are going to delete those data to simulate accidental database deletion.
 
 ```bash
 $ kubectl exec -it -n demo sample-redis-0 -- redis-cli -a $PASSWORD
