@@ -40,7 +40,7 @@ Later in this webinar, They discussed `Kibana` support for `Dashboard`. Where th
 
   Take a deep dive into the full webinar below:
 
-<iframe width="800" height="500" src="https://youtu.be/R-eYc2cUXQY?t=1" title="Elasticsearch Hot-Warm-Cold Architecture Management with Kibana in Kubernetes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="800" height="500" src="youtube.com/embed/R-eYc2cUXQY" title="Elasticsearch Hot-Warm-Cold Architecture Management with Kibana in Kubernetes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## What Next?
 
