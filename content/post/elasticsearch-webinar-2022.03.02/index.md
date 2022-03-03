@@ -48,12 +48,6 @@ Please try the latest release and give us your valuable feedback.
 
 * If you want to install **KubeDB**, please follow the installation instruction from [here](https://kubedb.com/docs/v2021.12.21/welcome/).
 
-* If you want to install **KubeVault**, please follow the installation instruction from [here](https://kubevault.com/docs/v2022.01.11/setup/).
- 
-* If you want to install **Stash**, please follow the installation instruction from [here](https://stash.run/docs/v2021.11.24/setup/).
-
-
-
 ## Support
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
