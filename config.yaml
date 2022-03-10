@@ -39,6 +39,7 @@ params:
       repoId: "R_kgDOG-h6rw"
       category: Blog
       categoryId: "DIC_kwDOG-h6r84COCFp"
+      map: title
 markup:
   goldmark:
     renderer:
