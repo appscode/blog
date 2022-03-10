@@ -95,7 +95,9 @@
 <!-- blog comments area start -->
 {{ if site.Params.comments.enable }}
   <section class="comments-area">
-    {{ partial "comments.html" . }}
+    <div class="container">
+      {{ partial "comments.html" . }}
+    </div>
   </section>
 {{ end }}
 <!-- blog comments area end -->
