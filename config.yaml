@@ -35,12 +35,10 @@ params:
   comments:
     enable: true
     giscus:
-      repo:
-        name: bytebuilders/community
-        id: "R_kgDOG-h6rw"
-      category:
-        name: Blog
-        id: "DIC_kwDOG-h6r84COCFp"
+      repo: bytebuilders/community
+      repoId: "R_kgDOG-h6rw"
+      category: Blog
+      categoryId: "DIC_kwDOG-h6r84COCFp"
 markup:
   goldmark:
     renderer:
