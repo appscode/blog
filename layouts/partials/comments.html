@@ -1,5 +1,7 @@
-{{ $repo := site.Params.comments.giscus.repo }}
-{{ $category := site.Params.comments.giscus.category | default "AppsCode" }}
+{{ $repoName := site.Params.comments.giscus.repo.name }}
+{{ $repoId := site.Params.comments.giscus.repo.id }}
+{{ $categoryName := site.Params.comments.giscus.category.name | default "AppsCode" }}
+{{ $categoryId := site.Params.comments.giscus.category.id }}
 {{ $theme := site.Params.comments.giscus.theme | default "light" }}
 {{ $map := site.Params.comments.giscus.map | default "url" }}
 {{ $reaction := site.Params.comments.giscus.reaction | default "1" }}
@@ -7,26 +9,11 @@
 {{ $inputPosition := site.Params.comments.giscus.inputPosition | default "bottom" }}
 {{ $crossOrigin := site.Params.comments.giscus.crossOrigin | default "anonymous" }}
 
-{{/*
-    <script src="https://giscus.app/client.js"
-            data-repo="{{ $repo }}"
-            data-category="{{ $category }}"
-            data-mapping="{{ $map }}"
-            data-reactions-enabled="{{ $reaction }}"
-            data-emit-metadata="{{ $metadata }}"
-            data-input-position="{{ $inputPosition }}"
-            data-theme="{{ $theme }}"
-            data-lang="{{ .Site.Language.Lang }}"
-            crossorigin="{{ $crossOrigin }}"
-            async>
-    </script>
-*/}}
-
 <script src="https://giscus.app/client.js"
-        data-repo="{{ $repo }}"
-        data-repo-id="R_kgDOG-h6rw"
-        data-category="{{ $category }}"
-        data-category-id="DIC_kwDOG-h6r84COCFp"
+        data-repo="{{ $repoName }}"
+        data-repo-id="{{ $repoId }}"
+        data-category="{{ $categoryName }}"
+        data-category-id="{{ $categoryId }}"
         data-mapping="{{ $map }}"
         data-reactions-enabled="{{ $reaction }}"
         data-emit-metadata="{{ $metadata }}"

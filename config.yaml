@@ -30,11 +30,17 @@ params:
   github_url: https://github.com/appscode
   domain_pharmer: https://pharmer.dev
   domain_stash: https://stash.run
+
+  # Enable giscus comment
   comments:
     enable: true
     giscus:
-      repo: bytebuilders/community
-      category: Blog
+      repo:
+        name: bytebuilders/community
+        id: "R_kgDOG-h6rw"
+      category:
+        name: Blog
+        id: "DIC_kwDOG-h6r84COCFp"
 markup:
   goldmark:
     renderer:
