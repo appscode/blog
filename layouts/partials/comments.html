@@ -1,7 +1,7 @@
-{{ $repoName := site.Params.comments.giscus.repo.name }}
-{{ $repoId := site.Params.comments.giscus.repo.id }}
-{{ $categoryName := site.Params.comments.giscus.category.name | default "AppsCode" }}
-{{ $categoryId := site.Params.comments.giscus.category.id }}
+{{ $repoName := site.Params.comments.giscus.repo }}
+{{ $repoId := site.Params.comments.giscus.repoId }}
+{{ $categoryName := site.Params.comments.giscus.category | default "AppsCode" }}
+{{ $categoryId := site.Params.comments.giscus.categoryId }}
 {{ $theme := site.Params.comments.giscus.theme | default "light" }}
 {{ $map := site.Params.comments.giscus.map | default "url" }}
 {{ $reaction := site.Params.comments.giscus.reaction | default "1" }}
