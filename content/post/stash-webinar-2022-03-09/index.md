@@ -38,8 +38,8 @@ Later, they introduced the new cross-namespaced backup and recovery support. The
 
 Please try the latest release and give us your valuable feedback.
 
-- If you want to install Stash in a clean cluster, please follow the installation instruction from [here](https://stash.run/docs/v2022.02.22/setup/).
-- If you want to upgrade Stash from a previous version, please follow the upgrade instruction from [here](https://stash.run/docs/v2022.02.22/setup/upgrade/).
+- If you want to install Stash in a clean cluster, please follow the installation instruction from [here](https://stash.run/docs/latest/setup/).
+- If you want to upgrade Stash from a previous version, please follow the upgrade instruction from [here](https://stash.run/docs/latest/setup/upgrade/).
 
 ### Support
 
