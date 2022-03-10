@@ -1,5 +1,5 @@
 ---
-title: Stash: Introducing a Better Cloud-Native Backup Experience
+title: "Stash: Introducing a Better Cloud-Native Backup Experience"
 date: 2022-03-02
 weight: 15
 authors:
