@@ -7,9 +7,26 @@
 {{ $inputPosition := site.Params.comments.giscus.inputPosition | default "bottom" }}
 {{ $crossOrigin := site.Params.comments.giscus.crossOrigin | default "anonymous" }}
 
+{{/*
+    <script src="https://giscus.app/client.js"
+            data-repo="{{ $repo }}"
+            data-category="{{ $category }}"
+            data-mapping="{{ $map }}"
+            data-reactions-enabled="{{ $reaction }}"
+            data-emit-metadata="{{ $metadata }}"
+            data-input-position="{{ $inputPosition }}"
+            data-theme="{{ $theme }}"
+            data-lang="{{ .Site.Language.Lang }}"
+            crossorigin="{{ $crossOrigin }}"
+            async>
+    </script>
+*/}}
+
 <script src="https://giscus.app/client.js"
         data-repo="{{ $repo }}"
+        data-repo-id="R_kgDOG-h6rw"
         data-category="{{ $category }}"
+        data-category-id="DIC_kwDOG-h6r84COCFp"
         data-mapping="{{ $map }}"
         data-reactions-enabled="{{ $reaction }}"
         data-emit-metadata="{{ $metadata }}"
