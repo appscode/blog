@@ -30,6 +30,11 @@ params:
   github_url: https://github.com/appscode
   domain_pharmer: https://pharmer.dev
   domain_stash: https://stash.run
+  comments:
+    enable: true
+    giscus:
+      repo: bytebuilders/community
+      category: Blog
 markup:
   goldmark:
     renderer:

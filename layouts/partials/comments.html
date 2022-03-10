@@ -1,0 +1,21 @@
+{{ $repo := site.Params.comments.giscus.repo }}
+{{ $category := site.Params.comments.giscus.category | default "AppsCode" }}
+{{ $theme := site.Params.comments.giscus.theme | default "light" }}
+{{ $map := site.Params.comments.giscus.map | default "url" }}
+{{ $reaction := site.Params.comments.giscus.reaction | default "1" }}
+{{ $metadata := site.Params.comments.giscus.metadata | default "0" }}
+{{ $inputPosition := site.Params.comments.giscus.inputPosition | default "bottom" }}
+{{ $crossOrigin := site.Params.comments.giscus.crossOrigin | default "anonymous" }}
+
+<script src="https://giscus.app/client.js"
+        data-repo="{{ $repo }}"
+        data-category="{{ $category }}"
+        data-mapping="{{ $map }}"
+        data-reactions-enabled="{{ $reaction }}"
+        data-emit-metadata="{{ $metadata }}"
+        data-input-position="{{ $inputPosition }}"
+        data-theme="{{ $theme }}"
+        data-lang="{{ .Site.Language.Lang }}"
+        crossorigin="{{ $crossOrigin }}"
+        async>
+</script>
