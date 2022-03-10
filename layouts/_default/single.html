@@ -86,20 +86,18 @@
           </div>
         </div>
         <!-- blog-content end -->
+
+        <!-- blog comments area start -->
+        {{ if site.Params.comments.enable }}
+        <div class="comments-area">
+          {{ partial "comments.html" . }}
+        </div>
+        {{ end }}
+        <!-- blog comments area end -->
       </div>
     </div>
   </div>
 </section>
 <!-- blog details area end -->
-
-<!-- blog comments area start -->
-{{ if site.Params.comments.enable }}
-  <section class="comments-area">
-    <div class="container">
-      {{ partial "comments.html" . }}
-    </div>
-  </section>
-{{ end }}
-<!-- blog comments area end -->
 
 {{ end }}
