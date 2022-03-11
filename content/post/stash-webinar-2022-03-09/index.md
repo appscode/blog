@@ -1,6 +1,6 @@
 ---
 title: "Stash: Introducing a Better Cloud-Native Backup Experience"
-date: 2022-03-02
+date: 2022-03-09
 weight: 15
 authors:
   - Hossain Mahmud
