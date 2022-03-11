@@ -73,7 +73,8 @@
               <!-- slider image start  -->
               {{ $hero := "/assets/images/slider-image/s-3.png"}}
               {{ with ($p.Resources.GetMatch "hero.jpg") }}
-                {{ $hero = .RelPermalink}}
+                {{ $resource := .Resize "612x" }}
+                {{ $hero = $resource.RelPermalink}}
               {{ end }}
               <a href="{{ $p.RelPermalink }}" class="blog-slider-image" style="background-image: url({{$hero}});"></a>
               <!-- slider image end -->
