@@ -71,7 +71,7 @@
             </div>
             <div class="column is-6" data-aos="fade-left" data-aos-duration="1000">
               <!-- slider image start  -->
-              {{ $hero:= $p.Resources.GetMatch "hero.jpg" | default "/assets/images/slider-image/s-3.png"}}
+              {{ $hero:= ($p.Resources.GetMatch "hero.jpg") | relURL | default "/assets/images/slider-image/s-3.png"}}
               <a href="{{ $p.RelPermalink }}" class="blog-slider-image" style="background-image: url({{$hero}});"></a>
               <!-- slider image end -->
             </div>
