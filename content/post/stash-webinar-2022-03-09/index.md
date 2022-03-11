@@ -32,7 +32,7 @@ Later, they introduced the new cross-namespaced backup and recovery support. The
 
   Take a deep dive into the full webinar below:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/ncBLVn8XnNw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/MREdcm9S8Xg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## What Next?
 
