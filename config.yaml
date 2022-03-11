@@ -30,7 +30,6 @@ params:
   github_url: https://github.com/appscode
   domain_pharmer: https://pharmer.dev
   domain_stash: https://stash.run
-
   # Enable giscus comment
   comments:
     enable: true
