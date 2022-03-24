@@ -22,8 +22,11 @@ tags:
 On 23rd March 2022, Appscode held a webinar on **Managing Opensearch cluster in Kubernetes using KubeDB**. Key contents of the webinars are:
 
 - Deploy Opensearch cluster
+
 - Deploy and manage Opensearch Dashboards instance
+
 - Version Upgrade of Opensearch Cluster using KubeDB Ops Request
+
 - Configure Opensearch Dashboard with Custom configurations
 
 ## Description of the Webinar
