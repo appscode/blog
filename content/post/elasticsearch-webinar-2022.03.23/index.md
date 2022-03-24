@@ -5,7 +5,7 @@ weight: 20
 authors:
   - Raihan Khan
 tags:
-  - kubeDB
+  - KubeDB
   - Opensearch
   - Opensearch Dashboards
   - ElasticsearchDashboard
