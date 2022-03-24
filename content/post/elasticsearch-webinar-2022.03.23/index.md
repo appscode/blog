@@ -21,16 +21,16 @@ tags:
 
 On 23rd March 2022, Appscode held a webinar on **Managing Opensearch cluster in Kubernetes using KubeDB**. Key contents of the webinars are:
 
--Deploy Opensearch cluster
--Deploy and manage Opensearch Dashboards instance
--Version Upgrade of Opensearch Cluster using KubeDB Ops Request
--Configure Opensearch Dashboard with Custom configurations
+- Deploy Opensearch cluster
+- Deploy and manage Opensearch Dashboards instance
+- Version Upgrade of Opensearch Cluster using KubeDB Ops Request
+- Configure Opensearch Dashboard with Custom configurations
 
 ## Description of the Webinar
 
-Earlier in this webinar, our speaker discussed in detail about `Opensearch`, it's functionalities and use cases. They created an `Opensearch` instance with `Elasticsearch` custom resource and an `Opensearch Dashboard` instance with `ElasticsearchDashboard` custom resource. 
+Earlier in this webinar, we discussed in detail about `Opensearch`, it's functionalities and use cases. Opensearch is a suite of tools centered on a search engine daemon, also called opensearch. It also consists of  a visualization and user interface, OpenSearch Dashboards. It is a 100% open source software, and it’s all released under the apache license version 2.0. We created an `Opensearch` instance with `Elasticsearch` custom resource and an `Opensearch Dashboard` instance with `ElasticsearchDashboard` custom resource. 
 
-Later in this webinar, he demonstrated basic CRUD operations in `Opensearch` cluster using `Dev Tools` from `Opensearch Dashboards`. After that, the earlier deployed `Opensearch` instance was shown to be upgraded by version with data persistence using `ElasticsearchOpsRequest` . Finally, how to add `Custom Branding` configurations for `opensearch Dashboards` was illustrated step by step.
+Later in this webinar, we demonstrated basic CRUD operations in `Opensearch` cluster using `Dev Tools` from `Opensearch Dashboards`. After that, the earlier deployed `Opensearch` instance was shown to be upgraded by version with data persistence using `ElasticsearchOpsRequest` . Finally, how to add `Custom Branding` configurations for `opensearch Dashboards` was illustrated step by step.
 
 
   Take a deep dive into the full webinar below:
