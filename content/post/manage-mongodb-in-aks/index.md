@@ -1,6 +1,6 @@
 ---
 title: Run & Manage MongoDB in Azure Kubernetes Service (AKS) Using KubeDB
-date: 2022-03-24
+date: 2022-03-28
 weight: 14
 authors:
   - Dipta Roy
@@ -17,8 +17,9 @@ tags:
   - MongoDB
   - KubeDB
   - Microsoft Azure
-  - Google Cloud Storage
-  - GCS
+  - Azure Storage Container
+  - Microsoft Azure Storage
+  - Azure Storage Blob
 ---
 
 ## Overview
@@ -36,7 +37,7 @@ In this tutorial we will deploy MongoDB database in Azure Kubernetes Service (AK
 
 We will follow the steps to install KubeDB.
 
-### Step 1: Get Cluster ID
+### Get Cluster ID
 
 We need the cluster ID to get the KubeDB License.
 To get cluster ID we can run the following command:
@@ -46,13 +47,13 @@ $ kubectl get ns kube-system -o jsonpath='{.metadata.uid}'
 8e336615-0dbb-4ae8-b72f-2e7ec34c399d 
 ```
 
-### Step 2: Get License
+### Get License
 
 Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the license.txt file. For this tutorial we will use KubeDB Enterprise Edition.
 
 ![License Server](AppscodeLicense.png)
 
-### Step 3: Install KubeDB
+### Install KubeDB
 
 We will use helm to install KubeDB. Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
 Now, let's install `KubeDB`.
@@ -191,9 +192,10 @@ mongodb.kubedb.com/sample-mongodb-rs created
 ```
 
 * In this yaml we can see in the `spec.version` field specifies the version of MongoDB. Here, we are using MongoDB `version 5.0.3`. You can list the KubeDB supported versions of MongoDB by running `$ kubectl get mongodbversions` command.
+* `spec.storage` specifies PVC spec that will be dynamically allocated to store data for this database. This storage spec will be passed to the StatefulSet created by KubeDB operator to run database pods. You can specify any StorageClass available in your cluster with appropriate resource requests.
 * And the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/v2022.02.22/guides/mongodb/concepts/mongodb/#specterminationpolicy).
 
-Once these are handled correctly and the MongoDB object is deployed, you will see that the following are created:
+Once these are handled correctly and the MongoDB object is deployed, you will see that the following objects are created:
 
 ```bash
 $ kubectl get all -n demo
@@ -230,7 +232,7 @@ To access the database through CLI, we have to get the credentials to access. Le
 
 #### Export the Credentials
 
-KubeDB will create Secret and Service for the database `sample-mongodb-rs` that we have deployed. Let’s check them by following command,
+KubeDB will create Secret and Service for the database `sample-mongodb-rs` that we have deployed. Let’s check them using the following commands,
 
 ```bash
 $ kubectl get secret -n demo -l=app.kubernetes.io/instance=sample-mongodb-rs
@@ -299,16 +301,16 @@ bye
 
 ```
 
-> This was just an example of our MongoDB ReplicaSet database deployment. The other databases that KubeDB supports are Elasticsearch, Redis, MySQL, PostgreSQL, MariaDB, Percona XtraDB, ProxySQL, Memcached and PgBouncer. More information about Run & Manage MongoDB on Kubernetes can be found [HERE](https://kubedb.com/kubernetes/databases/run-and-manage-mongodb-on-kubernetes/)
+> We've successfully inserted some sample data to our database. And this was just an example of our MongoDB ReplicaSet database deployment. The other databases that KubeDB supports are Elasticsearch, Redis, MySQL, PostgreSQL, MariaDB, Percona XtraDB, ProxySQL, Memcached and PgBouncer. More information about Run & Manage MongoDB on Kubernetes can be found [HERE](https://kubedb.com/kubernetes/databases/run-and-manage-mongodb-on-kubernetes/)
 
 ## Backup MongoDB Database Using Stash
 
 Here, we are going to use Stash to backup the MongoDB database we deployed before.
 
-### Step 1: Install Stash
+### Install Stash
 
-Go to [Appscode License Server](https://license-issuer.appscode.com/) again to get the Stash Enterprise license.
-Here, we will use the Stash Enterprise license that we obtained.
+Kubedb Enterprise License works for Stash too.
+So, we will use the Enterprise license that we already obtained.
 
 ```bash
 $ helm install stash appscode/stash             \
@@ -344,53 +346,55 @@ tasks.stash.appscode.com                  2022-03-23T05:29:56Z
 ```
 
 
-### Step 2: Prepare Backend
+### Prepare Backend
 
 Stash supports various backends for storing data snapshots. It can be a cloud storage like GCS bucket, AWS S3, Azure Blob Storage etc. or a Kubernetes persistent volume like HostPath, PersistentVolumeClaim, NFS etc.
 
-For this tutorial we are going to use gcs-bucket. You can find other setups [here](https://stash.run/docs/v2022.02.22/guides/backends/overview/).
+For this tutorial we are going to use azure storage. You can find other setups [here](https://stash.run/docs/v2022.02.22/guides/backends/overview/).
 
- ![My Empty GCS bucket](GoogleCloudEmpty.png)
+ ![My Empty azure storage](AzureStorageEmpty.png)
 
-At first we need to create a secret so that we can access the gcs bucket. We can do that by the following code:
+At first we need to create a secret so that we can access the azure storage container. We can do that by the following code:
 
 ```bash
-$ echo -n 'YOURPASSWORD' > RESTIC_PASSWORD
-$ echo -n 'YOURPROJECTNAME' > GOOGLE_PROJECT_ID
-$ cat /PATH/TO/JSONKEY.json > GOOGLE_SERVICE_ACCOUNT_JSON_KEY
-$ kubectl create secret generic -n demo gcs-secret \
-        --from-file=./RESTIC_PASSWORD              \
-        --from-file=./GOOGLE_PROJECT_ID            \
-        --from-file=./GOOGLE_SERVICE_ACCOUNT_JSON_KEY
+$ echo -n 'changeit' > RESTIC_PASSWORD
+$ echo -n '<your-azure-storage-account-name>' > AZURE_ACCOUNT_NAME
+$ echo -n '<your-azure-storage-account-key>' > AZURE_ACCOUNT_KEY
+$ kubectl create secret generic -n demo azure-secret \
+    --from-file=./RESTIC_PASSWORD \
+    --from-file=./AZURE_ACCOUNT_NAME \
+    --from-file=./AZURE_ACCOUNT_KEY
+secret/azure-secret created
  ```
 
-### Step 3: Create Repository
+### Create Repository
 
 ```yaml
 apiVersion: stash.appscode.com/v1alpha1
 kind: Repository
 metadata:
-  name: gcs-repo
+  name: azure-repo
   namespace: demo
 spec:
   backend:
-    gcs:
-      bucket: stash-backup-dipta
+    azure:
+      container: stash-backup
       prefix: /sample-mongodb
-    storageSecretName: gcs-secret
+    storageSecretName: azure-secret
+
 ```
 
-This repository CRO specifies the `gcs-secret` we created before and stores the name and path to the gcs-bucket. It also specifies the location in the bucket where we want to backup our database.
-> Here, My bucket name is `stash-backup-dipta`. Don't forget to change `spec.backend.gcs.bucket` to your bucket name.
+This repository CRO specifies the `azure-secret` we created before and stores the name and path to the azure storage container. It also specifies the location to the container where we want to backup our database.
+> Here, My container name is `stash-backup`. Don't forget to change `spec.backend.azure.container` to your container name.
 
 Lets create this repository,
 
 ```bash
-$ kubectl apply -f gcs-repo.yaml 
-repository.stash.appscode.com/gcs-repo created
+$ kubectl apply -f azure-repo.yaml 
+repository.stash.appscode.com/azure-repo created
 ```
 
-### Step 4: Create BackupConfiguration
+### Create BackupConfiguration
 
 Now, we need to create a `BackupConfiguration` file that specifies what to backup, where to backup and when to backup.
 
@@ -403,7 +407,7 @@ metadata:
 spec:
   schedule: "*/5 * * * *"
   repository:
-    name: gcs-repo
+    name: azure-repo
   target:
     ref:
       apiVersion: appcatalog.appscode.com/v1alpha1
@@ -422,24 +426,26 @@ backupconfiguration.stash.appscode.com/sample-mongodb-backup created
 ```
 
 * `BackupConfiguration` creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.
-* `spec.repository` contains the secret we created before called `gcs-secret`.
-* `spec.target.ref` contains the reference to the appbinding that we want to backup. 
+* `spec.repository` contains the secret we created before called `azure-secret`.
+* `spec.target.ref` contains the reference to the appbinding that we want to backup.
+* `spec.schedule` specifies that we want to backup the database at 5 minutes interval.
+* `spec.retentionPolicy` specifies the policy to follow for cleaning old snapshots. 
 * To learn more about `AppBinding`, click here [AppBinding](https://kubedb.com/docs/v2022.02.22/guides/mongodb/concepts/appbinding/). 
 So, after 5 minutes we can see the following status:
 
 ```bash
 $ kubectl get backupsession -n demo
 NAME                               INVOKER-TYPE          INVOKER-NAME            PHASE       DURATION   AGE
-sample-mongodb-backup-1648014906   BackupConfiguration   sample-mongodb-backup   Succeeded   19s        97s
+sample-mongodb-backup-1648200001   BackupConfiguration   sample-mongodb-backup   Succeeded   39s        4m8s
 
 $ kubectl get repository -n demo
-NAME       INTEGRITY   SIZE        SNAPSHOT-COUNT   LAST-SUCCESSFUL-BACKUP   AGE
-gcs-repo   true        3.442 KiB   1                6m                       10m
+NAME         INTEGRITY   SIZE        SNAPSHOT-COUNT   LAST-SUCCESSFUL-BACKUP   AGE
+azure-repo   true        3.442 KiB   1                2m32s                    5m10s
 ```
 
-Now if we check our GCS bucket we can see that the backup has been successful.
+Now if we check our azure storage container, we can see that the backup has been successful.
 
-![gcsSuccess](GoogleCloudSuccess.png)
+![AzureSuccess](AzureStorageSuccess.png)
 
 > **If you have reached here, CONGRATULATIONS!! :confetti_ball: :confetti_ball: :confetti_ball: You have successfully backed up MongoDB Database using Stash.** If you had any problem during the backup process, you can reach out to us via [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20GKE).
 
@@ -498,7 +504,7 @@ bye
 
 ```
 
-### Step 1: Create a RestoreSession
+### Create a RestoreSession
 
 Below, is the contents of YAML file of the `RestoreSession` object that we are going to create.
 
@@ -510,7 +516,7 @@ metadata:
   namespace: demo
 spec:
   repository:
-    name: gcs-repo
+    name: azure-repo
   target:
     ref:
       apiVersion: appcatalog.appscode.com/v1alpha1
@@ -533,7 +539,7 @@ Once this is applied, a `RestoreSession` will be created. Once it has succeeded,
 ```bash
 $ kubectl get restoresession -n demo
 NAME                     REPOSITORY   PHASE       DURATION   AGE
-sample-mongodb-restore   gcs-repo     Succeeded   5s         2m
+sample-mongodb-restore   azure-repo   Succeeded   4s         15s
 ```
 
 Now, let's check whether the database has been correctly restored:
