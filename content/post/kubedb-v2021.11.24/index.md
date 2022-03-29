@@ -4,6 +4,8 @@ date: 2021-11-30
 weight: 25
 authors:
   - Tamal Saha
+aliases:
+  - /post/kubedb.v2021.11.24/
 tags:
   - cloud-native
   - kubernetes
