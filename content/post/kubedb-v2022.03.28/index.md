@@ -21,7 +21,7 @@ tags:
   - schema-manager
 ---
 
-We are pleased to announce the release of [KubeDB v2022.03.28](https://kubedb.com/docs/v2022.03.28/setup/). This release is a bug fix release for v2022.02.22 . In this release we have fixed a memory leak in Postgres sidecar (known as `pg-coordinator`) which will cause the postgres pod to restart due to OOMKill by Kubernetes. Our regularly scheduled feature release is planned to be out in 2 weeks. If you are not affected by this particular issue, you can ignore this release. You can find the detailed change logs [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2022.03.28/README.md).
+We are pleased to announce the release of [KubeDB v2022.03.28](https://kubedb.com/docs/v2022.03.28/setup/). This release is a bug fix release for v2022.02.22 . In this release we have fixed a memory leak in Postgres sidecar (known as `pg-coordinator`) which will cause the postgres pod to restart due to OOMKill by Kubernetes. Our regular feature release is planned to be out in 2 weeks. If you are not affected by this particular issue, you can ignore this patch release. You can find the detailed change logs [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2022.03.28/README.md).
 
 ## Postgres side-car Memory Leak
 
