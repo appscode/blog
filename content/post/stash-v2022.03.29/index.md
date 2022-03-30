@@ -1,6 +1,6 @@
 ---
 title: Introducing Stash v2022.03.29
-date: 2022-02-22
+date: 2022-03-30
 weight: 15
 authors:
   - Piyush Kanti Das
