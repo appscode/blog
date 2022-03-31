@@ -36,7 +36,7 @@ Later on, MySQL semi-synchronous cluster provisioning is shown that KubeDB makes
 
 Take a deep dive into the full webinar below:
 
-<iframe width="800" height="500" src="https://youtu.be/y9VgofqwGyE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="800" height="500" src="https://www.youtube.com/embed/y9VgofqwGyE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## What Next?
 
