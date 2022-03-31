@@ -4,7 +4,7 @@ date: 2022-03-31
 weight: 20
 authors:
 - Mehedi Hasan
-  tags:
+tags:
 - kubeDB
 - MySQL
 - SemiSync
@@ -42,7 +42,7 @@ Take a deep dive into the full webinar below:
 
 Please try the latest release and give us your valuable feedback.
 
-* If you want to install **KubeDB**, please follow the installation instruction from [here](https://kubedb.com/docs/v2021.12.21/welcome/).
+* If you want to install **KubeDB**, please follow the installation instruction from [here](https://kubedb.com/docs/v2022.03.28/welcome/).
 
 ## Support
 
