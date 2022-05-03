@@ -60,7 +60,7 @@ jobs:
       #   if: startsWith(github.event.ref, 'refs/tags/') && (contains(github.ref, '-alpha.') || contains(github.ref, '-beta.'))
       #   run: |
       #     npm install
-      #     make docs
+      #     make assets
       #     make qa
 
       - name: Release
@@ -70,5 +70,5 @@ jobs:
         # if: startsWith(github.event.ref, 'refs/tags/') && (contains(github.ref, '-alpha.') || contains(github.ref, '-beta.')) == false
         run: |
           npm install
-          make docs
+          make assets
           make release
