@@ -25,15 +25,15 @@
     "alt": "KubeVault"
   },
   "icon": {
-    "src": "/assets/images/products/kubevault/kubevault-icon.png",
+    "src": "/assets/images/products/kubevault/kubevault-icon.svg",
     "alt": "KubeVault",
     "sizes": {
       "192x192": "/assets/images/products/kubevault/icons/android-icon-192x192.png"
     }
   },
-  "repoURL": "https://github.com/kubevault/docs",
+  "repoURL": "https://github.com/kubevault/kubevault",
   "starRepo": "kubevault/operator",
-  "docRepo": "kubevault/docs",
+  "docRepo": "kubevault/kubevault",
   "badges": [
     {
       "url": "kubevault",
@@ -133,32 +133,69 @@
       "show": true
     },
     {
-      "version": "v2020.07.09-beta.0",
-      "hostDocs": true
+      "version": "v2022.02.22",
+      "hostDocs": true,
+      "show": true,
+      "info": {
+        "cli": "v0.7.0",
+        "installer": "v2022.02.22",
+        "operator": "v0.7.0",
+        "unsealer": "v0.7.0"
+      }
     },
     {
-      "version": "v0.3.0",
+      "version": "v2022.01.11",
       "hostDocs": true,
-      "show": true
+      "show": true,
+      "info": {
+        "cli": "v0.6.0",
+        "installer": "v2022.01.11",
+        "operator": "v0.6.0",
+        "unsealer": "v0.6.0"
+      }
     },
     {
-      "version": "0.2.0",
+      "version": "v2021.10.11",
       "hostDocs": true,
-      "show": true
+      "show": true,
+      "info": {
+        "cli": "v0.5.1",
+        "installer": "v2021.10.11",
+        "operator": "v0.5.1",
+        "unsealer": "v0.5.1"
+      }
     },
     {
-      "version": "0.1.0",
+      "version": "v2021.09.27",
       "hostDocs": true,
-      "show": true
+      "show": true,
+      "info": {
+        "cli": "v0.5.0",
+        "installer": "v2021.09.27",
+        "operator": "v0.5.0",
+        "unsealer": "v0.5.0"
+      }
+    },
+    {
+      "version": "v2021.08.02",
+      "hostDocs": true,
+      "show": true,
+      "info": {
+        "cli": "v0.4.0",
+        "installer": "v2021.08.02",
+        "operator": "v0.4.0",
+        "unsealer": "v0.4.0"
+      }
     }
   ],
-  "latestVersion": "v0.3.0",
+  "latestVersion": "v2022.02.22",
   "socialLinks": {
     "facebook": "https://facebook.com/appscode",
     "github": "https://github.com/kubevault",
     "linkedin": "https://www.linkedin.com/company/appscode",
     "twitter": "https://twitter.com/kubevault",
-    "youtube": "https://www.youtube.com/c/appscodeinc"
+    "youtube": "https://www.youtube.com/c/appscodeinc",
+    "slack": "https://appscode.slack.com/messages/CAG4P4A0G"
   },
   "description": {
     "html": "<hr />\n\n<p>title: Welcome | KubeVault\ndescription: Welcome to KubeVault\nmenu:\n  docs_0.2.0:\n    identifier: readme-kubevault\n    name: Readme\n    parent: welcome\n    weight: -1\nmenu_name: docs_0.2.0\nsection_menu_id: welcome\nurl: /docs/0.2.0/welcome/\naliases:\n  - /docs/0.2.0/</p>\n\n<h2>- /docs/0.2.0/README/</h2>\n\n<h1>KubeVault</h1>\n\n<p>KubeVault by AppsCode is a collection of tools for running HashiCorp <a href=\"https://www.vaultproject.io/\">Vault</a> on Kubernetes. You can deploy and mange Vault using Vault operator. Using Vault operator, you can deploy Vault for following storage backends:</p>\n\n<ul>\n<li><a href=\"/docs/concepts/vault-server-crds/storage/azure.md\">Azure Storage</a></li>\n<li><a href=\"/docs/concepts/vault-server-crds/storage/dynamodb.md\">DynamoDB</a></li>\n<li><a href=\"/docs/concepts/vault-server-crds/storage/etcd.md\">Etcd</a></li>\n<li><a href=\"/docs/concepts/vault-server-crds/storage/gcs.md\">GCS</a></li>\n<li><a href=\"/docs/concepts/vault-server-crds/storage/inmem.md\">In Memory</a></li>\n<li><a href=\"/docs/concepts/vault-server-crds/storage/mysql.md\">MySQL</a></li>\n<li><a href=\"/docs/concepts/vault-server-crds/storage/postgresql.md\">PosgreSQL</a></li>\n<li><a href=\"/docs/concepts/vault-server-crds/storage/s3.md\">AWS S3</a></li>\n<li><a href=\"/docs/concepts/vault-server-crds/storage/swift.md\">Swift</a></li>\n<li><a href=\"/docs/concepts/vault-server-crds/storage/consul.md\">Consul</a></li>\n</ul>\n\n<p>From here you can learn all about Vault operator&rsquo;s architecture and how to deploy and use Vault operator.</p>\n\n<ul>\n<li><p><a href=\"/docs/concepts/\">Concepts</a>. Concepts explain the CRDs (CustomResourceDefinition) used by Vault operator.</p></li>\n\n<li><p><a href=\"/docs/setup/\">Setup</a>. Setup contains instructions for installing\nthe Vault operator in various cloud providers.</p></li>\n\n<li><p><a href=\"/docs/guides/monitoring\">Monitoring</a>. Monitoring contains instructions for setup prometheus with Vault server</p></li>\n\n<li><p><a href=\"/docs/guides/\">Guides</a>. Guides show you how to perform tasks with Vault operator.</p></li>\n\n<li><p><a href=\"/docs/reference/\">Reference</a>. Detailed exhaustive lists of\ncommand-line options, configuration options, API definitions, and procedures.</p></li>\n</ul>\n\n<p>We&rsquo;re always looking for help improving our documentation, so please don&rsquo;t hesitate to <a href=\"https://github.com/kubevault/project/issues/new\">file an issue</a> if you see some problem. Or better yet, submit your own <a href=\"/docs/CONTRIBUTING.md\">contributions</a> to help\nmake our docs better.</p>\n\n<hr />\n\n<p><strong>KubeVault binaries collect anonymous usage statistics to help us learn how the software is being used and how we can improve it. To disable stats collection, run the operator with the flag</strong> <code>--enable-analytics=false</code>.</p>\n\n<hr />\n",

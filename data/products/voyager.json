@@ -2,7 +2,7 @@
   "key": "voyager",
   "name": "Voyager",
   "fullname": "Voyager by AppsCode",
-  "tagline": "Secure HAProxy Ingress Controller for<br /> <strong>Kubernetes</strong>",
+  "tagline": "Secure HAProxy Ingress Controller for <strong>Kubernetes</strong>",
   "summary": "Secure HAProxy Ingress Controller for Kubernetes",
   "published": true,
   "author": "AppsCode Inc.",
@@ -24,15 +24,15 @@
     "alt": "Voyager"
   },
   "icon": {
-    "src": "/assets/images/products/voyager/voyager-icon.png",
+    "src": "/assets/images/products/voyager/voyager-icon.svg",
     "alt": "Voyager",
     "sizes": {
       "192x192": "/assets/images/products/voyager/icons/android-icon-192x192.png"
     }
   },
-  "repoURL": "https://github.com/voyagermesh/docs",
+  "repoURL": "https://github.com/voyagermesh/voyager",
   "starRepo": "voyagermesh/voyager",
-  "docRepo": "voyagermesh/docs",
+  "docRepo": "voyagermesh/voyager",
   "badges": [
     {
       "url": "voyagermesh",
@@ -132,14 +132,111 @@
       "show": true
     },
     {
-      "version": "v13.0.0-beta.1",
+      "version": "v2022.04.13",
       "hostDocs": true,
-      "show": true
+      "show": true,
+      "info": {
+        "cli": "v0.0.8",
+        "installer": "v2022.04.13"
+      }
+    },
+    {
+      "version": "v2022.03.17",
+      "hostDocs": true,
+      "show": true,
+      "info": {
+        "cli": "v0.0.7",
+        "installer": "v2022.03.17"
+      }
+    },
+    {
+      "version": "v2022.02.22",
+      "hostDocs": true,
+      "show": true,
+      "info": {
+        "cli": "v0.0.6",
+        "installer": "v2022.02.22"
+      }
+    },
+    {
+      "version": "v2022.01.10",
+      "hostDocs": true,
+      "show": true,
+      "info": {
+        "cli": "v0.0.5",
+        "installer": "v2022.01.10"
+      }
+    },
+    {
+      "version": "v2022.01.07",
+      "hostDocs": true,
+      "show": true,
+      "info": {
+        "cli": "v0.0.4",
+        "installer": "v2022.01.07"
+      }
+    },
+    {
+      "version": "v2022.01.01",
+      "hostDocs": true,
+      "show": true,
+      "info": {
+        "cli": "v0.0.4",
+        "installer": "v2022.01.01"
+      }
+    },
+    {
+      "version": "v2021.10.18",
+      "hostDocs": true,
+      "show": true,
+      "info": {
+        "cli": "v0.0.3",
+        "installer": "v2021.10.18"
+      }
+    },
+    {
+      "version": "v2021.10.17",
+      "hostDocs": true,
+      "info": {
+        "installer": "v2021.10.17"
+      }
+    },
+    {
+      "version": "v2021.10.16",
+      "hostDocs": true,
+      "info": {
+        "installer": "v2021.10.16"
+      }
+    },
+    {
+      "version": "v2021.09.15",
+      "hostDocs": true,
+      "show": true,
+      "info": {
+        "installer": "v2021.09.15"
+      }
+    },
+    {
+      "version": "v2021.04.24-rc.0",
+      "hostDocs": true,
+      "info": {
+        "installer": "v2021.04.24-rc.0"
+      }
+    },
+    {
+      "version": "v2021.04.20-beta.2",
+      "hostDocs": false,
+      "info": {
+        "installer": "v2021.04.20-beta.2"
+      }
+    },
+    {
+      "version": "v13.0.0-beta.1",
+      "hostDocs": true
     },
     {
       "version": "v13.0.0-beta.0",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "v12.0.0",
@@ -148,7 +245,7 @@
     },
     {
       "version": "v12.0.0-rc.2",
-      "hostDocs": true
+      "hostDocs": false
     },
     {
       "version": "v12.0.0-rc.1",
@@ -160,28 +257,23 @@
     },
     {
       "version": "v11.0.1",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "v11.0.0",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "10.0.0",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "9.0.0",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "8.0.1",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "8.0.0",
@@ -189,23 +281,19 @@
     },
     {
       "version": "7.4.0",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "7.3.0",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "7.2.0",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "7.1.1",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "7.1.0",
@@ -213,8 +301,7 @@
     },
     {
       "version": "7.0.0",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "7.0.0-rc.3",
@@ -234,8 +321,7 @@
     },
     {
       "version": "6.0.0",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "6.0.0-rc.2",
@@ -251,8 +337,7 @@
     },
     {
       "version": "5.0.0",
-      "hostDocs": true,
-      "show": true
+      "hostDocs": true
     },
     {
       "version": "5.0.0-rc.11",
@@ -260,8 +345,7 @@
     },
     {
       "version": "3.2.2",
-      "hostDocs": false,
-      "show": true
+      "hostDocs": false
     },
     {
       "version": "3.2.1",
@@ -296,11 +380,12 @@
       "hostDocs": false
     }
   ],
-  "latestVersion": "v12.0.0",
+  "latestVersion": "v2022.04.13",
   "socialLinks": {
     "facebook": "https://facebook.com/appscode",
     "github": "https://github.com/voyagermesh/voyager",
     "linkedin": "https://www.linkedin.com/company/appscode",
+    "slack": "https://appscode.slack.com/messages/C0XQFLGRM",
     "twitter": "https://twitter.com/Voyagermesh",
     "youtube": "https://www.youtube.com/c/appscodeinc"
   },

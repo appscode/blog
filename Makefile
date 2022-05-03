@@ -3,20 +3,20 @@ run:
 	@yqq w -i config.dev.yaml params.search_api_key --tag '!!str' $(GOOGLE_CUSTOM_SEARCH_API_KEY)
 	hugo server --config=config.dev.yaml --buildDrafts --buildFuture
 
-.PHONY: docs
-docs: hugo-tools
-	$(HUGO_TOOLS) docs-aggregator
+.PHONY: assets
+assets: hugo-tools
+	$(HUGO_TOOLS) docs-aggregator --only-assets
 	find ./data -name "*.json" -exec sed -i 's/https:\/\/cdn.appscode.com\/images/\/assets\/images/g' {} \;
 
 .PHONY: gen
-gen-draft:
+gen:
 	rm -rf public
 	@yqq w -i config.yaml params.search_api_key --tag '!!str' $(GOOGLE_CUSTOM_SEARCH_API_KEY)
 	hugo --config=config.yaml --buildDrafts --buildFuture
 	@yqq w -i config.yaml params.search_api_key --tag '!!str' '_replace_'
 
 .PHONY: qa
-qa: gen-draft
+qa: gen
 	firebase use default
 	firebase deploy
 
@@ -36,7 +36,7 @@ release: gen-prod
 HUGO_TOOLS = $(shell pwd)/bin/hugo-tools
 .PHONY: hugo-tools
 hugo-tools: ## Download hugo-tools locally if necessary.
-	$(call go-get-tool,$(HUGO_TOOLS),appscodelabs/hugo-tools,v0.2.21)
+	$(call go-get-tool,$(HUGO_TOOLS),appscodelabs/hugo-tools,v0.2.22)
 
 # go-get-tool will 'curl' binary from GH repo $2 with version $3 and install it to $1.
 PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
