@@ -26,6 +26,11 @@ Here, we are going to highlight the new features that have been introduced in th
 
 In this release, we have added Kubedump to our Stash add-ons family. Now, you can backup the YAMLs of your cluster resources using Stash. This add-on lets you backup the YAMLs of an application along with its dependants, all the resources of a particular namespace, and all the resources of the entire cluster.
 
+To know more details about taking backup using KubeDump, please follow the guides from below:
+- [Cluster Backup](https://stash.run/docs/latest/addons/kubedump/cluster/)
+- [Namespace Backup](https://stash.run/docs/latest/addons/kubedump/namespace/)
+- [Application Manifest Backup](https://stash.run/docs/v2022.05.12/addons/kubedump/application/)
+
 ### Support cross-namespace Target reference
 
 We are introducing support for cross-namespace Target reference. Now, you can refer to a Target in BackupConfiguration and RestoreSession from different namespaces. So, you can now use a dedicated namespace for keeping Stash resources isolated from your applications. It lets you manage the backup and restore of your applications across all namespaces from the dedicated namespace.
