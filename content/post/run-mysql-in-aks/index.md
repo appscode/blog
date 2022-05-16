@@ -175,8 +175,6 @@ spec:
   replicas: 3
   topology:
     mode: GroupReplication
-    group:
-      name: "dc002fc3-c412-4d18-b1d4-66c1fbfbbc9b"
   storageType: Durable
   storage:
     storageClassName: "default"
