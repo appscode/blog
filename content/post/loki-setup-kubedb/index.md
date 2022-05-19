@@ -16,7 +16,7 @@ tags:
   - kubernetes
 ---
 
-For many years, logs have been an essential part of troubleshooting application and infrastucture performance. For Kubernetes, logging mechanism becomes more crucial to manage and monitor services and infrastructure.
+For many years, logs have been an essential part of troubleshooting application and infrastucture performance. In Kubernetes, logging mechanism becomes more crucial to manage and monitor services and infrastructure.
 
 In this post, we are going to give you a full setup guide about how you can setup Grafana Loki for collecting logs from KubeDB pods and how you can generate alert based on those logs.
 
@@ -26,6 +26,7 @@ Here is the outline of this post:
 * Install Loki in Kubernetes
 * Promtail
 * Install Promtail in Kubernetes
+* Explore logs in Grafana
 * Setup Loki with Alertmanager
 * Setup Loki with GCS or S3 bucket
 
@@ -59,10 +60,52 @@ We install Promtail in Kubernetes using official helm chart from [here](https://
 ```bash
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
-helm upgrade -i <release-name> grafana/promtail -n loki 
+helm upgrade -i <release-name> grafana/promtail -n loki \
     --set config.lokiAddress=http://<loki-distributor-service-name>.<namespace>.svc:3100/loki/api/v1/push
 ```
 
-Note: Here we provide loki distributor service name as we are running loki in microservice mode. In loki mircoservice mode, distributor component takes log write request and sends it to available ingestor components. Then ingestor components actually write the log data in the configured storage. To learn more about loki components, please visit [here](https://grafana.com/docs/loki/latest/fundamentals/architecture/components/).
+Example:
+```bash
+~ $ kubectl get svc -n loki
+NAME                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+loki-loki-distributed-distributor         ClusterIP   10.96.247.189   <none>        3100/TCP,9095/TCP            44m
+loki-loki-distributed-gateway             ClusterIP   10.96.146.44    <none>        80/TCP                       44m
+loki-loki-distributed-ingester            ClusterIP   10.96.74.194    <none>        3100/TCP,9095/TCP            44m
+loki-loki-distributed-ingester-headless   ClusterIP   None            <none>        3100/TCP,9095/TCP            44m
+loki-loki-distributed-memberlist          ClusterIP   None            <none>        7946/TCP                     44m
+loki-loki-distributed-querier             ClusterIP   10.96.165.151   <none>        3100/TCP,9095/TCP            44m
+loki-loki-distributed-querier-headless    ClusterIP   None            <none>        3100/TCP,9095/TCP            44m
+loki-loki-distributed-query-frontend      ClusterIP   None            <none>        3100/TCP,9095/TCP,9096/TCP   44m
+```
+In this case, `loki-loki-distributed-distributor` is the required service to write the logs.
+
+Note: In loki mircoservice mode, distributor component takes log write request and sends it to available ingestor components. Then ingestor components actually write the log data in the configured storage. To learn more about loki components, please visit [here](https://grafana.com/docs/loki/latest/fundamentals/architecture/components/).
 
 
+## Explore logs in Grafana
+
+To explore the logs in Grafana, from Datasource section we have to add loki datasource like below:
+
+![loki-datasource](./static/loki-add-ds.png)
+
+Here, we have to add loki query component service address in url section.
+
+Example:
+```bash
+~ $ kubectl get svc -n loki
+NAME                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+loki-loki-distributed-distributor         ClusterIP   10.96.247.189   <none>        3100/TCP,9095/TCP            44m
+loki-loki-distributed-gateway             ClusterIP   10.96.146.44    <none>        80/TCP                       44m
+loki-loki-distributed-ingester            ClusterIP   10.96.74.194    <none>        3100/TCP,9095/TCP            44m
+loki-loki-distributed-ingester-headless   ClusterIP   None            <none>        3100/TCP,9095/TCP            44m
+loki-loki-distributed-memberlist          ClusterIP   None            <none>        7946/TCP                     44m
+loki-loki-distributed-querier             ClusterIP   10.96.165.151   <none>        3100/TCP,9095/TCP            44m
+loki-loki-distributed-querier-headless    ClusterIP   None            <none>        3100/TCP,9095/TCP            44m
+loki-loki-distributed-query-frontend      ClusterIP   None            <none>        3100/TCP,9095/TCP,9096/TCP   44m
+```
+In this case, `loki-loki-distributed-querier` is the required service to query the logs.
+
+
+Now from Grafana `Explore` section, logs can be explored like below:
+
+![loki-log-explore-sample](./static/sample-loki-logs.png)
