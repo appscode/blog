@@ -36,8 +36,7 @@ Loki by Grafana Labs is a log aggregation system inspired by Prometheus. It is d
 
 ## Install Loki in Kubernetes
 
-We install Loki in Kubernetes using official loki helm chart from [here](https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed). Here, we install loki-distributed helm chart in loki namespace which will run Grafana Loki in mircoservice mode.
-
+For installing Loki in Kubernetes, there is an official helm chart available. You'll find it [here](https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed). Here, we install loki-distributed helm chart in loki namespace which will run Grafana Loki in mircoservice mode.
 
 ```bash
 helm repo add grafana https://grafana.github.io/helm-charts
@@ -45,7 +44,38 @@ helm repo update
 helm upgrade -i <release-name> grafana/loki-distributed -n loki --create-namespace
 ```
 
-Note: You can run Loki as a single binary or as a simple scalable mode. But for Kubernetes, it is recommended to run Loki in mircoservice mode.
+Here is the installed version info and components from Loki installation notes.
+
+```bash
+***********************************************************************
+ Welcome to Grafana Loki
+ Chart version: 0.48.4
+ Loki version: 2.5.0
+***********************************************************************
+
+Installed components:
+* gateway
+* ingester
+* distributor
+* querier
+* query-frontend
+```
+
+By default, loki-distributed helm chart will deploy those components:
+- Gateway: The gateway component works as a load balancer to load balance incoming streams from client to distributor components.
+
+- Distributor: The distributor component is a stateless service which is responsible for hanldling incoming streams by client and sends it to available ingestor components.
+
+- Ingester: The ingester component is responsible for writing log data to long-term storage backends (DynamoDB, S3, Cassandra, etc.)
+
+- Querier: The querier component handles queries using the LogQL query language, fetching logs both from the ingesters and from long-term storage.
+
+- Query-frontend: The query frontend is an optional component providing the querier’s API endpoints and can be used to accelerate the read path.
+
+To learn more about loki components, please visit [here](https://grafana.com/docs/loki/latest/fundamentals/architecture/components/).
+
+
+Note: You can also run Loki as a single binary or as a simple scalable mode. But for Kubernetes, it is recommended to install Loki in mircoservice mode to run it in scale.
 
 ## Promtail
 
@@ -55,13 +85,13 @@ Note: Loki supports a good number of official clients like Promtail for sending 
 
 ## Install Promtail in Kubernetes
 
-We install Promtail in Kubernetes using official helm chart from [here](https://github.com/grafana/helm-charts/tree/main/charts/promtail). Promtail is deployed as a Kubernetes DaemonSet to every node for collecting the logs from that node.
+For installing Promtail in Kubernetes, Promtail official helm chart is used. You'll find the helm chart [here](https://github.com/grafana/helm-charts/tree/main/charts/promtail). Promtail is deployed as a Kubernetes DaemonSet to every node for collecting the logs from that node.
 
 ```bash
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
 helm upgrade -i <release-name> grafana/promtail -n loki \
-    --set config.lokiAddress=http://<loki-distributor-service-name>.<namespace>.svc:3100/loki/api/v1/push
+    --set config.lokiAddress=http://<loki-distributor-gateway-service-name>.<namespace>.svc:3100/loki/api/v1/push
 ```
 
 Example:
@@ -77,9 +107,7 @@ loki-loki-distributed-querier             ClusterIP   10.96.165.151   <none>    
 loki-loki-distributed-querier-headless    ClusterIP   None            <none>        3100/TCP,9095/TCP            44m
 loki-loki-distributed-query-frontend      ClusterIP   None            <none>        3100/TCP,9095/TCP,9096/TCP   44m
 ```
-In this case, `loki-loki-distributed-distributor` is the required service to write the logs.
-
-Note: In loki mircoservice mode, distributor component takes log write request and sends it to available ingestor components. Then ingestor components actually write the log data in the configured storage. To learn more about loki components, please visit [here](https://grafana.com/docs/loki/latest/fundamentals/architecture/components/).
+In this case, `loki-loki-distributed-gateway` is the required service to write the logs.
 
 
 ## Explore logs in Grafana
