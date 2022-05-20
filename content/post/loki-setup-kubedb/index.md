@@ -1,7 +1,7 @@
 ---
 title: Use Loki with KubeDB
 date: 2022-05-23
-weight: 40
+weight: 21
 authors:
   - Pulak Kanti Bhowmick
 tags:
@@ -16,9 +16,9 @@ tags:
   - kubernetes
 ---
 
-For many years, logs have been an essential part of troubleshooting application and infrastucture performance. In Kubernetes, logging mechanism becomes more crucial to manage and monitor services and infrastructure.
+For many years, logs have been an essential part of troubleshooting application and infrastructure performance. In Kubernetes, the logging mechanism becomes more crucial to managing and monitoring services and infrastructure.
 
-In this post, we are going to give you a full setup guide about how you can setup Grafana Loki for collecting logs from KubeDB pods and how you can generate alert based on those logs.
+In this post, we are going to give you a full setup guide about Grafana Loki setup for collecting logs from KubeDB pods and how you can generate alerts based on those logs.
 
 Here is the outline of this post:
 
@@ -28,7 +28,7 @@ Here is the outline of this post:
 * Install Promtail in Kubernetes
 * Explore logs in Grafana
 * Setup Loki with S3 or S3 compatible bucket
-
+* Setup Loki with Alertmanager
 
 ## Loki
 
@@ -36,7 +36,7 @@ Loki by Grafana Labs is a log aggregation system inspired by Prometheus. It is d
 
 ## Install Loki in Kubernetes
 
-For installing Loki in Kubernetes, there is an official helm chart available. You'll find it [here](https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed). Here, we install loki-distributed helm chart in loki namespace which will run Grafana Loki in mircoservice mode.
+For installing Loki in Kubernetes, there is an official helm chart available. You'll find it [here](https://github.com/grafana/helm-charts/tree/main/charts/loki-distributed). Here, we install loki-distributed helm chart in loki namespace which will run Grafana Loki in microservice mode.
 
 ```bash
 helm repo add grafana https://grafana.github.io/helm-charts
@@ -64,7 +64,7 @@ Installed components:
 By default, loki-distributed helm chart will deploy those components:
 - Gateway: The gateway component works as a load balancer to load balance incoming streams from client to distributor components.
 
-- Distributor: The distributor component is a stateless service which is responsible for hanldling incoming streams by client and sends it to available ingestor components.
+- Distributor: The distributor component is a stateless service that is responsible for handling incoming streams by the client and sending it to available ingester components.
 
 - Ingester: The ingester component is responsible for writing log data to long-term storage backends (DynamoDB, S3, Cassandra, etc.)
 
@@ -75,7 +75,7 @@ By default, loki-distributed helm chart will deploy those components:
 To learn more about loki components, please visit [here](https://grafana.com/docs/loki/latest/fundamentals/architecture/components/).
 
 
-Note: You can also run Loki as a single binary or as a simple scalable mode. But for Kubernetes, it is recommended to install Loki in mircoservice mode to run it in scale.
+Note: You can also run Loki as a single binary or as a simple scalable mode. But for Kubernetes, it is recommended to install Loki in microservice mode to run it on scale.
 
 ## Promtail
 
@@ -85,7 +85,7 @@ Note: Loki supports a good number of official clients like Promtail for sending 
 
 ## Install Promtail in Kubernetes
 
-For installing Promtail in Kubernetes, Promtail official helm chart is used. You'll find the helm chart [here](https://github.com/grafana/helm-charts/tree/main/charts/promtail). Promtail is deployed as a Kubernetes DaemonSet to every node for collecting the logs from that node.
+For installing Promtail in Kubernetes, Promtail official helm chart is used. You'll find the helm chart [here](https://github.com/grafana/helm-charts/tree/main/charts/promtail). Promtail is deployed as a Kubernetes DaemonSet to collect logs from every node.
 
 ```bash
 helm repo add grafana https://grafana.github.io/helm-charts
@@ -97,22 +97,22 @@ helm upgrade -i <release-name> grafana/promtail -n loki \
 Example:
 ```bash
 ~ $ kubectl get svc -n loki
-NAME                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
-loki-loki-distributed-distributor         ClusterIP   10.96.247.189   <none>        3100/TCP,9095/TCP            44m
-loki-loki-distributed-gateway             ClusterIP   10.96.146.44    <none>        80/TCP                       44m
-loki-loki-distributed-ingester            ClusterIP   10.96.74.194    <none>        3100/TCP,9095/TCP            44m
-loki-loki-distributed-ingester-headless   ClusterIP   None            <none>        3100/TCP,9095/TCP            44m
-loki-loki-distributed-memberlist          ClusterIP   None            <none>        7946/TCP                     44m
-loki-loki-distributed-querier             ClusterIP   10.96.165.151   <none>        3100/TCP,9095/TCP            44m
-loki-loki-distributed-querier-headless    ClusterIP   None            <none>        3100/TCP,9095/TCP            44m
-loki-loki-distributed-query-frontend      ClusterIP   None            <none>        3100/TCP,9095/TCP,9096/TCP   44m
+NAME                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE  
+loki-loki-distributed-distributor         ClusterIP   10.96.247.189   <none>        3100/TCP,9095/TCP            44m  
+loki-loki-distributed-gateway             ClusterIP   10.96.146.44    <none>        80/TCP                       44m  
+loki-loki-distributed-ingester            ClusterIP   10.96.74.194    <none>        3100/TCP,9095/TCP            44m  
+loki-loki-distributed-ingester-headless   ClusterIP   None            <none>        3100/TCP,9095/TCP            44m  
+loki-loki-distributed-memberlist          ClusterIP   None            <none>        7946/TCP                     44m  
+loki-loki-distributed-querier             ClusterIP   10.96.165.151   <none>        3100/TCP,9095/TCP            44m  
+loki-loki-distributed-querier-headless    ClusterIP   None            <none>        3100/TCP,9095/TCP            44m  
+loki-loki-distributed-query-frontend      ClusterIP   None            <none>        3100/TCP,9095/TCP,9096/TCP   44m  
 ```
 In this case, `loki-loki-distributed-gateway` is the required service to write the logs.
 
 
 ## Explore logs in Grafana
 
-To explore the logs in Grafana, from Datasource section we have to add loki datasource like below:
+To explore the logs in Grafana, from the Datasource section we have to add loki datasource like below:
 
 ![loki-datasource](./static/loki-add-ds.png)
 
@@ -134,14 +134,14 @@ loki-loki-distributed-query-frontend      ClusterIP   None            <none>    
 In this case, `loki-loki-distributed-querier` is the required service to query the logs.
 
 
-Now from Grafana `Explore` section, logs can be explored like below:
+Now from Grafana `Explore` section, logs can be explored like below using LogQL. LogQL is Grafana Loki’s PromQL-inspired query language. For LogQL documentation, please visit [here](https://grafana.com/docs/loki/latest/logql/).
 
 ![loki-log-explore-sample](./static/sample-loki-logs.png)
 
 
 ## Setup Loki with S3 or S3 compatible bucket
 
-Loki needs to store two different types of data: chunks and indexes. By default, Loki uses boltdb-shipper to store indexes and local filesystem to store chunks. So, to use cloud storage like S3 or S3 compatible storage like Linode Object Storage, we have to modify default loki config. Here is a sample loki config file to store data in s3 bucket.
+Loki needs to store two different types of data: chunks and indexes. By default, Loki uses boltdb-shipper to store indexes and local filesystem to store chunks. So, to use cloud storage like S3 or S3 compatible storage like Linode Object Storage, we have to modify the default loki config. Here is a sample loki config file to store data in s3 bucket.
 
 config.yaml:
 ```yaml
@@ -229,7 +229,7 @@ compactor:
 ```
 In this loki config, s3 bucket is used as shared storage to store both chunks and indexes.
 
-To create secret from config.yaml file:
+To create a secret from config.yaml file:
 
 ```bash
 kubectl create secret generic -n loki <secret_name> \
@@ -256,11 +256,11 @@ Note: Here we need to enable another microservice called `Index Gateway`. This c
 ## Setup Loki with Alertmanager
 
 Loki has a component called `Ruler`. Ruler is responsible for continually evaluating a set of configurable queries and performing an action based on that.
-We can setup ruler to send alert to Alertmanager based on pod logs.
+We can set up ruler to send alert to Alertmanager based on pod logs.
 
-By default loki-disbuted helm chart don't deploy ruler component. To deploy ruler component, we have to manually enable it in values file by setting `ruler.enabled` field to `true`.
+By default loki-disbuted helm chart doesn't deploy ruler component. To deploy ruler component, we have to manually enable it in the values file by setting the `ruler.enabled` field to `true`.
 
-Then we have to add alert rules in `ruler.directories` section like below. Here we have added alert rules based on KubeDB pods failed/error log. 
+Then we have to add alert rules in the `ruler.directories` section like below. Here we have added alert rules based on KubeDB pods failed/error log. 
 
 ```yaml
 ruler:
@@ -321,7 +321,7 @@ ruler:
                 summary: High number of connections are refused in pods in KubeDB namespace
 ```
 
-We need to configure the AlertManager address in config under `loki.config` like below:
+We need to configure the AlertManager address in config under `loki.config` like below to send the alert to AlertManager:
 
 ```yaml
 loki:
@@ -340,7 +340,7 @@ loki:
       alertmanager_url: http://<alertmanager_service_name>.<namespace>.svc:9093
 ```
 
-A complete values.yaml file configured with s3 storage and alertmanager is given [here](https://raw.githubusercontent.com/appscode/blog/master/content/post/loki-setup-kubedb/values.yaml).
+A complete values.yaml file configured with s3 storage and AlertManager is given [here](https://raw.githubusercontent.com/appscode/blog/master/content/post/loki-setup-kubedb/values.yaml).
 
 To install loki helm chart with custom values.yaml file:
 
@@ -349,7 +349,9 @@ helm upgrade -i <release_name> grafana/loki-distributed -n loki --create-namespa
         --values=<values-file-path>
 ```
 
-After that, Ruler component will start sending alert to configured AlertManager based on the alert rules.
+After that, Ruler component will start sending alerts to configured AlertManager based on the alert rules. 
+
+That's all! Happy Logging!
 
 ## Support
 
