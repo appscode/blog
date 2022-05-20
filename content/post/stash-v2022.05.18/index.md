@@ -1,5 +1,5 @@
 ---
-title: Introducing Stash v2022.05.12
+title: Introducing Stash v2022.05.18
 date: 2022-05-18
 weight: 10
 authors:
@@ -14,26 +14,21 @@ tags:
   - elasticsearch
 ---
 
-We are very excited to announce Stash `v2022.05.18`.  In this release, we have added exciting new features and improvements. We have squashed a few bugs as well. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2022.05.18/README.md). We are going to highlight the major changes in this post.
+We are very excited to announce Stash `v2022.05.18`.  In this release, we have added a few new features and improvements. We have squashed a few bugs as well. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2022.05.18/README.md). We are going to highlight the major changes in this post.
 
 ## New Features
 
 Here, we are going to highlight the new features that have been introduced in this release.
 
-#### Add support for Elasticsearch 8.2.0
-
-In this release, we have added Elasticsearch 8.2.0 support to our Stash Elasticsearch add-on. This addition improved Stash's capability to backup and restore large Elacticsearch databases. 
-
-#### Add Nat's Account Backup Support
-
-We have added Account Backup Support to our Nat's Addon. Now, you can backup your Nat's account and Nat's stream both by Stash.
+- **Add support for Elasticsearch 8.2.0:** In this release, we have added Elasticsearch 8.2.0 support to our Stash Elasticsearch add-on.
+- **Support NATS Account Backup:** We have added Account Backup Support to our Stash NATS Addon. We have also upgraded the addon to support NATS version 2.8.1.
 
 ## Bug Fixes and Improvements
 
-We have fixed some bugs and did some upgrade. Here are a few notable changes,
+We have also fixed few bugs and made some improvements. Here are the notable changes,
 
-- **Fix**: Fixed a bug to pass the ImagePullSecrets to the backup job properly now [#1445](https://github.com/stashed/stash/pull/1445).
-- **Improvement**: Updated BackupConfiguration webhook to make the backup target immutable [#1444](https://github.com/stashed/stash/pull/1444).
+- **Bug Fix**: Fixed bug that caused the ImagePullSecrets from RuntimeSettings of BackupConfiguration and RestoreSession weren't passed properly to the respective backup or restore job.[#1445](https://github.com/stashed/stash/pull/1445).
+- **Improvements**: BackupConfiguration webhook now rejects updating backup target when the BackupConfiguration is already is in Ready state. This ensures that user don't overwrite backed up data of the previous target mistakenly just by changing the target. [#1444](https://github.com/stashed/stash/pull/1444).
 
 ## What Next?
 
