@@ -258,5 +258,105 @@ Note: Here we need to enable another microservice called `Index Gateway`. This c
 Loki has a component called `Ruler`. Ruler is responsible for continually evaluating a set of configurable queries and performing an action based on that.
 We can setup ruler to send alert to Alertmanager based on pod logs.
 
-By default loki-disbuted helm chart don't deploy ruler component. To deploy ruler component, we have to manually enable it.
+By default loki-disbuted helm chart don't deploy ruler component. To deploy ruler component, we have to manually enable it in values file by setting `ruler.enabled` field to `true`.
 
+Then we have to add alert rules in `ruler.directories` section like below. Here we have added alert rules based on KubeDB pods failed/error log. 
+
+```yaml
+ruler:
+  ...
+  ...
+  directories:
+    tenant_foo:
+      rules.txt: |
+        groups:
+        - name: should_fire
+          rules:
+            - alert: AlertManagerHealthCheck
+              expr: 1 + 1
+              for: 1m
+              labels:
+                  severity: info
+              annotations:
+                  summary: Not an alert! Just for checking AlertManager Pipeline
+
+            - alert: KubeDBHighPercentageError
+              expr: |
+                sum(rate({namespace="kubedb"} |= "error" [5m])) by (pod)
+                / 
+                sum(rate({namespace="kubedb"} [5m])) by (pod)
+                > 0.05
+              for: 1m
+              labels:
+                  severity: warning
+              annotations:
+                  summary: High Percentage error in KubeDB pods in KubeDB namespace
+
+            - alert: KubeDBHighPercentageFailedLog
+              expr: |
+                sum(rate({namespace="kubedb"} |= "failed" [5m])) by (pod)
+                /
+                sum(rate({namespace="kubedb"} [5m])) by (pod)
+                > 0.05
+              for: 1m
+              labels:
+                severity: warning
+              annotations:
+                summary: High Percentage Failed log in KubeDB pods in KubeDB namespace
+            
+            - alert: HighConnectionRefused
+              expr: sum by (pod) (count_over_time({namespace="kubedb"} |= "connection refused")) > 10
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: High number of connections are refused in pods in KubeDB namespace
+            
+            - alert: HighConnectionRefused
+              expr: sum by (pod) (count_over_time({namespace="kubedb"} |= "connection refused")) > 10
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: High number of connections are refused in pods in KubeDB namespace
+```
+
+We need to configure the AlertManager address in config under `loki.config` like below:
+
+```yaml
+loki:
+  config: |
+    ...
+    ...
+    ruler:
+      storage:
+        type: local
+        local:
+          directory: /etc/loki/rules
+      ring:
+        kvstore:
+          store: memberlist
+      rule_path: /tmp/loki/scratch
+      alertmanager_url: http://<alertmanager_service_name>.<namespace>.svc:9093
+```
+
+A complete values.yaml file configured with s3 storage and alertmanager is given [here](https://raw.githubusercontent.com/appscode/blog/master/content/post/loki-setup-kubedb/values.yaml).
+
+To install loki helm chart with custom values.yaml file:
+
+```bash
+helm upgrade -i <release_name> grafana/loki-distributed -n loki --create-namespace \
+        --values=<values-file-path>
+```
+
+After that, Ruler component will start sending alert to configured AlertManager based on the alert rules.
+
+## Support
+
+To speak with us, please leave a message on [our website](https://appscode.com/contact/).
+
+To join public discussions with the KubeDB community, join us in the [Kubernetes Slack team](https://kubernetes.slack.com/messages/C8149MREV/) channel `#kubedb`. To sign up, use our [Slack inviter](http://slack.kubernetes.io/).
+
+To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
+
+If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
