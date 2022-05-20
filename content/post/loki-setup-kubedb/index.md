@@ -1,6 +1,6 @@
 ---
 title: Use Loki with KubeDB
-date: 2022-05-23
+date: 2022-05-20
 weight: 21
 authors:
   - Pulak Kanti Bhowmick
