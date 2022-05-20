@@ -20,22 +20,20 @@ We are very excited to announce Stash `v2022.05.18`.  In this release, we have a
 
 Here, we are going to highlight the new features that have been introduced in this release.
 
-### Add support for Elasticsearch 8.2.0
+#### Add support for Elasticsearch 8.2.0
 
-In this release, we have added Elasticsearch 8.2.0 support to our Stash Elasticsearch add-on.
+In this release, we have added Elasticsearch 8.2.0 support to our Stash Elasticsearch add-on. This addition improved Stash's capability to backup and restore large Elacticsearch databases. 
 
+#### Add Nat's Account Backup Support
 
-### Add Nat's Account Backup Support
-
-We have added Account Backup Support to our Nat's Addon.
+We have added Account Backup Support to our Nat's Addon. Now, you can backup your Nat's account and Nat's stream both by Stash.
 
 ## Bug Fixes and Improvements
 
 We have fixed some bugs and did some upgrade. Here are a few notable changes,
 
-- Fix: ImagePullSecrets not passing to the backup job properly [Fix #1445](https://github.com/stashed/stash/pull/1445)
-- Improvement: Updated BackupConfiguration webhook to make the target immutable [Improvement #1444](https://github.com/stashed/stash/pull/1444)
-
+- **Fix**: Fixed a bug to pass the ImagePullSecrets to the backup job properly now [#1445](https://github.com/stashed/stash/pull/1445).
+- **Improvement**: Updated BackupConfiguration webhook to make the backup target immutable [#1444](https://github.com/stashed/stash/pull/1444).
 
 ## What Next?
 
