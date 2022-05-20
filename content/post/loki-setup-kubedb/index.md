@@ -27,8 +27,8 @@ Here is the outline of this post:
 * Promtail
 * Install Promtail in Kubernetes
 * Explore logs in Grafana
-* Setup Loki with Alertmanager
-* Setup Loki with GCS or S3 bucket
+* Setup Loki with S3 or S3 compatible bucket
+
 
 ## Loki
 
@@ -137,3 +137,126 @@ In this case, `loki-loki-distributed-querier` is the required service to query t
 Now from Grafana `Explore` section, logs can be explored like below:
 
 ![loki-log-explore-sample](./static/sample-loki-logs.png)
+
+
+## Setup Loki with S3 or S3 compatible bucket
+
+Loki needs to store two different types of data: chunks and indexes. By default, Loki uses boltdb-shipper to store indexes and local filesystem to store chunks. So, to use cloud storage like S3 or S3 compatible storage like Linode Object Storage, we have to modify default loki config. Here is a sample loki config file to store data in s3 bucket.
+
+config.yaml:
+```yaml
+auth_enabled: false
+server:
+  http_listen_port: 3100
+
+distributor:
+  ring:
+    kvstore:
+      store: memberlist
+
+memberlist:
+  join_members:
+    - <helm_release_name>-loki-distributed-memberlist
+
+ingester:
+  lifecycler:
+    ring:
+      kvstore:
+        store: memberlist
+      replication_factor: 1
+  chunk_idle_period: 30m
+  chunk_block_size: 262144
+  chunk_encoding: snappy
+  chunk_retain_period: 1m
+  max_transfer_retries: 0
+  wal:
+    dir: /var/loki/wal
+
+limits_config:
+  enforce_metric_name: false
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+  max_cache_freshness_per_query: 10m
+  split_queries_by_interval: 15m
+
+schema_config:
+  configs:
+  - from: 2020-09-07
+    store: boltdb-shipper
+    object_store: s3
+    schema: v11
+    index:
+      prefix: loki_index_
+      period: 24h
+storage_config:
+  boltdb_shipper:
+    shared_store: s3
+    active_index_directory: /var/loki/index
+    cache_location: /var/loki/cache
+    cache_ttl: 168h
+  aws:
+    s3: s3://access_key:secret_key@endpoint/bucket_name
+    s3forcepathstyle: true
+
+chunk_store_config:
+  max_look_back_period: 0s
+
+table_manager:
+  retention_deletes_enabled: false
+  retention_period: 0s
+
+query_range:
+  align_queries_with_step: true
+  max_retries: 5
+  cache_results: true
+  results_cache:
+    cache:
+      enable_fifocache: true
+      fifocache:
+        max_size_items: 1024
+        validity: 24h
+
+frontend_worker:
+  frontend_address: <helm_release_name>-loki-distributed-query-frontend:9095
+
+frontend:
+  log_queries_longer_than: 5s
+  compress_responses: true
+  tail_proxy_url: http://loki-distributed-querier:3100
+
+compactor:
+  shared_store: s3
+```
+In this loki config, s3 bucket is used as shared storage to store both chunks and indexes.
+
+To create secret from config.yaml file:
+
+```bash
+kubectl create secret generic -n loki <secret_name> \
+      --from-file=config.yaml
+```
+
+To upgrade/install the loki with s3 storage:
+
+```bash
+ helm upgrade -i loki grafana/loki-distributed -n loki --create-namespace \
+      --set loki.existingSecretForConfig=<secret_name> \
+      --set indexGateway.enabled=true \
+      --set indexGateway.persistance.enabled=true \
+      --set indexGateway.persistance.size=10Gi \
+      --set indexGateway.persistance.storageClass=<storage_class_name> \
+      --set ingester.persistance.enabled=true \
+      --set ingester.persistance.size=10Gi \
+      --set ingester.persistance.storageClass=<storage_class_name>
+
+```
+
+Note: Here we need to enable another microservice called `Index Gateway`. This component is responsible for downloading data from cloud storage and sending those to querier and ruler over grpc. It is also recommended to run ingester and index gateway with persistence volume in Kubernetes as they are holding data for a while in local filesystem.
+
+## Setup Loki with Alertmanager
+
+Loki has a component called `Ruler`. Ruler is responsible for continually evaluating a set of configurable queries and performing an action based on that.
+We can setup ruler to send alert to Alertmanager based on pod logs.
+
+By default loki-disbuted helm chart don't deploy ruler component. To deploy ruler component, we have to manually enable it.
+
