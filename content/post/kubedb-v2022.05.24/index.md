@@ -18,10 +18,12 @@ tags:
   - kubedb
   - elasticsearch-dashboard
   - kibana
+  - opensearch
+  - opensearch-dashboard 
   - schema-manager
 ---
 
-We are pleased to announce the release of [KubeDB v2022.05.24](https://kubedb.com/docs/v2022.05.24/setup/). This post lists all the major changes done in this release since the last release. This release offers some major features like **MySQL Semi-Synchronous Replication**, **MongoDB Arbiter**, **PGBouncer**, **MariaDB Schema Manager**, **ProxySQL**, **Redigned Redis**, **Elasticsearch V8**, **OpenSearch Dashboard**, etc. It also contains various improvments and bug fixes. You can find the detailed changelogs [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2022.05.24/README.md).
+We are pleased to announce the release of [KubeDB v2022.05.24](https://kubedb.com/docs/v2022.05.24/setup/). This post lists all the major changes done in this release since the last release. This release offers some major features like **MySQL Semi-Synchronous Replication**, **MongoDB Arbiter**, **PGBouncer**, **MariaDB Schema Manager**, **ProxySQL**, **Redesigned Redis**, **Elasticsearch V8**, **OpenSearch Dashboard**, etc. It also contains various improvments and bug fixes. You can find the detailed changelogs [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2022.05.24/README.md).
 
 ## MySQL
 
@@ -57,7 +59,7 @@ spec:
 
 **What's New in MYSQL CRO?**
 
-In the `spec.topology` you refer to `SemiSync` Mode and in the `spec.topolgy.semiSync` you can refer to how many replicas, the source will wait for an acknowledgment before committing, how long the source will wait for replicas before going back to asynchronous replication, and the errant transaction recovery policy. We support two recovery policies for errant transactions that is PseudoTranscation and Clone. 
+In the `spec.topology` you refer to `SemiSync` Mode and in the `spec.topology.semiSync` you can refer to how many replicas, the source will wait for an acknowledgment before committing, how long the source will wait for replicas before going back to asynchronous replication, and the errant transaction recovery policy. We support two recovery policies for errant transactions that is PseudoTranscation and Clone.
 
 ```yaml
 spec:
@@ -124,7 +126,7 @@ IN this release, the Pg-Coordinator container has been improved. Now it exposes 
 
 ## PGBouncer
 
-In this release, KubeDB-managed PGBouncer is now supporting the latest pgBouncer version `1.17.0`. The new release also supports a `TLS secured` connection for both client and server(PostgreSQL). It also enables support for Prometheus `monitoring` for pgBouncer. To expand the compatibility with third-party software, we are creating an `AppBinding` with connection credentials so that any third-party software can communicate seamlessly with the pgBouncer.
+In this release, KubeDB-managed PGBouncer is now supporting the latest pgBouncer version `1.17.0`. The new release also supports a `TLS secured` connection for both client and server(PostgreSQL). It also enables support for Prometheus `monitoring` for pgBouncer. To expand the compatibility with third-party software, we are creating an `AppBinding` with connection credentials so that any third-party software can communicate seamlessly with the pgBouncer. The KubeDB operator also performs a continuous health check on the PGBouncer to reflect the ready status.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -162,7 +164,7 @@ spec:
 
 ## Redis
 
-We have redesigned the KubeDB Redis operator. We have distributed responsibility across different components so that there is no single point of failure. The primary task of the KubeDB Redis operator is to provision the cluster according to the provided configuration. After the KubeDB Redis operator successfully provisions the cluster, it no longer depends on the operator. The pods of the cluster can rejoin the cluster by themselves in case of node failure or network issues. We have fixed some minor bugs in KubeDB Redis Operator.
+We have redesigned the KubeDB Redis operator. We have distributed responsibility across different components so that there is no single point of failure. The primary task of the KubeDB Redis operator is to provision the cluster according to the provided configuration. After the KubeDB Redis operator successfully provisions the cluster, it no longer depends on the operator. The pods of the cluster can rejoin the cluster by themselves in case of node failure or network issues. We also fixed some minor bugs in KubeDB Redis Operator.
 
 ## MariaDB
 
@@ -206,7 +208,7 @@ The given YAML will create a MariaDB database schema in the cluster which will e
 
 ## Elasticsearch
 
-In this release, We are happy to introduce the support for `Elasticsearch V8`. Now, you can provision and manage Elasticsearch V8 with KubeDB. New supported ElasticsearchVersion CROs are `xpack-8.2.0`, `kubedb-xpack-8.2.0`, and `opensearch-1.3.2`. The `kubedb-xpack-8.2.0` packed with  `elasticsearch:8.2.0` with pre-installed plugins; `repository-s3`, `repository-azure`, `repository-hdfs`, and `repository-gcs`.
+In this release, We are happy to introduce the support for `Elasticsearch V8`. Now, you can provision and manage Elasticsearch V8 with KubeDB. New supported ElasticsearchVersion CROs are `xpack-8.2.0`, `kubedb-xpack-8.2.0`, and `opensearch-1.3.2`. The `kubedb-xpack-8.2.0` is packed with  `elasticsearch:8.2.0` with pre-installed plugins: `repository-s3`, `repository-azure`, `repository-hdfs`, and `repository-gcs`.
 
 **Configure Built-In Users:** KubeDB Elasticsearch CR now allows users to configure and manage Elasticsearch built-in users. Supported users are `elastic` , `kibana_system`, `logstash_system`, `beats system`, `apm_system`, and `remote_monitoring_user`. Passwords can also be customized via user-provided k8s secrets. Otherwise, the operator will create randomly generated passwords for those supported users. The k8s secrets with the user credentials can be found on the same namespace of the Elasticsearch CRO.
 
@@ -232,7 +234,7 @@ spec:
 
 ## Dashboard
 
-In this release, we are expanding our support for dashboards. Now KubeDB supports `opensearch-dashboard` with ElasticsearchVersion CRO `opensearch-1.1.0`, `opensearch-1.2.0`, and `opensearch-1.3.2`. It also supports kibana  with ElasticsearchVersion CRO `xpack-8.2.0`, `xpack-7.17.3`, `xpack-7.16.2`, `xpack-7.13.2`, `xpack-7.12.0`, `xpack-7.9.1`, and `xpack-6.8.22`.
+In this release, we are expanding our support for dashboards. Now KubeDB supports `OpenSearch Dashboards` with ElasticsearchVersion CRO `opensearch-1.1.0`, `opensearch-1.2.0`, and `opensearch-1.3.2`. It also supports kibana  with ElasticsearchVersion CRO `xpack-8.2.0`, `xpack-7.17.3`, `xpack-7.16.2`, `xpack-7.13.2`, `xpack-7.12.0`, `xpack-7.9.1`, and `xpack-6.8.22`.
 
 ## What Next?
 
