@@ -3,6 +3,7 @@ title: Running Production-Grade Databases on Kubernetes - Challenges and Solutio
 date: 2022-05-26
 weight: 14
 authors:
+  - Tamal Saha
   - Dipta Roy
 tags:
   - Cloud-native platform
