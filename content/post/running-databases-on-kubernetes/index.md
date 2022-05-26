@@ -1,5 +1,5 @@
 ---
-title: Running Production-Grade Databases on Kubernetes: Challenges and Solutions
+title: Running Production-Grade Databases on Kubernetes - Challenges and Solutions
 date: 2022-05-26
 weight: 14
 authors:
