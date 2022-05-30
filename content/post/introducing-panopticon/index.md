@@ -5,14 +5,24 @@ weight: 22
 authors:
   - Pulak Kanti Bhowmick
 tags:
-  - monitoring
-  - prometheus
+  - cloud-native
+  - database
+  - elasticsearch
   - grafana
-  - kubernetes
   - kubedb
-  - metrics
-  - prometheus-exporter
+  - kubernetes
   - kubernetes-exporter
+  - mariadb
+  - memcached
+  - metrics
+  - mongodb
+  - monitoring
+  - mysql
+  - panopticon
+  - postgresql
+  - prometheus
+  - prometheus-exporter
+  - redis
 ---
 
 We are excited to introduce `Panopticon`, a generic Kubernetes resource state metrics exporter. It comes with a lot of features and customization options.

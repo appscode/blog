@@ -22,13 +22,14 @@ jobs:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
         with:
-          go-version: ^1.17
+          go-version: ^1.18
         id: go
 
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: '16'
+          check-latest: true
 
       - name: Install yq
         run: |
@@ -39,7 +40,7 @@ jobs:
 
       - name: Install Hugo
         run: |
-          curl -fsSL -o hugo_extended.deb https://github.com/gohugoio/hugo/releases/download/v0.87.0/hugo_extended_0.87.0_Linux-64bit.deb
+          curl -fsSL -o hugo_extended.deb https://github.com/gohugoio/hugo/releases/download/v0.99.1/hugo_extended_0.99.1_Linux-64bit.deb
           sudo dpkg -i hugo_extended.deb
 
       - name: Install Hugo Tools
@@ -59,7 +60,7 @@ jobs:
       #   if: startsWith(github.event.ref, 'refs/tags/') && (contains(github.ref, '-alpha.') || contains(github.ref, '-beta.'))
       #   run: |
       #     npm install
-      #     make docs
+      #     make assets
       #     make qa
 
       - name: Release
@@ -69,5 +70,5 @@ jobs:
         # if: startsWith(github.event.ref, 'refs/tags/') && (contains(github.ref, '-alpha.') || contains(github.ref, '-beta.')) == false
         run: |
           npm install
-          make docs
+          make assets
           make release

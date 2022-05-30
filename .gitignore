@@ -6,3 +6,5 @@
 .sass-cache
 /public
 .DS_Store
+.hugo_build.lock
+/bin
