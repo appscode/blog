@@ -4,27 +4,15 @@ date: 2022-06-01
 weight: 14
 authors:
 - Tasdidur Rahman
-  tags:
+tags:
 - Cloud-native platform
 - Kubernetes
 - Database
 - Kubernetes ProxySQL
 - Run Production-grade Database
-- Elasticsearch
-- MariaDB
-- Memcached
-- MongoDB
 - MySQL
-- PostgreSQL
-- Redis
-- Percona XtraDB
-- PgBouncer
 - ProxySQL
 - KubeDB
-- Google Kubernetes Engine
-- GKE
-- Google Cloud Storage
-- GCS
 ---
 
 ### Overview
