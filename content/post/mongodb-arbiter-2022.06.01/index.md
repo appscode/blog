@@ -4,8 +4,9 @@ date: 2022-06-01
 weight: 20
 authors:
 - Arnob kumar saha
-  tags:
-- kubeDB
+
+tags:
+- kubedb
 - MongoDB
 - Arbiter
 - kubernetes
