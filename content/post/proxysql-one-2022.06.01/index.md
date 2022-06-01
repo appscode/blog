@@ -27,7 +27,7 @@ authors:
 - GCS
 ---
 
-## Overview
+### Overview
 
 <i>ProxySQL is an open source high performance, high availability, database protocol aware proxy for MySQL. ProxySQL helps you squeeze the last drop of performance out of your MySQL cluster with advanced connection management and flexible routing to scale across thousands of servers. ProxySQL is built with an advanced multi-core architecture to support hundreds of thousands of concurrent connections, multiplexed to thousands of servers.</i> - ProxySQL official website
 
@@ -472,7 +472,7 @@ MySQL [(none)]> select hostgroup, srv_host, Queries from stats_mysql_connection_
 ```
 We can see that queries were properly distributed over the MySQL servers.
 
-## Check TLS
+### Check TLS
 
 * Exec into the ubuntu pod, open in MySQL console with test user credential and connect to ProxySQL service.
 ```shell
