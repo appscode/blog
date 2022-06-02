@@ -197,14 +197,14 @@ proxy-mysql-server   2.3.2     Ready    4m
 ```
 
 We are now ready to test our ProxySQL functionalities. We will follow the below steps to check our functionalities, <br>
-* Create a test user, test database and table in MySQL server
-* Put an entry for the test user in ProxySQL server
-* Send load over the ProxySQL cluster as the test user
-* Check the load distribution over the ProxySQL cluster
-* Check TLS on the ProxySQL backend and frontend connection
+* [Create a test user, test database and table in MySQL server](#create-test-elements)
+* [Put an entry for the test user in ProxySQL server](#user-entry)
+* [Send load over the ProxySQL cluster as the test user](#send-load)
+* [Check the load distribution over the ProxySQL cluster](#check-load-distribution)
+* [Check TLS on the ProxySQL backend and frontend connection](#check-tls)
 
 
-#### Create test user, test database and table in MySLQ server
+#### <a id="create-test-elements"></a>Create test user, test database and table in MySLQ server
 * Exec into the MySQL primary pod with the following command, we will end up with something like this,
 ```shell
 ~ $ kubectl exec -it -n demo mysql-server-0 -- bash                            
@@ -280,7 +280,7 @@ mysql> flush privileges;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-#### Put entry for test user in ProxySQL
+#### <a id="user-entry"></a> Put entry for test user in ProxySQL
 
 * Exec into any ProxySQL pod with the following command, we will end up with something like this,
 ```shell
@@ -344,7 +344,7 @@ MySQL [(none)]> select hostname, Queries, Client_Connections_created from stats_
 
 We are now ready to send loads to the ProxySQL servers with test user.
 
-#### Send load over ProxySQL cluster
+#### <a id="send-load"></a> Send load over ProxySQL cluster
 To send loads to ProxySQL servers, first we need to create a pod from which we will connect to the ProxySQL service and run script from that pod.
 * Let's create a pod containing basic ubuntu image with the following yaml,
 ```yaml
@@ -426,7 +426,7 @@ root@ubuntu-6c6d9795f4-sjn8p:/# ./script.sh
 ```
 We have successfully sent the loads, now it's time to check what happened in the ProxySQL end.
 
-#### Check load distribution
+#### <a id="check-load-distribution"></a> Check load distribution
 Let's exec into any of the ProxySQL pods and login to the admin console as before.<br>
 * Now run the following command,
 ```shell
@@ -457,7 +457,7 @@ MySQL [(none)]> select hostgroup, srv_host, Queries from stats_mysql_connection_
 ```
 We can see that queries were properly distributed over the MySQL servers as well.
 
-#### Check TLS
+#### <a id="check-tls"></a> Check TLS
 
 * Exec into the ubuntu pod, open in MySQL console with test user credential and connect to ProxySQL service.
 ```shell
