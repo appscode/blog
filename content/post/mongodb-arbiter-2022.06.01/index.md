@@ -4,7 +4,6 @@ date: 2022-06-01
 weight: 20
 authors:
 - Arnob kumar saha
-
 tags:
 - kubedb
 - MongoDB
@@ -45,7 +44,7 @@ He also applied an arbiter-enabled sharded cluster & Reconfigure opsRequest to s
 
 Take a deep dive into the full webinar below:
 
-<iframe width="800" height="500" src="https://www.youtube.com/embed/QIDlhiEOvEg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="800" height="500" src="https://www.youtube.com/embed/XOqR5GJ2mM4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## What Next?
 
