@@ -204,7 +204,7 @@ We are now ready to test our ProxySQL functionalities. We will follow the below 
 * [Check TLS on the ProxySQL backend and frontend connection](#check-tls)
 
 
-#### <a id="create-test-elements"></a>Create test user, test database and table in MySLQ server
+#### <a id="create-test-elements"></a>Create test user, test database and table in MySQL server
 * Exec into the MySQL primary pod with the following command, we will end up with something like this,
 ```shell
 ~ $ kubectl exec -it -n demo mysql-server-0 -- bash                            
