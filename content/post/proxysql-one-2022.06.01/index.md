@@ -44,7 +44,7 @@ We need to have KubeDB operator version `v2022.05.24` or later to test ProxySQL.
 
 If you don't want TLS secured connection for your ProxySQL or MySQL you can skip this part. As we are going to test TLS secured connections, we need to install cert manager in our cluster first. You can install cert manager operator in your cluster with this following command, <br>
 ```shell
-~$ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.2/cert-manager.yaml
+$ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.2/cert-manager.yaml
 ```
 
 #### Create issuer
@@ -74,7 +74,7 @@ spec:
 ```
 * Now apply the issuer yaml,
 ```shell
-~$ kubectl apply -f issuer.yaml
+$ kubectl apply -f issuer.yaml
 issuer.cert-manager.io/my-issuer created
 ```
 #### Setup KubeDB MySQL
@@ -122,15 +122,15 @@ spec:
 
 * Now apply the yaml and wait for mysql to be ready.
 ```shell
-~$ kubectl apply -f mysql.yaml
+$ kubectl apply -f mysql.yaml
 mysql.kubedb.com/mysql-server created
 
-~$ kubectl get pods -n demo | grep mysql-server
+$ kubectl get pods -n demo | grep mysql-server
 mysql-server-0            2/2     Running   0          6m
 mysql-server-1            2/2     Running   0          5m
 mysql-server-2            2/2     Running   0          5m
 
-~$ kubectl get mysql -n demo 
+$ kubectl get mysql -n demo 
 NAME           VERSION   STATUS   AGE
 mysql-server   5.7.36    Ready    6m
 ```
@@ -182,15 +182,15 @@ spec:
 ```
 * Now apply the yaml and wait for ProxySQL to be ready.
 ```shell
-~$ kubectl apply -f proxysql.yaml
+$ kubectl apply -f proxysql.yaml
 proxysql.kubedb.com/proxy-mysql-server created
 
-~$ kubectl get pods -n demo | grep proxy
+$ kubectl get pods -n demo | grep proxy
 proxy-mysql-server-0            1/1     Running   0          3m
 proxy-mysql-server-1            1/1     Running   0          3m
 proxy-mysql-server-2            1/1     Running   0          3m
 
-~$ kubectl get proxysql -n demo                                                                                                         
+$ kubectl get proxysql -n demo                                                                                                         
 NAME                 VERSION   STATUS   AGE
 proxy-mysql-server   2.3.2     Ready    4m
 
@@ -211,7 +211,7 @@ We are now ready to test our ProxySQL functionalities. We will follow the below 
 Defaulted container "mysql" out of: mysql, mysql-coordinator, mysql-init (init)
 root@mysql-server-0:/#
 ```
-* Log into the MySQL console with root password.
+* Log in to the MySQL console with root password.
 ```shell
 root@mysql-server-0:/# mysql -uroot -p$MYSQL_ROOT_PASSWORD
 mysql: [Warning] Using a password on the command line interface can be insecure.
@@ -244,7 +244,7 @@ mysql> select user from mysql.user;
 +---------------+
 7 rows in set (0.00 sec)
 ```
-note : the use `proxysql` is the monitor user for ProxySQL created by KubeDB operator
+> Note : The user `proxysql` is the monitor user for ProxySQL created by KubeDB operator
 * Now create the test user, the database and the table and grant privileges to the test user.
 ```shell
 mysql> create user 'test'@'%' identified by 'test' REQUIRE SSL;
@@ -282,13 +282,9 @@ Query OK, 0 rows affected (0.01 sec)
 
 #### <a id="user-entry"></a> Put entry for test user in ProxySQL
 
-* Exec into any ProxySQL pod with the following command, we will end up with something like this,
+* Exec into any ProxySQL pod and log into the proxysql admin console,
 ```shell
-~ $ ~ $ kubectl exec -it -n demo proxy-mysql-server-0 -- bash                  
-root@proxy-mysql-server-0:/#
-```
-* Log into the proxysql admin console.
-```shell
+~ $ kubectl exec -it -n demo proxy-mysql-server-0 -- bash                  
 root@proxy-mysql-server-0:/# mysql -uadmin -padmin -h127.0.0.1 -P6032
 Welcome to the MariaDB monitor.  Commands end with ; or \g.
 Your MySQL connection id is 3378
@@ -376,10 +372,10 @@ spec:
 ```
 * Deploy this to the cluster.
 ```shell
-~$ kubectl apply -f deployment.yaml
+$ kubectl apply -f deployment.yaml
 deployment.apps/ubuntu created
 
-~$ kubectl get pods -n demo | grep ubuntu
+$ kubectl get pods -n demo | grep ubuntu
 ubuntu-6c6d9795f4-sjn8p   1/1     Running   0          1m
 ```
 
@@ -427,7 +423,7 @@ root@ubuntu-6c6d9795f4-sjn8p:/# ./script.sh
 We have successfully sent the loads, now it's time to check what happened in the ProxySQL end.
 
 #### <a id="check-load-distribution"></a> Check load distribution
-Let's exec into any of the ProxySQL pods and login to the admin console as before.<br>
+Let's exec into any of the ProxySQL pods and log in to the admin console as before.<br>
 * Now run the following command,
 ```shell
 MySQL [(none)]> select hostname, Queries, Client_Connections_created from stats_proxysql_servers_metrics; 
@@ -461,7 +457,7 @@ We can see that queries were properly distributed over the MySQL servers as well
 
 * Exec into the ubuntu pod, open in MySQL console with test user credential and connect to ProxySQL service.
 ```shell
-~$ kubectl exec -it -n demo ubuntu-6c6d9795f4-sjn8p -- bash 
+$ kubectl exec -it -n demo ubuntu-6c6d9795f4-sjn8p -- bash 
 root@ubuntu-6c6d9795f4-sjn8p:/# mysql -utest -ptest -hproxy-mysql-server.demo.svc -P6033
 mysql: [Warning] Using a password on the command line interface can be insecure.
 Welcome to the MySQL monitor.  Commands end with ; or \g.
