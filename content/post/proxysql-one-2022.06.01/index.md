@@ -1,7 +1,7 @@
 ---
-title: Deploy TLS secured ProxySQL cluster with KubeDB
-date: 2022-06-01
-weight: 14
+title: Load Balance MySQL Group Replication with TLS secured ProxySQL Cluster
+date: 2022-06-02
+weight: 20
 authors:
 - Tasdidur Rahman
 tags:
@@ -15,20 +15,20 @@ tags:
 - KubeDB
 ---
 
-### Overview
+#### Overview
 
-<i>ProxySQL is an open source high performance, high availability, database protocol aware proxy for MySQL. ProxySQL helps you squeeze the last drop of performance out of your MySQL cluster with advanced connection management and flexible routing to scale across thousands of servers. ProxySQL is built with an advanced multi-core architecture to support hundreds of thousands of concurrent connections, multiplexed to thousands of servers.</i> - ProxySQL official website
+ProxySQL is an open source high performance, high availability, database protocol aware proxy for MySQL. To know more about ProxySQL, you may refer to the [Link](https://kubedb.com/docs/v2022.05.24/guides/proxysql/overview/overview/).
 
-In the latest KubeDB release we have added ProxySQL support for KubeDB MySQL. Now you can provision a ProxySQL server or cluster of ProxySQL servers with declarative yamls using KubeDB operator.
+From the KubeDB release `v2022.05.24` we have added ProxySQL support for KubeDB MySQL. Now you can provision a ProxySQL server or cluster of ProxySQL servers with declarative yamls using KubeDB operator.
 
-With KubeDB operator , you can provision ProxySQL with much less effort than usual. To establish connection between KubeDB ProxySQL and KubeDB MySQL all you need to do is just mention the reference of MySQL object in your ProxySQL yaml. Which means, <br>
+With KubeDB operator, you can provision ProxySQL with much less effort than usual. To establish connection between KubeDB ProxySQL and KubeDB MySQL all you need to do is just mention the reference of MySQL object in your ProxySQL yaml. Which means, <br>
 * You don't need to create monitor user in the MySQL server on your own
 * You don't need to configure `mysql_servers` table manually in your ProxySQL
-* You don't need to run addition_to_sys.sql in the MySQL server yourself
-* If you are willing to deploy a ProxySQL cluster, you also don't need to configure `proxysql_server` table manually
+* You don't need to run `addition_to_sys.sql` in the MySQL server yourself
+* If you are willing to deploy a ProxySQL cluster, you also don't need to configure `proxysql_servers` table manually
 * And also if you want to bootstrap your ProxySQL servers with your own custom configuration, you just have to put that in a secret and mention that in the ProxySQL yaml, nothing else!
 
-In this blog post I will try to show the basic setup and will test some of the functionalities. We will follow these steps below,
+In this blog post I will try to show the basic setup and will test some functionalities. We will follow these steps below,
 1) Install KubeDB
 2) Deploy MySQL Group Replication
 3) Deploy ProxySQL cluster
@@ -36,18 +36,18 @@ In this blog post I will try to show the basic setup and will test some of the f
 5) Observe SSL status over ProxySQL frontend and backend connection
 
 
-### Install KubeDB
+#### Install KubeDB
 
-We need to have KubeDB operator version `v2022.05.24` or later to test ProxySQL. To install KubeDB in your cluster , you may follow this [Link](https://kubedb.com/docs/v2022.05.24/setup/)
+We need to have KubeDB operator version `v2022.05.24` or later to test ProxySQL. To install KubeDB in your cluster, you may follow this [Link](https://kubedb.com/docs/v2022.05.24/setup/)
 
-### Install cert manager
+#### Install cert manager
 
-If you don't want TLS secured connecion for your ProxySQL or MySQL you can skip this part. As we are going to test TLS secured connections, we need to install cert manager in our cluster first. You can install cert manager operator in your cluster with this following command, <br>
+If you don't want TLS secured connection for your ProxySQL or MySQL you can skip this part. As we are going to test TLS secured connections, we need to install cert manager in our cluster first. You can install cert manager operator in your cluster with this following command, <br>
 ```shell
 ~$ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.2/cert-manager.yaml
 ```
 
-### Create issuer
+#### Create issuer
 
 We also need an issuer to generate certs and keys for TLS secured connections.
 * Start off by generating our ca-certificates using openssl,
@@ -77,11 +77,11 @@ spec:
 ~$ kubectl apply -f issuer.yaml
 issuer.cert-manager.io/my-issuer created
 ```
-### Setup KubeDB MySQL
+#### Setup KubeDB MySQL
 
-Now we need KubeDB MySQL servers in our cluster on which we would test our ProxySQL functionalities.<br>
+Now we need KubeDB MySQL servers in our cluster on which we would test our ProxySQL functionalities. To know details about KubeDB MySQL, you may refer to this [Link](https://kubedb.com/docs/v2022.05.24/guides/mysql/) <br>
 
-* Let the name of our MySQL object be `mysql-server` in the namespace  `demo`. We are choosing `5.7.36` as the `MySQL Version`, and would like to create a `MySQL Group Replication` with `3` nodes. We want to secure our MySQL server connections with TLS as well. By applying  the following yaml we can get our target Kubedb MySQL.
+* Let the name of our MySQL object be `mysql-server` in the namespace  `demo`. We are choosing `5.7.36` as the `MySQL Version`, and would like to create a `MySQL Group Replication` with `3` nodes. We want to secure our MySQL server connections with TLS as well. By applying  the following yaml we can get our target KubeDB MySQL.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -136,8 +136,8 @@ mysql-server   5.7.36    Ready    6m
 ```
 Our MySQL is ready now.
 
-### Deploy ProxySQL
-Lets create a ProxySQL cluster with name `proxy-mysql-server` in the `demo` namespace. As we are currently supporting version `2.3.2` only , so set the version accordingly. In the `spec.backend` section we need to mention necessary information about our MySQL server. We just need to mention the MySQL object reference and replica count. We can skip the `spec.tls` section if we don't want to secure the proxysql frontend connections , but here we have mentioned that as we are going to test the functionality. It's an enterprise feature, so you need to have the kubedb enterprise operator in your cluster.
+#### Deploy ProxySQL
+Let's create a ProxySQL cluster with name `proxy-mysql-server` in the `demo` namespace. As we are currently supporting version `2.3.2` only, so set the version accordingly. In the `spec.backend` section we need to mention necessary information about our MySQL server. We just need to mention the MySQL object reference and replica count. We can skip the `spec.tls` section if we don't want to secure the proxysql frontend connections, but here we have mentioned that as we are going to test the functionality. It's an enterprise feature, so you need to have the KubeDB enterprise operator in your cluster.
 
 * Let's create the yaml first.
 ```yaml 
@@ -197,24 +197,21 @@ proxy-mysql-server   2.3.2     Ready    4m
 ```
 
 We are now ready to test our ProxySQL functionalities. We will follow the below steps to check our functionalities, <br>
-* Create a test user in MySQL server
-* Create a database and a table inside it
-* Grant all privileges to the test user on the database we just created
-* Put entry for the test user in ProxySQL server
-* Connect to the ProxySQL service and send load as the test user
+* Create a test user, test database and table in MySQL server
+* Put an entry for the test user in ProxySQL server
+* Send load over the ProxySQL cluster as the test user
 * Check the load distribution over the ProxySQL cluster
-* Check tls on the ProxySQL backend connection
-* Check tls on the ProxySQL frontend connection
+* Check TLS on the ProxySQL backend and frontend connection
 
 
-### Create test user
+#### Create test user, test database and table in MySLQ server
 * Exec into the MySQL primary pod with the following command, we will end up with something like this,
 ```shell
-~ $ kubectl exec -it -n demo mysql-server-0 -- bash                             11:44
+~ $ kubectl exec -it -n demo mysql-server-0 -- bash                            
 Defaulted container "mysql" out of: mysql, mysql-coordinator, mysql-init (init)
 root@mysql-server-0:/#
 ```
-* Log into the MySQL cli with root password.
+* Log into the MySQL console with root password.
 ```shell
 root@mysql-server-0:/# mysql -uroot -p$MYSQL_ROOT_PASSWORD
 mysql: [Warning] Using a password on the command line interface can be insecure.
@@ -283,7 +280,7 @@ mysql> flush privileges;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-### Put entry for test user in ProxySQL
+#### Put entry for test user in ProxySQL
 
 * Exec into any ProxySQL pod with the following command, we will end up with something like this,
 ```shell
@@ -304,7 +301,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 MySQL [(none)]>
 ```
 
-* Run the follwing command and put entry for the test user.
+* Run the following command and put entry for the test user.
 ```shell 
 MySQL [(none)]> replace into mysql_users(username,password,active,use_ssl,default_hostgroup, max_connections) values('test','test',1,1,2,200);
 Query OK, 1 row affected (0.003 sec)
@@ -316,9 +313,9 @@ MySQL [(none)]> LOAD MYSQL USERS TO RUNTIME;
 Query OK, 0 rows affected (0.002 sec)
 ```
 
-* Lets check the current users.
+* Let's check the current users.
 ```shell
-MySQL [(none)]> select username, active , use_ssl from runtime_mysql_users;
+MySQL [(none)]> select username, active, use_ssl from runtime_mysql_users;
 +----------+--------+---------+
 | username | active | use_ssl |
 +----------+--------+---------+
@@ -332,7 +329,7 @@ MySQL [(none)]> select username, active , use_ssl from runtime_mysql_users;
 6 rows in set (0.004 sec)
 ```
 
-* Also lets check the current stats for ProxySQL servers.
+* Also let's check the current stats for ProxySQL servers.
 ```shell
 MySQL [(none)]> select hostname, Queries, Client_Connections_created from stats_proxysql_servers_metrics; 
 +---------------------------------------------------+---------+----------------------------+
@@ -347,8 +344,8 @@ MySQL [(none)]> select hostname, Queries, Client_Connections_created from stats_
 
 We are now ready to send loads to the ProxySQL servers with test user.
 
-### Send loads to ProxySQL
-To send loads to ProxySQL servers, first of all we need to create a pod from which we will connect to the ProxySQL service and run script from that pod.
+#### Send load over ProxySQL cluster
+To send loads to ProxySQL servers, first we need to create a pod from which we will connect to the ProxySQL service and run script from that pod.
 * Let's create a pod containing basic ubuntu image with the following yaml,
 ```yaml
 apiVersion: apps/v1
@@ -427,10 +424,10 @@ done
 root@ubuntu-6c6d9795f4-sjn8p:/# chmod +x script.sh
 root@ubuntu-6c6d9795f4-sjn8p:/# ./script.sh
 ```
-We have successfully send the loads , now its time to check what happened in the ProxySQL end.
+We have successfully sent the loads, now it's time to check what happened in the ProxySQL end.
 
-### Check load distribution
-Lets exec into any of the ProxySQL pods and login to the admin console as before.<br>
+#### Check load distribution
+Let's exec into any of the ProxySQL pods and login to the admin console as before.<br>
 * Now run the following command,
 ```shell
 MySQL [(none)]> select hostname, Queries, Client_Connections_created from stats_proxysql_servers_metrics; 
@@ -458,9 +455,9 @@ MySQL [(none)]> select hostgroup, srv_host, Queries from stats_mysql_connection_
 +-----------+---------------------------------------+---------+
 4 rows in set (0.005 sec)
 ```
-We can see that queries were properly distributed over the MySQL servers.
+We can see that queries were properly distributed over the MySQL servers as well.
 
-### Check TLS
+#### Check TLS
 
 * Exec into the ubuntu pod, open in MySQL console with test user credential and connect to ProxySQL service.
 ```shell
@@ -482,7 +479,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 mysql> 
 ``` 
 
-* Lets check the backend ssl with the following command,
+* Let's check the backend ssl with the following command,
 ```shell
 mysql> show session status like 'Ssl_cipher';
 +---------------+-----------------------------+
@@ -494,7 +491,7 @@ mysql> show session status like 'Ssl_cipher';
 ```
 We can see that the backend connection is TLS secured
 
-* Lets check the frontend ssl with the following command,
+* Let's check the frontend ssl with the following command,
  ```shell
  mysql> status;
 --------------
@@ -524,8 +521,8 @@ Threads: 1  Questions: 202  Slow queries: 202
 
 We can see the ssl status : `SSL:			Cipher in use is TLS_AES_256_GCM_SHA384`. Which means our frontend connection is also TLS secured.
 
-### Conclusion
-In this blog post we have setup the basic connection and tested some basic functionalities of KubeDB ProxySQL. In the upcoming blog post we will try to cover the custom configuration and failover recovery of ProxySQL servers in ProxySQL cluster.
+#### Conclusion
+In this blog post we have set up the basic connection and tested some basic functionalities of KubeDB ProxySQL. In the upcoming blog post we will try to cover the custom configuration and failover recovery of ProxySQL servers in ProxySQL cluster.
 
 
 ## Support
