@@ -33,12 +33,12 @@ On 1st June 2022, Appscode held a webinar on **Managing MongoDB with Arbiter on 
 
 ## Description of the Webinar
 
-Earlier in this webinar, The speaker discussed about the `Arbiter` feature for `MongoDB`. Where He showed how to use kubeDB’s newly introduced features MongoDB-Arbiter. 
-He discussed the core concept behind replicaSet & shared-cluster architectures. He also talked about the primary-Election mechanism for automatic failover.
+Earlier in this webinar, We discussed about the `Arbiter` feature for `MongoDB`. Where we showed how to use kubeDB’s newly introduced feature MongoDB-Arbiter. 
+We discussed the core concept behind replicaSet & shared-cluster architectures. We also talked about the primary-Election mechanism for automatic failover.
 
 
-Later in this webinar, He created an arbiter-enabled replicaset database & a verticalScale opsRequest to show how to scale the resources for each pod & to show how the election makes impact.
-He also applied an arbiter-enabled sharded cluster & Reconfigure opsRequest to show how to change the db-specific internal configurations on the fly.
+Later in this webinar, We created an arbiter-enabled replicaset database & a verticalScale opsRequest to show how to scale the resources for each pod & to show how the election makes impact.
+We also applied an arbiter-enabled sharded cluster & Reconfigure opsRequest to show how to change the db-specific internal configurations on the fly.
 
 
 
