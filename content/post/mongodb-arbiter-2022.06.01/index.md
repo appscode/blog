@@ -1,6 +1,6 @@
 ---
 title: Managing MongoDB with Arbiter on Kubernetes using KubeDB
-date: 2022-06-01
+date: 2022-06-03
 weight: 20
 authors:
 - Arnob kumar saha
