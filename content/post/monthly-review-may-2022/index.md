@@ -1,5 +1,5 @@
 ---
-title: Monthly Review (May 2022)
+title: Monthly Review - May, 2022
 date: 2022-05-31
 weight: 14
 authors:
