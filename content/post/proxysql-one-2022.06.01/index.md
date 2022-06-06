@@ -1,6 +1,6 @@
 ---
 title: Load Balance MySQL Group Replication with TLS secured ProxySQL Cluster
-date: 2022-06-02
+date: 2022-06-06
 weight: 20
 authors:
 - Tasdidur Rahman
