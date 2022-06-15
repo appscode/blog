@@ -42,7 +42,7 @@ In this post, we are going to highlight the major changes. You can find the comp
       namespace: demo
     spec:
       version: 1.10.3
-      replicas: 2
+      replicas: 3
       allowedSecretEngines:
         namespaces:
           from: All
