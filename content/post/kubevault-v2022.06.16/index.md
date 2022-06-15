@@ -32,26 +32,57 @@ In this post, we are going to highlight the major changes. You can find the comp
 
   While deploying the `VaultServer` it's possible to define the list of auth methods users want to enable with it.
 
-    A `VaultServer` `.spec.authMethods` section may look like this:
+    A `VaultServer` yaml may look like this:
 
-    ```yaml
+  ```yaml
+    apiVersion: kubevault.com/v1alpha2
+    kind: VaultServer
+    metadata:
+      name: vault
+      namespace: demo
     spec:
+      version: 1.10.3
+      replicas: 2
+      allowedSecretEngines:
+        namespaces:
+          from: All
+        secretEngines:
+          - gcp
       authMethods:
         - type: jwt
           path: jwt
           jwtConfig:
-            ...
-        - type: oidc
-          path: oidc
-          oidcConfig:
-            ...
-    
-    ```
+            defaultLeaseTTL: 1h
+            defaultRole: k8s.kubevault.com.demo.reader-writer-role
+            oidcClientID: aFSrk3w06WsQqyjA30HvhbbJIR1VBidU
+            oidcDiscoveryURL: https://dev-tob49v6v.us.auth0.com/
+            credentialSecretRef:
+              name: jwt-cred
+      backend:
+        raft:
+          storage:
+            storageClassName: "standard"
+            resources:
+              requests:
+                storage: 1Gi
+      unsealer:
+        secretShares: 3
+        secretThreshold: 2
+        mode:
+          kubernetesSecret:
+            secretName: vault-keys
+      monitor:
+        agent: prometheus.io
+        prometheus:
+          exporter:
+            resources: {}
+      terminationPolicy: WipeOut
+      
+  ```
 
   * `.spec.authMethods.type` is a required field, the type of authentication method we want to enable.
   * `.spec.authMethods.path` is a required field, the path where we want to enable this authentication method.
-  * `.spec.authMethods.jwtConfig / .spec.authMethods.oidcConfig` contains various configuration for this authentication method. Details about configuration `parameters` can be found here: [JWT/OIDC Configuration](https://www.vaultproject.io/api-docs/auth/jwt#configure).
-
+  * `.spec.authMethods.jwtConfig / .spec.authMethods.oidcConfig` contains various configuration for this authentication method. Some of the `parameters` are: `DefaultLeaseTTL`, `MaxLeaseTTL`, `PluginName`, `CredentialSecretRef`, `TLSSecretRef`, `OIDCDiscoveryURL`, `OIDCClientID`, `OIDCResponseMode`, `DefaultRole`, `ProviderConfig`, etc. Full list can be found [here](https://github.com/kubevault/apimachinery/blob/master/apis/kubevault/v1alpha2/vaultserver_types.go).
     After an authentication method is successfully enabled, `KubeVault` operator will configure it with the provided configuration.
 
     After successfully enabling & configuring authentication methods, a VaultServer `.status.authMethodStatus` may look like this:
@@ -134,7 +165,7 @@ In this post, we are going to highlight the major changes. You can find the comp
 
 Please try the latest release and give us your valuable feedback.
 
-- If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2022.02.22/setup).
+- If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2022.06.16/setup).
 
 ## Support
 
