@@ -43,11 +43,6 @@ In this post, we are going to highlight the major changes. You can find the comp
     spec:
       version: 1.10.3
       replicas: 3
-      allowedSecretEngines:
-        namespaces:
-          from: All
-        secretEngines:
-          - gcp
       authMethods:
         - type: jwt
           path: jwt
@@ -71,12 +66,6 @@ In this post, we are going to highlight the major changes. You can find the comp
         mode:
           kubernetesSecret:
             secretName: vault-keys
-      monitor:
-        agent: prometheus.io
-        prometheus:
-          exporter:
-            resources: {}
-      terminationPolicy: WipeOut
       
   ```
 
