@@ -82,7 +82,7 @@ In this post, we are going to highlight the major changes. You can find the comp
 
   * `.spec.authMethods.type` is a required field, the type of authentication method we want to enable.
   * `.spec.authMethods.path` is a required field, the path where we want to enable this authentication method.
-  * `.spec.authMethods.jwtConfig / .spec.authMethods.oidcConfig` contains various configuration for this authentication method. Some of the `parameters` are: `DefaultLeaseTTL`, `MaxLeaseTTL`, `PluginName`, `CredentialSecretRef`, `TLSSecretRef`, `OIDCDiscoveryURL`, `OIDCClientID`, `OIDCResponseMode`, `DefaultRole`, `ProviderConfig`, etc. Full list can be found [here](https://github.com/kubevault/apimachinery/blob/master/apis/kubevault/v1alpha2/vaultserver_types.go).
+  * `.spec.authMethods.jwtConfig / .spec.authMethods.oidcConfig` contains various configuration for this authentication method. Some of the `parameters` are: `defaultLeaseTTL`, `maxLeaseTTL`, `pluginName`, `credentialSecretRef`, `tlsSecretRef`, `oidcDiscoveryURL`, `oidcClientID`, `oidcResponseMode`, `defaultRole`, `providerConfig`, etc. Check out [this](https://kubevault.com/docs/v2022.06.16/concepts/vault-server-crds/auth-methods/jwt-oidc/) for more details.
     After an authentication method is successfully enabled, `KubeVault` operator will configure it with the provided configuration.
 
     After successfully enabling & configuring authentication methods, a VaultServer `.status.authMethodStatus` may look like this:
