@@ -1,6 +1,6 @@
 ---
 title: Kubernetes Backup and Restore - A Complete Solution
-date: 2022-06-20
+date: 2022-06-21
 weight: 14
 authors:
   - Dipta Roy
@@ -31,9 +31,11 @@ Apart from all of the typical non-efficient solutions above, you can go with the
 
 [Stash](https://stash.run/) is a complete Kubernetes native production-grade disaster recovery solution for backup and restore your Kubernetes workloads, volumes, and databases on various public and private clouds. Stash is a Kubernetes operator that uses restic and Kubernetes CSI Driver VolumeSnapshotter functionality to address these issues. Using Stash, you can backup Kubernetes volumes mounted in workloads, stand-alone volumes and databases. Users may even extend Stash via addons for any custom workload. Stash offers so many features like Logical Backup, Policy based backup, Kubernetes Volume Backup, Database Backup, Declarative API, Deduplication, Data Encryption, Monitoring, Volume Snapshot and so on. Also, Stash supports multiple storages where you can store your backed up data. Stash supports AWS S3, Minio, Rook, Google Cloud Storage, Azure Blob Storage, OpenStack Swift, DigitalOcean Spaces, Blackbaze B2 and REST server as backup storage. You can also use Kubernetes persistent volumes as backend. Stash supports backup of various popular databases like [Elasticsearch](https://stash.run/addons/databases/backup-and-restore-elasticsearch-on-kubernetes/), [MariaDB](https://stash.run/addons/databases/backup-and-restore-mariadb-on-kubernetes/), [Redis](https://stash.run/addons/databases/backup-and-restore-redis-on-kubernetes/), [PostgreSQL](https://stash.run/addons/databases/backup-and-restore-postgres-on-kubernetes/), [MySQL](https://stash.run/addons/databases/backup-and-restore-mysql-on-kubernetes/), [MongoDB](https://stash.run/addons/databases/backup-and-restore-mongodb-on-kubernetes/), [Percona XtraDB](https://stash.run/addons/databases/backup-and-restore-percona-xtradb-on-kubernetes/) and [Etcd](). Also, you can backup [NATS](https://stash.run/addons/message-queue/backup-and-restore-nats-on-kubernetes/) Server or any [Kubernetes resources](https://stash.run/addons/kubernetes/backup-kubernetes-resources/) using Stash. Stash is an open core project used by thousands of engineers around the world.
 
-[Stash](https://stash.run/) offers an Enterprise edition for a production-grade environment and also provides 24/7 support. Stash community edition is FREE to use on any supported Kubernetes engines. You can Backup & Restore your volumes and databases on Kubernetes using Stash. There is no up-front investment required. Stash offers a 30 days license FREE of cost to try the Stash Enterprise edition. You can simply start with Stash by installing it from here: [Stash.run](https://stash.run/)
-Click here For [Documentation](https://stash.run/docs/latest/welcome/)
-We have made an in depth video about a Better Cloud-Native Backup Experience Using Stash. You can have a look into the video below:
+[Stash](https://stash.run/) offers an Enterprise edition for a production-grade environment and also provides 24/7 support. Stash community edition is FREE to use on any supported Kubernetes engines. You can Backup & Restore your volumes and databases on Kubernetes using Stash. There is no up-front investment required. Stash offers a 30 days license FREE of cost to try the Stash Enterprise edition. You can simply start with Stash by installing it from here: [stash.run](https://stash.run/)
+Click here For [documentation](https://stash.run/docs/latest/welcome/)
+
+We have made an in depth video about **a Better Cloud-Native Backup Experience Using Stash**. You can have a look into the video below:
+
 <iframe width="560" height="315" src="https://www.youtube.com/embed/MREdcm9S8Xg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
