@@ -48,7 +48,7 @@ In the last demonstration, we explored how to make the database connections TLS 
 
 Take a deep dive into the full webinar below:
 
-<iframe width="800" height="500" src="https://www.youtube.com/embed/XOqR5GJ2mM4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="800" height="500" src="https://www.youtube.com/watch?v=J7QI4EzuOVY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## What Next?
 
