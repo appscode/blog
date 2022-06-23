@@ -1,3 +1,18 @@
+---
+title: Add custom containers to KubeDB managed Statefulset
+date: 2022-06-23
+weight: 25
+authors:
+- Raihan Khan
+  tags:
+- kubeDB
+- container
+- MySQL
+- Filebeat
+- StatefulSet
+- MySQLOpsRequest
+---
+
 # Add custom containers to KubeDB managed Statefulset
 
 Let's assume you have a KubeDB managed MySQL cluster deployed in your Kubernetes environment, and you want to use [filebeat](https://www.elastic.co/beats/filebeat) to retrieve database logs from it. You can append filebeat container in your database pods which will fetch the logs from the default DB container. Now, Custom containers can be added to operator-generated [StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset) in KubeDB. Here's a quick demonstration on how to accomplish it.
@@ -135,3 +150,12 @@ kubectl logs -f -n demo pod/mysql-cluster-0 -c filebeat
 
 You can configure the `filebeat.yml` file to forward the output to [`Elasticsearch`](https://www.elastic.co/guide/en/beats/filebeat/current/elasticsearch-output.html) , [`Logstash`](https://www.elastic.co/guide/en/beats/filebeat/current/elasticsearch-output.html) , [`Kafka`](https://www.elastic.co/guide/en/beats/filebeat/current/kafka-output.html), [`redis`](https://www.elastic.co/guide/en/beats/filebeat/current/redis-output.html) etc. instead of console stdout.
 
+## Support
+
+To speak with us, please leave a message on [our website](https://appscode.com/contact/).
+
+To join public discussions with the KubeDB community, join us in the [Kubernetes Slack team](https://kubernetes.slack.com/messages/C8149MREV/) channel `#kubedb`. To sign up, use our [Slack inviter](http://slack.kubernetes.io/).
+
+To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
+
+If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
