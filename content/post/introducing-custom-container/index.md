@@ -3,14 +3,14 @@ title: Add custom containers to KubeDB managed Statefulset
 date: 2022-06-23
 weight: 25
 authors:
-- Raihan Khan
-  tags:
-- kubeDB
-- container
-- MySQL
-- Filebeat
-- StatefulSet
-- MySQLOpsRequest
+  - Raihan Khan
+tags:
+  - kubeDB
+  - container
+  - MySQL
+  - Filebeat
+  - StatefulSet
+  - MySQLOpsRequest
 ---
 
 # Add custom containers to KubeDB managed Statefulset
