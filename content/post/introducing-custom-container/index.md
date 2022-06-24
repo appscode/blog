@@ -120,7 +120,7 @@ Patch this YAML to our existing StatefulSet using the following command.
 ```bash
 $ kubectl patch sts mysql-cluster -n demo --patch-file mysql-patch.yaml
 ```
-![custom_container_insertion](/content/post/introducing-custom-container/custom_container_insertion.jpg)
+![custom_container_insertion](custom_container_insertion.jpg)
 
 Get the `mysql-cluster` StatefulSet YAML to confirm that the changes has been patched. Now, make a `MySQLOpsRequest` of type Restart to restart the Pods with the newly applied configurations. Apply the following YAML to make an OpsRequest to your `mysql-cluster` custom resource. Alternatively, you can restart your pods manually.
 
