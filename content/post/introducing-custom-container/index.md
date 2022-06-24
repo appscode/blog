@@ -13,7 +13,7 @@ tags:
   - MySQLOpsRequest
 ---
 
-### Add custom containers to KubeDB managed Database
+### Add custom containers in KubeDB managed Database
 
 Let's assume you have a KubeDB managed Database deployed in your Kubernetes environment. Now, You want to inject a sidecar container in the database StatefulSet in order to extend and enhance the functionality of existing containers. Currently, KubeDB doesn't have support for custom container insertion. But, we are having a workaround to run KubeDB managed pods with your own custom container. In this demo, we are going to demonstrate how to inject Filebeat container in KubeDB managed MySQL cluster.  
 
