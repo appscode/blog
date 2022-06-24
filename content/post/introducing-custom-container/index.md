@@ -1,6 +1,6 @@
 ---
-title: Add custom containers to KubeDB managed Statefulset
-date: 2022-06-23
+title: A workaround of adding custom container to KubeDB managed Databases
+date: 2022-06-24
 weight: 25
 authors:
   - Raihan Khan
@@ -13,13 +13,15 @@ tags:
   - MySQLOpsRequest
 ---
 
-# Add custom containers to KubeDB managed Statefulset
+### Add custom containers to KubeDB managed Database
 
-Let's assume you have a KubeDB managed MySQL cluster deployed in your Kubernetes environment, and you want to use [filebeat](https://www.elastic.co/beats/filebeat) to retrieve database logs from it. You can append filebeat container in your database pods which will fetch the logs from the default DB container. Now, Custom containers can be added to operator-generated [StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset) in KubeDB. Here's a quick demonstration on how to accomplish it.
+Let's assume you have a KubeDB managed Database deployed in your Kubernetes environment. Now, You want to inject a sidecar container in the database StatefulSet in order to extend and enhance the functionality of existing containers. Currently, KubeDB doesn't have support for custom container insertion. But, we are having a workaround to run KubeDB managed pods with your own custom container. In this demo, we are going to demonstrate how to inject Filebeat container in KubeDB managed MySQL cluster.  
 
-We are going to deploy a sample MySQL cluster in demo namespace using the following YAML.
+Let's assume you have a KubeDB managed MySQL cluster deployed in your Kubernetes environment,  Here's a quick demonstration on how to accomplish it.
 
-```
+Firstly, We are going to deploy a sample MySQL cluster in demo namespace using the following YAML.
+
+```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: MySQL
 metadata:
@@ -39,15 +41,15 @@ spec:
   terminationPolicy: WipeOut
 ```
 
-The Operator will create a custom resource `mysql-cluster`. It will also create a statefulset named `mysql-cluster` as well. The statefulset will eventually create two pods named `mysql-cluster-0` and `mysql-cluster-1`.
-
-### Create a custom docker image with required configurations
+The Operator will create a custom resource `mysql-cluster`. It will also create a StatefulSet named `mysql-cluster` as well. The StatefulSet will eventually create two pods named `mysql-cluster-0` and `mysql-cluster-1`.
+Our aim is to use [Filebeat](https://www.elastic.co/beats/filebeat) to retrieve database logs. We are going to inject a filebeat container with custom configuration to the operator-generated mysql-cluster [StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset).
+### Prepare the container
 
 At first, create a filebeat.yml file with your required configurations. Let's assume that you want to read DB logs from a mysql container. In kubeDB managed MySQL pod, the log file is mounted in `/var/lib/mysql` directory in `{pod-name}.log` file.
 
 The following example configures Filebeat to harvest lines from all log files that match the specified glob patterns. For this demo, we are going to Forward the output to console. The Console output writes events in JSON format to stdout.
 
-```
+```yaml
 filebeat.inputs:
   - type: log
     paths:
@@ -58,15 +60,15 @@ output.console:
 
 You can also provide specific log file paths for specific pods as well. Use the following command to view all the log files available in `mysql-cluster-0` pod.
 
-```
+```bash
 $ kubectl exec -it mysql-cluster-0 -n demo -c mysql -- bash -c "cd /var/lib/mysql && ls | grep *.log"
 
 mysql-quickstart-0.log
 ```
 
-Now create a Dockerfile in the same directory. The use your base filebeat image as your requirement. For this demo, we are using `Filebeat 7.17.1`. In the Dockerfile, copy the filebeat.yml to default filebeat.yml directory to override the existing one.
+Now create a Dockerfile in the same directory. Set the base image to your required filebeat version. For this demo, we are using `Filebeat 7.17.1`. In the Dockerfile, copy the filebeat.yml to default home directory to override the existing one.
 
-```
+```dockerfile
 FROM elastic/filebeat:7.17.1
 COPY filebeat.yml /usr/share/filebeat
 USER root
@@ -75,7 +77,8 @@ USER filebeat
 ```
 
 The working directory should be structured like this:
-```
+```bash
+tree .
 .
 ├── Dockerfile
 └── filebeat.yml
@@ -83,21 +86,21 @@ The working directory should be structured like this:
 
 Now, Use the following command to create the docker image and push to your remote dockerhub repository.
 
+```bash
+$ docker build -t repository_name/custom_filebeat:latest .
+$ docker push repository_name/custom_filebeat:latest
 ```
-docker build -t repository_name/custom_filebeat:latest .
-docker push repository_name/custom_filebeat:latest
-```
-### Patch the custom Filebeat docker image configuration in the Operator generated StatefulSet
+### Patch the custom container
 
 You can view the operator generated statefulset via the folllowing command.
 
-```
-kubectl get sts mysql-cluster -n demo -oyaml
+```bash
+$ kubectl get sts mysql-cluster -n demo -oyaml
 ```
 
 In order to add your custom container using the `custom_filebeat` image, create a YAML file named `mysql-patch.yaml` using the following spec. The log file is mounted in a shared PVC directory. Set the `securityContext.runAsUser` to MySQL user ID so that the mysql owned log files can be read by filebeat.
 
-```
+```yaml
 spec:
   template:
     spec:
@@ -112,17 +115,18 @@ spec:
         runAsUser: 999
 ```
 
-Patch this YAML to our existing statefulset using the following command.
+Patch this YAML to our existing StatefulSet using the following command.
 
+```bash
+$ kubectl patch sts mysql-cluster -n demo --patch-file mysql-patch.yaml
 ```
-kubectl patch sts mysql-cluster -n demo --patch-file mysql-patch.yaml
-```
+![custom_container_insertion](/content/post/introducing-custom-container/custom_container_insertion.jpg)
 
-Get the `mysql-cluster` statefulset YAML to confirm that the changes has been patched. Now, make a `MySQLOpsRequest` of type Restart to restart the Pods with the newly applied configurations. Apply the following YAML to make an OpsRequest to your `mysql-cluster` custom resource.
+Get the `mysql-cluster` StatefulSet YAML to confirm that the changes has been patched. Now, make a `MySQLOpsRequest` of type Restart to restart the Pods with the newly applied configurations. Apply the following YAML to make an OpsRequest to your `mysql-cluster` custom resource. Alternatively, you can restart your pods manually.
 
 ### Restart the pods with updated configurations
 
-```
+```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: MySQLOpsRequest
 metadata:
@@ -134,18 +138,18 @@ spec:
     name: mysql-cluster
 ```
 
-After the OpsRequest being successfull, the pods will be restarted with newly applied configurations. You can now exec into the `mysql` container and enable general_log using the following commands.
+After the OpsRequest being successfully executed, the pods will be restarted with newly applied configurations. You can now exec into the `mysql` container and enable general_log using the following commands.
 
-```
-kubectl logs -f -n demo pod/mysql-cluster-0 -c exec
-mysql -uroot -p$MYSQL_ROOT_PASSWORD
-mysql> set global general_log=ON;
+```bash
+$ kubectl logs -f -n demo pod/mysql-cluster-0 -c exec
+$ mysql -uroot -p$MYSQL_ROOT_PASSWORD
+$ mysql> set global general_log=ON;
 ```
 
 Now, View the `filebeat` container logs from another terminal to see the logs generated by mysql queries. You can continuously make queries in the terminal where the mysql container is executed and observe the query logs generated in the terminal where filebeat container is executed.
 
-```
-kubectl logs -f -n demo pod/mysql-cluster-0 -c filebeat
+```bash
+$ kubectl logs -f -n demo pod/mysql-cluster-0 -c filebeat
 ```
 
 You can configure the `filebeat.yml` file to forward the output to [`Elasticsearch`](https://www.elastic.co/guide/en/beats/filebeat/current/elasticsearch-output.html) , [`Logstash`](https://www.elastic.co/guide/en/beats/filebeat/current/elasticsearch-output.html) , [`Kafka`](https://www.elastic.co/guide/en/beats/filebeat/current/kafka-output.html), [`redis`](https://www.elastic.co/guide/en/beats/filebeat/current/redis-output.html) etc. instead of console stdout.
