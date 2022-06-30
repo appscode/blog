@@ -2,9 +2,15 @@
 // Author: AppsCode
 // Version: 0.0.1
 
+//Utilities - Base styles, variables, mixins
+@import "base/utilities/_initial-variable";
+@import "base/utilities/_default";
+@import "base/utilities/_themes";
+@import "base/utilities/_typography";
+
 //BASE - Base styles, variables, mixins
-@import "base/_variables";
-@import "base/_mixins";
+// @import "base/_variables";
+// @import "base/_mixins";
 @import "base/_global";
 
 // COMPONENTS

@@ -57,10 +57,10 @@
   <!-- bulma css  -->
   <link rel="stylesheet" href="/assets/css/bulma.min.css" />
   <!-- Custom CSS -->
-  {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
+  <!-- {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}" />
-  {{ end }}
-  <!-- <link rel="stylesheet" href="/assets/sass/main.css" /> -->
+  {{ end }} -->
+  <link rel="stylesheet" href="/assets/sass/main.css" />
 </head>
 
 <body>
@@ -78,7 +78,7 @@
     {{ block "header-top" . }}
     <div class="header-top">
       <!-- notification start  -->
-      <div onclick="goToWebinarPage()" class="notification-area notification is-primary" id="notification-area"
+      <div onclick="goToWebinarPage()" class="notification-area notification is-primary height-40" id="notification-area"
         style="display:none">
         <div class="container section">
           <div class="notification-inner is-flex is-align-items-center is-justify-content-center">

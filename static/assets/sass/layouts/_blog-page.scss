@@ -8,7 +8,7 @@
     z-index: 1;
     overflow: hidden;
     .social-media-share {
-      border: 10px solid $primary-color;
+      border: 10px solid $ac-primary;
       width: 240px;
       padding: 30px;
       text-align: right;
@@ -221,7 +221,7 @@
 
         &:hover,
         &.is-active {
-          color: $primary-color;
+          color: $ac-primary;
         }
       }
     }
@@ -243,7 +243,7 @@
     .blog-description {
       h2 {
         a {
-          color: $primary-color !important;
+          color: $ac-primary !important;
         }
       }
     }
@@ -279,7 +279,7 @@
 
       .meta-date {
         i {
-          color: $primary-color;
+          color: $ac-primary;
           padding-right: 5px;
         }
       }
@@ -289,7 +289,7 @@
           font-weight: 500;
           text-align: right;
           span {
-            color: $paragraph-color;
+            color: $ac-color-text;
             font-weight: 400;
           }
         }
@@ -306,7 +306,7 @@
           font-weight: 700;
           display: block;
           margin-bottom: 10px;
-          color: $heading-color;
+          color: $ac-color-heading;
         }
       }
 

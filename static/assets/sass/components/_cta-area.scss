@@ -2,16 +2,16 @@
 .cta-area {
   background-image: url(../images/bg-image/cta-bg.png);
   background-repeat: repeat;
-  background-color: $primary-color;
+  background-color: $ac-primary;
   .section-title.is-dark-bg {
     h2 {
       font-size: 32px;
       font-weight: 700;
-      color: $white-color;
+      color: $ac-white;
       line-height: 42px;
     }
     p {
-      color: darken($white-color, 20%);
+      color: darken($ac-white, 20%);
       margin-bottom: 30px;
     }
   }
@@ -26,7 +26,7 @@
         margin-bottom: 30px;
         h5 {
           font-size: 16px;
-          color: $white-color;
+          color: $ac-white;
         }
         .inline-button {
           font-size: 14px;
@@ -39,7 +39,7 @@
             bottom: 0;
             width: 0;
             height: 2px;
-            background: $primary-color;
+            background: $ac-primary;
             border-radius: 50px;
             transition: 0.3s ease-in-out;
           }

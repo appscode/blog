@@ -31,7 +31,7 @@ li.nav-item {
     font-weight: 500;
     font-size: 16px;
     border-bottom-width: 1px;
-    color: $primary-color;
+    color: $ac-primary;
     display: flex;
     justify-content: center;
     margin-bottom: -1px;
@@ -46,7 +46,7 @@ li.nav-item {
   justify-content: flex-start;
 }
 a.nav-link.active {
-  background-color: $white-color;
+  background-color: $ac-white;
   border-left: 1px solid #dbdbdb;
   border-right: 1px solid #dbdbdb;
   border-bottom-color: transparent !important;
@@ -56,7 +56,7 @@ a.nav-link.active {
   &:after {
     position: absolute;
     content: "";
-    background: $primary-color;
+    background: $ac-primary;
     top: 0;
     left: 0;
     width: 100%;

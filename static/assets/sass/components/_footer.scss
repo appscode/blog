@@ -16,8 +16,8 @@
     z-index: 1;
   }
   .subscription-button {
-    font-family: $font-link;
-    color: $primary-color;
+    font-family: $ac-color-link;
+    color: $ac-primary;
     border-radius: 0 4px 4px 0;
     padding: 0 13px;
     font-size: 16px;
@@ -32,9 +32,9 @@
     z-index: 9;
     background: transparent;
     &:hover {
-      background-color: $primary-color;
-      color: $white-color !important;
-      border: 1px solid $primary-color;
+      background-color: $ac-primary;
+      color: $ac-white !important;
+      border: 1px solid $ac-primary;
     }
   }
 }
@@ -42,22 +42,22 @@
 .subscription-form input[type="email"]:hover {
   outline: none;
   box-shadow: none;
-  border: 1px solid $primary-color;
+  border: 1px solid $ac-primary;
 }
 .contact-information {
   h4 {
     font-size: 18px;
-    color: $heading-color;
+    color: $ac-color-heading;
   }
   margin-top: 28px;
 }
 .all-contact-info {
   li {
     a {
-      color: $list-color;
+      color: $ac-color-value;
       display: inline-block;
       font-size: 14px;
-      font-family: $font-paragraph;
+      font-family: $ac-color-text;
       padding: 5px 0;
       span {
         padding-right: 10px;
@@ -66,23 +66,23 @@
   }
 }
 p.spam-message {
-  color: $list-color;
+  color: $ac-color-value;
   display: inline-block;
   font-size: 14px;
-  font-family: $font-paragraph;
+  font-family: $ac-color-text;
   padding: 5px 0;
 }
 .footer-menu {
   h4 {
     font-size: 18px;
-    color: $heading-color;
+    color: $ac-color-heading;
     margin-bottom: 14px;
   }
 }
 .footer-link {
   li {
     a {
-      color: $list-color;
+      color: $ac-color-value;
       font-size: 14px;
       display: block;
       padding: 8px 0;
@@ -91,7 +91,7 @@ p.spam-message {
         padding-bottom: 0;
       }
       &:hover {
-        color: $primary-color;
+        color: $ac-primary;
         padding-left: 5px;
       }
     }
@@ -105,17 +105,17 @@ p.spam-message {
   padding: 30px 0;
   p {
     font-size: 14px;
-    color: $paragraph-color;
+    color: $ac-color-text;
     margin-bottom: 0;
   }
 }
 .footer-inline-link {
   a {
-    color: $list-color;
+    color: $ac-color-value;
     font-size: 14px;
     margin-right: 30px;
     &:hover {
-      color: $primary-color;
+      color: $ac-primary;
     }
     &:last-child {
       margin-right: 0;
@@ -136,7 +136,7 @@ p.spam-message {
       border-radius: 50%;
       transition: 0.3s ease-in-out;
       &:hover {
-        background: $primary-color;
+        background: $ac-primary;
         color: #fff;
         border: 1px solid transparent;
         i{
