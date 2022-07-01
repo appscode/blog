@@ -73,113 +73,86 @@
   <![endif]-->
   <!-- header-area start -->
   {{ block "header" . }}
-  <header id="header">
-    <!-- header-area top start -->
-    {{ block "header-top" . }}
-    <div class="header-top">
-      <!-- notification start  -->
-      <div onclick="goToWebinarPage()" class="notification-area notification is-primary height-40" id="notification-area"
-        style="display:none">
-        <div class="container section">
-          <div class="notification-inner is-flex is-align-items-center is-justify-content-center">
-            <p>Join our upcoming webinar! Get your seat right now! <a href="https://appscode.com/webinar/"
-                target="_blank">Click</a> to
-              register.</p>
-          </div>
-        </div>
-        <button class="delete" onclick="event.stopPropagation(); closeItem('#notification-area')"></button>
-      </div>
-      <script type="text/javascript">
-        // close action start
-        function closeItem(item) {
-          const selcetedItem = document.querySelector(item)
-          selcetedItem.style.display = 'none'
-        }
-        // close action end
+  <header>
+    <div class="navbar-area active-headroom header--fixed">
+      <div class="navbar-area header--fixed">
+        <div class="navbar-appscode-wrapper">
+          <div class="navbar-appscode container">
 
-        // redirect to webinar pagte
-        function goToWebinarPage() {
-          window.open("https://appscode.com/webinar/", "_blank");
-        }
+            <div class="navbar-left">
+              <div class="navbar-brand">
+                <a href="{{.Site.Params.domain_bytebuilders}}">
+                  <img src="{{ .Site.Data.products.bytebuilders.logo.src }}" alt="img" />
+                </a>
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            </div>
 
-        (function () {
-          var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-          xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-              if (xhr.status === 200) {
-                var result = JSON.parse(xhr.responseText);
-                if (result.schedules) {
-                  let endDate = new Date(result.schedules[0]).getTime();
-                  let startDate = new Date().getTime();
-                  let timeRemaining = parseInt((endDate - startDate) / 1000);
-                  if (timeRemaining >= 0) {
-                    document.querySelector('#notification-area div div p').innerHTML = "Upcoming Webinar: \""+result.title+"\". <a href=\"https://appscode.com/webinar\">Register here</a>!";
-                    document.querySelector('#notification-area').style.display = 'block';
-                  }
-                }
-              }
-            }
-          }
-          // console.log('GET', 'https://license-issuer.appscode.com/_/webinars/');
-          xhr.open('GET', 'https://license-issuer.appscode.com/_/webinars/');
-          xhr.send();
-        }());
-      </script>
-      <!-- notification end -->
-      <div class="container">
-        <nav class="navbar customize-navbar" role="navigation" aria-label="main navigation">
-          <!-- navbar brand start -->
-          <div class="navbar-brand">
-            <a class="navbar-item" href="{{.Site.Params.domain_bytebuilders}}">
-              <img src="{{ .Site.Data.products.bytebuilders.logo.src }}" />
-            </a>
-
-            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
-              data-target="navbarBasicExample">
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-            </a>
-          </div>
-          <!-- navbar brand end -->
-
-          <!-- navbar-menu start -->
-          <div id="navbarBasicExample" class="navbar-menu">
-            <div class="navbar-end">
-              <a href="{{.Site.Params.domain_marketplace}}" class="navbar-item">
-                Marketplace
-              </a>
-
-              <a href="{{.Site.Params.blog_url}}" class="navbar-item">
-                Blog
-              </a>
-
-              <a href="{{.Site.Params.domain_appscode}}/about/" class="navbar-item">
-                About Us
-              </a>
-
-              <a href="{{.Site.Params.domain_appscode}}/contact/" class="navbar-item">
-                Contact
-              </a>
-
-              <div class="navbar-item">
-                <div class="buttons">
-                  <a href="{{.Site.Params.domain_bytebuilders}}/user/sign_up" class="button is-light is-primary">
-                    Sign up
-                  </a>
-                  <a href="{{.Site.Params.domain_bytebuilders}}/user/login" class="button is-primary">
-                    Sign in
-                  </a>
+            <div class="navbar-right">
+              <div class="is-flex is-align-items-center is-justify-content-space-between is-fullwidth">
+                <ul>
+                  <li class="nav-item">
+                    <a href="{{.Site.Params.domain_marketplace}}" target="_blank" class="link">Marketplace</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{.Site.Params.blog_url}}" target="_blank" class="link">Blog</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{.Site.Params.domain_appscode}}/about/" target="_blank" class="link">About Us</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/webinar" target="_blank" class="link">Webinar <span class="whats-new">New</span></a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{.Site.Params.domain_appscode}}/contact/" target="_blank" class="link">Contact</a>
+                  </li>
+                </ul>
+                <div class="navbar-item">
+                  <div class="buttons">
+                    <a href="{{.Site.Params.domain_bytebuilders}}/user/sign_up" class="button ac-button is-primary">
+                      Sign up
+                    </a>
+                    <a href="{{.Site.Params.domain_bytebuilders}}/user/login"
+                      class="button ac-button is-secondary ml-15">
+                      Sign in
+                    </a>
+                  </div>
                 </div>
+                <!-- if webinar exist script  -->
+                <script type="text/javascript">
+                  (function () {
+                    var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+                    xhr.onreadystatechange = function () {
+                      if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                          var result = JSON.parse(xhr.responseText);
+                          if (result.schedules) {
+                            let endDate = new Date(result.schedules[0]).getTime();
+                            let startDate = new Date().getTime();
+                            let timeRemaining = parseInt((endDate - startDate) / 1000);
+                            if (timeRemaining >= 0) {
+                              document.querySelector('.whats-new').classList.add('is-block')
+                            }
+                          }
+                        }
+                      }
+                    } //
+                    // console.log('GET', 'https://x.appscode.com/_/webinars/');
+                    xhr.open('GET', 'https://x.appscode.com/_/webinars/');
+                    xhr.send();
+                  }());
+                </script>
+                <!-- navbar items start -->
               </div>
             </div>
           </div>
-          <!-- navbar-menu end -->
-        </nav>
+        </div>
       </div>
     </div>
-    {{ end }}
-    <!-- header-area top end -->
   </header>
   {{ end }}
   <!-- header-area end -->
