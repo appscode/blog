@@ -59,9 +59,9 @@ Link: https://blog.byte.builders/post/kubevault-v2022.06.16/
 On June 29, 2022, Appscode held a webinar on Using GKE Workload Identity with Stash. 
 
 Key contents of the webinar:
--Stash overview
--Setup GKE workload identity
--Backup and Restore a database using workload identity
+- Stash overview
+- Setup GKE workload identity
+- Backup and Restore a database using workload identity
 
 Link: https://blog.byte.builders/post/stash-webinar-2022-06-29/
 
@@ -70,10 +70,10 @@ Link: https://blog.byte.builders/post/stash-webinar-2022-06-29/
 On 22nd June 2022, Appscode held a webinar on ”Deploy Sharded Redis Cluster On Kubernetes using KubeDB”. 
 
 The essential contents of the webinar:
--Introducing the concept of Redis Shard
--Challenges of running Redis on Kubernetes
--What KubeDB offers to face those challenges
--Live Demonstration
+- Introducing the concept of Redis Shard
+- Challenges of running Redis on Kubernetes
+- What KubeDB offers to face those challenges
+- Live Demonstration
 
 Link: https://blog.byte.builders/post/kubedb-redis-cluster-webiner-2022.06.22/
 
@@ -82,11 +82,11 @@ Link: https://blog.byte.builders/post/kubedb-redis-cluster-webiner-2022.06.22/
 On JUN 8, 2022, AppsCode held a webinar on “Deploy TLS secured ProxySQL Cluster for KubeDB provisioned MySQL Group Replication in Kubernetes”.
 
 The essential contents fo this webinar:
--ProxySQL initial setup made easy with KubeDB
--TLS secured frontend and backend connections for ProxySQL
--Load balance with ProxySQL cluster
--Failover recovery of ProxySQL cluster node
--Custom configuration in a declarative way
+- ProxySQL initial setup made easy with KubeDB
+- TLS secured frontend and backend connections for ProxySQL
+- Load balance with ProxySQL cluster
+- Failover recovery of ProxySQL cluster node
+- Custom configuration in a declarative way
 
 Link: https://blog.byte.builders/post/proxysql-webinar-2022.06.08/
 
@@ -95,10 +95,10 @@ Link: https://blog.byte.builders/post/proxysql-webinar-2022.06.08/
 On 1st June 2022, Appscode held a webinar on Managing MongoDB with Arbiter on Kubernetes using KubeDB. 
 
 Key contents of the webinar:
--Introducing the concept of MongoDB Arbiter
--Importance of voting in MongoDB
--How Arbiter works on Replica-set database & Sharded cluster.
--Live Demonstration
+- Introducing the concept of MongoDB Arbiter
+- Importance of voting in MongoDB
+- How Arbiter works on Replica-set database & Sharded cluster.
+- Live Demonstration
 
 Link: https://blog.byte.builders/post/mongodb-arbiter-2022.06.01/
 
