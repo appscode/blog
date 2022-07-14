@@ -30,6 +30,7 @@ We have also made some improvements. Here are the notable changes,
 
 - Ensured that the backupsession will be marked as completed after executing all the steps [#176](https://github.com/stashed/apimachinery/pull/176).
 - Added RBAC permissions for finalizer [#1458](https://github.com/stashed/stash/pull/1458).
+- Custom labels will be passed to Volume Snapshotter Job properly [#1461](https://github.com/stashed/stash/pull/1461).
 
 ## What Next?
 
