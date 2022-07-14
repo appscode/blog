@@ -1,6 +1,6 @@
 ---
 title: "Using EKS IRSA and Kube2iam with Stash"
-date: 2022-07-06
+date: 2022-07-14
 weight: 15
 authors:
   - Hossain Mahmud
