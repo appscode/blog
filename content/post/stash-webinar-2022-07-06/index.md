@@ -17,10 +17,10 @@ tags:
 
 ## Summary
 
-On July 6, 2022, Appscode held a webinar on **Using EKS IRSA and Kube2iam with Stash**. Key contents of the webinars are:
+On July 6, 2022, Appscode held a webinar on **Using EKS IRSA and Kube2iam with Stash**. Key contents of the webinar are:
 
 1) Setup IRSA
-2) Backup and Restore a database using EKS IRSA
+2) Backup and Restore a database using IRSA
 3) Setup Kub2iam
 4) Backup and Restore a database using Kub2iam
 4) Q & A Session
