@@ -18,50 +18,11 @@
       }
     }
 
-    .meta {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-      .author {
-        margin-right: 30px;
-        a {
-          font-weight: 400;
-          font-size: 16px;
-          line-height: 160%;
-          color: #000000;
-          letter-spacing: 0;
-        }
-      }
-
-      .date {
-        .fa {
-        }
-
-        strong {
-          font-weight: 500;
-          font-size: 16px;
-          line-height: 160%;
-
-          color: #000000;
-        }
-      }
-    }
-
     p {
       font-weight: 400;
       font-size: 16px;
       line-height: 160%;
       margin-bottom: 20px;
-    }
-
-    a.inline-button {
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 160%;
-      letter-spacing: 1.25px;
-      color: #1c1c1c;
-      .fa {
-      }
     }
 
     .social-share {
@@ -73,6 +34,7 @@
         line-height: 160%;
         color: #3e393e;
         margin-bottom: 15px;
+        display: block;
       }
 
       .social-share-button {
@@ -86,7 +48,41 @@
     }
   }
 }
+a.inline-button {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 160%;
+  letter-spacing: 1.25px;
+  color: #1c1c1c;
+}
+.meta {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  .author {
+    margin-right: 30px;
+    a {
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 160%;
+      color: #000000;
+      letter-spacing: 0;
+    }
+  }
 
+  .date {
+    .fa {
+    }
+
+    strong {
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 160%;
+
+      color: #000000;
+    }
+  }
+}
 ul.social-share-button {
   padding: 0;
   display: flex;
@@ -248,6 +244,8 @@ ul.social-share-button {
 
   .blog-items {
     .single-blog {
+      border: 1px solid $ac-white-light;
+      border-radius: 4px;
       a {
         img {
           object-fit: cover;
@@ -273,11 +271,20 @@ ul.social-share-button {
       }
 
       h2 {
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 130%;
+        margin-bottom: 15px;
         a {
+          color: $ac-color-heading;
         }
       }
 
       p {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 160%;
+        margin-bottom: 15px;
       }
 
       .inline-button {

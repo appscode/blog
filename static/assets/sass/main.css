@@ -10695,48 +10695,11 @@ p.spam-message {
   color: #1c1c1c;
 }
 
-.hero-area-blog .blog-title-content .meta {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  margin-bottom: 20px;
-}
-
-.hero-area-blog .blog-title-content .meta .author {
-  margin-right: 30px;
-}
-
-.hero-area-blog .blog-title-content .meta .author a {
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 160%;
-  color: #000000;
-  letter-spacing: 0;
-}
-
-.hero-area-blog .blog-title-content .meta .date strong {
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 160%;
-  color: #000000;
-}
-
 .hero-area-blog .blog-title-content p {
   font-weight: 400;
   font-size: 16px;
   line-height: 160%;
   margin-bottom: 20px;
-}
-
-.hero-area-blog .blog-title-content a.inline-button {
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 160%;
-  letter-spacing: 1.25px;
-  color: #1c1c1c;
 }
 
 .hero-area-blog .blog-title-content .social-share {
@@ -10750,6 +10713,44 @@ p.spam-message {
   line-height: 160%;
   color: #3e393e;
   margin-bottom: 15px;
+  display: block;
+}
+
+a.inline-button {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 160%;
+  letter-spacing: 1.25px;
+  color: #1c1c1c;
+}
+
+.meta {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin-bottom: 20px;
+}
+
+.meta .author {
+  margin-right: 30px;
+}
+
+.meta .author a {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 160%;
+  color: #000000;
+  letter-spacing: 0;
+}
+
+.meta .date strong {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 160%;
+  color: #000000;
 }
 
 ul.social-share-button {
@@ -10966,9 +10967,32 @@ ul.social-share-button li a i.fa {
   color: #3e393e;
 }
 
+.blog-items-area .blog-items .single-blog {
+  border: 1px solid #dbdbde;
+  border-radius: 4px;
+}
+
 .blog-items-area .blog-items .single-blog a img {
   -o-object-fit: cover;
      object-fit: cover;
+}
+
+.blog-items-area .blog-items .single-blog h2 {
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 130%;
+  margin-bottom: 15px;
+}
+
+.blog-items-area .blog-items .single-blog h2 a {
+  color: #1c1c1c;
+}
+
+.blog-items-area .blog-items .single-blog p {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 160%;
+  margin-bottom: 15px;
 }
 
 .blog-hero-area.section-padding {
