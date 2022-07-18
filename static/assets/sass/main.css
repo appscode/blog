@@ -10722,6 +10722,28 @@ a.inline-button {
   line-height: 160%;
   letter-spacing: 1.25px;
   color: #1c1c1c;
+  position: relative;
+  z-index: 1;
+}
+
+a.inline-button:after {
+  position: absolute;
+  content: "";
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 1px;
+  background-color: #1c1c1c;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
+}
+
+a.inline-button:hover:after {
+  width: 100%;
+}
+
+a.inline-button i.fa {
+  padding-left: 0.5rem;
 }
 
 .meta {
@@ -10734,6 +10756,11 @@ a.inline-button {
   margin-bottom: 20px;
 }
 
+.meta i.fa {
+  color: #555555;
+  margin-right: 0.3rem;
+}
+
 .meta .author {
   margin-right: 30px;
 }
@@ -10742,7 +10769,7 @@ a.inline-button {
   font-weight: 400;
   font-size: 16px;
   line-height: 160%;
-  color: #000000;
+  color: var(--ac-primary);
   letter-spacing: 0;
 }
 
@@ -10761,6 +10788,17 @@ ul.social-share-button {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+}
+
+ul.social-share-button.is-flex-direction-column {
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+}
+
+ul.social-share-button.is-flex-direction-column li {
+  margin-right: 0;
+  margin-bottom: 1rem;
 }
 
 ul.social-share-button li {
@@ -10783,7 +10821,8 @@ ul.social-share-button li {
 ul.social-share-button li a {
   width: 46px;
   height: 46px;
-  background: #ddd;
+  background: #1da1f2;
+  color: #ffffff;
   border-radius: 50%;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -10794,6 +10833,27 @@ ul.social-share-button li a {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+}
+
+ul.social-share-button li a:hover i.fa {
+  -webkit-animation: icon-animation 0.9s both;
+          animation: icon-animation 0.9s both;
+}
+
+ul.social-share-button li a.twitter {
+  background-color: #1da1f2;
+}
+
+ul.social-share-button li a.linkedin {
+  background-color: #0a66c2;
+}
+
+ul.social-share-button li a.facebook {
+  background-color: #4867aa;
+}
+
+ul.social-share-button li a.envelope {
+  background-color: #4285f4;
 }
 
 ul.social-share-button li a i.fa {
@@ -10916,6 +10976,19 @@ ul.social-share-button li a i.fa {
   border-radius: 2px;
   font-size: 1rem;
   margin-right: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.search-filter-area .filter-area .viewing-mode button span {
+  font-size: 20px;
 }
 
 .search-filter-area .filter-area .viewing-mode button:last-child {
@@ -10925,6 +10998,10 @@ ul.social-share-button li a i.fa {
 .search-filter-area .filter-area .viewing-mode button.is-active {
   background-color: var(--ac-primary);
   color: #ffffff;
+}
+
+.blog-items-area .left-sidebar {
+  margin-right: 30px;
 }
 
 .blog-items-area .left-sidebar .collapsable-menu {
@@ -10970,11 +11047,43 @@ ul.social-share-button li a i.fa {
 .blog-items-area .blog-items .single-blog {
   border: 1px solid #dbdbde;
   border-radius: 4px;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
+  min-height: 425px;
+}
+
+.blog-items-area .blog-items .single-blog:hover {
+  border: 1px solid var(--ac-primary);
+}
+
+.blog-items-area .blog-items .single-blog:hover h2 {
+  text-decoration: underline;
+}
+
+.blog-items-area .blog-items .single-blog:hover a.inline-button:after {
+  width: 100%;
 }
 
 .blog-items-area .blog-items .single-blog a img {
   -o-object-fit: cover;
      object-fit: cover;
+  border-radius: 4px 4px 0 0;
+}
+
+.blog-items-area .blog-items .single-blog .meta {
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.blog-items-area .blog-items .single-blog .meta .author a {
+  font-size: 14px;
+}
+
+.blog-items-area .blog-items .single-blog .meta .date strong {
+  font-size: 14px;
 }
 
 .blog-items-area .blog-items .single-blog h2 {
@@ -10982,6 +11091,8 @@ ul.social-share-button li a i.fa {
   font-size: 18px;
   line-height: 130%;
   margin-bottom: 15px;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
 }
 
 .blog-items-area .blog-items .single-blog h2 a {
@@ -11428,24 +11539,16 @@ ul.social-share-button li a i.fa {
 /*=================================================================================================
                                     Responsive code end
 =================================================================================================*/
-.blog-heading-area.section-padding {
-  padding-top: 160px;
-}
-
 .blog-details-area {
-  padding-bottom: 100px;
+  margin-top: 100px;
 }
 
-.blog-heading h1 {
-  font-size: 36px;
-  line-height: 44px;
+.blog-details-area h1 {
   font-weight: 700;
-  margin-bottom: 10px;
-}
-
-.blog-heading {
-  max-width: 70%;
-  margin: 0 auto;
+  font-size: 42px;
+  line-height: 130%;
+  /* or 55px */
+  letter-spacing: -2px;
 }
 
 .fig-style {
@@ -11475,6 +11578,77 @@ ul.social-share-button li a i.fa {
   position: -webkit-sticky;
   position: sticky;
   top: 130px;
+  z-index: 99;
+}
+
+.single-wizard h4 {
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 130%;
+  letter-spacing: -1px;
+  margin-bottom: 15px;
+}
+
+.single-wizard .single-recent-blog {
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.single-wizard .single-recent-blog .date-month {
+  width: 60px;
+  height: 60px;
+  background-color: rgba(0, 52, 102, 0.12);
+  margin-right: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding: 8px;
+}
+
+.single-wizard .single-recent-blog .date-month .date {
+  font-weight: 300;
+  font-size: 27.3833px;
+  line-height: 120%;
+}
+
+.single-wizard .single-recent-blog .date-month .month {
+  font-weight: 700;
+  font-size: 16.7833px;
+  line-height: 120%;
+}
+
+.single-wizard .single-recent-blog .recent-blog-content {
+  width: calc(100% - 76px);
+}
+
+.single-wizard .single-recent-blog .recent-blog-content h2 {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 120%;
+  /* or 19px */
+  letter-spacing: 0.25px;
+}
+
+.single-wizard .single-recent-blog .recent-blog-content h2 a {
+  color: #1c1c1c;
+}
+
+.single-wizard .single-recent-blog .recent-blog-content .meta a {
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 150%;
 }
 
 .code-block-heading {

@@ -33,17 +33,17 @@
           <p>Summary On June 29, 2022, Appscode held a webinar on Using GKE Workload Identity with Stash. Key contents
             of the webinars ...</p>
 
-          <a class="inline-button" href="#">READ MORE <i class="fa fa-arrow-right ml-10"></i></a>
+          <a class="inline-button" href="#">READ MORE <i class="fa fa-arrow-right"></i></a>
           <!-- summary  -->
 
           <!-- share with  -->
           <div class="social-share">
             <label>Share with:</label>
             <ul class="social-share-button">
-              <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-              <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-              <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-              <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
+              <li><a href="#" class="twitter"><i class="fa fa-twitter"></i></a></li>
+              <li><a href="#" class="linkedin"><i class="fa fa-linkedin"></i></a></li>
+              <li><a href="#" class="facebook"><i class="fa fa-facebook"></i></a></li>
+              <li><a href="#" class="envelope"><i class="fa fa-envelope-o"></i></a></li>
             </ul>
           </div>
           <!-- share with  -->
@@ -62,14 +62,13 @@
       <div class="column">
         <div class="filter-wrapper">
           <div class="search-area">
-            <i class="fa fa-search"></i>
-            <input type="search" name="search" placeholder="Search 'KubeDB', 'Stash', 'AWS'">
+            <label for="search"> <i class="fa fa-search"></i></label>
+            <input id="search" type="search" name="search" placeholder="Search 'KubeDB', 'Stash', 'AWS'">
           </div>
-
 
           <div class="filter-area">
             <!-- sort by  -->
-            <select name="sortby" id="">
+            <select class="select" name="sortby" id="">
               <option value="sortby">sortby</option>
               <option value="date">Date</option>
               <option value="name">Name</option>
@@ -85,7 +84,7 @@
             <!-- viewing type  -->
           </div>
         </div>
-     </div>
+      </div>
     </div>
   </div>
 </div>
@@ -166,53 +165,39 @@
         <!-- left sidebar end -->
       </div>
       <div class="column is-9">
-         <div class="blog-items">
-          <div class="columns">
+        <div class="blog-items">
+          <div class="columns is-multiline">
+             {{ range $idx, $p := $pages.ByDate.Reverse }}
+
             <div class="column is-4">
-               <div class="single-blog">
-                 <figure class="image is-16by9">
-                   <a href="#"><img src="https://via.placeholder.com/600/dddddd/808080" alt=""></a>
-                 </figure>
+              <div class="single-blog">
+                 {{ $original := $p.Resources.GetMatch "hero.jpg" }}
+                 {{ $cropped := $original.Fill "328x184" }}
+                <figure class="image is-16by9">
+                  <a href="{{ $p.RelPermalink }}"><img src="{{ $cropped.RelPermalink }}" alt=""></a>
+                </figure>
                 <div class="p-15">
-                   <!-- meta description  -->
-                   <div class="meta">
-                     <div class="author"><i class="fa fa-user"></i> <a href="#">Hossain Mahmud</a></div>
-                     <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                       <strong>30-Jun-2022</strong>
-                     </div>
-                   </div>
-                   <!-- meta description  -->
+                  <!-- meta description  -->
+                  <div class="meta">
+                    {{ range $author := $p.Params.authors }}
+                    <div class="author"><i class="fa fa-user"></i> <a
+                        href="/authors/{{ $author | urlize }}">{{ $author }}</a></div>
+                    {{ end }}
+                    <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                      <strong>{{ $p.Date.Format "2-Jan-2006" }}</strong>
+                    </div>
+                  </div>
+                  <!-- meta description  -->
 
-                   <h2><a href="#">Using GKE Workload Identity with Stash</a></h2>
-                   <p>Summary On June 29, 2022, Appscode held a webinar on Using GKE Workload ...</p>
-                   <a href="#" class="inline-button">READ MORE <i class="fa fa-angle-right"></i></a>
+                  <h2 class="is-ellipsis-2"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h2>
+                  <p class="is-ellipsis-3">{{ $p.Summary }}</p>
+                  <a href="{{ $p.RelPermalink }}" class="inline-button">READ MORE <i class="fa fa-arrow-right"></i></a>
                 </div>
-               </div>
+              </div>
             </div>
-
-             <div class="column is-4">
-               <div class="single-blog">
-                 <figure class="image is-16by9">
-                   <a href="#"><img src="https://via.placeholder.com/600/dddddd/808080" alt=""></a>
-                 </figure>
-                <div class="p-15">
-                   <!-- meta description  -->
-                   <div class="meta">
-                     <div class="author"><i class="fa fa-user"></i> <a href="#">Hossain Mahmud</a></div>
-                     <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                       <strong>30-Jun-2022</strong>
-                     </div>
-                   </div>
-                   <!-- meta description  -->
-
-                   <h2><a href="#">Using GKE Workload Identity with Stash</a></h2>
-                   <p>Summary On June 29, 2022, Appscode held a webinar on Using GKE Workload ...</p>
-                   <a href="#" class="inline-button">READ MORE <i class="fa fa-angle-right"></i></a>
-                </div>
-               </div>
-             </div>
+             {{ end }}
           </div>
-         </div>
+        </div>
       </div>
     </div>
   </div>

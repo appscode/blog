@@ -54,18 +54,42 @@ a.inline-button {
   line-height: 160%;
   letter-spacing: 1.25px;
   color: #1c1c1c;
+  position: relative;
+  z-index: 1;
+  &:after {
+    position: absolute;
+    content: "";
+    left: 0;
+    bottom: 0;
+    width: 0%;
+    height: 1px;
+    background-color: $ac-color-heading;
+    transition: 0.3s ease-in-out;
+  }
+  &:hover {
+    &:after {
+      width: 100%;
+    }
+  }
+  i.fa {
+    padding-left: 0.5rem;
+  }
 }
 .meta {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
+  i.fa {
+    color: #555555;
+    margin-right: 0.3rem;
+  }
   .author {
     margin-right: 30px;
     a {
       font-weight: 400;
       font-size: 16px;
       line-height: 160%;
-      color: #000000;
+      color: $ac-primary;
       letter-spacing: 0;
     }
   }
@@ -87,6 +111,13 @@ ul.social-share-button {
   padding: 0;
   display: flex;
   align-items: center;
+  &.is-flex-direction-column {
+    align-items: flex-start;
+    li {
+      margin-right: 0;
+      margin-bottom: 1rem;
+    }
+  }
   li {
     list-style: none;
     margin: 0;
@@ -99,11 +130,29 @@ ul.social-share-button {
     a {
       width: 46px;
       height: 46px;
-      background: #ddd;
+      background: #1da1f2;
+      color: $ac-white;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
+      &:hover {
+        i.fa {
+          animation: icon-animation 0.9s both;
+        }
+      }
+      &.twitter {
+        background-color: #1da1f2;
+      }
+      &.linkedin {
+        background-color: #0a66c2;
+      }
+      &.facebook {
+        background-color: #4867aa;
+      }
+      &.envelope {
+        background-color: #4285f4;
+      }
       i.fa {
         font-size: 1rem;
       }
@@ -176,8 +225,6 @@ ul.social-share-button {
         margin-left: 3rem;
         margin-right: 1rem;
       }
-      span {
-      }
 
       button {
         width: 40px;
@@ -187,6 +234,12 @@ ul.social-share-button {
         border-radius: 2px;
         font-size: 1rem;
         margin-right: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        span {
+          font-size: 20px;
+        }
         &:last-child {
           margin-right: 0;
         }
@@ -205,6 +258,7 @@ ul.social-share-button {
 
 .blog-items-area {
   .left-sidebar {
+    margin-right: 30px;
     .collapsable-menu {
       margin-bottom: 30px;
       button {
@@ -246,18 +300,36 @@ ul.social-share-button {
     .single-blog {
       border: 1px solid $ac-white-light;
       border-radius: 4px;
+      transition: 0.3s ease-in-out;
+      min-height: 425px;
+      &:hover {
+        border: 1px solid $ac-primary;
+        h2 {
+          text-decoration: underline;
+        }
+        a.inline-button {
+          &:after {
+            width: 100%;
+          }
+        }
+      }
       a {
         img {
           object-fit: cover;
+          border-radius: 4px 4px 0 0;
         }
       }
 
       .meta {
+        justify-content: space-between;
+
+        flex-wrap: wrap;
         .author {
           .fa {
           }
 
           a {
+            font-size: 14px;
           }
         }
 
@@ -266,6 +338,7 @@ ul.social-share-button {
           }
 
           strong {
+            font-size: 14px;
           }
         }
       }
@@ -275,6 +348,7 @@ ul.social-share-button {
         font-size: 18px;
         line-height: 130%;
         margin-bottom: 15px;
+        transition: 0.3s ease-in-out;
         a {
           color: $ac-color-heading;
         }
