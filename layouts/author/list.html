@@ -4,7 +4,7 @@
 
 <!-- author hero area start  -->
 <section class="author-hero-area">
-  <div class="container section">
+  <div class="container">
     <div class="columns">
       <div class="column is-8 is-offset-2 has-text-centered">
         <div class="author-content" data-aos="fade-up" data-aos-duration="500">
@@ -13,26 +13,30 @@
           </figure>
           <h3 data-aos="fade-up" data-aos-duration="600">{{ $author.name }}</h3>
           <p data-aos="fade-up" data-aos-duration="800">{{ $author.biography }}</p>
-          <div class="social-link-horizontal">
-            <ul>
+          <div class="social-share">
+            <ul class="social-share-button is-justify-content-center">
               {{ if $author.twitter }}
               <li>
-                <a href="{{ $author.twitter }}" target="_blank" rel="noopener" class="twitter" aria-label="Follow on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                <a href="{{ $author.twitter }}" target="_blank" rel="noopener" class="twitter"
+                  aria-label="Follow on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
               </li>
               {{ end }}
               {{ if $author.github }}
               <li>
-                <a href="{{ $author.github }}" target="_blank" rel="noopener" class="github" aria-label="Follow on GitHub"><i class="fa fa-github" aria-hidden="true"></i></a>
+                <a href="{{ $author.github }}" target="_blank" rel="noopener" class="github"
+                  aria-label="Follow on GitHub"><i class="fa fa-github" aria-hidden="true"></i></a>
               </li>
               {{ end }}
               {{ if $author.linkedin }}
               <li>
-                <a href="{{ $author.linkedin }}" target="_blank" rel="noopener" class="linkedin" aria-label="Connect on Linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                <a href="{{ $author.linkedin }}" target="_blank" rel="noopener" class="linkedin"
+                  aria-label="Connect on Linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
               </li>
               {{ end }}
               {{ if $author.facebook }}
               <li>
-                <a href="{{ $author.facebook }}" target="_blank" rel="noopener" class="facebook" aria-label="Follow on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                <a href="{{ $author.facebook }}" target="_blank" rel="noopener" class="facebook"
+                  aria-label="Follow on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
               </li>
               {{ end }}
               {{ if $author.email }}
@@ -49,40 +53,116 @@
 </section>
 <!-- author hero area end -->
 
+<!--============================== search and filter area start  ==============================-->
+<div class="search-filter-area">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <div class="filter-wrapper">
+          <div class="search-area">
+            <label for="search"> <i class="fa fa-search"></i></label>
+            <input id="search" type="search" name="search" placeholder="Search 'KubeDB', 'Stash', 'AWS'">
+          </div>
+
+          <div class="filter-area">
+            <!-- sort by  -->
+            <select class="select" name="sortby" id="">
+              <option value="sortby">sortby</option>
+              <option value="date">Date</option>
+              <option value="name">Name</option>
+            </select>
+            <!-- sort by  -->
+
+            <!-- viewing type  -->
+            <div class="viewing-mode">
+              <label>VIEW</label>
+              <button class="is-active"><span class="material-symbols-outlined">grid_view</span></button>
+              <button><span class="material-symbols-outlined">list</span></button>
+            </div>
+            <!-- viewing type  -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--============================== search and filter area end  ==============================-->
 
 <!-- all blog content start  -->
 <div class="blog-items-area section-padding-60">
-  <div class="container section">
+  <div class="container">
     <div class="columns">
       <!-- left sidebar start  -->
       <div class="column is-3">
-        <div class="blog-left-sidebar">
+          <!-- left sidebar start  -->
+          <div class="left-sidebar">
+            <!-- collapsable menu start  -->
+            <div class="collapsable-menu">
+              <button>PRODUCTS <i class="fa fa-angle-up"></i></button>
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubedb" type="checkbox" name="checkbox" />
+                <label for="kubedb">KubeDB</label>
+              </div>
+              <!-- single ac-checkbox end -->
 
-          <!-- search-bar start  -->
-          <!-- <div class="search-bar">
-            <input type="search" name="search" placeholder="Search">
-            <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
-          </div> -->
-          <!-- search-bar end -->
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="stash" type="checkbox" name="checkbox" />
+                <label for="stash">Stash</label>
+              </div>
+              <!-- single ac-checkbox end -->
 
-          <!-- categories title  -->
-          <div class="widget-title" data-aos="fade-left">
-              <h3>Categories</h3>
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubevault" type="checkbox" name="checkbox" />
+                <label for="kubevault">KubeVault</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubeform" type="checkbox" name="checkbox" />
+                <label for="kubeform">Kubeform</label>
+              </div>
+              <!-- single ac-checkbox end -->
             </div>
-            <!-- categories title  -->
-  
-            <!-- category start  -->
-            <div class="blog-category" data-aos="fade-left">
-              <ul>
-                <!-- <li><a href="#" class="is-active">All</a></li> -->
-                {{ range .Site.Taxonomies.tags.Alphabetical }}
-                <li><a href="{{ .Page.Permalink }}">{{ .Page.Name | title }}</a></li>
-                {{ end }}
-              </ul>
-            </div>
-            <!-- category end  -->
+            <!-- collapsable menu end -->
 
-        </div>
+            <!-- collapsable menu start  -->
+            <div class="collapsable-menu">
+              <button>PRODUCTS <i class="fa fa-angle-up"></i></button>
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubedb" type="checkbox" name="checkbox" />
+                <label for="kubedb">KubeDB</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="stash" type="checkbox" name="checkbox" />
+                <label for="stash">Stash</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubevault" type="checkbox" name="checkbox" />
+                <label for="kubevault">KubeVault</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubeform" type="checkbox" name="checkbox" />
+                <label for="kubeform">Kubeform</label>
+              </div>
+              <!-- single ac-checkbox end -->
+            </div>
+            <!-- collapsable menu end -->
+          </div>
+          <!-- left sidebar end -->
       </div>
       <!-- left sidebar end -->
       <div class="column is-9">
@@ -91,28 +171,29 @@
           {{ range $idx, $p := .RegularPages.ByDate.Reverse }}
           <!-- single blog start  -->
           <div class="column is-one-third-fullhd is-half-tablet is-one-third-desktop" data-aos="fade-up">
-            <div class="single-blog-item">
-              <div class="blog-image-wrapper">
-                {{ $original := $p.Resources.GetMatch "hero.jpg" }}
-                {{ $cropped := $original.Fill "328x234" }}
-                <a href="{{ $p.RelPermalink }}" class="blog-image blog-1" style="background-image: url({{ $cropped.RelPermalink }});"></a>
-              </div>
-              <div class="single-blog-content">
-                <div class="blog-meta">
-                  <div class="meta-date"><i class="fa fa-calendar"
-                      aria-hidden="true"></i>{{ $p.Date.Format "2-Jan-2006" }}</div>
-                  <div class="meta-author">
-                    {{ range $author := $p.Params.authors }}
-                    <a href="/authors/{{ $author | urlize }}"><span>by</span>{{ $author }}</a>
-                    {{ end }}
-                  </div>
-                </div>
-                <div class="blog-description">
-                  <h2><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h2>
-                  <p>{{ $p.Summary }}</p>
-                  <a href="{{ $p.RelPermalink }}" class="inline-button">Read More</a>
-                </div>
-              </div>
+            <div class="single-blog">
+              {{ $original := $p.Resources.GetMatch "hero.jpg" }}
+              {{ $cropped := $original.Resize "x200" }}
+              <figure class="image">
+                <a href="{{ $p.RelPermalink }}"><img src="{{ $cropped.RelPermalink }}" alt=""></a>
+              </figure>
+               <div class="p-15">
+                 <!-- meta description  -->
+                 <div class="meta">
+                   {{ range $author := $p.Params.authors }}
+                   <div class="author"><i class="fa fa-user"></i> <a
+                       href="/authors/{{ $author | urlize }}">{{ $author }}</a></div>
+                   {{ end }}
+                   <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                     <strong>{{ $p.Date.Format "2-Jan-2006" }}</strong>
+                   </div>
+                 </div>
+                 <!-- meta description  -->
+
+                 <h2 class="is-ellipsis-2"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h2>
+                 <p class="is-ellipsis-3">{{ $p.Summary }}</p>
+                 <a href="{{ $p.RelPermalink }}" class="inline-button">READ MORE <i class="fa fa-arrow-right"></i></a>
+               </div>
             </div>
           </div>
           <!-- single blog end -->

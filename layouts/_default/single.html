@@ -1,5 +1,6 @@
 {{ define "main" }}
 
+
 <!-- blog details area start  -->
 <section class="blog-details-area">
   <div class="container">
@@ -60,21 +61,9 @@
 
         <!-- blog-content start  -->
         <div class="blog-content">
-          <!--
-          <div class="bb-quote-msg">
-            <div class="quote-icon"><img src="/assets/images/icons/quote.svg" alt="quote.svg"></div>
-             <p> Make sure that you’re running a linux machine with kernel version 4.17 or higher. We’re attaching eBPF programs to raw_tracepoints, and this feature is available from linux kernel 4.17. For more information, you can see here.</p>
-             <div class="name-descriptor">Tomas Albart, <span>Product designer at <a href="#" class="inline-button">AWS</a></span></div>
-          </div>
-          -->
 
           {{ .Content }}
 
-          <div class="tags">
-            {{ range $tag := .Params.tags }}
-            <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
-            {{ end }}
-          </div>
         </div>
         <!-- blog-content end -->
 
@@ -89,20 +78,38 @@
       <div class="column is-4">
         <div class="single-wizard ml-30">
           <h4>Recent Blog</h4>
+        {{ range first 5 (where site.RegularPages.ByDate.Reverse "Type" "in" "posts" )}}
+          <!-- recent-blog  -->
           <div class="single-recent-blog">
             <!-- date and month  -->
             <a href="#" class="date-month">
-              <span class="date">27</span>
-              <span class="month">AUG</span>
+              <span class="date">{{.PublishDate.Day}}</span>
+              <span class="month">{{.PublishDate.Format "Jan" | upper}}</span>
             </a>
             <!-- date and month  -->
 
             <!-- content  -->
             <div class="recent-blog-content">
-              <h2><a href="#">Deploy Sharded Redis Cluster on Kubernetes using KubeDB</a></h2>
-              <div class="meta">By <a href="#">Kamol Hasan</a> | <a href="#">AppsCode Inc</a></div>
+              <h2><a href="{{.RelPermalink}}">{{.Title}}</a></h2>
+              {{ range $author := first 1 .Params.authors }}
+              <div class="meta">By - <a href="/authors/{{ $author | urlize }}"> {{$author}} </a></div>
+              {{ end }}
             </div>
             <!-- content  -->
+          </div>
+          <!-- recent-blog  -->
+          {{ end }}
+          
+         
+        </div>
+
+
+        <div class="single-wizard ml-30">
+          <h4>Popular tags</h4>
+          <div class="tags">
+            {{ range $tag := .Params.tags }}
+            <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
+            {{ end }}
           </div>
         </div>
       </div>

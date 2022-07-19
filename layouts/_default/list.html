@@ -7,49 +7,75 @@
 <!--============================== hero area 2022 start  ==============================-->
 <section class="hero-area-blog mt-100">
   <div class="container">
-    <div class="columns is-vcentered">
+    {{ range $idx, $p := $pages.ByDate.Reverse | first 3 }}
+    <div class="columns is-vcentered is-multiline">
       <div class="column is-7">
         <figure class="blog-banner image is-16by9">
-          <a href="#"><img
-              src="https://blog.byte.builders/post/stash-webinar-2022-07-06/hero_hudfd7443e5b7fdd9c44f163608ea40ad4_67089_1300x650_fill_q75_box_smart1.jpg"
-              alt="appscode-blog"></a>
+          {{ $image := $p.Resources.GetMatch "hero.jpg" }}
+          <a href="#">
+            <img src="{{ $image.RelPermalink }}" alt="appscode-blog"></a>
         </figure>
+     
       </div>
       <div class="column is-5">
         <div class="blog-title-content">
           <!-- title  -->
-          <h1><a href="#">Using GKE Workload Identity with Stasy</a></h1>
+          <h1 class="is-ellipsis-2"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h1>
           <!-- title  -->
 
           <!-- meta description  -->
           <div class="meta">
-            <div class="author">By <a href="#">Hossain Mahmud</a></div>
-            <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> <strong>30-Jun-2022</strong>
+           
+            <div class="author">By 
+              {{ range $author := first 1 $p.Params.authors }}
+              <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
+              {{end}}
+
+              {{ range $author := after 1 $p.Params.authors }}
+              <span>&amp;</span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
+              {{ end }}
+            </div>
+
+          
+            <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> <strong>
+                {{ $p.Date.Format "2-Jan-2006" }}</strong>
             </div>
           </div>
           <!-- meta description  -->
 
           <!-- summary  -->
-          <p>Summary On June 29, 2022, Appscode held a webinar on Using GKE Workload Identity with Stash. Key contents
-            of the webinars ...</p>
+          <p class="is-ellipsis-3">{{ $p.Summary }}</p>
 
-          <a class="inline-button" href="#">READ MORE <i class="fa fa-arrow-right"></i></a>
+          <a class="inline-button" href="{{ $p.RelPermalink }}">READ MORE <i class="fa fa-arrow-right"></i></a>
           <!-- summary  -->
 
           <!-- share with  -->
           <div class="social-share">
-            <label>Share with:</label>
+             <label>Share with:</label>
             <ul class="social-share-button">
-              <li><a href="#" class="twitter"><i class="fa fa-twitter"></i></a></li>
-              <li><a href="#" class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-              <li><a href="#" class="facebook"><i class="fa fa-facebook"></i></a></li>
-              <li><a href="#" class="envelope"><i class="fa fa-envelope-o"></i></a></li>
+              <li>
+                <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title }}" target="_blank" rel="noopener"
+                  class="twitter" aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+              </li>
+              <li>
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title }}&summary={{ .Summary }}"
+                  target="_blank" rel="noopener" class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+              </li>
+              <li>
+                <a href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" target="_blank" rel="noopener"
+                  class="facebook" aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+              </li>
+              <li>
+                <a href="mailto:?subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i
+                    class="fa fa-envelope-o" aria-hidden="true"></i></a>
+              </li>
             </ul>
           </div>
           <!-- share with  -->
         </div>
       </div>
     </div>
+    {{ end }}
   </div>
 </section>
 <!--============================== hero area 2022 end ==============================-->
@@ -172,8 +198,8 @@
             <div class="column is-4">
               <div class="single-blog">
                  {{ $original := $p.Resources.GetMatch "hero.jpg" }}
-                 {{ $cropped := $original.Fill "328x184" }}
-                <figure class="image is-16by9">
+                 {{ $cropped := $original.Resize "x200" }}
+                <figure class="image">
                   <a href="{{ $p.RelPermalink }}"><img src="{{ $cropped.RelPermalink }}" alt=""></a>
                 </figure>
                 <div class="p-15">
@@ -205,7 +231,7 @@
 
 <!-- blog hero area start  -->
 <section class="blog-hero-area section-padding hero is-medium has-carousel">
-  <div class="container section">
+  <div class="container">
 
     <!-- slider wrapper start  -->
     <div class="blog-slider-wrapper">
@@ -294,7 +320,7 @@
 
 <!-- all blog content start  -->
 <div class="blog-items-area section-padding-60">
-  <div class="container section">
+  <div class="container">
     <div class="columns">
       <!-- left sidebar start  -->
       <div class="column is-3">

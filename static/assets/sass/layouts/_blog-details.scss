@@ -47,8 +47,8 @@
     margin-bottom: 1rem;
     display: flex;
     .date-month {
-      width: 60px;
-      height: 60px;
+      width: 70px;
+      height: 70px;
       background-color: rgba(0, 52, 102, 0.12);
       margin-right: 1rem;
       display: flex;
@@ -71,7 +71,7 @@
     }
 
     .recent-blog-content {
-      width: calc(100% - 76px);
+      width: calc(100% - 86px);
       h2 {
         font-weight: 500;
         font-size: 16px;
@@ -85,9 +85,11 @@
       }
 
       .meta {
+        margin-top: 0.5rem;
+        font-size: 14px;
+        margin-bottom: 0;
         a {
           font-weight: 400;
-          font-size: 13px;
           line-height: 150%;
         }
       }

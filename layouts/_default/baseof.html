@@ -52,7 +52,8 @@
   <meta property="og:type" content="article">
   <!-- font-awesome css  -->
   <link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
   <!-- AOS css  -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <!-- bulma css  -->
@@ -164,7 +165,7 @@
   <!-- cta-area start  -->
   {{ block "cta-install" . }}
   <section class="cta-area section-padding">
-    <div class="container section">
+    <div class="container">
       <div class="columns">
         <div class="column is-5 has-text-left">
           <div class="section-title is-dark-bg" data-aos="fade-up">
@@ -208,41 +209,42 @@
   <!-- footer area start  -->
   {{ block "footer" . }}
   <footer class="footer-area">
-    <!-- footer top start  -->
     <div class="footer-top">
-      <div class="container section">
-        <div class="columns is-mobile is-multiline" data-aos="fade-up">
-          <div class="column is-full-mobile is-one-third-desktop is-one-third-widescreen is-one-third-tablet">
+      <div class="container">
+        <div class="columns is-mobile is-multiline is-variable is-1-mobile">
+          <div class="column is-full-mobile is-one-third-desktop is-one-third-widescreen is-one-third-tablet mb-15"
+            data-aos="fade-up">
             <div class="single-footer-widget">
+              <!-- logo start -->
               <div class="footer-logo">
-                <a href="{{.Site.Params.domain_appscode}}">
-                  <img src="{{$.Site.Data.products.appscode.logo.src}}" alt="{{$.Site.Data.products.appscode.logo.alt}}"
-                    class="img" />
-                </a>
+                <a href="{{.Site.Params.domain_appscode}}"><img src="{{$.Site.Data.products.appscode.logo.src}}"
+                    alt="{{$.Site.Data.products.appscode.logo.alt}}" class="img" /></a>
               </div>
-              <!-- subscription area start  -->
+              <!-- logo end -->
+
+              <!-- subscription form start -->
               <div class="subscription-form">
                 <form method="post" action="https://listmonk.appscode.com/subscription/form"
                   id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="navbar-form" target="_blank"
-                  rel="noopener" novalidate="" role="email">
-                  <h4>Subscribe to Our Newsletter</h4>
-                  <p class="spam-message">
-                    No spam, we promise. Your mail address is secure
-                  </p>
+                  novalidate role="email" role="email">
+                  <label for="email">Subscribe to Our Newsletter</label>
+                  <p class="spam-message">No spam, we promise. Your mail address is secure</p>
                   <div class="field has-addons">
                     <div class="control">
-                      <input type="hidden" id="afbbc" name="l" value="afbbc974-e163-4467-be49-040e399520f3">
+                      <!-- AppsCode Monthly Newsletter -->
+                      <input type="hidden" id="afbbc" name="l" value="afbbc974-e163-4467-be49-040e399520f3" />
                       <input class="input" name="email" id="mce-EMAIL" type="email"
-                        placeholder="Your work email address" required="" />
-                      <button id="mc-embedded-subscribe" type="submit" name="subscribe" class="subscription-button">
+                        placeholder="Your work email address" required />
+                      <button id="mc-embedded-subscribe" type="submit" name="subscribe" class="button">
                         <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
                       </button>
                     </div>
                   </div>
                 </form>
               </div>
-              <!-- subscription area end  -->
-              <!-- contact info start  -->
+              <!-- subscription form end -->
+
+              <!-- contact information start -->
               <div class="contact-information">
                 <h4>Have any Inquiry?</h4>
                 <ul class="all-contact-info">
@@ -257,12 +259,14 @@
                   </li>
                 </ul>
               </div>
+              <!-- contact information end -->
             </div>
           </div>
-          <!-- subscription area end  -->
-          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="400">
+
+          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="500">
             <div class="single-footer-widget">
-              <div class="footer-menu">
+              <!-- footer menu start -->
+              <div class="footer-menu is-info">
                 <h4>Products</h4>
                 <ul class="footer-link">
                   {{ range $item := $.Site.Data.config.footerLinks }}
@@ -271,25 +275,30 @@
                   {{ end }}
                 </ul>
               </div>
-            </div>
-          </div>
-
-          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="500">
-            <div class="single-footer-widget">
-              <div class="footer-menu">
-                <h4>Services</h4>
-                <ul class="footer-link">
-                  <li><a href="{{.Site.Params.domain_appscode}}/consulting/">Consulting</a></li>
-                  <li><a href="{{.Site.Params.domain_appscode}}/training/">Training</a></li>
-                  <li><a href="{{.Site.Params.domain_appscode}}/support/">Support</a></li>
-                </ul>
-              </div>
+              <!-- footer menu end -->
             </div>
           </div>
 
           <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="600">
             <div class="single-footer-widget">
-              <div class="footer-menu">
+              <!-- footer menu start -->
+              <div class="footer-menu is-success">
+                <h4>Services</h4>
+                <ul class="footer-link">
+                  <!-- <li><a href="{{.Site.Params.domain_appscode}}/pricing/">Pricing</a></li> -->
+                  <li><a href="{{.Site.Params.domain_appscode}}/consulting/">Consulting</a></li>
+                  <li><a href="{{.Site.Params.domain_appscode}}/training/">Training</a></li>
+                  <li><a href="{{.Site.Params.domain_appscode}}/support/">Support</a></li>
+                </ul>
+              </div>
+              <!-- footer menu end -->
+            </div>
+          </div>
+
+          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="700">
+            <div class="single-footer-widget">
+              <!-- footer menu start -->
+              <div class="footer-menu is-warning">
                 <h4>Company</h4>
                 <ul class="footer-link">
                   <li><a href="{{.Site.Params.domain_appscode}}/about/">About Us</a></li>
@@ -297,12 +306,14 @@
                   <li><a href="{{.Site.Params.domain_appscode}}/contact/">Contact Us</a></li>
                 </ul>
               </div>
+              <!-- footer menu end -->
             </div>
           </div>
 
-          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="700">
+          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="800">
             <div class="single-footer-widget">
-              <div class="footer-menu">
+              <!-- footer menu start -->
+              <div class="footer-menu is-danger">
                 <h4>Legal</h4>
                 <ul class="footer-link">
                   <li><a href="{{.Site.Params.domain_appscode}}/legal/tos/">Terms of Sevice</a></li>
@@ -311,31 +322,33 @@
                   <li><a href="{{.Site.Params.domain_appscode}}/legal/sla/">Service Level Agreement</a></li>
                 </ul>
               </div>
+              <!-- footer menu end -->
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- footer top end  -->
-
-    <!-- footer bottom start  -->
     <div class="footer-bottom">
-      <div class="container section">
-        <div class="columns">
-          <div class="column is-4">
+      <div class="container">
+        <div class="columns is-vcentered">
+          <div class="column is-4 has-text-centered-mobile  has-text-left-tablet is-paddingless">
             <p>© {{ now.Format "2006" }} AppsCode Inc. All rights reserved.</p>
           </div>
-          <div class="column is-4 has-text-centered-desktop has-text-left-touch">
+          <div class="column is-4 is-mobile has-text-centered-touch has-text-centered-desktop is-paddingless">
             <div class="footer-inline-link">
               <a href="{{.Site.Params.domain_appscode}}/legal/privacy-policy/">Privacy Policy</a>
               <a href="{{.Site.Params.domain_appscode}}/legal/tos/">Terms of Service</a>
             </div>
           </div>
-          <div class="column is-4 has-text-right-desktop has-text-left-touch">
-            <div class="social-link-inline">
+          <div class="column is-4 has-text-centered-mobile  has-text-right-tablet is-paddingless">
+            <div class="socail-link-inline">
               <ul>
                 <li>
                   <a href="{{.Site.Params.twitter_url}}"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/company/appscode"><i class="fa fa-linkedin"
+                      aria-hidden="true"></i></a>
                 </li>
                 <li>
                   <a href="{{.Site.Params.facebook_url}}"><i class="fa fa-facebook" aria-hidden="true"></i></a>
@@ -349,7 +362,6 @@
         </div>
       </div>
     </div>
-    <!-- footer bottom end  -->
   </footer>
   {{ end }}
   <!-- footer area end -->
