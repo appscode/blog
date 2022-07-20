@@ -28,17 +28,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // menu sticky
 //Not a ton of code, but hard to
-const nav = document.querySelector("#header");
-let topOfNav = nav.offsetTop + 1;
-function fixNav() {
-  if (window.scrollY >= topOfNav) {
-    document.body.classList.add("fixed-nav");
-  } else {
-    document.body.classList.remove("fixed-nav");
-    document.body.style.paddingTop = 0;
-  }
-}
-window.addEventListener("scroll", fixNav);
+// const nav = document.querySelector("#header");
+// let topOfNav = nav.offsetTop + 1;
+// function fixNav() {
+//   if (window.scrollY >= topOfNav) {
+//     document.body.classList.add("fixed-nav");
+//   } else {
+//     document.body.classList.remove("fixed-nav");
+//     document.body.style.paddingTop = 0;
+//   }
+// }
+// window.addEventListener("scroll", fixNav);
 
 // scroll to top
 var basicScrollTop = function() {

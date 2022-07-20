@@ -12,10 +12,10 @@
       <div class="column is-7">
         <figure class="blog-banner image is-16by9">
           {{ $image := $p.Resources.GetMatch "hero.jpg" }}
-          <a href="#">
+          <a href="{{ $p.RelPermalink }}">
             <img src="{{ $image.RelPermalink }}" alt="appscode-blog"></a>
         </figure>
-     
+
       </div>
       <div class="column is-5">
         <div class="blog-title-content">
@@ -25,8 +25,8 @@
 
           <!-- meta description  -->
           <div class="meta">
-           
-            <div class="author">By 
+
+            <div class="author">By
               {{ range $author := first 1 $p.Params.authors }}
               <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
               {{end}}
@@ -36,7 +36,7 @@
               {{ end }}
             </div>
 
-          
+
             <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> <strong>
                 {{ $p.Date.Format "2-Jan-2006" }}</strong>
             </div>
@@ -51,7 +51,7 @@
 
           <!-- share with  -->
           <div class="social-share">
-             <label>Share with:</label>
+            <label>Share with:</label>
             <ul class="social-share-button">
               <li>
                 <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title }}" target="_blank" rel="noopener"
@@ -192,13 +192,14 @@
       </div>
       <div class="column is-9">
         <div class="blog-items">
+          <!-- grid view start -->
           <div class="columns is-multiline">
-             {{ range $idx, $p := $pages.ByDate.Reverse }}
+            {{ range $idx, $p := $pages.ByDate.Reverse }}
 
             <div class="column is-4">
               <div class="single-blog">
-                 {{ $original := $p.Resources.GetMatch "hero.jpg" }}
-                 {{ $cropped := $original.Resize "x200" }}
+                {{ $original := $p.Resources.GetMatch "hero.jpg" }}
+                {{ $cropped := $original.Resize "x200" }}
                 <figure class="image">
                   <a href="{{ $p.RelPermalink }}"><img src="{{ $cropped.RelPermalink }}" alt=""></a>
                 </figure>
@@ -221,8 +222,59 @@
                 </div>
               </div>
             </div>
-             {{ end }}
+            {{ end }}
           </div>
+          <!-- grid view end  -->
+
+          <!-- list view start  -->
+          {{ range $idx, $p := $pages.ByDate.Reverse }}
+          <div class="columns is-vcentered is-multiline is-hidden">
+            <div class="column is-6">
+              <figure class="blog-banner image">
+                {{ $image := $p.Resources.GetMatch "hero.jpg" }}
+                <a href="{{ $p.RelPermalink }}">
+                  <img src="{{ $image.RelPermalink }}" alt="appscode-blog"></a>
+              </figure>
+
+            </div>
+            <div class="column is-6">
+              <div class="blog-title-content">
+                <!-- meta description  -->
+                <div class="meta">
+
+                  <div class="author">By
+                    {{ range $author := first 1 $p.Params.authors }}
+                    <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
+                    {{end}}
+
+                    {{ range $author := after 1 $p.Params.authors }}
+                    <span>&amp;</span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
+                    {{ end }}
+                  </div>
+
+                  <!-- date  -->
+                  <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> <strong>
+                      {{ $p.Date.Format "2-Jan-2006" }}</strong>
+                  </div>
+                  <!-- date  -->
+                </div>
+                <!-- meta description  -->
+                <!-- title  -->
+                <h2 class="is-ellipsis-2"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h2>
+                <!-- title  -->
+
+
+
+                <!-- summary  -->
+                <p class="is-ellipsis-2">{{ $p.Summary }}</p>
+
+                <a class="inline-button" href="{{ $p.RelPermalink }}">READ MORE <i class="fa fa-arrow-right"></i></a>
+                <!-- summary  -->
+              </div>
+            </div>
+          </div>
+          {{ end }}
+          <!-- list view end -->
         </div>
       </div>
     </div>

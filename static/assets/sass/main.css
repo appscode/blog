@@ -11105,6 +11105,38 @@ ul.social-share-button li a i.fa {
   margin-bottom: 15px;
 }
 
+.blog-items .blog-title-content {
+  padding-left: 20px;
+}
+
+.blog-items .blog-title-content:hover h2 a {
+  color: var(--ac-primary);
+}
+
+.blog-items .blog-title-content:hover a.inline-button:after {
+  width: 100%;
+}
+
+.blog-items .blog-title-content .meta {
+  margin-bottom: 10px;
+}
+
+.blog-items .blog-title-content h2 {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 130%;
+  letter-spacing: -1px;
+  margin-bottom: 15px;
+}
+
+.blog-items .blog-title-content h2 a {
+  color: #1c1c1c;
+}
+
+.blog-items .blog-title-content p {
+  margin-bottom: 20px;
+}
+
 .blog-hero-area.section-padding {
   padding: 160px 0 100px;
 }
@@ -11216,18 +11248,6 @@ ul.social-share-button li a i.fa {
           user-select: none;
   overflow: hidden;
   background-color: #333;
-}
-
-.blog-bg-1 {
-  background-image: url(/assets/images/slider-image/s-1.png);
-}
-
-.blog-bg-2 {
-  background-image: url(/assets/images/slider-image/s-2.png);
-}
-
-.blog-bg-3 {
-  background-image: url(/assets/images/slider-image/s-3.png);
 }
 
 .blog-left-sidebar {
@@ -11362,81 +11382,12 @@ ul.social-share-button li a i.fa {
 /**************************************************************** 
                   Desktop Between 1024px and 1215px
 **************************************************************** */
-@media (min-width: 1024px) and (max-width: 1215px) {
-  .blog-hero-area .blog-slider-wrapper .social-media-share {
-    padding: 30px 15px;
-  }
-}
-
 /**************************************************************** 
                   Tablet Between 769px and 1023px
 **************************************************************** */
-@media (min-width: 769px) and (max-width: 1023px) {
-  .blog-hero-area.section-padding {
-    padding-top: 160px;
-    padding-bottom: 0;
-  }
-  .blog-hero-area .blog-slider-wrapper .blog-slider-inner .single-blog .blog-content-wrapper .blog-content-inner {
-    padding-right: 50px;
-  }
-  .blog-hero-area .blog-slider-wrapper .blog-slider-inner .single-blog .blog-content-wrapper .blog-content-inner h1 {
-    font-size: 36px;
-    line-height: 50px;
-  }
-  .blog-hero-area .blog-slider-wrapper .social-media-share {
-    border: none;
-  }
-  .blog-hero-area .blog-slider-wrapper .social-media-share {
-    width: auto;
-    padding: 0;
-  }
-  .search-bar input[type="search"] {
-    height: 50px;
-  }
-  .search-bar button {
-    font-size: 18px;
-  }
-}
-
 /**************************************************************** 
                     Mobile Up to 768px. 
 **************************************************************** */
-@media only screen and (min-width: 100px) and (max-width: 768px) {
-  .blog-hero-area.section-padding {
-    padding-top: 160px;
-    padding-bottom: 0;
-  }
-  .blog-hero-area .blog-slider-wrapper .blog-slider-inner .slider-button {
-    right: 0;
-  }
-  .blog-hero-area .blog-slider-wrapper .blog-slider-inner .single-blog .blog-content-wrapper .blog-content-inner {
-    padding-right: 80px;
-  }
-  .blog-hero-area .blog-slider-wrapper .blog-slider-inner .single-blog .blog-content-wrapper .blog-content-inner h1 {
-    font-size: 30px;
-    line-height: 48px;
-  }
-  .blog-hero-area .blog-slider-wrapper .blog-slider-inner .single-blog .blog-slider-image {
-    max-width: 100%;
-    height: 270px;
-  }
-  .blog-hero-area .blog-slider-wrapper .social-media-share {
-    border: none;
-  }
-  .blog-hero-area .blog-slider-wrapper .social-media-share {
-    width: auto;
-    padding: 0;
-    top: 0;
-    margin-top: 0;
-  }
-  .search-bar input[type="search"] {
-    height: 50px;
-  }
-  .search-bar button {
-    font-size: 18px;
-  }
-}
-
 /*=================================================================================================
                                     Responsive code end
 =================================================================================================*/
