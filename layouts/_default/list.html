@@ -8,7 +8,7 @@
 <section class="hero-area-blog mt-100">
   <div class="container">
     {{ range $idx, $p := $pages.ByDate.Reverse | first 3 }}
-    <div class="columns is-vcentered is-multiline">
+    <div class="columns is-vcentered is-multiline single-blog-carousel {{if eq $idx 0}}show{{end}} ">
       <div class="column is-7">
         <figure class="blog-banner image is-16by9">
           {{ $image := $p.Resources.GetMatch "hero.jpg" }}
@@ -77,6 +77,12 @@
     </div>
     {{ end }}
   </div>
+
+   <!-- slider-button start  -->
+   <div class="slider-button">
+     <button id="sBtn" class="slide"><img src="/assets/images/icons/arrow.svg" alt="arrow"></button>
+   </div>
+   <!-- slider-button end -->
 </section>
 <!--============================== hero area 2022 end ==============================-->
 
@@ -291,9 +297,9 @@
       <div class="blog-slider-inner">
 
         <!-- slider-button start  -->
-        <div class="slider-button">
+        <!-- <div class="slider-button">
           <button id="sBtn" class="slide"><img src="/assets/images/icons/arrow.svg" alt="arrow"></button>
-        </div>
+        </div> -->
         <!-- slider-button end -->
 
         {{ range $idx, $p := $pages.ByDate.Reverse | first 3 }}

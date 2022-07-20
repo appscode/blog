@@ -73,7 +73,7 @@ if (sBtn) {
   sBtn.addEventListener("click", function(event) {
     event.preventDefault();
 
-    const sliderItems = document.querySelectorAll(".single-blog");
+    const sliderItems = document.querySelectorAll(".single-blog-carousel");
     const arr = Array.from(sliderItems);
 
     let indexOfShow = 0;

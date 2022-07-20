@@ -10660,6 +10660,16 @@ Responsive Classes
   opacity: 1;
 }
 
+.hero-area-blog .single-blog-carousel {
+  display: none;
+}
+
+.hero-area-blog .single-blog-carousel.show {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
 .hero-area-blog .blog-banner {
   background-image: url(/assets/images/bg-image/pattern-bg.png);
 }
@@ -10701,6 +10711,30 @@ Responsive Classes
   color: #3e393e;
   margin-bottom: 15px;
   display: block;
+}
+
+button.slide {
+  background: #fff;
+  border: none;
+  -webkit-box-shadow: 6px 6px 19px 2px rgba(0, 0, 0, 0.1);
+          box-shadow: 6px 6px 19px 2px rgba(0, 0, 0, 0.1);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  cursor: pointer;
+}
+
+button.slide img {
+  width: 30px;
 }
 
 a.inline-button {

@@ -1,5 +1,11 @@
 // blog page 2022
 .hero-area-blog {
+  .single-blog-carousel {
+    display: none;
+    &.show {
+      display: flex;
+    }
+  }
   .blog-banner {
     // background-color: #333333;
     background-image: url(/assets/images/bg-image/pattern-bg.png);
@@ -38,17 +44,24 @@
         margin-bottom: 15px;
         display: block;
       }
-
-      .social-share-button {
-        li {
-          a {
-            .fa {
-            }
-          }
-        }
-      }
     }
   }
+}
+button.slide {
+    background: #fff;
+    border: none;
+    box-shadow: 6px 6px 19px 2px rgba(0,0,0,0.1);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+button.slide img {
+    width: 30px;
 }
 a.inline-button {
   font-weight: 600;
