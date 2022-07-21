@@ -199,7 +199,7 @@
       <div class="column is-9">
         <div class="blog-items">
           <!-- grid view start -->
-          <div class="columns is-multiline">
+          <div class="columns is-multiline"  id="card-list">
             {{ range $idx, $p := $pages.ByDate.Reverse }}
 
             <div class="column is-4">
@@ -212,6 +212,11 @@
                 <div class="p-15">
                   <!-- meta description  -->
                   <div class="meta">
+                    <div class="tags">
+                      {{ range $tag := .Params.tags }}
+                      <a href="#" class="tag">{{ . }}</a>
+                      {{ end }}
+                    </div>
                     {{ range $author := $p.Params.authors }}
                     <div class="author"><i class="fa fa-user"></i> <a
                         href="/authors/{{ $author | urlize }}">{{ $author }}</a></div>

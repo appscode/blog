@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var app = Vue.createApp({
   delimiters: ["[[", "]]"],
   data(){
@@ -6,3 +7,5 @@ var app = Vue.createApp({
     }
   }
 }).mount('#app');
+=======
+>>>>>>> Add Filter function
