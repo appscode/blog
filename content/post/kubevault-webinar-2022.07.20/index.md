@@ -36,7 +36,7 @@ Initially the `Vault` was deployed with `JWT/OIDC` authentication method enabled
 
 Later on the webinar, various features of `KubeVault CLI` were discussed, e.g: CRUD operation on Vault `root-token` & `unseal-keys`, `Approve/Deny/Revoke` `SecretAccessRequest` for managing DB user privileges, `generate` `SecretProviderClass` for the secrets-store CSI driver, etc. Overall, it was shown how `KubeVault CLI` can be very handy while using `KubeVault` & its CRDs, also automating tedious tasks in general. 
 
-A step-by-step guide & the manifest files used during the webinar can be found [here](https://github.com/kubevault/demo). 
+> A step-by-step guide & the manifest files used during the webinar can be found [here](https://github.com/kubevault/demo). 
 
   Take a deep dive into the full webinar below:
 
