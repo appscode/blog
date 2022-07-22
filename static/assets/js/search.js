@@ -1,11 +1,35 @@
 const keywords =  new Set();
 let searchKeyword = "";
+let viewType = "grid-view";
 
 const kubedb = document.getElementById("kubedb");
 const stash = document.getElementById("stash");
 const kubevault = document.getElementById("kubevault");
 const kubeform = document.getElementById("kubeform");
 const searchElement = document.getElementById("search");
+const gridView = document.getElementById("grid-view");
+const listView = document.getElementById("list-view");
+const gridViewBtn = document.getElementById("grid-btn-view");
+const listViewBtn = document.getElementById("list-btn-view");
+
+gridViewBtn.addEventListener("click",(event) =>{
+  gridViewBtn.classList.add("is-active");
+  gridView.classList.remove("is-hidden");
+  listViewBtn.classList.remove("is-active");
+  listView.classList.add("is-hidden");
+
+  viewType = "grid-view";
+})
+
+listViewBtn.addEventListener("click",(event) =>{
+  listViewBtn.classList.add("is-active");
+  listView.classList.remove("is-hidden");
+  gridViewBtn.classList.remove("is-active");
+  gridView.classList.add("is-hidden");
+
+  viewType = "list-view";
+})
+
 
 kubedb.addEventListener("change",(Event)=>{
   let isChecked = Event.target.checked; 
@@ -43,15 +67,25 @@ searchElement.addEventListener("input",(event)=>{
 
 //Filter based on the tags and search keyword
 const filterList = () =>{
-  const cards = document.getElementById("card-list");
-  const cardList = cards.querySelectorAll(".column");
+  const cards = document.getElementById(viewType);
+  const cardList = cards.querySelectorAll(".each-blog");
   cardList.forEach(card => {
+    //get all tags
     const tags = card.querySelector(".tags").innerText.toLowerCase();
-    const author = card.querySelector(".author").innerText.toLowerCase();
+    
+    //get all authers name
+    let authors = "";
+    const authorList = card.querySelectorAll(".author");
+    authorList.forEach(author=>authors+=author.innerText.toLowerCase());
+
+    //get all headings
     const heading = card.querySelector("h2").innerText.toLowerCase();
-    if(!isTagAvailable(tags,author,heading)){
+    
+    if(!isTagAvailable(tags,authors,heading)){
       card.style.display = "none";
-    }else card.style.display = "block"
+    }else{
+      card.style.display = viewType === "grid-view" ?  "block" : "flex";
+    }
   })
 }
 
