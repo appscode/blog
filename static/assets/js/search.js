@@ -17,8 +17,8 @@ gridViewBtn.addEventListener("click",(event) =>{
   gridView.classList.remove("is-hidden");
   listViewBtn.classList.remove("is-active");
   listView.classList.add("is-hidden");
-
   viewType = "grid-view";
+  filterList();
 })
 
 listViewBtn.addEventListener("click",(event) =>{
@@ -26,8 +26,8 @@ listViewBtn.addEventListener("click",(event) =>{
   listView.classList.remove("is-hidden");
   gridViewBtn.classList.remove("is-active");
   gridView.classList.add("is-hidden");
-
   viewType = "list-view";
+  filterList();
 })
 
 
