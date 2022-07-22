@@ -1,4 +1,4 @@
-const keywords =  new Set();
+const keywords = new Set();
 let searchKeyword = "";
 let viewType = "grid-view";
 
@@ -12,7 +12,7 @@ const listView = document.getElementById("list-view");
 const gridViewBtn = document.getElementById("grid-btn-view");
 const listViewBtn = document.getElementById("list-btn-view");
 
-gridViewBtn.addEventListener("click",(event) =>{
+gridViewBtn.addEventListener("click", (event) => {
   gridViewBtn.classList.add("is-active");
   gridView.classList.remove("is-hidden");
   listViewBtn.classList.remove("is-active");
@@ -21,7 +21,7 @@ gridViewBtn.addEventListener("click",(event) =>{
   filterList();
 })
 
-listViewBtn.addEventListener("click",(event) =>{
+listViewBtn.addEventListener("click", (event) => {
   listViewBtn.classList.add("is-active");
   listView.classList.remove("is-hidden");
   gridViewBtn.classList.remove("is-active");
@@ -31,81 +31,85 @@ listViewBtn.addEventListener("click",(event) =>{
 })
 
 
-kubedb.addEventListener("change",(Event)=>{
-  let isChecked = Event.target.checked; 
-  if(isChecked) keywords.add("kubedb");
+kubedb.addEventListener("change", (Event) => {
+  let isChecked = Event.target.checked;
+  if (isChecked) keywords.add("kubedb");
   else keywords.delete("kubedb");
   filterList();
 })
 
-stash.addEventListener("change",(Event)=>{
-  let isChecked = Event.target.checked; 
-  if(isChecked) keywords.add("stash");
+stash.addEventListener("change", (Event) => {
+  let isChecked = Event.target.checked;
+  if (isChecked) keywords.add("stash");
   else keywords.delete("stash")
   filterList();
 })
 
-kubevault.addEventListener("change",(Event)=>{
-  let isChecked = Event.target.checked; 
-  if(isChecked) keywords.add("kubevault");
+kubevault.addEventListener("change", (Event) => {
+  let isChecked = Event.target.checked;
+  if (isChecked) keywords.add("kubevault");
   else keywords.delete("kubevault");
   filterList();
 })
 
-kubeform.addEventListener("change",(Event)=>{
-  let isChecked = Event.target.checked; 
-  if(isChecked) keywords.add("kubeform");
+kubeform.addEventListener("change", (Event) => {
+  let isChecked = Event.target.checked;
+  if (isChecked) keywords.add("kubeform");
   else keywords.delete("kubeform");
   filterList();
 })
 
-searchElement.addEventListener("input",(event)=>{
+searchElement.addEventListener("input", (event) => {
   let str = searchElement.value;
   searchKeyword = str.toLowerCase();
   filterList();
 })
 
 //Filter based on the tags and search keyword
-const filterList = () =>{
+const filterList = () => {
   const cards = document.getElementById(viewType);
   const cardList = cards.querySelectorAll(".each-blog");
   cardList.forEach(card => {
     //get all tags
     const tags = card.querySelector(".tags").innerText.toLowerCase();
-    
+
     //get all authers name
     let authors = "";
     const authorList = card.querySelectorAll(".author");
-    authorList.forEach(author=>authors+=author.innerText.toLowerCase());
+    authorList.forEach(author => authors += author.innerText.toLowerCase());
 
     //get all headings
     const heading = card.querySelector("h2").innerText.toLowerCase();
-    
-    if(!isTagAvailable(tags,authors,heading)){
+
+    if (!isTagAvailable(tags, authors, heading)) {
       card.style.display = "none";
-    }else{
-      card.style.display = viewType === "grid-view" ?  "block" : "flex";
+    } else {
+      card.style.display = viewType === "grid-view" ? "block" : "flex";
     }
   })
 }
 
 //Check if tags & search keyword contains in cards tags, auther and heading
-const isTagAvailable = (tags,author,heading) =>{
-  if(keywords.size === 0 && searchKeyword.length<3) return true;
+const isTagAvailable = (tags, author, heading) => {
+  if (keywords.size === 0 && searchKeyword.length < 3) return true;
   let flag = false;
-  if(keywords.size === 0){
+  if (keywords.size === 0) {
     flag |= tags.includes(searchKeyword);
     flag |= author.includes(searchKeyword);
     flag |= heading.includes(searchKeyword);
-  }else if(searchKeyword.length<3){
-    keywords.forEach(key=>{
-      flag |= tags.includes(key);
+  } else if (searchKeyword.length < 3) {
+    let temFlag = true;
+    keywords.forEach(key => {
+      temFlag &= tags.includes(key);
     })
-  }else{
-    keywords.forEach(key=>{
-      let flag1 = tags.includes(key) 
-      let flag2 = tags.includes(searchKeyword) || author.includes(searchKeyword) || heading.includes(searchKeyword);
-      flag = flag1 & flag2;
+    flag = temFlag;
+  } else {
+    let flag1 = true;
+    let flag2 = tags.includes(searchKeyword) || author.includes(searchKeyword) || heading.includes(searchKeyword);
+    keywords.forEach(key => {
+      flag1 &= tags.includes(key)
     })
-  }return flag;
+    flag = flag1 & flag2;
+  }
+  return flag;
 }

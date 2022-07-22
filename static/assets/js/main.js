@@ -68,15 +68,16 @@ var basicScrollTop = function() {
 basicScrollTop();
 
 // blog page hero slider
-var sBtn = document.getElementById("sBtn");
-if (sBtn) {
-  sBtn.addEventListener("click", function(event) {
+var carouselBtn = document.getElementsByClassName("carousel-button");
+if (carouselBtn) {
+  Array.from(carouselBtn).forEach((carouselEl,carouselElIdx) => {
+    carouselEl.addEventListener("click", function(event) {
+      console.log(carouselElIdx);
     event.preventDefault();
-
     const sliderItems = document.querySelectorAll(".single-blog-carousel");
     const arr = Array.from(sliderItems);
 
-    let indexOfShow = 0;
+    let indexOfShow = carouselElIdx;
     arr.forEach((sliderItem, idx) => {
       if (sliderItem.classList.contains("show")) {
         indexOfShow = idx;
@@ -86,6 +87,7 @@ if (sBtn) {
 
     let newIndex = (indexOfShow + 1) % arr.length;
     arr[newIndex].classList.add("show");
+  });
   });
 }
 
