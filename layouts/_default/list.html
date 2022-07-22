@@ -110,8 +110,8 @@
             <!-- viewing type  -->
             <div class="viewing-mode">
               <label>VIEW</label>
-              <button class="is-active"><span class="material-symbols-outlined">grid_view</span></button>
-              <button><span class="material-symbols-outlined">list</span></button>
+              <button id="grid-btn-view" class="is-active"><span class="material-symbols-outlined">grid_view</span></button>
+              <button id="list-btn-view"><span class="material-symbols-outlined">list</span></button>
             </div>
             <!-- viewing type  -->
           </div>
@@ -199,10 +199,10 @@
       <div class="column is-9">
         <div class="blog-items">
           <!-- grid view start -->
-          <div class="columns is-multiline">
+          <div class="columns is-multiline"  id="grid-view">
             {{ range $idx, $p := $pages.ByDate.Reverse }}
 
-            <div class="column is-4">
+            <div class="column is-4 each-blog">
               <div class="single-blog">
                 {{ $original := $p.Resources.GetMatch "hero.jpg" }}
                 {{ $cropped := $original.Resize "x200" }}
@@ -212,6 +212,11 @@
                 <div class="p-15">
                   <!-- meta description  -->
                   <div class="meta">
+                    <div class="tags">
+                      {{ range $tag := .Params.tags }}
+                      <a href="#" class="tag">{{ . }}</a>
+                      {{ end }}
+                    </div>
                     {{ range $author := $p.Params.authors }}
                     <div class="author"><i class="fa fa-user"></i> <a
                         href="/authors/{{ $author | urlize }}">{{ $author }}</a></div>
@@ -233,53 +238,59 @@
           <!-- grid view end  -->
 
           <!-- list view start  -->
-          {{ range $idx, $p := $pages.ByDate.Reverse }}
-          <div class="columns is-vcentered is-multiline is-hidden">
-            <div class="column is-6">
-              <figure class="blog-banner image">
-                {{ $image := $p.Resources.GetMatch "hero.jpg" }}
-                <a href="{{ $p.RelPermalink }}">
-                  <img src="{{ $image.RelPermalink }}" alt="appscode-blog"></a>
-              </figure>
+          <div class="columns is-vcentered is-multiline is-hidden" id="list-view">
+            {{ range $idx, $p := $pages.ByDate.Reverse }}
+            <div class="columns each-blog">
+              <div class="column is-6">
+                <figure class="blog-banner image">
+                  {{ $image := $p.Resources.GetMatch "hero.jpg" }}
+                  <a href="{{ $p.RelPermalink }}">
+                    <img src="{{ $image.RelPermalink }}" alt="appscode-blog"></a>
+                </figure>
 
-            </div>
-            <div class="column is-6">
-              <div class="blog-title-content">
-                <!-- meta description  -->
-                <div class="meta">
+              </div>
+              <div class="column is-6">
+                <div class="blog-title-content">
+                  <!-- meta description  -->
+                  <div class="meta">
+                    <div class="tags is-hidden">
+                      {{ range $tag := .Params.tags }}
+                      <a href="#" class="tag">{{ . }}</a>
+                      {{ end }}
+                    </div>
+                    <div class="author">By
+                      {{ range $author := first 1 $p.Params.authors }}
+                      <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
+                      {{end}}
 
-                  <div class="author">By
-                    {{ range $author := first 1 $p.Params.authors }}
-                    <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
-                    {{end}}
-
-                    {{ range $author := after 1 $p.Params.authors }}
-                    <span>&amp;</span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
-                    {{ end }}
+                      {{ range $author := after 1 $p.Params.authors }}
+                      <span>&amp;</span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
+                      {{ end }}
+                    </div>
+  
+                    <!-- date  -->
+                    <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> <strong>
+                        {{ $p.Date.Format "2-Jan-2006" }}</strong>
+                    </div>
+                    <!-- date  -->
                   </div>
+                  <!-- meta description  -->
+                  <!-- title  -->
+                  <h2 class="is-ellipsis-2"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h2>
+                  <!-- title  -->
 
-                  <!-- date  -->
-                  <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> <strong>
-                      {{ $p.Date.Format "2-Jan-2006" }}</strong>
-                  </div>
-                  <!-- date  -->
+
+
+                  <!-- summary  -->
+                  <p class="is-ellipsis-2">{{ $p.Summary }}</p>
+
+                  <a class="inline-button" href="{{ $p.RelPermalink }}">READ MORE <i class="fa fa-arrow-right"></i></a>
+                  <!-- summary  -->
                 </div>
-                <!-- meta description  -->
-                <!-- title  -->
-                <h2 class="is-ellipsis-2"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h2>
-                <!-- title  -->
-
-
-
-                <!-- summary  -->
-                <p class="is-ellipsis-2">{{ $p.Summary }}</p>
-
-                <a class="inline-button" href="{{ $p.RelPermalink }}">READ MORE <i class="fa fa-arrow-right"></i></a>
-                <!-- summary  -->
               </div>
             </div>
+            {{ end }}
           </div>
-          {{ end }}
           <!-- list view end -->
         </div>
       </div>
