@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // AOS initialization 
+  // AOS initialization
   AOS.init({
-    once: false
+    once: false,
   });
 
   // Get all "navbar-burger" elements
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Check if there are any navbar burgers
   if ($navbarBurgers.length > 0) {
     // Add a click event on each of them
-    $navbarBurgers.forEach(el => {
+    $navbarBurgers.forEach((el) => {
       el.addEventListener("click", () => {
         // Get the target from the "data-target" attribute
         const target = el.dataset.target;
@@ -24,8 +24,39 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
-});
 
+  // blog page hero area slider start
+  var sliderElement = document.getElementById("hero-area-blog");
+  var interval = 0;
+
+  function autoplay(run) {
+    clearInterval(interval);
+    interval = setInterval(() => {
+      if (run && slider) {
+        slider.next();
+      }
+    }, 4000);
+  }
+
+  var slider = new KeenSlider(sliderElement, {
+    loop: true,
+    duration: 2000,
+    dragStart: () => {
+      autoplay(false);
+    },
+    dragEnd: () => {
+      autoplay(true);
+    }
+  });
+
+  sliderElement?.addEventListener("mouseover", () => {
+    autoplay(false);
+  });
+  sliderElement?.addEventListener("mouseout", () => {
+    autoplay(true);
+  });
+  autoplay(true);
+});
 
 // scroll to top
 var basicScrollTop = function () {
@@ -80,7 +111,7 @@ if (carouselBtn) {
 
 // code download and copy function //
 var codeHeading = document.querySelectorAll(".code-block-heading");
-Array.from(codeHeading).forEach(heading => {
+Array.from(codeHeading).forEach((heading) => {
   const pre = heading.nextElementSibling;
   const code = pre.querySelector("code");
   const codeContent = code.textContent;
@@ -90,7 +121,9 @@ Array.from(codeHeading).forEach(heading => {
   } else {
     fileType = "txt";
   }
-  let fileName = heading.querySelector('.code-title > h4').textContent.replace(" ", "_")
+  let fileName = heading
+    .querySelector(".code-title > h4")
+    .textContent.replace(" ", "_");
 
   // download js //
   var downloadBtn = heading.querySelector(".download-here");
@@ -112,26 +145,26 @@ Array.from(codeHeading).forEach(heading => {
 
 // tabs active class add script - setup | install page
 const tabItems = document.querySelectorAll(".nav-item .nav-link");
-tabItems.forEach(tab => {
-  tab.addEventListener("click", e => {
+tabItems.forEach((tab) => {
+  tab.addEventListener("click", (e) => {
     e.preventDefault();
     const el = e.currentTarget;
 
     // add .active class to the clicked item, remove .active from others
-    document.querySelectorAll(".nav-item .nav-link").forEach(navLink => {
-      navLink === el ?
-        navLink.classList.add("active") :
-        navLink.classList.remove("active");
+    document.querySelectorAll(".nav-item .nav-link").forEach((navLink) => {
+      navLink === el
+        ? navLink.classList.add("active")
+        : navLink.classList.remove("active");
     });
 
     // add .show class to the target tab-pane, remove from others
     const elHref = el.getAttribute("href");
     const tabPaneTarget = document.querySelector(elHref);
 
-    document.querySelectorAll(".tab-pane").forEach(tabPane => {
-      tabPane === tabPaneTarget ?
-        tabPane.classList.add("show") :
-        tabPane.classList.remove("show");
+    document.querySelectorAll(".tab-pane").forEach((tabPane) => {
+      tabPane === tabPaneTarget
+        ? tabPane.classList.add("show")
+        : tabPane.classList.remove("show");
     });
   });
 });

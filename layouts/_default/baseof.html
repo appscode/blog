@@ -58,8 +58,8 @@
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <!-- bulma css  -->
   <link rel="stylesheet" href="/assets/css/bulma.min.css" />
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@5.0.2/keen-slider.min.css" />
+  <!-- keen slider css  -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@6.7.0/keen-slider.min.css" />
   <!-- Custom CSS -->
   <!-- {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}" />
@@ -384,42 +384,9 @@
   <script src="/assets/js/main.js"></script>
   <!--Search  -->
   <script src="/assets/js/search.js"></script>
-
-  <script src="https://cdn.jsdelivr.net/npm/keen-slider@5.0.2/keen-slider.min.js"></script>
-  <script>
-    // blog page hero area slider start
-    var sliderElement = document.getElementById("hero-area-blog");
-    var interval = 0;
-
-    function autoplay(run) {
-      clearInterval(interval);
-      interval = setInterval(() => {
-        if (run && slider) {
-          slider.next();
-        }
-      }, 4000);
-    }
-
-    var slider = new KeenSlider(sliderElement, {
-      loop: true,
-      duration: 2000,
-      dragStart: () => {
-        autoplay(false);
-      },
-      dragEnd: () => {
-        autoplay(true);
-      }
-    });
-
-    sliderElement?.addEventListener("mouseover", () => {
-      autoplay(false);
-    });
-    sliderElement?.addEventListener("mouseout", () => {
-      autoplay(true);
-    });
-    autoplay(true);
-  </script>
-  // blog page hero area slider end
+  <!-- keen slider js -->
+  <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.7.0/keen-slider.min.js"></script>
+ 
   <!--Start of Tawk.to Script-->
   <script type="text/javascript">
     var Tawk_API = Tawk_API || {},
