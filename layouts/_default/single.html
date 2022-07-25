@@ -37,7 +37,7 @@
         <h1 data-aos="fade-up" data-aos-duration="500">{{ .Title }}</h1>
 
         <!-- meta description  -->
-        <div class="meta">
+        <div class="meta" data-aos="fade-up" data-aos-duration="800">
           {{ range $author := first 1 .Params.authors }}
           <div class="author"><i class="fa fa-user"></i> <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
           </div>
@@ -76,40 +76,42 @@
         <!-- blog comments area end -->
       </div>
       <div class="column is-4">
-        <div class="single-wizard ml-30">
-          <h4>Recent Blog</h4>
-        {{ range first 5 (where site.RegularPages.ByDate.Reverse "Type" "in" "posts" )}}
-          <!-- recent-blog  -->
-          <div class="single-recent-blog">
-            <!-- date and month  -->
-            <a href="#" class="date-month">
-              <span class="date">{{.PublishDate.Day}}</span>
-              <span class="month">{{.PublishDate.Format "Jan" | upper}}</span>
-            </a>
-            <!-- date and month  -->
+        <div class="wizerd-items">
+          <div class="single-wizard ml-30">
+            <h4>Recent Blog</h4>
+            {{ range first 5 (where site.RegularPages.ByDate.Reverse "Type" "in" "posts" )}}
+            <!-- recent-blog  -->
+            <div class="single-recent-blog">
+              <!-- date and month  -->
+              <a href="#" class="date-month">
+                <span class="date">{{.PublishDate.Day}}</span>
+                <span class="month">{{.PublishDate.Format "Jan" | upper}}</span>
+              </a>
+              <!-- date and month  -->
 
-            <!-- content  -->
-            <div class="recent-blog-content">
-              <h2><a href="{{.RelPermalink}}">{{.Title}}</a></h2>
-              {{ range $author := first 1 .Params.authors }}
-              <div class="meta">By - <a href="/authors/{{ $author | urlize }}"> {{$author}} </a></div>
+              <!-- content  -->
+              <div class="recent-blog-content">
+                <h2><a href="{{.RelPermalink}}">{{.Title}}</a></h2>
+                {{ range $author := first 1 .Params.authors }}
+                <div class="meta">By - <a href="/authors/{{ $author | urlize }}"> {{$author}} </a></div>
+                {{ end }}
+              </div>
+              <!-- content  -->
+            </div>
+            <!-- recent-blog  -->
+            {{ end }}
+
+
+          </div>
+
+
+          <div class="single-wizard ml-30">
+            <h4>Popular tags</h4>
+            <div class="tags">
+              {{ range $tag := .Params.tags }}
+              <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
               {{ end }}
             </div>
-            <!-- content  -->
-          </div>
-          <!-- recent-blog  -->
-          {{ end }}
-          
-         
-        </div>
-
-
-        <div class="single-wizard ml-30">
-          <h4>Popular tags</h4>
-          <div class="tags">
-            {{ range $tag := .Params.tags }}
-            <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
-            {{ end }}
           </div>
         </div>
       </div>

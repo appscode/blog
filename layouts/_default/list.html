@@ -7,87 +7,94 @@
 <!--============================== hero area 2022 start  ==============================-->
 <section class="hero-area-blog mt-100">
   <div class="container">
-    {{ range $idx, $p := $pages.ByDate.Reverse | first 3 }}
-    <div class="columns is-vcentered is-multiline single-blog-carousel {{if eq $idx 0}}show{{end}} ">
-      <div class="column is-7">
+    <div class="slider-wrapper keen-slider" id="hero-area-blog">
+      {{ range $idx, $p := $pages.ByDate.Reverse | first 3 }}
+      <div class="single-slider keen-slider__slide">
+        <div class="columns is-vcentered is-multiline single-blog-carousel">
+          <div class="column is-7">
 
-        <div class="hero-area-thumbnail">
-          <figure class="blog-banner image is-16by9">
-            {{ $image := $p.Resources.GetMatch "hero.jpg" }}
-            <a href="{{ $p.RelPermalink }}">
-              <img src="{{ $image.RelPermalink }}" alt="appscode-blog"></a>
-          </figure>
+            <div class="hero-area-thumbnail" data-aos="fade-in" data-aos-duration="500">
+              <figure class="blog-banner image is-16by9">
+                {{ $image := $p.Resources.GetMatch "hero.jpg" }}
+                <a href="{{ $p.RelPermalink }}">
+                  <img src="{{ $image.RelPermalink }}" alt="appscode-blog"></a>
+              </figure>
 
-          <!-- slider-button start  -->
-          <div class="slider-button">
-            <button class="slide carousel-button"><img src="/assets/images/icons/arrow.svg" alt="arrow"></button>
-          </div>
-          <!-- slider-button end -->
-        </div>
-
-      </div>
-      <div class="column is-5">
-        <div class="blog-title-content">
-          <!-- title  -->
-          <h1 class="is-ellipsis-2"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h1>
-          <!-- title  -->
-
-          <!-- meta description  -->
-          <div class="meta">
-
-            <div class="author">By
-              {{ range $author := first 1 $p.Params.authors }}
-              <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
-              {{end}}
-
-              {{ range $author := after 1 $p.Params.authors }}
-              <span>&amp;</span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
-              {{ end }}
+              <!-- slider-button start  -->
+              <!-- <div class="slider-button">
+          <button class="slide carousel-button"><img src="/assets/images/icons/arrow.svg" alt="arrow"></button>
+        </div> -->
+              <!-- slider-button end -->
             </div>
 
+          </div>
+          <div class="column is-5">
+            <div class="blog-title-content">
+              <!-- title  -->
+              <h1 class="is-ellipsis-2" data-aos="fade-up" data-aos-duration="500"><a
+                  href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h1>
+              <!-- title  -->
 
-            <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> <strong>
-                {{ $p.Date.Format "2-Jan-2006" }}</strong>
+              <!-- meta description  -->
+              <div class="meta" data-aos="fade-up" data-aos-duration="600">
+
+                <div class="author">By
+                  {{ range $author := first 1 $p.Params.authors }}
+                  <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
+                  {{end}}
+
+                  {{ range $author := after 1 $p.Params.authors }}
+                  <span>&amp;</span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
+                  {{ end }}
+                </div>
+
+
+                <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> <strong>
+                    {{ $p.Date.Format "2-Jan-2006" }}</strong>
+                </div>
+              </div>
+              <!-- meta description  -->
+
+              <!-- summary  -->
+              <p class="is-ellipsis-3" data-aos="fade-up" data-aos-duration="700">{{ $p.Summary }}</p>
+
+              <a class="inline-button" href="{{ $p.RelPermalink }}" data-aos="fade-up" data-aos-duration="800">READ MORE
+                <i class="fa fa-arrow-right"></i></a>
+              <!-- summary  -->
+
+              <!-- share with  -->
+              <div class="social-share" data-aos="fade-up" data-aos-duration="900">
+                <label>Share with:</label>
+                <ul class="social-share-button">
+                  <li>
+                    <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title }}" target="_blank"
+                      rel="noopener" class="twitter" aria-label="share on Twitter"><i class="fa fa-twitter"
+                        aria-hidden="true"></i></a>
+                  </li>
+                  <li>
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title }}&summary={{ .Summary }}"
+                      target="_blank" rel="noopener" class="linkedin"><i class="fa fa-linkedin"
+                        aria-hidden="true"></i></a>
+                  </li>
+                  <li>
+                    <a href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" target="_blank" rel="noopener"
+                      class="facebook" aria-label="share on Facebook"><i class="fa fa-facebook"
+                        aria-hidden="true"></i></a>
+                  </li>
+                  <li>
+                    <a href="mailto:?subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i
+                        class="fa fa-envelope-o" aria-hidden="true"></i></a>
+                  </li>
+                </ul>
+              </div>
+              <!-- share with  -->
             </div>
           </div>
-          <!-- meta description  -->
-
-          <!-- summary  -->
-          <p class="is-ellipsis-3">{{ $p.Summary }}</p>
-
-          <a class="inline-button" href="{{ $p.RelPermalink }}">READ MORE <i class="fa fa-arrow-right"></i></a>
-          <!-- summary  -->
-
-          <!-- share with  -->
-          <div class="social-share">
-            <label>Share with:</label>
-            <ul class="social-share-button">
-              <li>
-                <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title }}" target="_blank" rel="noopener"
-                  class="twitter" aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-              </li>
-              <li>
-                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title }}&summary={{ .Summary }}"
-                  target="_blank" rel="noopener" class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
-              </li>
-              <li>
-                <a href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" target="_blank" rel="noopener"
-                  class="facebook" aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-              </li>
-              <li>
-                <a href="mailto:?subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i
-                    class="fa fa-envelope-o" aria-hidden="true"></i></a>
-              </li>
-            </ul>
-          </div>
-          <!-- share with  -->
         </div>
       </div>
+      {{ end }}
     </div>
-    {{ end }}
   </div>
-
-
 
 </section>
 <!--============================== hero area 2022 end ==============================-->
@@ -130,66 +137,156 @@
           <!-- collapsable menu start  -->
           <div class="collapsable-menu">
             <button>PRODUCTS <i class="fa fa-angle-up"></i></button>
-            <!-- single ac-checkbox start  -->
-            <div class="ac-single-checkbox">
-              <input class="is-checkradio ac-checkbox" id="kubedb" type="checkbox" name="checkbox" />
-              <label for="kubedb">KubeDB</label>
-            </div>
-            <!-- single ac-checkbox end -->
+            <div class="checkbox-wrapper">
 
-            <!-- single ac-checkbox start  -->
-            <div class="ac-single-checkbox">
-              <input class="is-checkradio ac-checkbox" id="stash" type="checkbox" name="checkbox" />
-              <label for="stash">Stash</label>
-            </div>
-            <!-- single ac-checkbox end -->
 
-            <!-- single ac-checkbox start  -->
-            <div class="ac-single-checkbox">
-              <input class="is-checkradio ac-checkbox" id="kubevault" type="checkbox" name="checkbox" />
-              <label for="kubevault">KubeVault</label>
-            </div>
-            <!-- single ac-checkbox end -->
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubedb" type="checkbox" name="checkbox" />
+                <label for="kubedb">KubeDB</label>
+              </div>
+              <!-- single ac-checkbox end -->
 
-            <!-- single ac-checkbox start  -->
-            <div class="ac-single-checkbox">
-              <input class="is-checkradio ac-checkbox" id="kubeform" type="checkbox" name="checkbox" />
-              <label for="kubeform">Kubeform</label>
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="stash" type="checkbox" name="checkbox" />
+                <label for="stash">Stash</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubevault" type="checkbox" name="checkbox" />
+                <label for="kubevault">KubeVault</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubeform" type="checkbox" name="checkbox" />
+                <label for="kubeform">Kubeform</label>
+              </div>
+              <!-- single ac-checkbox end -->
             </div>
-            <!-- single ac-checkbox end -->
           </div>
           <!-- collapsable menu end -->
 
           <!-- collapsable menu start  -->
           <div class="collapsable-menu">
-            <button>PRODUCTS <i class="fa fa-angle-up"></i></button>
-            <!-- single ac-checkbox start  -->
-            <div class="ac-single-checkbox">
-              <input class="is-checkradio ac-checkbox" id="kubedb" type="checkbox" name="checkbox" />
-              <label for="kubedb">KubeDB</label>
-            </div>
-            <!-- single ac-checkbox end -->
+            <button>CATEGORIES <i class="fa fa-angle-up"></i></button>
+            <div class="checkbox-wrapper">
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="alert" type="checkbox" name="checkbox" />
+                <label for="alert">Alert</label>
+              </div>
+              <!-- single ac-checkbox end -->
 
-            <!-- single ac-checkbox start  -->
-            <div class="ac-single-checkbox">
-              <input class="is-checkradio ac-checkbox" id="stash" type="checkbox" name="checkbox" />
-              <label for="stash">Stash</label>
-            </div>
-            <!-- single ac-checkbox end -->
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="auto-scalling" type="checkbox" name="checkbox" />
+                <label for="auto-scalling">Auto-scalling</label>
+              </div>
+              <!-- single ac-checkbox end -->
 
-            <!-- single ac-checkbox start  -->
-            <div class="ac-single-checkbox">
-              <input class="is-checkradio ac-checkbox" id="kubevault" type="checkbox" name="checkbox" />
-              <label for="kubevault">KubeVault</label>
-            </div>
-            <!-- single ac-checkbox end -->
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="appscode" type="checkbox" name="checkbox" />
+                <label for="appscode">AppsCode</label>
+              </div>
+              <!-- single ac-checkbox end -->
 
-            <!-- single ac-checkbox start  -->
-            <div class="ac-single-checkbox">
-              <input class="is-checkradio ac-checkbox" id="kubeform" type="checkbox" name="checkbox" />
-              <label for="kubeform">Kubeform</label>
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="aws" type="checkbox" name="checkbox" />
+                <label for="aws">AWS</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="alert" type="checkbox" name="checkbox" />
+                <label for="alert">Alert</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="backup" type="checkbox" name="checkbox" />
+                <label for="backup">Backup</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="crd" type="checkbox" name="checkbox" />
+                <label for="crd">Crd</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="database" type="checkbox" name="checkbox" />
+                <label for="database">Database</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="docs" type="checkbox" name="checkbox" />
+                <label for="docs">Docs</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="hook" type="checkbox" name="checkbox" />
+                <label for="hook">Hook</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="jwt" type="checkbox" name="checkbox" />
+                <label for="jwt">Jwt</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="nats" type="checkbox" name="checkbox" />
+                <label for="nats">Nats</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubernetes" type="checkbox" name="checkbox" />
+                <label for="kubernetes">Kubernetes</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="gcs" type="checkbox" name="checkbox" />
+                <label for="gcs">GCS</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubevault" type="checkbox" name="checkbox" />
+                <label for="kubevault">KubeVault</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubeform" type="checkbox" name="checkbox" />
+                <label for="kubeform">Kubeform</label>
+              </div>
+              <!-- single ac-checkbox end -->
             </div>
-            <!-- single ac-checkbox end -->
           </div>
           <!-- collapsable menu end -->
         </div>
@@ -211,7 +308,7 @@
                 <div class="p-15">
                   <!-- meta description  -->
                   <div class="meta">
-                    <div class="tags">
+                    <div class="tags is-hidden">
                       {{ range $tag := .Params.tags }}
                       <a href="#" class="tag">{{ . }}</a>
                       {{ end }}

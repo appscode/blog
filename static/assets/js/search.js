@@ -12,7 +12,8 @@ const listView = document.getElementById("list-view");
 const gridViewBtn = document.getElementById("grid-btn-view");
 const listViewBtn = document.getElementById("list-btn-view");
 
-gridViewBtn.addEventListener("click", (event) => {
+
+gridViewBtn?.addEventListener("click", (event) => {
   gridViewBtn.classList.add("is-active");
   gridView.classList.remove("is-hidden");
   listViewBtn.classList.remove("is-active");
@@ -21,7 +22,10 @@ gridViewBtn.addEventListener("click", (event) => {
   filterList();
 })
 
-listViewBtn.addEventListener("click", (event) => {
+
+
+
+listViewBtn?.addEventListener("click", (event) => {
   listViewBtn.classList.add("is-active");
   listView.classList.remove("is-hidden");
   gridViewBtn.classList.remove("is-active");
@@ -31,35 +35,35 @@ listViewBtn.addEventListener("click", (event) => {
 })
 
 
-kubedb.addEventListener("change", (Event) => {
+kubedb?.addEventListener("change", (Event) => {
   let isChecked = Event.target.checked;
   if (isChecked) keywords.add("kubedb");
   else keywords.delete("kubedb");
   filterList();
 })
 
-stash.addEventListener("change", (Event) => {
+stash?.addEventListener("change", (Event) => {
   let isChecked = Event.target.checked;
   if (isChecked) keywords.add("stash");
   else keywords.delete("stash")
   filterList();
 })
 
-kubevault.addEventListener("change", (Event) => {
+kubevault?.addEventListener("change", (Event) => {
   let isChecked = Event.target.checked;
   if (isChecked) keywords.add("kubevault");
   else keywords.delete("kubevault");
   filterList();
 })
 
-kubeform.addEventListener("change", (Event) => {
+kubeform?.addEventListener("change", (Event) => {
   let isChecked = Event.target.checked;
   if (isChecked) keywords.add("kubeform");
   else keywords.delete("kubeform");
   filterList();
 })
 
-searchElement.addEventListener("input", (event) => {
+searchElement?.addEventListener("input", (event) => {
   let str = searchElement.value;
   searchKeyword = str.toLowerCase();
   filterList();

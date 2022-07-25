@@ -10722,10 +10722,6 @@ Responsive Classes
   opacity: 1;
 }
 
-.hero-area-blog .single-blog-carousel {
-  display: none;
-}
-
 .hero-area-blog .single-blog-carousel.show {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -10965,6 +10961,12 @@ ul.social-share-button li a i.fa {
 
 .search-filter-area {
   margin: 30px 0;
+  margin: 30px 0;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 60px;
+  z-index: 99;
+  background: #fff;
 }
 
 .search-filter-area .filter-wrapper {
@@ -11088,6 +11090,7 @@ ul.social-share-button li a i.fa {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+  cursor: pointer;
 }
 
 .search-filter-area .filter-area .viewing-mode button span {
@@ -11105,6 +11108,9 @@ ul.social-share-button li a i.fa {
 
 .blog-items-area .left-sidebar {
   margin-right: 30px;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 170px;
 }
 
 .blog-items-area .left-sidebar .collapsable-menu {
@@ -11425,10 +11431,10 @@ ul.social-share-button li a i.fa {
   border-bottom: 1px solid #dbdbde;
 }
 
-.sticky-social-menu {
+.sticky-social-menu, .wizerd-items {
   position: -webkit-sticky;
   position: sticky;
-  top: 130px;
+  top: 110px;
   z-index: 99;
 }
 

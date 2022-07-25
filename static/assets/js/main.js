@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
   // AOS initialization 
   AOS.init({
-    once: true
+    once: false
   });
-  
+
   // Get all "navbar-burger" elements
   const $navbarBurgers = Array.prototype.slice.call(
     document.querySelectorAll(".navbar-burger"),
@@ -26,26 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// menu sticky
-//Not a ton of code, but hard to
-// const nav = document.querySelector("#header");
-// let topOfNav = nav.offsetTop + 1;
-// function fixNav() {
-//   if (window.scrollY >= topOfNav) {
-//     document.body.classList.add("fixed-nav");
-//   } else {
-//     document.body.classList.remove("fixed-nav");
-//     document.body.style.paddingTop = 0;
-//   }
-// }
-// window.addEventListener("scroll", fixNav);
 
 // scroll to top
-var basicScrollTop = function() {
+var basicScrollTop = function () {
   // The button
   var btnTop = document.querySelector("#goTop");
   // Reveal the button
-  var btnReveal = function() {
+  var btnReveal = function () {
     if (window.scrollY >= 300) {
       btnTop.classList.add("is-visible");
     } else {
@@ -53,9 +40,9 @@ var basicScrollTop = function() {
     }
   };
   // Smooth scroll top
-  var TopscrollTo = function() {
+  var TopscrollTo = function () {
     if (window.scrollY != 0) {
-      setTimeout(function() {
+      setTimeout(function () {
         window.scrollTo(0, window.scrollY - 30);
         TopscrollTo();
       }, 5);
@@ -70,24 +57,24 @@ basicScrollTop();
 // blog page hero slider
 var carouselBtn = document.getElementsByClassName("carousel-button");
 if (carouselBtn) {
-  Array.from(carouselBtn).forEach((carouselEl,carouselElIdx) => {
-    carouselEl.addEventListener("click", function(event) {
+  Array.from(carouselBtn).forEach((carouselEl, carouselElIdx) => {
+    carouselEl.addEventListener("click", function (event) {
       console.log(carouselElIdx);
-    event.preventDefault();
-    const sliderItems = document.querySelectorAll(".single-blog-carousel");
-    const arr = Array.from(sliderItems);
+      event.preventDefault();
+      const sliderItems = document.querySelectorAll(".single-blog-carousel");
+      const arr = Array.from(sliderItems);
 
-    let indexOfShow = carouselElIdx;
-    arr.forEach((sliderItem, idx) => {
-      if (sliderItem.classList.contains("show")) {
-        indexOfShow = idx;
-        sliderItem.classList.remove("show");
-      }
+      let indexOfShow = carouselElIdx;
+      arr.forEach((sliderItem, idx) => {
+        if (sliderItem.classList.contains("show")) {
+          indexOfShow = idx;
+          sliderItem.classList.remove("show");
+        }
+      });
+
+      let newIndex = (indexOfShow + 1) % arr.length;
+      arr[newIndex].classList.add("show");
     });
-
-    let newIndex = (indexOfShow + 1) % arr.length;
-    arr[newIndex].classList.add("show");
-  });
   });
 }
 
@@ -104,11 +91,11 @@ Array.from(codeHeading).forEach(heading => {
     fileType = "txt";
   }
   let fileName = heading.querySelector('.code-title > h4').textContent.replace(" ", "_")
-  
+
   // download js //
   var downloadBtn = heading.querySelector(".download-here");
   if (downloadBtn) {
-    downloadBtn.addEventListener("click", function() {
+    downloadBtn.addEventListener("click", function () {
       return download(codeContent, `${fileName}.${fileType}`, "text/plain");
     });
   }
@@ -117,7 +104,7 @@ Array.from(codeHeading).forEach(heading => {
   var copyBtn = heading.querySelector(".copy-here");
   if (copyBtn) {
     new ClipboardJS(copyBtn);
-    copyBtn.addEventListener("click", function() {
+    copyBtn.addEventListener("click", function () {
       copyBtn.setAttribute("title", "copied!");
     });
   }
@@ -132,9 +119,9 @@ tabItems.forEach(tab => {
 
     // add .active class to the clicked item, remove .active from others
     document.querySelectorAll(".nav-item .nav-link").forEach(navLink => {
-      navLink === el
-        ? navLink.classList.add("active")
-        : navLink.classList.remove("active");
+      navLink === el ?
+        navLink.classList.add("active") :
+        navLink.classList.remove("active");
     });
 
     // add .show class to the target tab-pane, remove from others
@@ -142,9 +129,9 @@ tabItems.forEach(tab => {
     const tabPaneTarget = document.querySelector(elHref);
 
     document.querySelectorAll(".tab-pane").forEach(tabPane => {
-      tabPane === tabPaneTarget
-        ? tabPane.classList.add("show")
-        : tabPane.classList.remove("show");
+      tabPane === tabPaneTarget ?
+        tabPane.classList.add("show") :
+        tabPane.classList.remove("show");
     });
   });
 });
