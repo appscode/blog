@@ -2,15 +2,13 @@ const keywords = new Set();
 let searchKeyword = "";
 let viewType = "grid-view";
 
-const kubedb = document.getElementById("kubedb");
-const stash = document.getElementById("stash");
-const kubevault = document.getElementById("kubevault");
-const kubeform = document.getElementById("kubeform");
 const searchElement = document.getElementById("search");
 const gridView = document.getElementById("grid-view");
 const listView = document.getElementById("list-view");
 const gridViewBtn = document.getElementById("grid-btn-view");
 const listViewBtn = document.getElementById("list-btn-view");
+const productElement = document.getElementById("products");
+const categoriesElement = document.getElementById("categories");
 
 
 gridViewBtn?.addEventListener("click", (event) => {
@@ -22,9 +20,6 @@ gridViewBtn?.addEventListener("click", (event) => {
   filterList();
 })
 
-
-
-
 listViewBtn?.addEventListener("click", (event) => {
   listViewBtn.classList.add("is-active");
   listView.classList.remove("is-hidden");
@@ -34,33 +29,24 @@ listViewBtn?.addEventListener("click", (event) => {
   filterList();
 })
 
-
-kubedb?.addEventListener("change", (Event) => {
-  let isChecked = Event.target.checked;
-  if (isChecked) keywords.add("kubedb");
-  else keywords.delete("kubedb");
-  filterList();
+productElement?.addEventListener("change",(event)=>{
+  let elementName = event.target.id || "";
+  if(elementName){
+    let isChecked = event.target.checked || false;
+    if (isChecked) keywords.add(elementName.toLowerCase());
+    else keywords.delete(elementName.toLowerCase());
+    filterList();
+  }
 })
 
-stash?.addEventListener("change", (Event) => {
-  let isChecked = Event.target.checked;
-  if (isChecked) keywords.add("stash");
-  else keywords.delete("stash")
-  filterList();
-})
-
-kubevault?.addEventListener("change", (Event) => {
-  let isChecked = Event.target.checked;
-  if (isChecked) keywords.add("kubevault");
-  else keywords.delete("kubevault");
-  filterList();
-})
-
-kubeform?.addEventListener("change", (Event) => {
-  let isChecked = Event.target.checked;
-  if (isChecked) keywords.add("kubeform");
-  else keywords.delete("kubeform");
-  filterList();
+categoriesElement?.addEventListener("change",(event)=>{
+  let elementName = event.target.id || "";
+  if(elementName){
+    let isChecked = event.target.checked || false;
+    if (isChecked) keywords.add(elementName.toLowerCase());
+    else keywords.delete(elementName.toLowerCase());
+    filterList();
+  }
 })
 
 searchElement?.addEventListener("input", (event) => {
