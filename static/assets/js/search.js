@@ -9,6 +9,8 @@ const gridViewBtn = document.getElementById("grid-btn-view");
 const listViewBtn = document.getElementById("list-btn-view");
 const productElement = document.getElementById("products");
 const categoriesElement = document.getElementById("categories");
+const productBtn = document.getElementById("product-btn");
+const categoriesBtn = document.getElementById("categories-btn");
 
 
 gridViewBtn?.addEventListener("click", (event) => {
@@ -54,6 +56,39 @@ searchElement?.addEventListener("input", (event) => {
   searchKeyword = str.toLowerCase();
   filterList();
 })
+
+//Toggle view of sidebar product list
+productBtn?.addEventListener("click",(event)=>{
+  const iconElement = productBtn.querySelector("i");
+  const className = iconElement.className;
+  if(className === "fa fa-angle-up"){
+    iconElement.classList.remove("fa-angle-up");
+    iconElement.classList.add("fa-angle-down");
+    productElement.style.display = "none";
+
+  }else{
+    iconElement.classList.remove("fa-angle-down");
+    iconElement.classList.add("fa-angle-up")
+    productElement.style.display = "block";
+  }
+})
+
+//Toggle view of sidebar categories list
+categoriesBtn?.addEventListener("click",(event)=>{
+  const iconElement = categoriesBtn.querySelector("i");
+  const className = iconElement.className;
+  if(className === "fa fa-angle-up"){
+    iconElement.classList.remove("fa-angle-up");
+    iconElement.classList.add("fa-angle-down");
+    categoriesElement.style.display = "none";
+
+  }else{
+    iconElement.classList.remove("fa-angle-down");
+    iconElement.classList.add("fa-angle-up")
+    categoriesElement.style.display = "block";
+  }
+})
+
 
 //Filter based on the tags and search keyword
 const filterList = () => {
