@@ -642,7 +642,43 @@ ul.social-share-button {
 =================================================================================================*/
 
 // Extra small devices (portrait phones, less than 576px)
-@media (max-width: 768px) {}
+@media (max-width: 768px) {
+  .hero-area-blog {
+    .single-blog-carousel {
+      .blog-title-content {
+        padding-left: 0;
+         h1 {
+          font-size: 34px;
+         }
+      }
+    }
+  }
+  .search-filter-area {
+    top: 34px;
+    .filter-wrapper {
+      padding: 6px 10px;
+      .search-area {
+        display: flex;
+        label {
+          i.fa {
+            font-size: 16px;
+          }
+        }
+        input {
+          width: 180px;
+        }
+      }
+    }
+    .viewing-mode {
+      button {
+        margin-right: 0.5rem;
+      }
+      label {
+        display: none;
+      }
+    }
+  }
+}
 
 // Small devices (landscape phones, 576px and up)
 @media (min-width: 576px) and (max-width: 768px) {}
