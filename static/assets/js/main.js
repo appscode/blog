@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (run && slider) {
         slider.next();
       }
-    }, 4000);
+    }, 3000);
   }
 
   var slider = new KeenSlider(sliderElement, {
