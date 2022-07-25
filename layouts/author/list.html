@@ -18,53 +18,27 @@
             <ul class="social-share-button is-justify-content-center">
               {{ if $author.twitter }}
               <li>
-                <a
-                  href="{{ $author.twitter }}"
-                  target="_blank"
-                  rel="noopener"
-                  class="twitter"
-                  aria-label="Follow on Twitter"
-                  ><i class="fa fa-twitter" aria-hidden="true"></i
-                ></a>
+                <a href="{{ $author.twitter }}" target="_blank" rel="noopener" class="twitter"
+                  aria-label="Follow on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
               </li>
               {{ end }} {{ if $author.github }}
               <li>
-                <a
-                  href="{{ $author.github }}"
-                  target="_blank"
-                  rel="noopener"
-                  class="github"
-                  aria-label="Follow on GitHub"
-                  ><i class="fa fa-github" aria-hidden="true"></i
-                ></a>
+                <a href="{{ $author.github }}" target="_blank" rel="noopener" class="github"
+                  aria-label="Follow on GitHub"><i class="fa fa-github" aria-hidden="true"></i></a>
               </li>
               {{ end }} {{ if $author.linkedin }}
               <li>
-                <a
-                  href="{{ $author.linkedin }}"
-                  target="_blank"
-                  rel="noopener"
-                  class="linkedin"
-                  aria-label="Connect on Linkedin"
-                  ><i class="fa fa-linkedin" aria-hidden="true"></i
-                ></a>
+                <a href="{{ $author.linkedin }}" target="_blank" rel="noopener" class="linkedin"
+                  aria-label="Connect on Linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
               </li>
               {{ end }} {{ if $author.facebook }}
               <li>
-                <a
-                  href="{{ $author.facebook }}"
-                  target="_blank"
-                  rel="noopener"
-                  class="facebook"
-                  aria-label="Follow on Facebook"
-                  ><i class="fa fa-facebook" aria-hidden="true"></i
-                ></a>
+                <a href="{{ $author.facebook }}" target="_blank" rel="noopener" class="facebook"
+                  aria-label="Follow on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
               </li>
               {{ end }} {{ if $author.email }}
               <li>
-                <a href="mailto:{{ $author.email }}"
-                  ><i class="fa fa-envelope-o" aria-hidden="true"></i
-                ></a>
+                <a href="mailto:{{ $author.email }}"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
               </li>
               {{ end }}
             </ul>
@@ -84,12 +58,7 @@
         <div class="filter-wrapper">
           <div class="search-area">
             <label for="search"> <i class="fa fa-search"></i></label>
-            <input
-              id="search"
-              type="search"
-              name="search"
-              placeholder="Search 'KubeDB', 'Stash', 'AWS'"
-            />
+            <input id="search" type="search" name="search" placeholder="Search 'KubeDB', 'Stash', 'AWS'" />
           </div>
 
           <div class="filter-area">
@@ -125,48 +94,28 @@
             <!-- single ac-checkbox start  -->
             <div class="checkbox-wrapper" id="products">
               <div class="ac-single-checkbox">
-                <input
-                  class="is-checkradio ac-checkbox"
-                  id="kubedb"
-                  type="checkbox"
-                  name="checkbox"
-                />
+                <input class="is-checkradio ac-checkbox" id="kubedb" type="checkbox" name="checkbox" />
                 <label for="kubedb">KubeDB</label>
               </div>
               <!-- single ac-checkbox end -->
 
               <!-- single ac-checkbox start  -->
               <div class="ac-single-checkbox">
-                <input
-                  class="is-checkradio ac-checkbox"
-                  id="stash"
-                  type="checkbox"
-                  name="checkbox"
-                />
+                <input class="is-checkradio ac-checkbox" id="stash" type="checkbox" name="checkbox" />
                 <label for="stash">Stash</label>
               </div>
               <!-- single ac-checkbox end -->
 
               <!-- single ac-checkbox start  -->
               <div class="ac-single-checkbox">
-                <input
-                  class="is-checkradio ac-checkbox"
-                  id="kubevault"
-                  type="checkbox"
-                  name="checkbox"
-                />
+                <input class="is-checkradio ac-checkbox" id="kubevault" type="checkbox" name="checkbox" />
                 <label for="kubevault">KubeVault</label>
               </div>
               <!-- single ac-checkbox end -->
 
               <!-- single ac-checkbox start  -->
               <div class="ac-single-checkbox">
-                <input
-                  class="is-checkradio ac-checkbox"
-                  id="kubeform"
-                  type="checkbox"
-                  name="checkbox"
-                />
+                <input class="is-checkradio ac-checkbox" id="kubeform" type="checkbox" name="checkbox" />
                 <label for="kubeform">Kubeform</label>
               </div>
               <!-- single ac-checkbox end -->
@@ -180,52 +129,102 @@
             <div class="checkbox-wrapper" id="categories">
               <!-- single ac-checkbox start  -->
               <div class="ac-single-checkbox">
-                <input
-                  class="is-checkradio ac-checkbox"
-                  id="kubedb"
-                  type="checkbox"
-                  name="checkbox"
-                />
-                <label for="kubedb">KubeDB</label>
+                <input class="is-checkradio ac-checkbox" id="alert" type="checkbox" name="checkbox" />
+                <label for="alert">Alert</label>
               </div>
               <!-- single ac-checkbox end -->
 
               <!-- single ac-checkbox start  -->
               <div class="ac-single-checkbox">
-                <input
-                  class="is-checkradio ac-checkbox"
-                  id="stash"
-                  type="checkbox"
-                  name="checkbox"
-                />
-                <label for="stash">Stash</label>
+                <input class="is-checkradio ac-checkbox" id="auto-scalling" type="checkbox" name="checkbox" />
+                <label for="auto-scalling">Auto-scalling</label>
               </div>
               <!-- single ac-checkbox end -->
 
               <!-- single ac-checkbox start  -->
               <div class="ac-single-checkbox">
-                <input
-                  class="is-checkradio ac-checkbox"
-                  id="kubevault"
-                  type="checkbox"
-                  name="checkbox"
-                />
-                <label for="kubevault">KubeVault</label>
+                <input class="is-checkradio ac-checkbox" id="appscode" type="checkbox" name="checkbox" />
+                <label for="appscode">AppsCode</label>
               </div>
               <!-- single ac-checkbox end -->
 
               <!-- single ac-checkbox start  -->
               <div class="ac-single-checkbox">
-                <input
-                  class="is-checkradio ac-checkbox"
-                  id="kubeform"
-                  type="checkbox"
-                  name="checkbox"
-                />
-                <label for="kubeform">Kubeform</label>
+                <input class="is-checkradio ac-checkbox" id="aws" type="checkbox" name="checkbox" />
+                <label for="aws">AWS</label>
               </div>
               <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="alert" type="checkbox" name="checkbox" />
+                <label for="alert">Alert</label>
               </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="backup" type="checkbox" name="checkbox" />
+                <label for="backup">Backup</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="crd" type="checkbox" name="checkbox" />
+                <label for="crd">Crd</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="database" type="checkbox" name="checkbox" />
+                <label for="database">Database</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="docs" type="checkbox" name="checkbox" />
+                <label for="docs">Docs</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="hook" type="checkbox" name="checkbox" />
+                <label for="hook">Hook</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="jwt" type="checkbox" name="checkbox" />
+                <label for="jwt">Jwt</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="nats" type="checkbox" name="checkbox" />
+                <label for="nats">Nats</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="kubernetes" type="checkbox" name="checkbox" />
+                <label for="kubernetes">Kubernetes</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="gcs" type="checkbox" name="checkbox" />
+                <label for="gcs">GCS</label>
+              </div>
+              <!-- single ac-checkbox end -->
+            </div>
           </div>
           <!-- collapsable menu end -->
         </div>

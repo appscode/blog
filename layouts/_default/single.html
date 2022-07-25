@@ -91,7 +91,7 @@
 
               <!-- content  -->
               <div class="recent-blog-content">
-                <h2><a href="{{.RelPermalink}}">{{.Title}}</a></h2>
+                <h2 class="is-ellipsis-2"><a href="{{.RelPermalink}}">{{.Title}}</a></h2>
                 {{ range $author := first 1 .Params.authors }}
                 <div class="meta">By - <a href="/authors/{{ $author | urlize }}"> {{$author}} </a></div>
                 {{ end }}

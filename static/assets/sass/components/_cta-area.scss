@@ -1,107 +1,108 @@
-// cta area start
 .cta-area {
-  background-image: url(../images/bg-image/cta-bg.png);
-  background-repeat: repeat;
-  background-color: $ac-primary;
-  .section-title.is-dark-bg {
-    h2 {
-      font-size: 32px;
-      font-weight: 700;
+  margin-top: 30px;
+  .cta-area-inner {
+    padding: 20px 50px;
+    background-image: url(../images/bg-image/cta-bg.png);
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+
+    h3 {
       color: $ac-white;
-      line-height: 42px;
+      margin-bottom: 1rem;
     }
+
     p {
-      color: darken($ac-white, 20%);
-      margin-bottom: 30px;
+      color: $ac-white;
     }
   }
-  .cta-buttons .button:not(:last-child):not(.is-fullwidth) {
-    margin-right: 30px;
-  }
-  .right-sidebar {
-    border-left: 2px solid #8e939a;
-    .right-sidebar-inner {
-      padding-left: 30px;
-      .single-sidebar-item {
-        margin-bottom: 30px;
-        h5 {
-          font-size: 16px;
-          color: $ac-white;
-        }
-        .inline-button {
-          font-size: 14px;
-          font-weight: 500;
-          position: relative;
-          &:after {
-            position: absolute;
-            content: "";
-            left: 0;
-            bottom: 0;
-            width: 0;
-            height: 2px;
-            background: $ac-primary;
-            border-radius: 50px;
-            transition: 0.3s ease-in-out;
+}
+
+/****************************************
+Responsive Classes
+*****************************************/
+// Extra small devices (portrait phones, less than 576px)
+@media (max-width: 768px) {
+  .cta-area {
+    .cta-area-inner {
+      height: auto !important;
+      padding: 30px 15px;
+
+      h3 {
+        font-size: 22px;
+        text-align: center;
+      }
+
+      p {
+        text-align: center;
+      }
+      .buttons {
+        justify-content: center !important;
+        .button {
+          &.ac-button {
+            letter-spacing: 0;
+            padding: 0.5rem 1rem;
           }
         }
-        &:hover .inline-button:after {
-          width: 100%;
-        }
       }
     }
   }
 }
-// cta area end
 
-/*=================================================================================================
-                                    Responsive code start
-=================================================================================================*/
-/**************************************************************** 
-                  Full HD Min Width 1407
-**************************************************************** */
-/* Full HD Min Width 1408px */
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) and (max-width: 768px) {
+}
+
+// Medium devices (tablets, 769px and up)
+@media (min-width: 769px) and (max-width: 1023px) {
+  .cta-area {
+    .cta-area-inner {
+      padding: 20px;
+      h3 {
+        font-size: 28px;
+      }
+    }
+  }
+}
+
+// Large devices (desktops, 1024px and up)
+@media (min-width: 1024px) and (max-width: 1215px) {
+  .cta-area {
+    .cta-area-inner {
+      padding: 20px;
+      h3 {
+        font-size: 28px;
+      }
+    }
+  }
+}
+
+@media (min-width: 1216px) and (max-width: 1407px) {
+  .cta-area {
+    .cta-area-inner {
+      height: 200px;
+      padding: 30px;
+      h3 {
+        font-size: 28px;
+      }
+    }
+  }
+}
+
+@media (min-width: 1408px) and (max-width: 1600px) {
+  .cta-area {
+    .cta-area-inner {
+      height: 200px;
+      padding: 30px;
+      h3 {
+        font-size: 28px;
+      }
+    }
+  }
+}
+
 @media (min-width: 1408px) {
 }
-
-/**************************************************************** 
-                  Widescreen Between 1216px and 1407px
-**************************************************************** */
-@media (min-width: 1216px) and (max-width: 1407px) {
-}
-
-/**************************************************************** 
-                  Desktop Between 1024px and 1215px
-**************************************************************** */
-@media (min-width: 1024px) and (max-width: 1215px) {
-}
-/**************************************************************** 
-                  Tablet Between 769px and 1023px
-**************************************************************** */
-@media (min-width: 769px) and (max-width: 1023px) {
-  
-}
-
-/**************************************************************** 
-                    Mobile Up to 768px. 
-**************************************************************** */
-@media only screen and (min-width: 100px) and (max-width: 768px) {
-  .cta-area {
-    .cta-buttons {
-      .button{
-          margin-right: 10px !important;
-      }
-    }
-    .section-title {
-      &.is-dark-bg{
-        h2{
-          font-size: 26px;
-          line-height: 38px;
-        }
-      }
-      }
-  }
-}
-
-/*=================================================================================================
-                                    Responsive code end
-=================================================================================================*/

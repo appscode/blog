@@ -586,6 +586,7 @@ Responsive Classes
 }
 
 @media (min-width: 1216px) and (max-width: 1407px) {
+  
   .section-title {
     h1 {
       &.is-outlined-text {
@@ -596,15 +597,15 @@ Responsive Classes
 }
 
 @media (min-width: 1408px) and (max-width: 1600px) {
+  .container {
+    max-width: 1200px !important;
+  }
   .section-title {
     h1 {
       &.is-outlined-text {
         font-size: 80px;
       }
     }
-  }
-  .container {
-    max-width: 1100px !important;
   }
 }
 

@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // AOS initialization
   AOS.init({
-    once: false,
+    once: true,
   });
 
   // Get all "navbar-burger" elements

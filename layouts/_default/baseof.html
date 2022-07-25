@@ -115,14 +115,15 @@
                     <a href="{{.Site.Params.domain_appscode}}/contact/" target="_blank" class="link">Contact</a>
                   </li>
                 </ul>
-                <div class="navbar-item">
+                <div class="navbar-item pr-0">
                   <div class="buttons">
-                    <a href="{{.Site.Params.domain_bytebuilders}}/user/sign_up" class="button ac-button is-primary">
-                      Sign up
-                    </a>
                     <a href="{{.Site.Params.domain_bytebuilders}}/user/login"
-                      class="button ac-button is-secondary ml-0">
+                      class="button ac-button is-secondary is-uppercase">
                       Sign in
+                    </a>
+                    <a href="{{.Site.Params.domain_bytebuilders}}/user/sign_up"
+                      class="button ac-button is-primary is-uppercase ml-0">
+                      Sign up
                     </a>
                   </div>
                 </div>
@@ -166,39 +167,22 @@
 
   <!-- cta-area start  -->
   {{ block "cta-install" . }}
-  <section class="cta-area section-padding">
+  <section class="cta-area">
     <div class="container">
-      <div class="columns">
-        <div class="column is-5 has-text-left">
-          <div class="section-title is-dark-bg" data-aos="fade-up">
-            <h2>Get Up and Running Quickly</h2>
-            <p>
-              {{ .Site.Data.products.bytebuilders.summary | plainify }}
-            </p>
-          </div>
-          <div class="cta-buttons buttons" data-aos="fade-up" data-aos-duration="600">
-            <a href="{{.Site.Params.domain_bytebuilders}}/user/sign_up" class="button is-primary is-large">Get started
-              free</a>
-            <a href="{{.Site.Params.domain_appscode}}/meet-expert/" class="button is-large is-white-hoverable">Get a
-              Demo</a>
-          </div>
-        </div>
-        <div class="column is-4 is-offset-3">
-          <div class="right-sidebar style-1">
-            <div class="right-sidebar-inner">
-              <div class="single-sidebar-item" data-aos="fade-left">
-                <h5>Want to host dedicated setup? We got you.</h5>
-                <a href="{{.Site.Params.domain_appscode}}/contact/" class="inline-button">Contact us</a>
-              </div>
-              <div class="single-sidebar-item" data-aos="fade-left" data-aos-duration="500">
-                <h5>Need Support SLA for AppsCode OSS projects?</h5>
-                <a href="{{.Site.Params.domain_appscode}}/contact/" class="inline-button">Purchase our commercial
-                  support package</a>
-              </div>
-              <div class="single-sidebar-item" data-aos="fade-left" data-aos-duration="700">
-                <h5>Interested in Professional Services & Training?</h5>
-                <a href="{{.Site.Params.domain_appscode}}/consulting/" class="inline-button">Explore our services</a>
-              </div>
+      <div class="cta-area-inner">
+        <div class="container">
+          <div class="columns is-vcentered is-multiline">
+            <div class="column is-full-tablet is-half-tablet is-half-desktop">
+              <h3 data-aos="fade-up" data-aos-duration="500" class="aos-init aos-animate">Get Up and Running Quickly</h3>
+              <p>Deploy, manage, upgrade Kubernetes on any cloud and automate deployment, scaling, and management of containerized applications.</p>
+            </div>
+            <div
+              class="column is-full-tablet is-half-tablet is-half-desktop has-text-centered-touch has-text-right-desktop">
+              <div class="buttons is-justify-content-flex-end"><a href="https://appscode.com/contact/"
+                  class="button ac-button ac-white"
+                  style="background-color:#fff;border:1px solid #e7e7e7;color:#003466"><span>
+                  <i class="fa fa-envelope-o mr-8"></i>
+                  </span>CONTACT US</a></div>
             </div>
           </div>
         </div>
@@ -386,7 +370,7 @@
   <script src="/assets/js/search.js"></script>
   <!-- keen slider js -->
   <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.7.0/keen-slider.min.js"></script>
- 
+
   <!--Start of Tawk.to Script-->
   <script type="text/javascript">
     var Tawk_API = Tawk_API || {},

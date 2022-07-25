@@ -8687,11 +8687,11 @@ Responsive Classes
 }
 
 @media (min-width: 1408px) and (max-width: 1600px) {
+  .container {
+    max-width: 1200px !important;
+  }
   .section-title h1.is-outlined-text {
     font-size: 80px;
-  }
-  .container {
-    max-width: 1100px !important;
   }
 }
 
@@ -9580,7 +9580,7 @@ Responsive Classes
 
 .header--fixed {
   position: fixed;
-  z-index: 10;
+  z-index: 9999;
   right: 0;
   left: 0;
   top: 0;
@@ -10389,99 +10389,97 @@ a.nav-link.active:after {
 Responsive Classes
 *****************************************/
 .cta-area {
+  margin-top: 30px;
+}
+
+.cta-area .cta-area-inner {
+  padding: 20px 50px;
   background-image: url(../images/bg-image/cta-bg.png);
-  background-repeat: repeat;
-  background-color: var(--ac-primary);
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  height: 150px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
-.cta-area .section-title.is-dark-bg h2 {
-  font-size: 32px;
-  font-weight: 700;
+.cta-area .cta-area-inner h3 {
   color: #ffffff;
-  line-height: 42px;
+  margin-bottom: 1rem;
 }
 
-.cta-area .section-title.is-dark-bg p {
-  color: #cccccc;
-  margin-bottom: 30px;
-}
-
-.cta-area .cta-buttons .button:not(:last-child):not(.is-fullwidth) {
-  margin-right: 30px;
-}
-
-.cta-area .right-sidebar {
-  border-left: 2px solid #8e939a;
-}
-
-.cta-area .right-sidebar .right-sidebar-inner {
-  padding-left: 30px;
-}
-
-.cta-area .right-sidebar .right-sidebar-inner .single-sidebar-item {
-  margin-bottom: 30px;
-}
-
-.cta-area .right-sidebar .right-sidebar-inner .single-sidebar-item h5 {
-  font-size: 16px;
+.cta-area .cta-area-inner p {
   color: #ffffff;
 }
 
-.cta-area .right-sidebar .right-sidebar-inner .single-sidebar-item .inline-button {
-  font-size: 14px;
-  font-weight: 500;
-  position: relative;
-}
-
-.cta-area .right-sidebar .right-sidebar-inner .single-sidebar-item .inline-button:after {
-  position: absolute;
-  content: "";
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 2px;
-  background: var(--ac-primary);
-  border-radius: 50px;
-  -webkit-transition: 0.3s ease-in-out;
-  transition: 0.3s ease-in-out;
-}
-
-.cta-area .right-sidebar .right-sidebar-inner .single-sidebar-item:hover .inline-button:after {
-  width: 100%;
-}
-
-/*=================================================================================================
-                                    Responsive code start
-=================================================================================================*/
-/**************************************************************** 
-                  Full HD Min Width 1407
-**************************************************************** */
-/* Full HD Min Width 1408px */
-/**************************************************************** 
-                  Widescreen Between 1216px and 1407px
-**************************************************************** */
-/**************************************************************** 
-                  Desktop Between 1024px and 1215px
-**************************************************************** */
-/**************************************************************** 
-                  Tablet Between 769px and 1023px
-**************************************************************** */
-/**************************************************************** 
-                    Mobile Up to 768px. 
-**************************************************************** */
-@media only screen and (min-width: 100px) and (max-width: 768px) {
-  .cta-area .cta-buttons .button {
-    margin-right: 10px !important;
+/****************************************
+Responsive Classes
+*****************************************/
+@media (max-width: 768px) {
+  .cta-area .cta-area-inner {
+    height: auto !important;
+    padding: 30px 15px;
   }
-  .cta-area .section-title.is-dark-bg h2 {
-    font-size: 26px;
-    line-height: 38px;
+  .cta-area .cta-area-inner h3 {
+    font-size: 22px;
+    text-align: center;
+  }
+  .cta-area .cta-area-inner p {
+    text-align: center;
+  }
+  .cta-area .cta-area-inner .buttons {
+    -webkit-box-pack: center !important;
+        -ms-flex-pack: center !important;
+            justify-content: center !important;
+  }
+  .cta-area .cta-area-inner .buttons .button.ac-button {
+    letter-spacing: 0;
+    padding: 0.5rem 1rem;
   }
 }
 
-/*=================================================================================================
-                                    Responsive code end
-=================================================================================================*/
+@media (min-width: 769px) and (max-width: 1023px) {
+  .cta-area .cta-area-inner {
+    padding: 20px;
+  }
+  .cta-area .cta-area-inner h3 {
+    font-size: 28px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1215px) {
+  .cta-area .cta-area-inner {
+    padding: 20px;
+  }
+  .cta-area .cta-area-inner h3 {
+    font-size: 28px;
+  }
+}
+
+@media (min-width: 1216px) and (max-width: 1407px) {
+  .cta-area .cta-area-inner {
+    height: 200px;
+    padding: 30px;
+  }
+  .cta-area .cta-area-inner h3 {
+    font-size: 28px;
+  }
+}
+
+@media (min-width: 1408px) and (max-width: 1600px) {
+  .cta-area .cta-area-inner {
+    height: 200px;
+    padding: 30px;
+  }
+  .cta-area .cta-area-inner h3 {
+    font-size: 28px;
+  }
+}
+
 .single-footer-widget .footer-logo {
   max-width: 160px;
 }
@@ -10739,6 +10737,14 @@ Responsive Classes
 .hero-area-blog .blog-banner img {
   -o-object-fit: contain;
      object-fit: contain;
+}
+
+.hero-area-blog .blog-title-content:hover h1 a {
+  color: var(--ac-primary);
+}
+
+.hero-area-blog .blog-title-content:hover a.inline-button::after {
+  width: 100%;
 }
 
 .hero-area-blog .blog-title-content h1 {
@@ -11111,6 +11117,17 @@ ul.social-share-button li a i.fa {
   position: -webkit-sticky;
   position: sticky;
   top: 170px;
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.blog-items-area .left-sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .blog-items-area .left-sidebar .collapsable-menu {
@@ -11142,15 +11159,17 @@ ul.social-share-button li a i.fa {
   margin-bottom: 10px;
 }
 
-.blog-items-area .left-sidebar .collapsable-menu .ac-single-checkbox .is-checkradio {
-  margin-right: 10px;
-}
-
 .blog-items-area .left-sidebar .collapsable-menu .ac-single-checkbox label {
   font-weight: 400;
   font-size: 16px;
   line-height: 100%;
   color: #3e393e;
+  padding-left: 10px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  cursor: pointer;
 }
 
 .single-blog {
@@ -11377,22 +11396,67 @@ ul.social-share-button li a i.fa {
 /*=================================================================================================
                                     Responsive code start
 =================================================================================================*/
-/**************************************************************** 
-                  Full HD Min Width 1407
-**************************************************************** */
-/* Full HD Min Width 1408px */
-/**************************************************************** 
-                  Widescreen Between 1216px and 1407px
-**************************************************************** */
-/**************************************************************** 
-                  Desktop Between 1024px and 1215px
-**************************************************************** */
-/**************************************************************** 
-                  Tablet Between 769px and 1023px
-**************************************************************** */
-/**************************************************************** 
-                    Mobile Up to 768px. 
-**************************************************************** */
+@media (min-width: 1408px) and (max-width: 1600px) {
+  .hero-area-blog .blog-title-content h1 {
+    font-size: 32px;
+    letter-spacing: 0.3px;
+  }
+  .hero-area-blog .blog-title-content p {
+    margin-bottom: 10px;
+  }
+  .hero-area-blog .blog-title-content .social-share {
+    margin-top: 20px;
+  }
+  .meta {
+    margin-bottom: 10px;
+  }
+  .meta .author {
+    margin-right: 4px;
+  }
+  .single-blog .image img {
+    max-height: 145px;
+  }
+  .single-blog .meta i.fa {
+    font-size: 13px;
+    margin-right: 0.2rem;
+  }
+  .single-blog .meta .author a {
+    font-size: 13px;
+  }
+  .single-blog .meta .date strong {
+    font-size: 13px;
+  }
+  .single-blog .meta a.inline-button {
+    font-size: 12px;
+  }
+  .single-blog h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .search-filter-area .filter-wrapper {
+    padding: 6px 12px;
+  }
+  .search-filter-area .filter-wrapper .search-area .fa {
+    font-size: 18px;
+    margin-right: 0.75rem;
+  }
+  .search-filter-area .filter-area .viewing-mode button {
+    margin-right: 0.5rem;
+  }
+  .single-blog {
+    min-height: 367px;
+  }
+  .blog-items-area .left-sidebar .collapsable-menu .ac-single-checkbox {
+    margin-bottom: 6px;
+  }
+  .blog-items-area .left-sidebar .collapsable-menu .ac-single-checkbox label {
+    font-size: 14px;
+  }
+  .blog-items .blog-title-content h2 {
+    font-size: 18px;
+  }
+}
+
 /*=================================================================================================
                                     Responsive code end
 =================================================================================================*/
@@ -11406,6 +11470,10 @@ ul.social-share-button li a i.fa {
   line-height: 130%;
   /* or 55px */
   letter-spacing: -2px;
+}
+
+.blog-details-area .meta {
+  margin-bottom: 20px;
 }
 
 .fig-style {
@@ -11472,6 +11540,7 @@ ul.social-share-button li a i.fa {
       -ms-flex-direction: column;
           flex-direction: column;
   padding: 8px;
+  border-radius: 2px;
 }
 
 .single-wizard .single-recent-blog .date-month .date {
@@ -11784,75 +11853,24 @@ ul.social-share-button li a i.fa {
 /*=================================================================================================
                                     Responsive code start
 =================================================================================================*/
-/**************************************************************** 
-                  Full HD Min Width 1407
-**************************************************************** */
-/* Full HD Min Width 1408px */
-/**************************************************************** 
-                  Widescreen Between 1216px and 1407px
-**************************************************************** */
-/**************************************************************** 
-                  Desktop Between 1024px and 1215px
-**************************************************************** */
-/**************************************************************** 
-                  Tablet Between 769px and 1023px
-**************************************************************** */
-@media (min-width: 769px) and (max-width: 1023px) {
-  .blog-content p,
-  .blog-content a,
-  .blog-content ul li {
-    font-size: 16px;
+@media (min-width: 1408px) and (max-width: 1600px) {
+  .blog-details-area h1 {
+    font-size: 32px;
+    letter-spacing: -1.5px;
+    margin-bottom: 15px;
   }
-  .blog-content p {
-    margin-bottom: 20px;
+  .blog-details-area .meta {
+    margin-bottom: 15px;
   }
-  .blog-content h2 {
-    font-size: 30px;
-    margin-bottom: 10px;
+  .single-wizard .single-recent-blog .date-month {
+    width: 60px;
+    height: 60px;
   }
-  .blog-content .highlight {
-    margin-bottom: 0;
-    overflow: hidden;
+  .single-wizard .single-recent-blog .date-month .date {
+    font-size: 18px;
   }
-}
-
-/**************************************************************** 
-                    Mobile Up to 768px. 
-**************************************************************** */
-@media only screen and (min-width: 100px) and (max-width: 768px) {
-  .blog-heading-area {
-    padding-top: 160px;
-  }
-  .blog-heading-area .blog-heading h1 {
-    font-size: 30px;
-    line-height: 46px;
-  }
-  .blog-heading-area .blog-heading {
-    max-width: 95%;
-  }
-  .blog-details-area .social-link-vertical ul li {
-    display: inline-block;
-    margin-bottom: 0;
-    margin-right: 10px;
-  }
-  .blog-details-area .social-link-vertical ul li:last-child {
-    margin-right: 0;
-  }
-  .blog-content p,
-  .blog-content a,
-  .blog-content ul li {
-    font-size: 16px;
-  }
-  .blog-content p {
-    margin-bottom: 20px;
-  }
-  .blog-content h2 {
-    font-size: 26px;
-    margin-bottom: 5px;
-  }
-  .blog-content .highlight {
-    margin-bottom: 0;
-    overflow: hidden;
+  .single-wizard .single-recent-blog .date-month .month {
+    font-size: 14px;
   }
 }
 
@@ -11889,32 +11907,12 @@ ul.social-share-button li a i.fa {
 /*=================================================================================================
                                     Responsive code start
 =================================================================================================*/
-/**************************************************************** 
-                  Full HD Min Width 1407
-**************************************************************** */
-/* Full HD Min Width 1408px */
-/**************************************************************** 
-                  Widescreen Between 1216px and 1407px
-**************************************************************** */
-/**************************************************************** 
-                  Desktop Between 1024px and 1215px
-**************************************************************** */
-/**************************************************************** 
-                  Tablet Between 769px and 1023px
-**************************************************************** */
-/**************************************************************** 
-                    Mobile Up to 768px. 
-**************************************************************** */
-@media only screen and (min-width: 100px) and (max-width: 768px) {
-  .author-content .image {
-    margin-bottom: 20px;
-  }
-  .author-content h3 {
-    margin-bottom: 10px;
+@media (min-width: 1408px) and (max-width: 1600px) {
+  .author-hero-area {
+    padding: 100px 0 20px;
   }
 }
 
 /*=================================================================================================
                                     Responsive code end
 =================================================================================================*/
-/*# sourceMappingURL=main.css.map */

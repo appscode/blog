@@ -8,6 +8,9 @@
 
     letter-spacing: -2px;
   }
+  .meta {
+    margin-bottom: 20px;
+  }
 }
 
 .fig-style {
@@ -56,6 +59,7 @@
       justify-content: space-between;
       flex-direction: column;
       padding: 8px;
+      border-radius: 2px;
 
       .date {
         font-weight: 300;
@@ -331,95 +335,50 @@
 /*=================================================================================================
                                     Responsive code start
 =================================================================================================*/
-/**************************************************************** 
-                  Full HD Min Width 1407
-**************************************************************** */
-/* Full HD Min Width 1408px */
-@media (min-width: 1408px) {
+
+// Extra small devices (portrait phones, less than 576px)
+@media (max-width: 768px) {
 }
 
-/**************************************************************** 
-                  Widescreen Between 1216px and 1407px
-**************************************************************** */
-@media (min-width: 1216px) and (max-width: 1407px) {
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) and (max-width: 768px) {
 }
 
-/**************************************************************** 
-                  Desktop Between 1024px and 1215px
-**************************************************************** */
+// Medium devices (tablets, 769px and up)
+@media (min-width: 769px) and (max-width: 1023.98px) {
+}
+
+// Large devices (desktops, 1024px and up)
 @media (min-width: 1024px) and (max-width: 1215px) {
 }
-/**************************************************************** 
-                  Tablet Between 769px and 1023px
-**************************************************************** */
-@media (min-width: 769px) and (max-width: 1023px) {
-  .blog-content {
-    p,
-    a,
-    ul li {
-      font-size: 16px;
-    }
-    p {
-      margin-bottom: 20px;
-    }
-    h2 {
-      font-size: 30px;
-      margin-bottom: 10px;
-    }
-    .highlight {
-      margin-bottom: 0;
-      overflow: hidden;
-    }
-  }
+
+// Extra large devices (large desktops, 1216px and up)
+@media (min-width: 1216px) {
 }
 
-/**************************************************************** 
-                    Mobile Up to 768px. 
-**************************************************************** */
-@media only screen and (min-width: 100px) and (max-width: 768px) {
-  .blog-heading-area {
-    padding-top: 160px;
-    .blog-heading {
-      h1 {
-        font-size: 30px;
-        line-height: 46px;
-      }
+@media (min-width: 1408px) and (max-width: 1600px) {
+  .blog-details-area {
+    h1 {
+      font-size: 32px;
+      letter-spacing: -1.5px;
+      margin-bottom: 15px;
     }
-    .blog-heading {
-      max-width: 95%;
+    .meta {
+      margin-bottom: 15px;
     }
   }
-
-  .blog-details-area {
-    .social-link-vertical {
-      ul {
-        li {
-          display: inline-block;
-          margin-bottom: 0;
-          margin-right: 10px;
-          &:last-child {
-            margin-right: 0;
-          }
+  .single-wizard {
+    .single-recent-blog {
+      .date-month {
+        width: 60px;
+    height: 60px;
+        .date {
+          font-size: 18px;
+        }
+        .month {
+          font-size: 14px;
         }
       }
-    }
-  }
-  .blog-content {
-    p,
-    a,
-    ul li {
-      font-size: 16px;
-    }
-    p {
-      margin-bottom: 20px;
-    }
-    h2 {
-      font-size: 26px;
-      margin-bottom: 5px;
-    }
-    .highlight {
-      margin-bottom: 0;
-      overflow: hidden;
     }
   }
 }

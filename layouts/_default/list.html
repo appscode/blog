@@ -67,23 +67,23 @@
                 <label>Share with:</label>
                 <ul class="social-share-button">
                   <li>
-                    <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title }}" target="_blank"
+                    <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title }}" target="_blank" title="Share on Twitter"
                       rel="noopener" class="twitter" aria-label="share on Twitter"><i class="fa fa-twitter"
                         aria-hidden="true"></i></a>
                   </li>
                   <li>
                     <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title }}&summary={{ .Summary }}"
-                      target="_blank" rel="noopener" class="linkedin"><i class="fa fa-linkedin"
+                      target="_blank" title="Share on Linkedin" rel="noopener" class="linkedin"><i class="fa fa-linkedin"
                         aria-hidden="true"></i></a>
                   </li>
                   <li>
-                    <a href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" target="_blank" rel="noopener"
+                    <a href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" target="_blank" title="Share on Facebook" rel="noopener"
                       class="facebook" aria-label="share on Facebook"><i class="fa fa-facebook"
                         aria-hidden="true"></i></a>
                   </li>
                   <li>
                     <a href="mailto:?subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i
-                        class="fa fa-envelope-o" aria-hidden="true"></i></a>
+                        class="fa fa-envelope-o" aria-hidden="true" title="Share on Email"></i></a>
                   </li>
                 </ul>
               </div>
@@ -115,9 +115,9 @@
             <!-- viewing type  -->
             <div class="viewing-mode">
               <label>VIEW</label>
-              <button id="grid-btn-view" class="is-active"><span
+              <button id="grid-btn-view" title="Grid View" class="is-active"><span
                   class="material-symbols-outlined">grid_view</span></button>
-              <button id="list-btn-view"><span class="material-symbols-outlined">list</span></button>
+              <button id="list-btn-view" title="List View"><span class="material-symbols-outlined">list</span></button>
             </div>
             <!-- viewing type  -->
           </div>
@@ -272,20 +272,6 @@
                 <label for="gcs">GCS</label>
               </div>
               <!-- single ac-checkbox end -->
-
-              <!-- single ac-checkbox start  -->
-              <div class="ac-single-checkbox">
-                <input class="is-checkradio ac-checkbox" id="kubevault" type="checkbox" name="checkbox" />
-                <label for="kubevault">KubeVault</label>
-              </div>
-              <!-- single ac-checkbox end -->
-
-              <!-- single ac-checkbox start  -->
-              <div class="ac-single-checkbox">
-                <input class="is-checkradio ac-checkbox" id="kubeform" type="checkbox" name="checkbox" />
-                <label for="kubeform">Kubeform</label>
-              </div>
-              <!-- single ac-checkbox end -->
             </div>
           </div>
           <!-- collapsable menu end -->
@@ -295,7 +281,7 @@
       <div class="column is-9">
         <div class="blog-items">
           <!-- grid view start -->
-          <div class="columns is-multiline" id="grid-view">
+          <div class="columns is-variable is-1-mobile is-1-tablet is-1-desktop is-1-widescreen is-2-fullhd is-multiline" id="grid-view">
             {{ range $idx, $p := $pages.ByDate.Reverse }}
 
             <div class="column is-4 each-blog">
