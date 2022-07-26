@@ -340,8 +340,11 @@
 // Extra small devices (portrait phones, less than 576px)
 @media (max-width: 768px) {
   .blog-details-area {
+    margin-top: 80px;
     h1 {
-      font-size: 32px;
+      font-size: 24px;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
     }
   }
   ul.social-share-button.is-flex-direction-column {
@@ -349,6 +352,7 @@
     flex-direction: row !important;
     li {
       margin-right: 10px;
+      margin-bottom: 0;
     }
   }
   iframe {
@@ -372,6 +376,35 @@
       }
     }
   }
+
+  .blog-content {
+    h1,
+    h2,
+    h3 {
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 130%;
+      letter-spacing: -0.3px;
+    }
+    h1 {
+      font-size: 24px;
+    }
+    h2 {
+      font-size: 20px;
+    }
+    h3 {
+      font-size: 18px;
+    }
+    h4 {
+      font-size: 16px;
+    }
+    p {
+      font-size: 14px;
+      text-align: justify;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+  }
 }
 
 // Small devices (landscape phones, 576px and up)
@@ -381,7 +414,7 @@
 // Medium devices (tablets, 769px and up)
 @media (min-width: 769px) and (max-width: 1023.98px) {
   .blog-details-area {
-    margin-top: 70px;
+    margin-top: 80px;
     h1 {
       font-size: 32px;
     }

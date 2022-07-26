@@ -9654,28 +9654,8 @@ Responsive Classes
 Responsive Classes
 *****************************************/
 @media (max-width: 1023.98px) {
-  .headroom--unpinned .navbar-appscode-wrapper.navbar-product {
-    padding: 0 0;
-    -webkit-transform: translateY(104px);
-            transform: translateY(104px);
-  }
-  .headroom--unpinned .navbar-appscode-wrapper.navbar-product .navbar-appscode .navbar-right {
-    top: 47px;
-  }
   .navbar-appscode.container {
-    padding: 0.5rem 15px;
-  }
-  .navbar-appscode.documentation-menu {
-    margin-left: 0;
-    padding: 0;
-  }
-  .navbar-appscode.documentation-menu ul .nav-item .link.is-active:after {
-    display: none;
-  }
-  .navbar-appscode.documentation-menu .navbar-right {
-    position: fixed;
-    width: 80%;
-    border-right: 1px solid #dbdbde;
+    padding: 1rem 15px;
   }
   .navbar-appscode .navbar-left {
     width: 100%;
@@ -9732,9 +9712,12 @@ Responsive Classes
     margin-left: 0 !important;
     margin-top: 15px;
   }
+  .navbar-appscode .navbar-right .button.ac-button {
+    margin-left: 0;
+  }
   .navbar-appscode .navbar-right .button.ac-button.is-primary {
     margin-left: 0;
-    width: 100%;
+    width: auto;
   }
   .navbar-appscode .navbar-right ul {
     display: -webkit-box;
@@ -9748,9 +9731,12 @@ Responsive Classes
   .navbar-appscode .navbar-right ul li.nav-item {
     margin: 6px 0;
   }
+  .navbar-appscode .navbar-right ul li.nav-item .link {
+    text-align: center;
+  }
   .navbar-appscode .navbar-right ul li.nav-item .link .whats-new {
-    top: -0.2rem;
-    right: 0.5rem;
+    top: -0.7rem;
+    right: 0.2rem;
   }
   .navbar-appscode .navbar-right .community-items.ml-70 {
     margin-left: 0 !important;
@@ -9759,77 +9745,6 @@ Responsive Classes
   .navbar-appscode .navbar-right.is-visible {
     opacity: 1;
     visibility: visible;
-  }
-  .resources-list {
-    -ms-grid-columns: auto;
-        grid-template-columns: auto;
-  }
-  .resources-list .list-items h6 {
-    margin-bottom: 0.5rem;
-  }
-  .mega-menu-wrapper {
-    width: 100% !important;
-    left: 0 !important;
-    top: 0 !important;
-    padding-top: 20px !important;
-    background-color: #fafafd;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  .mega-menu-wrapper .mega-menu-inner .product-menu {
-    -ms-grid-columns: auto;
-        grid-template-columns: auto;
-    width: 100%;
-  }
-  .mega-menu-wrapper .mega-menu-inner .product-menu .single-product {
-    width: 100%;
-  }
-  .mega-menu-wrapper .mega-menu-inner .product-menu .single-product .product-logo {
-    height: 50px;
-    width: 50px;
-  }
-  .mega-menu-wrapper .mega-menu-inner .product-menu .single-product .product-logo img {
-    height: 1.8rem;
-  }
-  .mega-menu-wrapper .mega-menu-inner .product-menu .single-product .navigate-icon .material-icons {
-    font-size: 16px;
-  }
-  .mega-menu-wrapper .mega-menu-inner .product-menu.database-list {
-    -ms-grid-columns: auto;
-        grid-template-columns: auto;
-  }
-  .mega-menu-wrapper .mega-menu-inner .product-description {
-    border-left: none;
-    padding-left: 0;
-    margin-top: 35px;
-    margin-left: 0;
-    max-width: 100%;
-  }
-  .press-wrapper .button.inline-button {
-    margin-left: 0 !important;
-    background-color: transparent;
-  }
-  .navbar-appscode-wrapper.navbar-product .navbar-appscode .navbar-right {
-    top: 47px;
-  }
-  .product-version.pl-20 {
-    padding-left: 10px;
-  }
-  .product-version .dropdown .dropdown-trigger .button {
-    width: 170px;
-  }
-  .product-version .dropdown-menu {
-    z-index: 9999;
-  }
-  .back-button {
-    display: -webkit-box !important;
-    display: -ms-flexbox !important;
-    display: flex !important;
-  }
-  .back-button span {
-    color: var(--ac-primary);
-    padding-right: 15px;
-    font-size: 18px;
   }
 }
 
@@ -10445,6 +10360,7 @@ Responsive Classes
 @media (min-width: 769px) and (max-width: 1023px) {
   .cta-area .cta-area-inner {
     padding: 20px;
+    height: 210px;
   }
   .cta-area .cta-area-inner h3 {
     font-size: 28px;
@@ -11181,6 +11097,10 @@ ul.social-share-button li a i.fa {
   overflow: hidden;
 }
 
+.single-blog .image img {
+  height: 160px;
+}
+
 .single-blog:hover {
   border: 1px solid var(--ac-primary);
 }
@@ -11410,7 +11330,10 @@ ul.social-share-button li a i.fa {
     margin-top: 20px;
   }
   .search-filter-area {
-    top: 34px;
+    top: 50px;
+  }
+  .search-filter-area .filter-area .viewing-mode {
+    margin-right: 0.1rem;
   }
   .search-filter-area .filter-wrapper {
     padding: 6px 10px;
@@ -11436,6 +11359,17 @@ ul.social-share-button li a i.fa {
     margin-bottom: 10px;
     margin-top: 10px;
   }
+  .columns.each-blog {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .blog-items .blog-title-content h2 {
+    font-size: 18px;
+    letter-spacing: -0.5px;
+    font-weight: 500;
+  }
 }
 
 @media (min-width: 769px) and (max-width: 1023.98px) {
@@ -11459,7 +11393,7 @@ ul.social-share-button li a i.fa {
     margin-bottom: 10px;
   }
   .search-filter-area {
-    top: 34px;
+    top: 50px;
   }
   .search-filter-area .filter-wrapper {
     padding: 6px 12px;
@@ -12083,8 +12017,13 @@ ul.social-share-button li a i.fa {
                                     Responsive code start
 =================================================================================================*/
 @media (max-width: 768px) {
+  .blog-details-area {
+    margin-top: 80px;
+  }
   .blog-details-area h1 {
-    font-size: 32px;
+    font-size: 24px;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
   }
   ul.social-share-button.is-flex-direction-column {
     display: -webkit-box;
@@ -12097,6 +12036,7 @@ ul.social-share-button li a i.fa {
   }
   ul.social-share-button.is-flex-direction-column li {
     margin-right: 10px;
+    margin-bottom: 0;
   }
   iframe {
     width: 100%;
@@ -12115,11 +12055,37 @@ ul.social-share-button li a i.fa {
   .single-wizard .single-recent-blog .date-month .month {
     font-size: 14px;
   }
+  .blog-content h1,
+  .blog-content h2,
+  .blog-content h3 {
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 130%;
+    letter-spacing: -0.3px;
+  }
+  .blog-content h1 {
+    font-size: 24px;
+  }
+  .blog-content h2 {
+    font-size: 20px;
+  }
+  .blog-content h3 {
+    font-size: 18px;
+  }
+  .blog-content h4 {
+    font-size: 16px;
+  }
+  .blog-content p {
+    font-size: 14px;
+    text-align: justify;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
 }
 
 @media (min-width: 769px) and (max-width: 1023.98px) {
   .blog-details-area {
-    margin-top: 70px;
+    margin-top: 80px;
   }
   .blog-details-area h1 {
     font-size: 32px;

@@ -59,8 +59,10 @@ Responsive Classes
 // Medium devices (tablets, 769px and up)
 @media (min-width: 769px) and (max-width: 1023px) {
   .cta-area {
+
     .cta-area-inner {
       padding: 20px;
+      height: 210px;
       h3 {
         font-size: 28px;
       }
