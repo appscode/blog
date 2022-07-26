@@ -341,7 +341,8 @@
 @media (max-width: 768px) {
   .blog-details-area {
     h1 {
-      font-size: 32px;    }
+      font-size: 32px;
+    }
   }
   ul.social-share-button.is-flex-direction-column {
     display: flex;
@@ -379,14 +380,102 @@
 
 // Medium devices (tablets, 769px and up)
 @media (min-width: 769px) and (max-width: 1023.98px) {
+  .blog-details-area {
+    margin-top: 70px;
+    h1 {
+      font-size: 32px;
+    }
+  }
+
+  .sticky-social-menu,
+  .wizerd-items {
+    top: 70px;
+  }
+  iframe {
+    width: 100%;
+    height: auto;
+  }
+  .single-wizard.ml-30 {
+    margin-left: 0 !important;
+  }
+  .single-wizard {
+    .single-recent-blog {
+      .date-month {
+        width: 60px;
+        height: 60px;
+        .date {
+          font-size: 18px;
+        }
+        .month {
+          font-size: 14px;
+        }
+      }
+    }
+  }
 }
 
 // Large devices (desktops, 1024px and up)
 @media (min-width: 1024px) and (max-width: 1215px) {
+  .blog-details-area {
+    margin-top: 100px;
+    h1 {
+      font-size: 32px;
+    }
+  }
+
+  .sticky-social-menu,
+  .wizerd-items {
+    top: 100px;
+  }
+  iframe {
+    width: 100%;
+    height: auto;
+  }
+  .single-wizard.ml-30 {
+    margin-left: 0 !important;
+  }
+  .single-wizard {
+    .single-recent-blog {
+      .date-month {
+        width: 60px;
+        height: 60px;
+        .date {
+          font-size: 18px;
+        }
+        .month {
+          font-size: 14px;
+        }
+      }
+    }
+  }
 }
 
 // Extra large devices (large desktops, 1216px and up)
-@media (min-width: 1216px) {
+@media (min-width: 1216px) and (max-width: 1407) {
+  .blog-details-area {
+    h1 {
+      font-size: 32px;
+      letter-spacing: -1.5px;
+      margin-bottom: 15px;
+    }
+    .meta {
+      margin-bottom: 15px;
+    }
+  }
+  .single-wizard {
+    .single-recent-blog {
+      .date-month {
+        width: 60px;
+        height: 60px;
+        .date {
+          font-size: 18px;
+        }
+        .month {
+          font-size: 14px;
+        }
+      }
+    }
+  }
 }
 
 @media (min-width: 1408px) and (max-width: 1600px) {
