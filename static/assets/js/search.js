@@ -92,6 +92,11 @@ categoriesBtn?.addEventListener("click",(event)=>{
 
 //Filter based on the tags and search keyword
 const filterList = () => {
+  window.scroll({
+    top: 500, 
+    left: 0, 
+    behavior: 'smooth'
+  });
   const cards = document.getElementById(viewType);
   const cardList = cards.querySelectorAll(".each-blog");
   cardList.forEach(card => {
