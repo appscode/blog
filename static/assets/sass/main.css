@@ -10702,7 +10702,24 @@ Responsive Classes
 }
 
 .hero-area-blog .blog-banner {
-  background-image: url(/assets/images/bg-image/pattern-bg.png);
+  background-color: #333333;
+  background-image: url(/assets/images/bg-image/pattern-1.png);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-area-blog .blog-banner::after {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #1c1c1c;
+  z-index: -1;
+  opacity: 0.7;
 }
 
 .hero-area-blog .blog-banner img {
