@@ -11798,29 +11798,26 @@ ul.social-share-button li a i.fa {
 
 .blog-content h1,
 .blog-content h2,
-.blog-content h3 {
-  font-weight: 700;
-  margin-bottom: 10px;
+.blog-content h3,
+.blog-content h4 {
+  font-weight: 600;
+  line-height: 130%;
 }
 
 .blog-content h1 {
   font-size: 36px;
-  line-height: 50px;
 }
 
 .blog-content h2 {
-  font-size: 28px;
-  line-height: 40px;
+  font-size: 24px;
 }
 
 .blog-content h3 {
-  font-size: 26px;
-  line-height: 36px;
+  font-size: 20px;
 }
 
 .blog-content h4 {
-  font-size: 22px;
-  line-height: 32px;
+  font-size: 18px;
 }
 
 .blog-content p {
