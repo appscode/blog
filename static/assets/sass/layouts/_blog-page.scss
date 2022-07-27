@@ -96,7 +96,7 @@
     h1 {
       font-style: normal;
       font-weight: 600;
-      font-size: 44px;
+      font-size: 36px;
       line-height: 130%;
       letter-spacing: -0.5px;
       margin-bottom: 15px;
@@ -142,10 +142,16 @@
     button {
       width: 40px;
       height: 40px;
-      opacity: 0.7;
-      background-color: $ac-primary !important;
-      color: #fff !important;
+      background-color: $ac-white !important;
+      color: #1c1c1c !important;
       border-radius: 50%;
+      box-shadow: 0 2px 45px rgba(0, 0, 0, 0.1);
+      border: 1px solid $ac-white-light !important;
+      transition: 0.3s ease-in-out;
+      &:hover {
+        border: 1px solid $ac-primary !important;
+        transform: scale(1.2);
+      }
 
       &.owl-prev {
         margin-left: -20px;

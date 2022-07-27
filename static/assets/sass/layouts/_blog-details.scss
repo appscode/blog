@@ -16,6 +16,8 @@
 .fig-style {
   max-height: 650px;
   overflow: hidden;
+  border: 1px solid #e7e7e7;
+  border-radius: 10px;
   img {
     user-select: none;
     display: block;

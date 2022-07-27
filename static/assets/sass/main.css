@@ -10625,7 +10625,7 @@ Responsive Classes
   line-height: 30px;
   border-radius: 50%;
   color: #fff;
-  background: rgba(var(--ac-primary), 0.5);
+  background: #333;
   border: none;
   opacity: 0;
   cursor: pointer;
@@ -10738,7 +10738,7 @@ Responsive Classes
 .hero-area-blog .blog-title-content h1 {
   font-style: normal;
   font-weight: 600;
-  font-size: 44px;
+  font-size: 36px;
   line-height: 130%;
   letter-spacing: -0.5px;
   margin-bottom: 15px;
@@ -10789,10 +10789,20 @@ Responsive Classes
 .hero-area-blog .owl-nav button {
   width: 40px;
   height: 40px;
-  opacity: 0.7;
-  background-color: var(--ac-primary) !important;
-  color: #fff !important;
+  background-color: #ffffff !important;
+  color: #1c1c1c !important;
   border-radius: 50%;
+  -webkit-box-shadow: 0 2px 45px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 2px 45px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dbdbde !important;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
+}
+
+.hero-area-blog .owl-nav button:hover {
+  border: 1px solid var(--ac-primary) !important;
+  -webkit-transform: scale(1.2);
+          transform: scale(1.2);
 }
 
 .hero-area-blog .owl-nav button.owl-prev {
@@ -11747,6 +11757,8 @@ ul.social-share-button li a i.fa {
 .fig-style {
   max-height: 650px;
   overflow: hidden;
+  border: 1px solid #e7e7e7;
+  border-radius: 10px;
 }
 
 .fig-style img {
