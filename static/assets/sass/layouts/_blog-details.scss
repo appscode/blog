@@ -1,26 +1,23 @@
-.blog-heading-area {
-  &.section-padding {
-    padding-top: 160px;
-  }
-}
 .blog-details-area {
-  padding-bottom: 100px;
-}
-.blog-heading {
+  margin-top: 100px;
   h1 {
-    font-size: 36px;
-    line-height: 44px;
     font-weight: 700;
-    margin-bottom: 10px;
+    font-size: 42px;
+    line-height: 130%;
+    /* or 55px */
+
+    letter-spacing: -2px;
+  }
+  .meta {
+    margin-bottom: 20px;
   }
 }
-.blog-heading {
-  max-width: 70%;
-  margin: 0 auto;
-}
+
 .fig-style {
   max-height: 650px;
   overflow: hidden;
+  border: 1px solid #e7e7e7;
+  border-radius: 10px;
   img {
     user-select: none;
     display: block;
@@ -29,16 +26,82 @@
   figcaption {
     max-width: 80%;
     margin: 0 auto;
-    color: $paragraph-color;
+    color: $ac-color-text;
     opacity: 0.8;
     padding: 10px 0;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $ac-white-light;
   }
 }
 //sticky social link
-.sticky-social-menu {
+.sticky-social-menu,
+.wizerd-items {
   position: sticky;
-  top: 130px;
+  top: 110px;
+  z-index: 99;
+}
+
+.single-wizard {
+  h4 {
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 130%;
+    letter-spacing: -1px;
+    margin-bottom: 15px;
+  }
+
+  .single-recent-blog {
+    margin-bottom: 1rem;
+    display: flex;
+    .date-month {
+      width: 70px;
+      height: 70px;
+      background-color: rgba(0, 52, 102, 0.12);
+      margin-right: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: column;
+      padding: 8px;
+      border-radius: 2px;
+
+      .date {
+        font-weight: 300;
+        font-size: 27.3833px;
+        line-height: 120%;
+      }
+
+      .month {
+        font-weight: 700;
+        font-size: 16.7833px;
+        line-height: 120%;
+      }
+    }
+
+    .recent-blog-content {
+      width: calc(100% - 86px);
+      h2 {
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 120%;
+        /* or 19px */
+
+        letter-spacing: 0.25px;
+        a {
+          color: $ac-color-heading;
+        }
+      }
+
+      .meta {
+        margin-top: 0.5rem;
+        font-size: 14px;
+        margin-bottom: 0;
+        a {
+          font-weight: 400;
+          line-height: 150%;
+        }
+      }
+    }
+  }
 }
 //code block style
 .code-block-heading {
@@ -53,7 +116,7 @@
   .code-title {
     h4 {
       font-size: 16px;
-      font-family: $font-paragraph;
+      font-family: $ac-color-text;
       font-weight: 400;
       margin-bottom: 0;
     }
@@ -88,25 +151,23 @@
 .blog-content {
   h1,
   h2,
-  h3 {
-    font-weight: 700;
+  h3,
+  h4 {
+    font-weight: 600;
+    line-height: 130%;
     margin-bottom: 10px;
   }
   h1 {
     font-size: 36px;
-    line-height: 50px;
   }
   h2 {
-    font-size: 28px;
-    line-height: 40px;
+    font-size: 24px;
   }
   h3 {
-    font-size: 26px;
-    line-height: 36px;
+    font-size: 20px;
   }
   h4 {
-    font-size: 22px;
-    line-height: 32px;
+    font-size: 18px;
   }
   p {
     font-size: 16px;
@@ -122,7 +183,7 @@
         bottom: 0;
         width: 0;
         height: 2px;
-        background: $primary-color;
+        background: $ac-primary;
         border-radius: 50px;
         transition: 0.3s ease-in-out;
       }
@@ -133,7 +194,7 @@
       }
     }
     img {
-      border: 1px solid $border-color;
+      border: 1px solid $ac-white-light;
       padding: 15px;
       border-radius: 8px;
     }
@@ -147,7 +208,7 @@
     line-height: 22px;
   }
   figure {
-    border: 1px solid $border-color;
+    border: 1px solid $ac-white-light;
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 4px;
@@ -214,7 +275,7 @@
       top: 0;
       width: 4px;
       height: 100%;
-      background-color: $primary-color;
+      background-color: $ac-primary;
       border-radius: 2px;
     }
   }
@@ -263,7 +324,7 @@
     margin-bottom: 20px;
     td,
     th {
-      border: 1px solid $border-color;
+      border: 1px solid $ac-white-light;
       padding: 10px 20px;
     }
     th {
@@ -275,95 +336,204 @@
 /*=================================================================================================
                                     Responsive code start
 =================================================================================================*/
-/**************************************************************** 
-                  Full HD Min Width 1407
-**************************************************************** */
-/* Full HD Min Width 1408px */
-@media (min-width: 1408px) {
-}
 
-/**************************************************************** 
-                  Widescreen Between 1216px and 1407px
-**************************************************************** */
-@media (min-width: 1216px) and (max-width: 1407px) {
-}
-
-/**************************************************************** 
-                  Desktop Between 1024px and 1215px
-**************************************************************** */
-@media (min-width: 1024px) and (max-width: 1215px) {
-}
-/**************************************************************** 
-                  Tablet Between 769px and 1023px
-**************************************************************** */
-@media (min-width: 769px) and (max-width: 1023px) {
-  .blog-content {
-    p,
-    a,
-    ul li {
-      font-size: 16px;
-    }
-    p {
-      margin-bottom: 20px;
-    }
-    h2 {
-      font-size: 30px;
+// Extra small devices (portrait phones, less than 576px)
+@media (max-width: 768px) {
+  .blog-details-area {
+    margin-top: 80px;
+    h1 {
+      font-size: 24px;
+      letter-spacing: -0.5px;
       margin-bottom: 10px;
     }
-    .highlight {
+  }
+  ul.social-share-button.is-flex-direction-column {
+    display: flex;
+    flex-direction: row !important;
+    li {
+      margin-right: 10px;
       margin-bottom: 0;
-      overflow: hidden;
     }
   }
-}
-
-/**************************************************************** 
-                    Mobile Up to 768px. 
-**************************************************************** */
-@media only screen and (min-width: 100px) and (max-width: 768px) {
-  .blog-heading-area {
-    padding-top: 160px;
-    .blog-heading {
-      h1 {
-        font-size: 30px;
-        line-height: 46px;
-      }
-    }
-    .blog-heading {
-      max-width: 95%;
-    }
+  iframe {
+    width: 100%;
+    height: auto;
   }
-
-  .blog-details-area {
-    .social-link-vertical {
-      ul {
-        li {
-          display: inline-block;
-          margin-bottom: 0;
-          margin-right: 10px;
-          &:last-child {
-            margin-right: 0;
-          }
+  .single-wizard.ml-30 {
+    margin-left: 0 !important;
+  }
+  .single-wizard {
+    .single-recent-blog {
+      .date-month {
+        width: 60px;
+        height: 60px;
+        .date {
+          font-size: 18px;
+        }
+        .month {
+          font-size: 14px;
         }
       }
     }
   }
+
   .blog-content {
-    p,
-    a,
-    ul li {
+    h1,
+    h2,
+    h3 {
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 130%;
+      letter-spacing: -0.3px;
+    }
+    h1 {
+      font-size: 24px;
+    }
+    h2 {
+      font-size: 20px;
+    }
+    h3 {
+      font-size: 18px;
+    }
+    h4 {
       font-size: 16px;
     }
     p {
+      font-size: 14px;
+      text-align: justify;
       margin-bottom: 20px;
+      line-height: 1.6;
     }
-    h2 {
-      font-size: 26px;
-      margin-bottom: 5px;
+  }
+}
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) and (max-width: 768px) {
+}
+
+// Medium devices (tablets, 769px and up)
+@media (min-width: 769px) and (max-width: 1023.98px) {
+  .blog-details-area {
+    margin-top: 80px;
+    h1 {
+      font-size: 32px;
     }
-    .highlight {
-      margin-bottom: 0;
-      overflow: hidden;
+  }
+
+  .sticky-social-menu,
+  .wizerd-items {
+    top: 70px;
+  }
+  iframe {
+    width: 100%;
+    height: auto;
+  }
+  .single-wizard.ml-30 {
+    margin-left: 0 !important;
+  }
+  .single-wizard {
+    .single-recent-blog {
+      .date-month {
+        width: 60px;
+        height: 60px;
+        .date {
+          font-size: 18px;
+        }
+        .month {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
+// Large devices (desktops, 1024px and up)
+@media (min-width: 1024px) and (max-width: 1215px) {
+  .blog-details-area {
+    margin-top: 100px;
+    h1 {
+      font-size: 32px;
+    }
+  }
+
+  .sticky-social-menu,
+  .wizerd-items {
+    top: 100px;
+  }
+  iframe {
+    width: 100%;
+    height: auto;
+  }
+  .single-wizard.ml-30 {
+    margin-left: 0 !important;
+  }
+  .single-wizard {
+    .single-recent-blog {
+      .date-month {
+        width: 60px;
+        height: 60px;
+        .date {
+          font-size: 18px;
+        }
+        .month {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
+// Extra large devices (large desktops, 1216px and up)
+@media (min-width: 1216px) and (max-width: 1407) {
+  .blog-details-area {
+    h1 {
+      font-size: 32px;
+      letter-spacing: -1.5px;
+      margin-bottom: 15px;
+    }
+    .meta {
+      margin-bottom: 15px;
+    }
+  }
+  .single-wizard {
+    .single-recent-blog {
+      .date-month {
+        width: 60px;
+        height: 60px;
+        .date {
+          font-size: 18px;
+        }
+        .month {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 1408px) and (max-width: 1600px) {
+  .blog-details-area {
+    h1 {
+      font-size: 32px;
+      letter-spacing: -1.5px;
+      margin-bottom: 15px;
+    }
+    .meta {
+      margin-bottom: 15px;
+    }
+  }
+  .single-wizard {
+    .single-recent-blog {
+      .date-month {
+        width: 60px;
+        height: 60px;
+        .date {
+          font-size: 18px;
+        }
+        .month {
+          font-size: 14px;
+        }
+      }
     }
   }
 }

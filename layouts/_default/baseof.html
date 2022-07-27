@@ -50,17 +50,23 @@
   <meta property="og:description" content="{{ $p.tagline | plainify }}" />
   <meta property="og:site_name" content="{{ $p.fullname }}">
   <meta property="og:type" content="article">
+  <!-- animate css  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <!-- font-awesome css  -->
   <link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
   <!-- AOS css  -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <!-- bulma css  -->
   <link rel="stylesheet" href="/assets/css/bulma.min.css" />
+  <!-- owl carousel css -->
+  <link rel="stylesheet" href="/assets/css/owl.carousel.min.css" />
   <!-- Custom CSS -->
-  {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
+  <!-- {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}" />
-  {{ end }}
-  <!-- <link rel="stylesheet" href="/assets/sass/main.css" /> -->
+  {{ end }} -->
+  <link rel="stylesheet" href="/assets/sass/main.css" />
 </head>
 
 <body>
@@ -73,113 +79,88 @@
   <![endif]-->
   <!-- header-area start -->
   {{ block "header" . }}
-  <header id="header">
-    <!-- header-area top start -->
-    {{ block "header-top" . }}
-    <div class="header-top">
-      <!-- notification start  -->
-      <div onclick="goToWebinarPage()" class="notification-area notification is-primary" id="notification-area"
-        style="display:none">
-        <div class="container section">
-          <div class="notification-inner is-flex is-align-items-center is-justify-content-center">
-            <p>Join our upcoming webinar! Get your seat right now! <a href="https://appscode.com/webinar/"
-                target="_blank">Click</a> to
-              register.</p>
-          </div>
-        </div>
-        <button class="delete" onclick="event.stopPropagation(); closeItem('#notification-area')"></button>
-      </div>
-      <script type="text/javascript">
-        // close action start
-        function closeItem(item) {
-          const selcetedItem = document.querySelector(item)
-          selcetedItem.style.display = 'none'
-        }
-        // close action end
+  <header>
+    <div class="navbar-area active-headroom header--fixed">
+      <div class="navbar-area header--fixed">
+        <div class="navbar-appscode-wrapper">
+          <div class="navbar-appscode container">
 
-        // redirect to webinar pagte
-        function goToWebinarPage() {
-          window.open("https://appscode.com/webinar/", "_blank");
-        }
+            <div class="navbar-left">
+              <div class="navbar-brand">
+                <a href="{{.Site.Params.domain_bytebuilders}}">
+                  <img src="{{ .Site.Data.products.bytebuilders.logo.src }}" alt="img" />
+                </a>
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            </div>
 
-        (function () {
-          var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-          xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-              if (xhr.status === 200) {
-                var result = JSON.parse(xhr.responseText);
-                if (result.schedules) {
-                  let endDate = new Date(result.schedules[0]).getTime();
-                  let startDate = new Date().getTime();
-                  let timeRemaining = parseInt((endDate - startDate) / 1000);
-                  if (timeRemaining >= 0) {
-                    document.querySelector('#notification-area div div p').innerHTML = "Upcoming Webinar: \""+result.title+"\". <a href=\"https://appscode.com/webinar\">Register here</a>!";
-                    document.querySelector('#notification-area').style.display = 'block';
-                  }
-                }
-              }
-            }
-          }
-          // console.log('GET', 'https://license-issuer.appscode.com/_/webinars/');
-          xhr.open('GET', 'https://license-issuer.appscode.com/_/webinars/');
-          xhr.send();
-        }());
-      </script>
-      <!-- notification end -->
-      <div class="container">
-        <nav class="navbar customize-navbar" role="navigation" aria-label="main navigation">
-          <!-- navbar brand start -->
-          <div class="navbar-brand">
-            <a class="navbar-item" href="{{.Site.Params.domain_bytebuilders}}">
-              <img src="{{ .Site.Data.products.bytebuilders.logo.src }}" />
-            </a>
-
-            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
-              data-target="navbarBasicExample">
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-            </a>
-          </div>
-          <!-- navbar brand end -->
-
-          <!-- navbar-menu start -->
-          <div id="navbarBasicExample" class="navbar-menu">
-            <div class="navbar-end">
-              <a href="{{.Site.Params.domain_marketplace}}" class="navbar-item">
-                Marketplace
-              </a>
-
-              <a href="{{.Site.Params.blog_url}}" class="navbar-item">
-                Blog
-              </a>
-
-              <a href="{{.Site.Params.domain_appscode}}/about/" class="navbar-item">
-                About Us
-              </a>
-
-              <a href="{{.Site.Params.domain_appscode}}/contact/" class="navbar-item">
-                Contact
-              </a>
-
-              <div class="navbar-item">
-                <div class="buttons">
-                  <a href="{{.Site.Params.domain_bytebuilders}}/user/sign_up" class="button is-light is-primary">
-                    Sign up
-                  </a>
-                  <a href="{{.Site.Params.domain_bytebuilders}}/user/login" class="button is-primary">
-                    Sign in
-                  </a>
+            <div class="navbar-right">
+              <div class="is-flex is-align-items-center is-justify-content-space-between is-fullwidth">
+                <ul>
+                  <li class="nav-item">
+                    <a href="{{.Site.Params.domain_marketplace}}" target="_blank" class="link">Marketplace</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{.Site.Params.blog_url}}" target="_blank" class="link">Blog</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{.Site.Params.domain_appscode}}/about/" target="_blank" class="link">About Us</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="https://appscode.com/webinar" target="_blank" class="link">Webinar <span
+                        class="whats-new">New</span></a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{.Site.Params.domain_appscode}}/contact/" target="_blank" class="link">Contact</a>
+                  </li>
+                </ul>
+                <div class="navbar-item pr-0">
+                  <div class="buttons">
+                    <a href="{{.Site.Params.domain_bytebuilders}}/user/login"
+                      class="button ac-button is-secondary is-uppercase">
+                      Sign in
+                    </a>
+                    <a href="{{.Site.Params.domain_bytebuilders}}/user/sign_up"
+                      class="button ac-button is-primary is-uppercase ml-0">
+                      Sign up
+                    </a>
+                  </div>
                 </div>
+                <!-- if webinar exist script  -->
+                <script type="text/javascript">
+                  (function () {
+                    var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+                    xhr.onreadystatechange = function () {
+                      if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                          var result = JSON.parse(xhr.responseText);
+                          if (result.schedules) {
+                            let endDate = new Date(result.schedules[0]).getTime();
+                            let startDate = new Date().getTime();
+                            let timeRemaining = parseInt((endDate - startDate) / 1000);
+                            if (timeRemaining >= 0) {
+                              document.querySelector('.whats-new').classList.add('is-block')
+                            }
+                          }
+                        }
+                      }
+                    } //
+                    // console.log('GET', 'https://x.appscode.com/_/webinars/');
+                    xhr.open('GET', 'https://x.appscode.com/_/webinars/');
+                    xhr.send();
+                  }());
+                </script>
+                <!-- navbar items start -->
               </div>
             </div>
           </div>
-          <!-- navbar-menu end -->
-        </nav>
+        </div>
       </div>
     </div>
-    {{ end }}
-    <!-- header-area top end -->
   </header>
   {{ end }}
   <!-- header-area end -->
@@ -189,39 +170,24 @@
 
   <!-- cta-area start  -->
   {{ block "cta-install" . }}
-  <section class="cta-area section-padding">
-    <div class="container section">
-      <div class="columns">
-        <div class="column is-5 has-text-left">
-          <div class="section-title is-dark-bg" data-aos="fade-up">
-            <h2>Get Up and Running Quickly</h2>
-            <p>
-              {{ .Site.Data.products.bytebuilders.summary | plainify }}
-            </p>
-          </div>
-          <div class="cta-buttons buttons" data-aos="fade-up" data-aos-duration="600">
-            <a href="{{.Site.Params.domain_bytebuilders}}/user/sign_up" class="button is-primary is-large">Get started
-              free</a>
-            <a href="{{.Site.Params.domain_appscode}}/meet-expert/" class="button is-large is-white-hoverable">Get a
-              Demo</a>
-          </div>
-        </div>
-        <div class="column is-4 is-offset-3">
-          <div class="right-sidebar style-1">
-            <div class="right-sidebar-inner">
-              <div class="single-sidebar-item" data-aos="fade-left">
-                <h5>Want to host dedicated setup? We got you.</h5>
-                <a href="{{.Site.Params.domain_appscode}}/contact/" class="inline-button">Contact us</a>
-              </div>
-              <div class="single-sidebar-item" data-aos="fade-left" data-aos-duration="500">
-                <h5>Need Support SLA for AppsCode OSS projects?</h5>
-                <a href="{{.Site.Params.domain_appscode}}/contact/" class="inline-button">Purchase our commercial
-                  support package</a>
-              </div>
-              <div class="single-sidebar-item" data-aos="fade-left" data-aos-duration="700">
-                <h5>Interested in Professional Services & Training?</h5>
-                <a href="{{.Site.Params.domain_appscode}}/consulting/" class="inline-button">Explore our services</a>
-              </div>
+  <section class="cta-area">
+    <div class="container">
+      <div class="cta-area-inner">
+        <div class="container">
+          <div class="columns is-vcentered is-multiline">
+            <div class="column is-full-tablet is-half-tablet is-half-desktop">
+              <h3 data-aos="fade-up" data-aos-duration="500" class="aos-init aos-animate">Get Up and Running Quickly
+              </h3>
+              <p>Deploy, manage, upgrade Kubernetes on any cloud and automate deployment, scaling, and management of
+                containerized applications.</p>
+            </div>
+            <div
+              class="column is-full-tablet is-half-tablet is-half-desktop has-text-centered-touch has-text-right-desktop">
+              <div class="buttons is-justify-content-flex-end"><a href="https://appscode.com/contact/"
+                  class="button ac-button ac-white"
+                  style="background-color:#fff;border:1px solid #e7e7e7;color:#003466"><span>
+                    <i class="fa fa-envelope-o mr-8"></i>
+                  </span>CONTACT US</a></div>
             </div>
           </div>
         </div>
@@ -234,41 +200,41 @@
   <!-- footer area start  -->
   {{ block "footer" . }}
   <footer class="footer-area">
-    <!-- footer top start  -->
     <div class="footer-top">
-      <div class="container section">
-        <div class="columns is-mobile is-multiline" data-aos="fade-up">
-          <div class="column is-full-mobile is-one-third-desktop is-one-third-widescreen is-one-third-tablet">
+      <div class="container">
+        <div class="columns is-mobile is-multiline is-variable is-1-mobile">
+          <div class="column is-full-mobile is-one-third-desktop is-one-third-widescreen is-one-third-tablet mb-15">
             <div class="single-footer-widget">
+              <!-- logo start -->
               <div class="footer-logo">
-                <a href="{{.Site.Params.domain_appscode}}">
-                  <img src="{{$.Site.Data.products.appscode.logo.src}}" alt="{{$.Site.Data.products.appscode.logo.alt}}"
-                    class="img" />
-                </a>
+                <a href="{{.Site.Params.domain_appscode}}"><img src="{{$.Site.Data.products.appscode.logo.src}}"
+                    alt="{{$.Site.Data.products.appscode.logo.alt}}" class="img" /></a>
               </div>
-              <!-- subscription area start  -->
+              <!-- logo end -->
+
+              <!-- subscription form start -->
               <div class="subscription-form">
                 <form method="post" action="https://listmonk.appscode.com/subscription/form"
                   id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="navbar-form" target="_blank"
-                  rel="noopener" novalidate="" role="email">
-                  <h4>Subscribe to Our Newsletter</h4>
-                  <p class="spam-message">
-                    No spam, we promise. Your mail address is secure
-                  </p>
+                  novalidate role="email" role="email">
+                  <label for="email">Subscribe to Our Newsletter</label>
+                  <p class="spam-message">No spam, we promise. Your mail address is secure</p>
                   <div class="field has-addons">
                     <div class="control">
-                      <input type="hidden" id="afbbc" name="l" value="afbbc974-e163-4467-be49-040e399520f3">
+                      <!-- AppsCode Monthly Newsletter -->
+                      <input type="hidden" id="afbbc" name="l" value="afbbc974-e163-4467-be49-040e399520f3" />
                       <input class="input" name="email" id="mce-EMAIL" type="email"
-                        placeholder="Your work email address" required="" />
-                      <button id="mc-embedded-subscribe" type="submit" name="subscribe" class="subscription-button">
+                        placeholder="Your work email address" required />
+                      <button id="mc-embedded-subscribe" type="submit" name="subscribe" class="button">
                         <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
                       </button>
                     </div>
                   </div>
                 </form>
               </div>
-              <!-- subscription area end  -->
-              <!-- contact info start  -->
+              <!-- subscription form end -->
+
+              <!-- contact information start -->
               <div class="contact-information">
                 <h4>Have any Inquiry?</h4>
                 <ul class="all-contact-info">
@@ -283,12 +249,14 @@
                   </li>
                 </ul>
               </div>
+              <!-- contact information end -->
             </div>
           </div>
-          <!-- subscription area end  -->
-          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="400">
+
+          <div class="column is-half-mobile">
             <div class="single-footer-widget">
-              <div class="footer-menu">
+              <!-- footer menu start -->
+              <div class="footer-menu is-info">
                 <h4>Products</h4>
                 <ul class="footer-link">
                   {{ range $item := $.Site.Data.config.footerLinks }}
@@ -297,25 +265,30 @@
                   {{ end }}
                 </ul>
               </div>
+              <!-- footer menu end -->
             </div>
           </div>
 
-          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="500">
+          <div class="column is-half-mobile">
             <div class="single-footer-widget">
-              <div class="footer-menu">
+              <!-- footer menu start -->
+              <div class="footer-menu is-success">
                 <h4>Services</h4>
                 <ul class="footer-link">
+                  <!-- <li><a href="{{.Site.Params.domain_appscode}}/pricing/">Pricing</a></li> -->
                   <li><a href="{{.Site.Params.domain_appscode}}/consulting/">Consulting</a></li>
                   <li><a href="{{.Site.Params.domain_appscode}}/training/">Training</a></li>
                   <li><a href="{{.Site.Params.domain_appscode}}/support/">Support</a></li>
                 </ul>
               </div>
+              <!-- footer menu end -->
             </div>
           </div>
 
-          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="600">
+          <div class="column is-half-mobile">
             <div class="single-footer-widget">
-              <div class="footer-menu">
+              <!-- footer menu start -->
+              <div class="footer-menu is-warning">
                 <h4>Company</h4>
                 <ul class="footer-link">
                   <li><a href="{{.Site.Params.domain_appscode}}/about/">About Us</a></li>
@@ -323,12 +296,14 @@
                   <li><a href="{{.Site.Params.domain_appscode}}/contact/">Contact Us</a></li>
                 </ul>
               </div>
+              <!-- footer menu end -->
             </div>
           </div>
 
-          <div class="column is-half-mobile" data-aos="fade-up" data-aos-duration="700">
+          <div class="column is-half-mobile">
             <div class="single-footer-widget">
-              <div class="footer-menu">
+              <!-- footer menu start -->
+              <div class="footer-menu is-danger">
                 <h4>Legal</h4>
                 <ul class="footer-link">
                   <li><a href="{{.Site.Params.domain_appscode}}/legal/tos/">Terms of Sevice</a></li>
@@ -337,31 +312,33 @@
                   <li><a href="{{.Site.Params.domain_appscode}}/legal/sla/">Service Level Agreement</a></li>
                 </ul>
               </div>
+              <!-- footer menu end -->
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- footer top end  -->
-
-    <!-- footer bottom start  -->
     <div class="footer-bottom">
-      <div class="container section">
-        <div class="columns">
-          <div class="column is-4">
+      <div class="container">
+        <div class="columns is-vcentered">
+          <div class="column is-4 has-text-centered-mobile  has-text-left-tablet is-paddingless">
             <p>© {{ now.Format "2006" }} AppsCode Inc. All rights reserved.</p>
           </div>
-          <div class="column is-4 has-text-centered-desktop has-text-left-touch">
+          <div class="column is-4 is-mobile has-text-centered-touch has-text-centered-desktop is-paddingless">
             <div class="footer-inline-link">
               <a href="{{.Site.Params.domain_appscode}}/legal/privacy-policy/">Privacy Policy</a>
               <a href="{{.Site.Params.domain_appscode}}/legal/tos/">Terms of Service</a>
             </div>
           </div>
-          <div class="column is-4 has-text-right-desktop has-text-left-touch">
-            <div class="social-link-inline">
+          <div class="column is-4 has-text-centered-mobile  has-text-right-tablet is-paddingless">
+            <div class="socail-link-inline">
               <ul>
                 <li>
                   <a href="{{.Site.Params.twitter_url}}"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/company/appscode"><i class="fa fa-linkedin"
+                      aria-hidden="true"></i></a>
                 </li>
                 <li>
                   <a href="{{.Site.Params.facebook_url}}"><i class="fa fa-facebook" aria-hidden="true"></i></a>
@@ -375,7 +352,6 @@
         </div>
       </div>
     </div>
-    <!-- footer bottom end  -->
   </footer>
   {{ end }}
   <!-- footer area end -->
@@ -386,14 +362,26 @@
   </button>
   <!-- go-to-top end -->
 
+
   <!-- AOS js  -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <!-- download js  -->
   <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
   <!-- clipboard js  -->
   <script src="https://unpkg.com/clipboard@2/dist/clipboard.min.js"></script>
+
+  <!-- jquery  -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+  <!--owl carousel  -->
+  <script src="/assets/js/owl.carousel.min.js"></script>
+  <!--Search  -->
+  <script src="/assets/js/search.js"></script>
   <!-- Main JS -->
   <script src="/assets/js/main.js"></script>
+
+
 
   <!--Start of Tawk.to Script-->
   <script type="text/javascript">
@@ -410,6 +398,7 @@
     })();
   </script>
   <!--End of Tawk.to Script-->
+
 </body>
 
 </html>

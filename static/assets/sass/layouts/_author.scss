@@ -1,7 +1,7 @@
 .author-hero-area {
-  padding: 160px 0 40px;
-  border-bottom: 1px solid #eaebf5;
+  padding: 100px 0 40px;
 }
+
 .author-content {
   .image {
     width: 165px;
@@ -9,60 +9,51 @@
     margin: 0 auto;
     border-radius: 50%;
     overflow: hidden;
+
     img {
       height: 100%;
       width: 100%;
     }
   }
+
   p {
     font-size: 16px;
   }
+
   .image,
   h3,
   p {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 }
 
 /*=================================================================================================
                                     Responsive code start
 =================================================================================================*/
-/**************************************************************** 
-                  Full HD Min Width 1407
-**************************************************************** */
-/* Full HD Min Width 1408px */
-@media (min-width: 1408px) {
+
+// Extra small devices (portrait phones, less than 576px)
+@media (max-width: 768px) {
 }
 
-/**************************************************************** 
-                  Widescreen Between 1216px and 1407px
-**************************************************************** */
-@media (min-width: 1216px) and (max-width: 1407px) {
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) and (max-width: 768px) {
 }
 
-/**************************************************************** 
-                  Desktop Between 1024px and 1215px
-**************************************************************** */
+// Medium devices (tablets, 769px and up)
+@media (min-width: 769px) and (max-width: 1023.98px) {
+}
+
+// Large devices (desktops, 1024px and up)
 @media (min-width: 1024px) and (max-width: 1215px) {
 }
 
-/**************************************************************** 
-                  Tablet Between 769px and 1023px
-**************************************************************** */
-@media (min-width: 769px) and (max-width: 1023px) {
+// Extra large devices (large desktops, 1216px and up)
+@media (min-width: 1216px) {
 }
 
-/**************************************************************** 
-                    Mobile Up to 768px. 
-**************************************************************** */
-@media only screen and (min-width: 100px) and (max-width: 768px) {
-  .author-content {
-    .image {
-      margin-bottom: 20px;
-    }
-    h3 {
-      margin-bottom: 10px;
-    }
+@media (min-width: 1408px) and (max-width: 1600px) {
+  .author-hero-area {
+    padding: 100px 0 20px;
   }
 }
 

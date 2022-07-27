@@ -1,28 +1,55 @@
 {{ define "main" }}
 
-<!-- blog heading start  -->
-<section class="blog-heading-area section-padding">
-  <div class="container section">
-    <div class="columns">
-      <div class="column has-text-centered">
 
-        <!-- blog heading start  -->
-        <div class="blog-heading">
-          <p data-aos="fade-up" class="meta-date"><i class="fa fa-calendar" aria-hidden="true"></i> {{ .Date.Format "2-Jan-2006" }}</p>
-          <h1 data-aos="fade-up" data-aos-duration="500">{{ .Title }}</h1>
-          <p data-aos="fade-up" data-aos-duration="600" class="author"><span>by </span>
-          {{ range $author := first 1 .Params.authors }}
-            <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
-          {{ end }}
-          {{ range $author := after 1 .Params.authors }}
-            <span>&amp;</span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
-          {{ end }}
-          </p>
+<!-- blog details area start  -->
+<section class="blog-details-area">
+  <div class="container">
+    <div class="columns">
+      <div class="column is-1">
+        <!-- sticky social menu start  -->
+        <div class="sticky-social-menu">
+          <div class="social-share">
+            <ul class="social-share-button is-flex-direction-column">
+              <li>
+                <a title="Twitter" href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title | htmlEscape }}"
+                  class="twitter" aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+              </li>
+              <li>
+                <a title="Linkedin"
+                  href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title | htmlEscape }}&summary={{ .Summary | htmlEscape }}&source=LinkedIn"
+                  class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+              </li>
+              <li>
+                <a title="Facebook" href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" class="facebook"
+                  aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+              </li>
+              <li>
+                <a href="mailto:?subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i
+                    class="fa fa-envelope-o" aria-hidden="true"></i></a>
+              </li>
+            </ul>
+          </div>
         </div>
-        <!-- blog heading end -->
+        <!--sticky  social menu end -->
+      </div>
+      <div class="column is-7">
+
+        <h1 data-aos="fade-up" data-aos-duration="500">{{ .Title }}</h1>
+
+        <!-- meta description  -->
+        <div class="meta" data-aos="fade-up" data-aos-duration="800">
+          {{ range $author := first 1 .Params.authors }}
+          <div class="author"><i class="fa fa-user"></i> <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
+          </div>
+          {{ end }}
+          <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+            <strong>{{ .Date.Format "2-Jan-2006" }}</strong>
+          </div>
+        </div>
+        <!-- meta description  -->
 
         <!-- blog large image start -->
-        <figure class="fig-style">
+        <figure class="fig-style mb-20">
           {{ $original := .Resources.GetMatch "hero.jpg" }}
           {{ $cropped := $original.Fill "1300x650" }}
           <img data-aos="fade-up" data-aos-duration="600" src="{{ $cropped.RelPermalink }}" alt="">
@@ -31,59 +58,12 @@
         </figure>
         <!-- blog large image end -->
 
-      </div>
-    </div>
-  </div>
-</section>
-<!-- blog heading end -->
 
-<!-- blog details area start  -->
-<section class="blog-details-area">
-  <div class="container section">
-    <div class="columns">
-      <div class="column is-2">
-        <!-- sticky social menu start  -->
-        <div class="sticky-social-menu">
-          <div class="social-link-vertical">
-            <ul>
-              <li>
-                <a title="Twitter" href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title | htmlEscape }}" class="twitter"
-                  aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-              </li>
-              <li>
-                <a title="Linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title | htmlEscape }}&summary={{ .Summary | htmlEscape }}&source=LinkedIn"
-                  class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
-              </li>
-              <li>
-                <a title="Facebook" href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" class="facebook"
-                  aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-              </li>
-              <li>
-                <a href="mailto:?subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <!--sticky  social menu end -->
-      </div>
-      <div class="column is-8">
         <!-- blog-content start  -->
         <div class="blog-content">
-          <!--
-          <div class="bb-quote-msg">
-            <div class="quote-icon"><img src="/assets/images/icons/quote.svg" alt="quote.svg"></div>
-             <p> Make sure that you’re running a linux machine with kernel version 4.17 or higher. We’re attaching eBPF programs to raw_tracepoints, and this feature is available from linux kernel 4.17. For more information, you can see here.</p>
-             <div class="name-descriptor">Tomas Albart, <span>Product designer at <a href="#" class="inline-button">AWS</a></span></div>
-          </div>
-          -->
 
           {{ .Content }}
 
-          <div class="tags">
-            {{ range $tag := .Params.tags }}
-            <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
-            {{ end }}
-          </div>
         </div>
         <!-- blog-content end -->
 
@@ -94,6 +74,46 @@
         </div>
         {{ end }}
         <!-- blog comments area end -->
+      </div>
+      <div class="column is-4">
+        <div class="wizerd-items">
+          <div class="single-wizard ml-30">
+            <h4>Recent Blog</h4>
+            {{ range first 5 (where site.RegularPages.ByDate.Reverse "Type" "in" "posts" )}}
+            <!-- recent-blog  -->
+            <div class="single-recent-blog">
+              <!-- date and month  -->
+              <a href="{{.RelPermalink}}" class="date-month">
+                <span class="date">{{.PublishDate.Day}}</span>
+                <span class="month">{{.PublishDate.Format "Jan" | upper}}</span>
+              </a>
+              <!-- date and month  -->
+
+              <!-- content  -->
+              <div class="recent-blog-content">
+                <h2 class="is-ellipsis-2"><a href="{{.RelPermalink}}">{{.Title}}</a></h2>
+                {{ range $author := first 1 .Params.authors }}
+                <div class="meta">By - <a href="/authors/{{ $author | urlize }}"> {{$author}} </a></div>
+                {{ end }}
+              </div>
+              <!-- content  -->
+            </div>
+            <!-- recent-blog  -->
+            {{ end }}
+
+
+          </div>
+
+
+          <div class="single-wizard ml-30">
+            <h4>Popular tags</h4>
+            <div class="tags">
+              {{ range $tag := .Params.tags }}
+              <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
+              {{ end }}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
