@@ -6,17 +6,18 @@
     background-size: cover;
     background-position: center;
     border-radius: 8px;
-    height: 150px;
+    min-height: 170px;
     display: flex;
     align-items: center;
 
     h3 {
       color: $ac-white;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
+      font-size: 28px;
     }
 
     p {
-      color: $ac-white;
+      color: #f3f3f3;
     }
   }
 }

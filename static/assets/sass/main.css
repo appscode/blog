@@ -10313,7 +10313,7 @@ Responsive Classes
   background-size: cover;
   background-position: center;
   border-radius: 8px;
-  height: 150px;
+  min-height: 170px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -10324,11 +10324,12 @@ Responsive Classes
 
 .cta-area .cta-area-inner h3 {
   color: #ffffff;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 28px;
 }
 
 .cta-area .cta-area-inner p {
-  color: #ffffff;
+  color: #f3f3f3;
 }
 
 /****************************************
@@ -11802,6 +11803,7 @@ ul.social-share-button li a i.fa {
 .blog-content h4 {
   font-weight: 600;
   line-height: 130%;
+  margin-bottom: 10px;
 }
 
 .blog-content h1 {
