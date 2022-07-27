@@ -153,15 +153,29 @@ const isTagAvailable = (tags, author, heading) => {
 }
 
 const calculateTopVaue = () =>{
-  const pageUrl = window.location.href;
+  const pageUrl = window.location.href || "";
   const pageWide = window.innerWidth;
   let authorPage = false;
   if(pageUrl.includes("authors")) authorPage = true;
   if(authorPage){
     if(pageWide>=768) return 400;
-    else return 400;
+    else return 500;
   }else{
     if(pageWide>=768) return 500;
-    else return 500;
+    else return 650;
   }
+}
+
+
+//From Mobile View only
+if(window.innerWidth<768){
+  const pdtElement = productBtn.querySelector("i");
+  pdtElement.classList.remove("fa-angle-up");
+  pdtElement.classList.add("fa-angle-down");
+  productElement.style.display = "none";
+
+  const ctgElement = categoriesBtn.querySelector("i");
+  ctgElement.classList.remove("fa-angle-up");
+  ctgElement.classList.add("fa-angle-down");
+  categoriesElement.style.display = "none";
 }
