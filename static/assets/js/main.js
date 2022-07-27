@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", () => {
   // AOS initialization
   AOS.init({
@@ -13,38 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     dropdown.style.opacity = 1 - dropdown.style.opacity;
     dropdown.style.visibility = hasActiveClass ? "hidden" : "visible";
   });
-
-  // blog page hero area slider start
-  var sliderElement = document.getElementById("hero-area-blog");
-  var interval = 0;
-
-  function autoplay(run) {
-    clearInterval(interval);
-    interval = setInterval(() => {
-      if (run && slider) {
-        slider.next();
-      }
-    }, 3000);
-  }
-
-  var slider = new KeenSlider(sliderElement, {
-    loop: true,
-    duration: 2000,
-    dragStart: () => {
-      autoplay(false);
-    },
-    dragEnd: () => {
-      autoplay(true);
-    },
-  });
-
-  sliderElement?.addEventListener("mouseover", () => {
-    autoplay(false);
-  });
-  sliderElement?.addEventListener("mouseout", () => {
-    autoplay(true);
-  });
-  autoplay(true);
 });
 
 // scroll to top
@@ -157,3 +127,31 @@ tabItems.forEach((tab) => {
     });
   });
 });
+
+
+
+
+// // blog hero area carousel start
+$('.owl-carousel').owlCarousel({
+    loop:true,
+    dots: false,
+    nav: true,
+    animateOut: 'fadeOut',
+    margin:0,
+    infinity: true,
+    autoplay: true,
+    responsiveClass:true,
+    responsive:{
+        0:{
+            items:1,
+          
+        },
+        600:{
+            items:1,
+        },
+        1000:{
+            items:1,
+        }
+    }
+}) 
+// // blog hero area carousel end

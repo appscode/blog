@@ -50,6 +50,8 @@
   <meta property="og:description" content="{{ $p.tagline | plainify }}" />
   <meta property="og:site_name" content="{{ $p.fullname }}">
   <meta property="og:type" content="article">
+  <!-- animate css  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <!-- font-awesome css  -->
   <link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
   <link rel="stylesheet"
@@ -58,8 +60,8 @@
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <!-- bulma css  -->
   <link rel="stylesheet" href="/assets/css/bulma.min.css" />
-  <!-- keen slider css  -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@6.7.0/keen-slider.min.css" />
+  <!-- owl carousel css -->
+  <link rel="stylesheet" href="/assets/css/owl.carousel.min.css" />
   <!-- Custom CSS -->
   <!-- {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}" />
@@ -109,7 +111,8 @@
                     <a href="{{.Site.Params.domain_appscode}}/about/" target="_blank" class="link">About Us</a>
                   </li>
                   <li class="nav-item">
-                    <a href="https://appscode.com/webinar" target="_blank" class="link">Webinar <span class="whats-new">New</span></a>
+                    <a href="https://appscode.com/webinar" target="_blank" class="link">Webinar <span
+                        class="whats-new">New</span></a>
                   </li>
                   <li class="nav-item">
                     <a href="{{.Site.Params.domain_appscode}}/contact/" target="_blank" class="link">Contact</a>
@@ -173,15 +176,17 @@
         <div class="container">
           <div class="columns is-vcentered is-multiline">
             <div class="column is-full-tablet is-half-tablet is-half-desktop">
-              <h3 data-aos="fade-up" data-aos-duration="500" class="aos-init aos-animate">Get Up and Running Quickly</h3>
-              <p>Deploy, manage, upgrade Kubernetes on any cloud and automate deployment, scaling, and management of containerized applications.</p>
+              <h3 data-aos="fade-up" data-aos-duration="500" class="aos-init aos-animate">Get Up and Running Quickly
+              </h3>
+              <p>Deploy, manage, upgrade Kubernetes on any cloud and automate deployment, scaling, and management of
+                containerized applications.</p>
             </div>
             <div
               class="column is-full-tablet is-half-tablet is-half-desktop has-text-centered-touch has-text-right-desktop">
               <div class="buttons is-justify-content-flex-end"><a href="https://appscode.com/contact/"
                   class="button ac-button ac-white"
                   style="background-color:#fff;border:1px solid #e7e7e7;color:#003466"><span>
-                  <i class="fa fa-envelope-o mr-8"></i>
+                    <i class="fa fa-envelope-o mr-8"></i>
                   </span>CONTACT US</a></div>
             </div>
           </div>
@@ -358,18 +363,26 @@
   </button>
   <!-- go-to-top end -->
 
+
   <!-- AOS js  -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <!-- download js  -->
   <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
   <!-- clipboard js  -->
   <script src="https://unpkg.com/clipboard@2/dist/clipboard.min.js"></script>
-  <!-- Main JS -->
-  <script src="/assets/js/main.js"></script>
+
+  <!-- jquery  -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+  <!--owl carousel  -->
+  <script src="/assets/js/owl.carousel.min.js"></script>
   <!--Search  -->
   <script src="/assets/js/search.js"></script>
-  <!-- keen slider js -->
-  <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.7.0/keen-slider.min.js"></script>
+  <!-- Main JS -->
+  <script src="/assets/js/main.js"></script>
+
+
 
   <!--Start of Tawk.to Script-->
   <script type="text/javascript">

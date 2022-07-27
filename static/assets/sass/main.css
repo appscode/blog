@@ -10637,10 +10637,64 @@ Responsive Classes
   opacity: 1;
 }
 
-.hero-area-blog .single-blog-carousel.show {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+.hero-area-blog:hover .owl-nav {
+  opacity: 1;
+  visibility: visible;
+}
+
+.hero-area-blog .owl-item.active h1 {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: fadeInDown;
+          animation-name: fadeInDown;
+  -webkit-animation-delay: 0.3s;
+          animation-delay: 0.3s;
+}
+
+.hero-area-blog .owl-item.active p {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: fadeInUp;
+          animation-name: fadeInUp;
+  -webkit-animation-delay: 0.3s;
+          animation-delay: 0.3s;
+}
+
+.hero-area-blog .owl-item.active .meta {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: fadeInUp;
+          animation-name: fadeInUp;
+  -webkit-animation-delay: 0.5s;
+          animation-delay: 0.5s;
+}
+
+.hero-area-blog .owl-item.active .social-share {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: fadeInUp;
+          animation-name: fadeInUp;
+  -webkit-animation-delay: 0.7s;
+          animation-delay: 0.7s;
+}
+
+.hero-area-blog .owl-item.active a.inline-button {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: fadeInUp;
+          animation-name: fadeInUp;
+  -webkit-animation-delay: 0.3s;
+          animation-delay: 0.3s;
 }
 
 .hero-area-blog .single-blog-carousel .blog-title-content {
@@ -10696,6 +10750,40 @@ Responsive Classes
   color: #3e393e;
   margin-bottom: 15px;
   display: block;
+}
+
+.hero-area-blog .owl-nav {
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  font-size: 16px;
+}
+
+.hero-area-blog .owl-nav button {
+  width: 40px;
+  height: 40px;
+  opacity: 0.7;
+  background-color: var(--ac-primary) !important;
+  color: #fff !important;
+  border-radius: 50%;
+}
+
+.hero-area-blog .owl-nav button.owl-prev {
+  margin-left: -20px;
+}
+
+.hero-area-blog .owl-nav button.owl-next {
+  margin-right: -20px;
 }
 
 button.slide {
