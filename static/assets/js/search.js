@@ -161,7 +161,7 @@ const calculateTopVaue = () =>{
     if(pageWide>=768) return 400;
     else return 500;
   }else{
-    if(pageWide>=768) return 500;
+    if(pageWide>=768) return 450;
     else return 650;
   }
 }
