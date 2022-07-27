@@ -11,6 +11,7 @@ const productElement = document.getElementById("products");
 const categoriesElement = document.getElementById("categories");
 const productBtn = document.getElementById("product-btn");
 const categoriesBtn = document.getElementById("categories-btn");
+const nodataElement = document.getElementById("nodata-content");
 
 
 gridViewBtn?.addEventListener("click", (event) => {
@@ -93,12 +94,13 @@ categoriesBtn?.addEventListener("click",(event)=>{
 //Filter based on the tags and search keyword
 const filterList = () => {
   window.scroll({
-    top: 500, 
+    top: calculateTopVaue(), 
     left: 0, 
     behavior: 'smooth'
   });
   const cards = document.getElementById(viewType);
   const cardList = cards.querySelectorAll(".each-blog");
+  let noDataAvailable = true;
   cardList.forEach(card => {
     //get all tags
     const tags = card.querySelector(".tags").innerText.toLowerCase();
@@ -114,9 +116,15 @@ const filterList = () => {
     if (!isTagAvailable(tags, authors, heading)) {
       card.style.display = "none";
     } else {
+      noDataAvailable = false;
       card.style.display = viewType === "grid-view" ? "block" : "flex";
     }
   })
+  if(noDataAvailable){
+    nodataElement.classList.remove("is-hidden");
+  }else{
+    nodataElement.classList.add("is-hidden");
+  }
 }
 
 //Check if tags & search keyword contains in cards tags, auther and heading
@@ -142,4 +150,32 @@ const isTagAvailable = (tags, author, heading) => {
     flag = flag1 & flag2;
   }
   return flag;
+}
+
+const calculateTopVaue = () =>{
+  const pageUrl = window.location.href || "";
+  const pageWide = window.innerWidth;
+  let authorPage = false;
+  if(pageUrl.includes("authors")) authorPage = true;
+  if(authorPage){
+    if(pageWide>=768) return 400;
+    else return 500;
+  }else{
+    if(pageWide>=768) return 500;
+    else return 650;
+  }
+}
+
+
+//From Mobile View only
+if(window.innerWidth<768){
+  const pdtElement = productBtn.querySelector("i");
+  pdtElement.classList.remove("fa-angle-up");
+  pdtElement.classList.add("fa-angle-down");
+  productElement.style.display = "none";
+
+  const ctgElement = categoriesBtn.querySelector("i");
+  ctgElement.classList.remove("fa-angle-up");
+  ctgElement.classList.add("fa-angle-down");
+  categoriesElement.style.display = "none";
 }
