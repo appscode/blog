@@ -2,17 +2,27 @@
 // Author: AppsCode
 // Version: 0.0.1
 
-//BASE - Base styles, variables, mixins
-@import "base/_variables";
-@import "base/_mixins";
-@import "base/_global";
+//Utilities - Base styles, variables, mixins
+@import "base/utilities/_initial-variable";
+@import "base/utilities/_default";
+@import "base/utilities/_themes";
+@import "base/utilities/_typography";
+@import "base/utilities/global";
+
+
+
+// mixins
+@import "mixins/_mixin";
+
 
 // COMPONENTS
-@import "components/_header";
+@import "components/_navbar";
+@import "components/_tabs";
+@import "components/_button";
 
 @import "components/_cta-area";
 @import "components/_footer";
-@import "components/_tabs-style";
+// @import "components/_tabs-style";
 @import "components/_go-to-top";
 
 //LAYOUTS - Page layout styles
