@@ -40,8 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
     btnTop.addEventListener("click", TopscrollTo);
   };
   basicScrollTop();
-  TopscrollTo();
+  // TopscrollTo();
 });
+
+
 
 // code download and copy function //
 var codeHeading = document.querySelectorAll(".code-block-heading");
@@ -76,6 +78,7 @@ Array.from(codeHeading).forEach((heading) => {
     });
   }
 });
+
 
 // tabs active class add script - setup | install page
 const tabItems = document.querySelectorAll(".nav-item .nav-link");
