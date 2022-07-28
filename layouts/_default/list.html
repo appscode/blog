@@ -15,9 +15,10 @@
 
             <div class="hero-area-thumbnail" data-aos="fade-in" data-aos-duration="500">
               <figure class="blog-banner image is-16by9">
-                {{ $image := $p.Resources.GetMatch "hero.jpg" }}
+                {{ $original := $p.Resources.GetMatch "hero.jpg" }}
+                {{ $cropped := $original.Resize "x450" }}
                 <a href="{{ $p.RelPermalink }}">
-                  <img src="{{ $image.RelPermalink }}" alt="appscode-blog" loading="lazy" decoding="async"></a>
+                  <img src="{{ $cropped.RelPermalink }}" alt="appscode-blog" loading="lazy" decoding="async"></a>
               </figure>
 
               <!-- slider-button start  -->
@@ -115,9 +116,18 @@
             <!-- viewing type  -->
             <div class="viewing-mode">
               <label>VIEW</label>
-              <button id="grid-btn-view" title="Grid View" class="is-active"><span
-                  class="material-symbols-outlined">grid_view</span></button>
-              <button id="list-btn-view" title="List View"><span class="material-symbols-outlined">list</span></button>
+              <button id="grid-btn-view" title="Grid View" class="is-active"><span class="material-symbols-outlined">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24">
+                    <path
+                      d="M3 11V3h8v8Zm0 10v-8h8v8Zm10-10V3h8v8Zm0 10v-8h8v8ZM5 9h4V5H5Zm10 0h4V5h-4Zm0 10h4v-4h-4ZM5 19h4v-4H5ZM15 9Zm0 6Zm-6 0Zm0-6Z" />
+                  </svg>
+                </span></button>
+              <button id="list-btn-view" title="List View"><span class="material-symbols-outlined">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24">
+                    <path
+                      d="M4 17q-.425 0-.712-.288Q3 16.425 3 16t.288-.713Q3.575 15 4 15t.713.287Q5 15.575 5 16t-.287.712Q4.425 17 4 17Zm0-4q-.425 0-.712-.288Q3 12.425 3 12t.288-.713Q3.575 11 4 11t.713.287Q5 11.575 5 12t-.287.712Q4.425 13 4 13Zm0-4q-.425 0-.712-.288Q3 8.425 3 8t.288-.713Q3.575 7 4 7t.713.287Q5 7.575 5 8t-.287.712Q4.425 9 4 9Zm3 8v-2h14v2Zm0-4v-2h14v2Zm0-4V7h14v2Z" />
+                  </svg>
+                </span></button>
             </div>
             <!-- viewing type  -->
           </div>
@@ -295,7 +305,7 @@
             <div class="column is-4 each-blog">
               <div class="single-blog">
                 {{ $original := $p.Resources.GetMatch "hero.jpg" }}
-                {{ $cropped := $original.Resize "x200" }}
+                {{ $cropped := $original.Resize "x170" }}
                 <figure class="image">
                   <a href="{{ $p.RelPermalink }}"><img src="{{ $cropped.RelPermalink }}" alt="" loading="lazy"
                       decoding="async"></a>
@@ -334,9 +344,10 @@
             <div class="columns each-blog">
               <div class="column is-6">
                 <figure class="blog-banner image">
-                  {{ $image := $p.Resources.GetMatch "hero.jpg" }}
+                  {{ $original := $p.Resources.GetMatch "hero.jpg" }}
+                  {{ $cropped := $original.Resize "x250" }}
                   <a href="{{ $p.RelPermalink }}">
-                    <img src="{{ $image.RelPermalink }}" alt="appscode-blog" loading="lazy" decoding="async"></a>
+                    <img src="{{ $cropped.RelPermalink }}" alt="appscode-blog" loading="lazy" decoding="async"></a>
                 </figure>
 
               </div>

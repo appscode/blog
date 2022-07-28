@@ -54,8 +54,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <!-- font-awesome css  -->
   <link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
   <!-- AOS css  -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <!-- bulma css  -->
@@ -63,10 +61,10 @@
   <!-- owl carousel css -->
   <link rel="stylesheet" href="/assets/css/owl.carousel.min.css" />
   <!-- Custom CSS -->
-  <!-- {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
+  {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}" />
-  {{ end }} -->
-  <link rel="stylesheet" href="/assets/sass/main.css" />
+  {{ end }}
+  <!-- <link rel="stylesheet" href="/assets/sass/main.css" /> -->
 </head>
 
 <body>
