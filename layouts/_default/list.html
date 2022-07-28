@@ -67,19 +67,19 @@
                 <label>Share with:</label>
                 <ul class="social-share-button">
                   <li>
-                    <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title }}" target="_blank" title="Share on Twitter"
-                      rel="noopener" class="twitter" aria-label="share on Twitter"><i class="fa fa-twitter"
-                        aria-hidden="true"></i></a>
+                    <a href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title }}" target="_blank"
+                      title="Share on Twitter" rel="noopener" class="twitter" aria-label="share on Twitter"><i
+                        class="fa fa-twitter" aria-hidden="true"></i></a>
                   </li>
                   <li>
                     <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title }}&summary={{ .Summary }}"
-                      target="_blank" title="Share on Linkedin" rel="noopener" class="linkedin"><i class="fa fa-linkedin"
-                        aria-hidden="true"></i></a>
+                      target="_blank" title="Share on Linkedin" rel="noopener" class="linkedin"><i
+                        class="fa fa-linkedin" aria-hidden="true"></i></a>
                   </li>
                   <li>
-                    <a href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" target="_blank" title="Share on Facebook" rel="noopener"
-                      class="facebook" aria-label="share on Facebook"><i class="fa fa-facebook"
-                        aria-hidden="true"></i></a>
+                    <a href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" target="_blank"
+                      title="Share on Facebook" rel="noopener" class="facebook" aria-label="share on Facebook"><i
+                        class="fa fa-facebook" aria-hidden="true"></i></a>
                   </li>
                   <li>
                     <a href="mailto:?subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i
@@ -165,6 +165,13 @@
               <div class="ac-single-checkbox">
                 <input class="is-checkradio ac-checkbox" id="kubeform" type="checkbox" name="checkbox" />
                 <label for="kubeform">Kubeform</label>
+              </div>
+              <!-- single ac-checkbox end -->
+
+              <!-- single ac-checkbox start  -->
+              <div class="ac-single-checkbox">
+                <input class="is-checkradio ac-checkbox" id="voyager" type="checkbox" name="checkbox" />
+                <label for="voyager">Voyager</label>
               </div>
               <!-- single ac-checkbox end -->
             </div>
@@ -281,7 +288,8 @@
       <div class="column is-9">
         <div class="blog-items">
           <!-- grid view start -->
-          <div class="columns is-variable is-1-mobile is-1-tablet is-1-desktop is-1-widescreen is-2-fullhd is-multiline" id="grid-view">
+          <div class="columns is-variable is-1-mobile is-1-tablet is-1-desktop is-1-widescreen is-2-fullhd is-multiline"
+            id="grid-view">
             {{ range $idx, $p := $pages.ByDate.Reverse }}
 
             <div class="column is-4 each-blog">

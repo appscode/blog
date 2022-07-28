@@ -213,6 +213,7 @@
     margin-bottom: 15px;
     border-radius: 4px;
   }
+
   .inline-button {
     font-size: 16px;
   }
@@ -404,6 +405,10 @@
       margin-bottom: 20px;
       line-height: 1.6;
     }
+    iframe {
+      width: 300px !important;
+      height: 200px !important;
+    }
   }
 }
 
@@ -424,9 +429,11 @@
   .wizerd-items {
     top: 70px;
   }
-  iframe {
-    width: 100%;
-    height: auto;
+  .blog-content {
+    iframe {
+      width: 400px !important;
+      height: 225px !important;
+    }
   }
   .single-wizard.ml-30 {
     margin-left: 0 !important;
@@ -481,10 +488,16 @@
       }
     }
   }
+  .blog-content {
+    iframe {
+      width: 510px !important;
+      height: 286.88px !important;
+    }
+  }
 }
 
 // Extra large devices (large desktops, 1216px and up)
-@media (min-width: 1216px) and (max-width: 1407) {
+@media (min-width: 1216px) and (max-width: 1407px) {
   .blog-details-area {
     h1 {
       font-size: 32px;
@@ -507,6 +520,19 @@
           font-size: 14px;
         }
       }
+    }
+  }
+  .blog-content {
+    iframe {
+      width: 500px !important;
+      height: 281px !important;
+    }
+  }
+
+  .blog-content {
+    iframe {
+      width: 660px !important;
+      height: 371.25px !important;
     }
   }
 }
@@ -534,6 +560,12 @@
           font-size: 14px;
         }
       }
+    }
+  }
+  .blog-content {
+    iframe {
+      width: 700px !important;
+      height: 393.75px !important;
     }
   }
 }
