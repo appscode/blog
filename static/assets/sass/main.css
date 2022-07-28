@@ -11133,6 +11133,12 @@ ul.social-share-button li a i.fa {
 
 .search-filter-area .filter-area .viewing-mode button span {
   font-size: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .search-filter-area .filter-area .viewing-mode button:last-child {
@@ -11142,6 +11148,10 @@ ul.social-share-button li a i.fa {
 .search-filter-area .filter-area .viewing-mode button.is-active {
   background-color: var(--ac-primary);
   color: #ffffff;
+}
+
+.search-filter-area .filter-area .viewing-mode button.is-active svg {
+  fill: #ffffff;
 }
 
 .blog-items-area .left-sidebar {
@@ -11246,6 +11256,7 @@ ul.social-share-button li a i.fa {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  margin-bottom: 10px;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
 }
@@ -11295,10 +11306,10 @@ ul.social-share-button li a i.fa {
 }
 
 .blog-items .blog-title-content h2 {
-  font-weight: 700;
+  font-weight: 500;
   font-size: 24px;
   line-height: 130%;
-  letter-spacing: -1px;
+  letter-spacing: -0.5px;
   margin-bottom: 15px;
 }
 

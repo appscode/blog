@@ -52,7 +52,8 @@
         <figure class="fig-style mb-20">
           {{ $original := .Resources.GetMatch "hero.jpg" }}
           {{ $cropped := $original.Fill "1300x650" }}
-          <img data-aos="fade-up" data-aos-duration="600" src="{{ $cropped.RelPermalink }}" alt="">
+          <img data-aos="fade-up" data-aos-duration="600" src="{{ $cropped.RelPermalink }}" alt="" loading="lazy"
+            decoding="async">
           <!-- <figcaption>capture operational knowledge in a software form</figcaption> -->
           </a>
         </figure>
