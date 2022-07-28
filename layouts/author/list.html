@@ -8,7 +8,7 @@
       <div class="column is-8 is-offset-2 has-text-centered">
         <div class="author-content" data-aos="fade-up" data-aos-duration="500">
           <figure class="image">
-            <img src="{{ $author.profile }}" />
+            <img src="{{ $author.profile }}" loading="lazy" decoding="async" />
           </figure>
           <h3 data-aos="fade-up" data-aos-duration="600">{{ $author.name }}</h3>
           <p data-aos="fade-up" data-aos-duration="800">
@@ -249,7 +249,8 @@
                 {{ $original := $p.Resources.GetMatch "hero.jpg" }}
                 {{ $cropped := $original.Resize "x200" }}
                 <figure class="image">
-                  <a href="{{ $p.RelPermalink }}"><img src="{{ $cropped.RelPermalink }}" alt=""></a>
+                  <a href="{{ $p.RelPermalink }}"><img src="{{ $cropped.RelPermalink }}" alt="" loading="lazy"
+                      decoding="async"></a>
                 </figure>
                 <div class="p-15">
                   <!-- meta description  -->
@@ -291,7 +292,7 @@
                 <figure class="blog-banner image">
                   {{ $image := $p.Resources.GetMatch "hero.jpg" }}
                   <a href="{{ $p.RelPermalink }}">
-                    <img src="{{ $image.RelPermalink }}" alt="appscode-blog"></a>
+                    <img src="{{ $image.RelPermalink }}" alt="appscode-blog" loading="lazy" decoding="async"></a>
                 </figure>
 
               </div>

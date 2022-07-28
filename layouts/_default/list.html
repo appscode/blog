@@ -17,7 +17,7 @@
               <figure class="blog-banner image is-16by9">
                 {{ $image := $p.Resources.GetMatch "hero.jpg" }}
                 <a href="{{ $p.RelPermalink }}">
-                  <img src="{{ $image.RelPermalink }}" alt="appscode-blog"></a>
+                  <img src="{{ $image.RelPermalink }}" alt="appscode-blog" loading="lazy" decoding="async"></a>
               </figure>
 
               <!-- slider-button start  -->
@@ -297,7 +297,8 @@
                 {{ $original := $p.Resources.GetMatch "hero.jpg" }}
                 {{ $cropped := $original.Resize "x200" }}
                 <figure class="image">
-                  <a href="{{ $p.RelPermalink }}"><img src="{{ $cropped.RelPermalink }}" alt=""></a>
+                  <a href="{{ $p.RelPermalink }}"><img src="{{ $cropped.RelPermalink }}" alt="" loading="lazy"
+                      decoding="async"></a>
                 </figure>
                 <div class="p-15">
                   <!-- meta description  -->
@@ -335,7 +336,7 @@
                 <figure class="blog-banner image">
                   {{ $image := $p.Resources.GetMatch "hero.jpg" }}
                   <a href="{{ $p.RelPermalink }}">
-                    <img src="{{ $image.RelPermalink }}" alt="appscode-blog"></a>
+                    <img src="{{ $image.RelPermalink }}" alt="appscode-blog" loading="lazy" decoding="async"></a>
                 </figure>
 
               </div>
