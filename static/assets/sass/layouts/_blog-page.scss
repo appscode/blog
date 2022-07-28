@@ -432,6 +432,8 @@ ul.social-share-button {
 
         span {
           font-size: 20px;
+          display: flex;
+          align-items: center;
         }
 
         &:last-child {
@@ -441,6 +443,9 @@ ul.social-share-button {
         &.is-active {
           background-color: $ac-primary;
           color: $ac-white;
+          svg {
+            fill: $ac-white;
+          }
         }
       }
     }
@@ -548,7 +553,7 @@ ul.social-share-button {
 
   .meta {
     justify-content: space-between;
-
+    margin-bottom: 10px;
     flex-wrap: wrap;
 
     .author {
@@ -607,10 +612,10 @@ ul.social-share-button {
     }
 
     h2 {
-      font-weight: 700;
+      font-weight: 500;
       font-size: 24px;
       line-height: 130%;
-      letter-spacing: -1px;
+      letter-spacing: -0.5px;
       margin-bottom: 15px;
 
       a {

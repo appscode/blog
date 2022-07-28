@@ -54,8 +54,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <!-- font-awesome css  -->
   <link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
   <!-- AOS css  -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <!-- bulma css  -->
@@ -63,10 +61,10 @@
   <!-- owl carousel css -->
   <link rel="stylesheet" href="/assets/css/owl.carousel.min.css" />
   <!-- Custom CSS -->
-  <!-- {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
+  {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}" />
-  {{ end }} -->
-  <link rel="stylesheet" href="/assets/sass/main.css" />
+  {{ end }}
+  <!-- <link rel="stylesheet" href="/assets/sass/main.css" /> -->
 </head>
 
 <body>
@@ -88,7 +86,8 @@
             <div class="navbar-left">
               <div class="navbar-brand">
                 <a href="{{.Site.Params.domain_bytebuilders}}">
-                  <img src="{{ .Site.Data.products.bytebuilders.logo.src }}" alt="img" />
+                  <img src="{{ .Site.Data.products.bytebuilders.logo.src }}" alt="img" loading="lazy"
+                    decoding="async" loading="lazy" decoding="async" />
                 </a>
                 <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
                   <span aria-hidden="true"></span>
@@ -208,7 +207,7 @@
               <!-- logo start -->
               <div class="footer-logo">
                 <a href="{{.Site.Params.domain_appscode}}"><img src="{{$.Site.Data.products.appscode.logo.src}}"
-                    alt="{{$.Site.Data.products.appscode.logo.alt}}" class="img" /></a>
+                    alt="{{$.Site.Data.products.appscode.logo.alt}}" class="img" loading="lazy" decoding="async"/></a>
               </div>
               <!-- logo end -->
 
