@@ -79,7 +79,7 @@
       <div class="column is-4">
         <div class="wizerd-items">
           <div class="single-wizard ml-30">
-            <h4>Recent Blog</h4>
+            <h4>Recent Blogs</h4>
             {{ range first 5 (where site.RegularPages.ByDate.Reverse "Type" "in" "posts" )}}
             <!-- recent-blog  -->
             <div class="single-recent-blog">
