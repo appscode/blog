@@ -1,5 +1,5 @@
 ---
-title: Monthly Review - June, 2022
+title: Monthly Review - July, 2022
 date: 2022-08-01
 weight: 14
 authors:
@@ -35,7 +35,7 @@ Add Hook ExecutionPolicy: We have added executionPolicy to our PostBackupHook an
 
 We have also made some improvements. Here are the notable changes, Ensured that the backupsession will be marked as completed after executing all the steps #176, Added RBAC permissions for finalizer #1458, Custom labels will be passed to Volume Snapshotter Job properly #1461.
 
- Link: https://blog.byte.builders/post/stash-v2022.07.09/
+Link: https://blog.byte.builders/post/stash-v2022.07.09/
 
 
 
@@ -63,7 +63,6 @@ AppsCode held a webinar on “JWT/OIDC Auth method & Automation with KubeVault C
 - Discussion on JWT/OIDC authentication method
 - Automation using KubeVault CLI
 
-
 Link: https://blog.byte.builders/post/kubevault-webinar-2022.07.20/
 
 #### Using EKS IRSA and Kube2iam with Stash
@@ -75,6 +74,8 @@ On July 6, 2022, Appscode held a webinar on Using EKS IRSA and Kube2iam with Sta
 - Setup Kub2iam
 - Backup and Restore a database using Kub2iam
 - Q&A Session
+
+Link: https://blog.byte.builders/post/stash-webinar-2022-07-06/
 
 
 
