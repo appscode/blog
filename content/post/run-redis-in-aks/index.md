@@ -1,6 +1,6 @@
 ---
 title: Run Redis in Azure Kubernetes Service (AKS) Using KubeDB
-date: 2022-07-25
+date: 2022-08-03
 weight: 14
 authors:
   - Dipta Roy
