@@ -42,12 +42,12 @@ On the live demo part, We created a replicaset database with StorageEngine inMem
 We created a `VerticalScaling` opsRequest to show how to scale the resources for each pod & to show how the election makes impact.
 We also applied an inMemory sharded cluster & a `HorizontalScaling` opsRequest to show how to scale up the db horizontally.
 
-Later in this webinar, We introduced our new VPA-integrated autoscaler-operator, & argued why one should use it. Then we have showed the autoscaler-operator in action by inserting a bunch of data using script.
+Later in this webinar, We introduced our new `VPA-integrated autoscaler-operator`, & argued why one should use it. Then we have showed the autoscaler-operator in action by inserting a bunch of data using script.
 
 
 Take a deep dive into the full webinar below:
 
-<iframe width="800" height="500" src="https://www.youtube.com/embed/XOqR5GJ2mM4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="800" height="500" src="https://www.youtube.com/embed/dwLZdDzZ8j4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## What Next?
 
