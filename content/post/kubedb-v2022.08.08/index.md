@@ -319,7 +319,7 @@ The re-constructed Elasticsearch health checker provides you with continuous rea
 
 **Declarative Configuration:** You can now set up the ProxySQL bootstrap configuration with declarative YAML. You can mention all the configurations regarding `mysql_users`, `mysql_query_rules`, `mysql_variables` and `admin_variables` through the YAML or config secret  and KubeDB ProxySQL will generate a configuration file based on these and bootstrap the server with that. With this feature ProxySQL admin does not need to set up anything from the command line.
 
-**User synchronization with backend:** `syncUser` field is newly introduced to KubeDB ProxySQL. When enabled it syncs all the necessary information of the user with the backend server. Any updates in the backend will automatically reflect in the ProxySQL server if needed. With this feature, ProxySQL admin does not need to enter users manually in the ProxySQL server or update any information like password, even in case of deletion no need to remove from ProxySQL.
+**User synchronization with backend:** `syncUser` field is newly introduced to KubeDB ProxySQL. When enabled it syncs all the necessary information of the user with the backend server. Any updates in the backend will automatically reflect in the ProxySQL server if needed. With this feature, ProxySQL admin does not need to enter users manually in the ProxySQL server or update any information like password. Even in the case when a user is deleted from the backend, the operator will auto remove it from ProxySQL server.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -360,6 +360,7 @@ spec:
         match_digest: "^SELECT"
         destination_hostgroup: 3
         apply: 1
+    terminationPolicy: WipeOut
 ```
 
 ## PostgreSQL
