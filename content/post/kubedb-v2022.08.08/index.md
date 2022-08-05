@@ -192,26 +192,26 @@ Now KubeDB operators use docker image with digest value (ie. `elasticsearch:7.12
 
 ### OpsRequest
 
-We have added `ApplyOption` field to MongoDBOpsRequest CRD to control the execution of the opsRequest depending on the Database state. Its supported values are `IfReady` & `Always`.
+We have added `apply` field to MongoDBOpsRequest CRD to control the execution of the opsRequest depending on the Database state. Its supported values are `IfReady` & `Always`.
 Use `IfReady` if you want to process the opsReq only when the database is Ready.  And use `Always` if you want to process the execution of opsReq irrespective of the Database state.
 
 We have also added opsRequest status named `Skipped`, & redesigned the execution order of MongoDBOpsRequest CROs. The idea behind skipping is something like this :
 
-1. If there are multiple opsReqs of the same `Type` (like 3 'VerticalScaling'the ) in the Pending state,
+1. If there are multiple opsReqs of the same ops-request type (like 3 'VerticalScaling' ) in the Pending state,
    We don't want to reconcile them one by one. Because only reconciling the last one is enough, & that is the user's desired spec.
    we are setting opsReq Phase `Skipped` in this situation, for all, except the last one.
 
-2. If there are multiple opsReqs of different `Type` (like 3 'VerticalScaling', 2 `Upgrade`, 2 `Reconfigure`) in the Pending state,
+2. If there are multiple opsReqs of different ops-request type (like 3 'VerticalScaling', 2 `Upgrade`, 2 `Reconfigure`) in the Pending state,
    After skipping the previous step, there will be exactly one opsReq of each type in Pending
    And now, as they are different types, We want to reconcile the oldest one first.
 
 ### AutoScaler
 
-To autoscale the InMemory databases, A field named `InMemoryStorage` has been added. There are two fields inside it: `UsageThresholdPercentage`, `ScalingFactorPercentage`.
+To autoscale the InMemory databases, A field named `inMemoryStorage` has been added. There are two fields inside it: `usageThresholdPercentage`, `scalingFactorPercentage`.
 
-We have also added a field named `OpsRequestOptions` on MongoDBAutoscaler. It has 3 fields inside. `ReadinessCriteria` to specify the `OplogMaxLagSeconds` which defines the maximum lagging time among the replicas, & `ObjectsCountDiffPercentage` which defines the maximum objectsCount difference among replicas.
+We have also added a field named `opsRequestOptions` on MongoDBAutoscaler. It has 3 fields inside. `readinessCriteria` to specify the `oplogMaxLagSeconds` which defines the maximum lagging time among the replicas, & `objectsCountDiffPercentage` which defines the maximum objectsCount difference among replicas.
 
-We have two more fields : `Timeout` & `Apply`. If any step in opsRequest execution doesn’t finish with a specified timeout, the corresponding opsRequest will result in `Failed`. The `Apply` field is the same as discussed in the above OpsRequest section.  A sample MongoDBAutoscaler YAML is given below :
+We have two more fields : `timeout` & `apply`. If any step in opsRequest execution doesn’t finish with a specified timeout, the corresponding opsRequest will result in `Failed`. The `apply` field is the same as discussed in the above OpsRequest section.  A sample MongoDBAutoscaler YAML is given below :
 
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
