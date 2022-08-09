@@ -316,7 +316,7 @@ spec:
 
 ## MySQL
 
-**OpsRequest:** All the MySQL ops request  is reworked . We have also added support for  for `InnoDBCluster` , `SemiSync` and `ReadReplica`. Now you can perform MySQLOpsRequest for all the available topologies.
+**OpsRequest:** All the MySQL ops requests have been reworked . We have also added support for  for `InnoDBCluster` , `SemiSync` and `ReadReplica`. Now you can perform MySQLOpsRequest for all the available topologies.
 
 **Custom Auth Secret:** The bug related to using user-provided custom auth secret is fixed. Validation of a custom auth secret is also added in this realease.
 
