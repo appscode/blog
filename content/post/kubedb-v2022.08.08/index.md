@@ -184,18 +184,16 @@ With this new release, users will be able to add additional volumes and volumeMo
          secretName: custom-config
 ```
 
-## Image Digest
+## OpsRequests
+There are two changes on all the kubeDB opsRequest Types.
 
-Now KubeDB operators use docker image with digest value (ie. `elasticsearch:7.12.0@sha256:383e9fb572f3ca2fdef5ba2edb0dae2c467736af96aba2c193722aa0c08ca7ec` ) while provisioning databases. For a given docker image, if there is any vulnerability-fix pushed in the docker registry with the same tag, the running pods will have no idea about the change. Adding the digest helps the KubeDB recommendation engine to verify whether the current docker images are up to date or not. If not, the engine will generate recommendations for Restart/Upgrade ops requests to update the database pods with the latest images.
-
-## MongoDB
-
-### OpsRequest
-
-We have added `apply` field to MongoDBOpsRequest CRD to control the execution of the opsRequest depending on the Database state. Its supported values are `IfReady` & `Always`.
+### Apply
+We have added the `apply` field to OpsRequest CRD to control the execution of the opsRequest depending on the Database state. Its supported values are `IfReady` & `Always`.
 Use `IfReady` if you want to process the opsReq only when the database is Ready.  And use `Always` if you want to process the execution of opsReq irrespective of the Database state.
 
-We have also added opsRequest status named `Skipped`, & redesigned the execution order of MongoDBOpsRequest CROs. The idea behind skipping is something like this :
+
+### Skip
+We have also added opsRequest status named `Skipped`, & redesigned the execution order of OpsRequest CROs. The idea behind skipping is something like this :
 
 1. If there are multiple opsReqs of the same ops-request type (like 3 'VerticalScaling' ) in the Pending state,
    We don't want to reconcile them one by one. Because only reconciling the last one is enough, & that is the user's desired spec.
@@ -204,6 +202,15 @@ We have also added opsRequest status named `Skipped`, & redesigned the execution
 2. If there are multiple opsReqs of different ops-request type (like 3 'VerticalScaling', 2 `Upgrade`, 2 `Reconfigure`) in the Pending state,
    After skipping the previous step, there will be exactly one opsReq of each type in Pending
    And now, as they are different types, We want to reconcile the oldest one first.
+
+
+## Image Digest
+
+Now KubeDB operators use docker image with digest value (ie. `elasticsearch:7.12.0@sha256:383e9fb572f3ca2fdef5ba2edb0dae2c467736af96aba2c193722aa0c08ca7ec` ) while provisioning databases. For a given docker image, if there is any vulnerability-fix pushed in the docker registry with the same tag, the running pods will have no idea about the change. Adding the digest helps the KubeDB recommendation engine to verify whether the current docker images are up to date or not. If not, the engine will generate recommendations for Restart/Upgrade ops requests to update the database pods with the latest images.
+
+
+
+## MongoDB
 
 ### AutoScaler
 
