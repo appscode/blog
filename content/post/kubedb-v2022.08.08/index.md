@@ -314,6 +314,12 @@ spec:
 
 **Custom Auth Secret:** The bug related to using user-provided custom auth secret is fixed. Validation of a custom auth secret is also added in this release.
 
+## MySQL
+
+**OpsRequest:** All the MySQL ops request  is reworked . We have also added support for  for `InnoDBCluster` , `SemiSync` and `ReadReplica`. Now you can perform MySQLOpsRequest for all the available topologies.
+
+**Custom Auth Secret:** The bug related to using user-provided custom auth secret is fixed. Validation of a custom auth secret is also added in this realease.
+
 ## Elasticsearch
 
 The re-constructed Elasticsearch health checker provides you with continuous read/write accessibility checking in the database. When the disk space reaches watermark limits, Elasticsearch has a protective function that locks the indices, stopping new data from being written to them. This is to stop Elasticsearch from using any further disk causing the disk to become exhausted. While the indices are locked, new data is not indexed and thus is not searchable. The read/write healthChecker makes sure that database accessibility is reflected in the `Elasticsearch` CRO status. The R/W accessibility checking can be halted by setting `.spec.healthCheck.disableWriteCheck` to `true`.
