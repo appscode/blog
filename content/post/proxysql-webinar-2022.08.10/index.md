@@ -1,6 +1,6 @@
 ---
-title: ProxySQL declarative provisioning, reconfiguration and horizontal scaling using KubeDB 
-date: 2022-08-10
+title: ProxySQL Declarative Provisioning, Reconfiguration and Horizontal Scaling using KubeDB 
+date: 2022-08-12
 weight: 20
 authors:
   - Tasdidur Rahman 
@@ -44,7 +44,7 @@ Take a deep dive into the full webinar below:
 Please try the latest release and give us your valuable feedback.
 
 * If you want to install **KubeDB**, please follow the installation instruction from [here](https://kubedb.com/docs/v2022.08.08/setup/).
-* Find the sample yamls from webinar [here](https://github.com/kubedb/project/tree/master/demo/proxysql/webinar-2022.08.08).
+* Find the sample yamls from webinar [here](https://github.com/kubedb/project/tree/master/demo/proxysql/webinar-2022.08.10).
 
 
 ## Support
