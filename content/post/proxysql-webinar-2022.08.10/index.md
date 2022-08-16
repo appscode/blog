@@ -39,6 +39,7 @@ At last, up-scaling and down-scaling with horizontal scaling feature was shown i
 Take a deep dive into the full webinar below:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/fT_cQDxfU9o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 ## What Next?
 
 Please try the latest release and give us your valuable feedback.
