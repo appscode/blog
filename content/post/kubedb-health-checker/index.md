@@ -60,10 +60,10 @@ The flowchart below shows how KubeDB calculates the database Phase.
 
 The flowchart shows that KubeDB checks the status conditions of the database objects.
 - First, it checks the `ReplicaReady` condition.
-- Then, it checks the `AcceptingConnections` condition.
+- Then, it checks the `AcceptingConnection` condition.
 - If both of the conditions are true, KubeDB sets the database phase as `Ready`.
-- If `ReplicaReady` is false, but `AcceptingConnections` is true, the database phase is set to `Critical`.
-- If `AcceptingConnections` is false, irrespective of the `ReplicaReady` conditions the database is set to `NotReady`.
+- If `ReplicaReady` is false, but `AcceptingConnection` is true, the database phase is set to `Critical`.
+- If `AcceptingConnection` is false, irrespective of the `ReplicaReady` conditions the database is set to `NotReady`.
 
 The below table shows the currently supported KubeDB phases and what each phase means:
 
@@ -91,12 +91,12 @@ We can see from the flowchart that, When a database StatefulSets have any change
 - If all the Pods are in Ready state, the `ReplicaReady` condition is set to True.
 - Otherwise, the `ReplicaReady` condition is set to False.
 
-### How AcceptingConnections condition is determined?
-The flowchart below shows how KubeDB determines the `AcceptingConnections` condition.
+### How AcceptingConnection condition is determined?
+The flowchart below shows how KubeDB determines the `AcceptingConnection` condition.
 
 <figure align="center">
- <img alt="kubedb determining acceptingConnections condition" src="kubedb-determining-accepting-connections-condition.png">
- <figcaption align="center">Fig: Flowchart of determining AcceptingConnections condition</figcaption>
+ <img alt="kubedb determining acceptingConnection condition" src="kubedb-determining-accepting-connections-condition.png">
+ <figcaption align="center">Fig: Flowchart of determining AcceptingConnection condition</figcaption>
 </figure>
 
 From the flowchart we can see that, on each health check, KubeDB performs the following checks:
@@ -105,9 +105,9 @@ From the flowchart we can see that, on each health check, KubeDB performs the fo
 - If `disableHealthCheck` is not true, Can the database be written?
 - If the database is in cluster mode with primary and secondary nodes, Is there only one Primary node?
 
-If all the answers are affirmative, KubeDB sets the `AcceptingConnections` condition as `True`.
+If all the answers are affirmative, KubeDB sets the `AcceptingConnection` condition as `True`.
 
-But, if any of the checks failed, KubeDB checks how many times that particular check failed before. If the number of failures crosses the `failureThreshold` provided by the user, KubeDB sets the `AcceptingConnections` condition as `False`.
+But, if any of the checks failed, KubeDB checks how many times that particular check failed before. If the number of failures crosses the `failureThreshold` provided by the user, KubeDB sets the `AcceptingConnection` condition as `False`.
 
 So, using the `AccptingConnection` and `ReplicaReady` conditions, KubeDB determines the database phase and the phase reflects the current health of the Database.
 
