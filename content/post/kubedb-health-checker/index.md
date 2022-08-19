@@ -41,6 +41,7 @@ spec:
 ```
 
 If you provide the above health checker configuration in your KubeDB database yaml, health check will be performed like the following:
+
 - A health check will be performed every `15 seconds` for your database.
 - If a health check takes more than `10 seconds`, that health check will be timed out and will be considered as failed.
 - If a particular health check, say creating a database client, fails for `3 times` only then the database will be considered as `NotReady`. But if the number of failures is less than 3 then the database won't be considered as `NotReady`.
@@ -51,6 +52,7 @@ If you provide the above health checker configuration in your KubeDB database ya
 Now, let's see how the KubeDB health check is performed by the operator. We can describe the health check in the following way. First, we can see how the phase is calculated using 2 status conditions of the database object. Then we can see how these conditions are calculated.
 
 ### How DB Phase is calculated?
+
 The flowchart below shows how KubeDB calculates the database Phase.
 
 <figure align="center">
@@ -59,6 +61,7 @@ The flowchart below shows how KubeDB calculates the database Phase.
 </figure>
 
 The flowchart shows that KubeDB checks the status conditions of the database objects.
+
 - First, it checks the `ReplicaReady` condition.
 - Then, it checks the `AcceptingConnection` condition.
 - If both of the conditions are true, KubeDB sets the database phase as `Ready`.
@@ -79,6 +82,7 @@ The below table shows the currently supported KubeDB phases and what each phase 
 
 
 ### How ReplicaReady condition is determined?
+
 The flowchart below shows how KubeDB determines the `ReplicaReady` condition.
 
 <figure align="center">
@@ -92,6 +96,7 @@ We can see from the flowchart that, When a database StatefulSets have any change
 - Otherwise, the `ReplicaReady` condition is set to False.
 
 ### How AcceptingConnection condition is determined?
+
 The flowchart below shows how KubeDB determines the `AcceptingConnection` condition.
 
 <figure align="center">
@@ -100,9 +105,10 @@ The flowchart below shows how KubeDB determines the `AcceptingConnection` condit
 </figure>
 
 From the flowchart we can see that, on each health check, KubeDB performs the following checks:
-- Can database client be created?
+
+- Can a database client be created?
 - Can the database servers be pinged using the created client?
-- If `disableHealthCheck` is not true, Can the database be written?
+- If `disableHealthCheck` is not true, can the database be written to?
 - If the database is in cluster mode with primary and secondary nodes, Is there only one Primary node?
 
 If all the answers are affirmative, KubeDB sets the `AcceptingConnection` condition as `True`.
