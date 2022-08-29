@@ -443,11 +443,11 @@ tasks.stash.appscode.com                  2022-08-26T07:07:50Z
 
 Stash supports various backends for storing data snapshots. It can be a cloud storage like GCS bucket, AWS S3, Azure Blob Storage etc. or a Kubernetes persistent volume like HostPath, PersistentVolumeClaim, NFS etc.
 
-For this tutorial we are going to use azure storage. You can find other setups [here](https://stash.run/docs/v2022.05.18/guides/backends/overview/).
+For this tutorial we are going to use Amazon S3 storage. You can find other setups [here](https://stash.run/docs/v2022.05.18/guides/backends/overview/).
 
  ![My Empty S3 Storage](AWSStorageEmpty.png)
 
-At first we need to create a secret so that we can access the Azure storage container. We can do that by the following code:
+At first we need to create a secret so that we can access the Amazon S3 bucket. We can do that by the following code:
 
 ```bash
 $ echo -n 'changeit' > RESTIC_PASSWORD
@@ -538,11 +538,11 @@ NAME      INTEGRITY   SIZE         SNAPSHOT-COUNT   LAST-SUCCESSFUL-BACKUP   AGE
 s3-repo   true        14.223 KiB   1                4m10s                    9m48s
 ```
 
-Now if we check our azure storage container, we can see that the backup has been successful.
+Now if we check our Amazon S3 bucket, we can see that the backup has been successful.
 
 ![AWSSuccess](AWSStorageSuccess.png)
 
-> **If you have reached here, CONGRATULATIONS!! :confetti_ball: :confetti_ball: :confetti_ball: You have successfully backed up MySQL Database using Stash.** If you had any problem during the backup process, you can reach out to us via [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20AWS).
+> **If you have reached here, CONGRATULATIONS!! :confetti_ball: :confetti_ball: :confetti_ball: You have successfully backed up Elasticsearch Database using Stash.** If you had any problem during the backup process, you can reach out to us via [EMAIL](mailto:support@appscode.com?subject=Stash%20Backup%20Failed%20in%20AWS).
 
 ## Recover Elasticsearch Database Using Stash
 
