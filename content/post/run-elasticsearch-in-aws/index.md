@@ -30,7 +30,7 @@ tags:
 
 ## Overview
 
-KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are Elasticsearch, MySQL, MongoDB, MariaDB, Redis, PostgreSQL, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/). Elasticsearch has many distributions like [ElasticStack](https://www.elastic.co/), [OpenSearch](https://opensearch.org/), [SearchGuard](https://search-guard.com/), [OpenDistro](https://opendistro.github.io/for-elasticsearch/) etc. **KubeDB provides all of these distribution's support under the Elasticsearch CR of KubeDB**.
+KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are Elasticsearch, MySQL, MongoDB, MariaDB, Redis, PostgreSQL, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/). KubeDB provides support not only for the official [Elasticsearch](https://www.elastic.co/) by Elastic, but also other open source distributions like, [OpenSearch](https://opensearch.org/), [SearchGuard](https://search-guard.com/) and [OpenDistro](https://opendistro.github.io/for-elasticsearch/). **KubeDB provides all of these distribution's support under the Elasticsearch CR of KubeDB**.
 In this tutorial we will deploy Elasticsearch database in Amazon Elastic Kubernetes Service (Amazon EKS). We will cover the following steps:
 
 1) Install KubeDB
@@ -274,7 +274,7 @@ es-topology-cluster   xpack-8.2.0   Ready    3m1s
 
 ### Insert Sample Data
 
-In this section, we are going to create few indexes in Elasticsearch. On the deployment of Elasticsearch yaml, the operator creates a governing service that is named after the Elasticsearch object name itself. We are going to use this object to port-forward and connect with the database from our local machine. Then, we are going to insert some data into the Elasticsearch.
+In this section, we are going to create few indexes in Elasticsearch. On the deployment of Elasticsearch yaml, the operator creates a governing service that is named after the Elasticsearch object name itself. We are going to use this service to port-forward and connect with the database from our local machine. Then, we are going to insert some data into the Elasticsearch.
 
 #### Port-forward the Service
 
