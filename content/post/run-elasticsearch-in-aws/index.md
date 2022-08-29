@@ -30,7 +30,7 @@ tags:
 
 ## Overview
 
-KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are Elasticsearch, MySQL, MongoDB, MariaDB, Redis, PostgreSQL, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/). Elasticsearch has many distributions like `ElasticStack`, `OpenSearch`, `SearchGuard`, `OpenDistro` etc. **KubeDB provides all of these distribution's support under the Elasticsearch CR of KubeDB**.
+KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are Elasticsearch, MySQL, MongoDB, MariaDB, Redis, PostgreSQL, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/). Elasticsearch has many distributions like [ElasticStack](https://www.elastic.co/), [OpenSearch](https://opensearch.org/), [SearchGuard](https://search-guard.com/), [OpenDistro](https://opendistro.github.io/for-elasticsearch/) etc. **KubeDB provides all of these distribution's support under the Elasticsearch CR of KubeDB**.
 In this tutorial we will deploy Elasticsearch database in Amazon Elastic Kubernetes Service (Amazon EKS). We will cover the following steps:
 
 1) Install KubeDB
@@ -46,7 +46,7 @@ We will follow the steps to install KubeDB.
 ### Get Cluster ID
 
 We need the cluster ID to get the KubeDB License.
-To get cluster ID we can run the following command:
+To get cluster ID, we can run the following command:
 
 ```bash
 $ kubectl get ns kube-system -o jsonpath='{.metadata.uid}'
@@ -103,7 +103,7 @@ $ helm install kubedb appscode/kubedb \
 Let's verify the installation:
 
 ```bash
-$ watch kubectl get pods --all-namespaces -l "app.kubernetes.io/instance=kubedb"
+$ kubectl get pods --all-namespaces -l "app.kubernetes.io/instance=kubedb"
 NAMESPACE   NAME                                           READY   STATUS    RESTARTS   AGE
 kubedb      kubedb-kubedb-autoscaler-67dbb56797-dtmm5      1/1     Running   0          2m19s
 kubedb      kubedb-kubedb-dashboard-5dbddbfbc9-h9c4x       1/1     Running   0          2m19s
@@ -161,8 +161,7 @@ redisversions.catalog.kubedb.com                  2022-08-26T05:53:44Z
 
 ## Deploy Elasticsearch Topology Cluster
 
-Now, we are going to Deploy Elasticsearch with the help of KubeDB.
-At first, let's create a Namespace in which we will deploy the database.
+Now, We are going to use the KubeDB-provided Custom Resource object `Elasticsearch` for deployment. The object will be deployed in demo namespace. So, let's create the namespace first.
 
 ```bash
 $ kubectl create ns demo
@@ -219,7 +218,7 @@ $ kubectl create -f es-topology-cluster.yaml
 elasticsearch.kubedb.com/es-topology-cluster created
 ```
 
-* In this yaml we can see in the `spec.version` field specifies the version of Elasticsearch. Here, we are using Elasticsearch version `xpack-8.2.0` of ElasticStack distribution.. You can list the KubeDB supported versions of Elasticsearch CR by running `kubectl get elasticsearchversions` command.
+* In this yaml we can see in the `spec.version` field specifies the version of Elasticsearch. Here, we are using Elasticsearch version `xpack-8.2.0` which is used to provision `Elasticsearch-8.2.0` with xpack auth plugin. You can list the KubeDB supported versions of Elasticsearch CR by running `kubectl get elasticsearchversions` command.
 * `spec.storage` specifies PVC spec that will be dynamically allocated to store data for this database. This storage spec will be passed to the StatefulSet created by KubeDB operator to run database pods. You can specify any StorageClass available in your cluster with appropriate resource requests.
 * `spec.enableSSL` - specifies whether the HTTP layer is secured with certificates or not.
 * `spec.storageType` - specifies the type of storage that will be used for Elasticsearch database. It can be `Durable` or `Ephemeral`. The default value of this field is `Durable`. If `Ephemeral` is used then KubeDB will create the Elasticsearch database using `EmptyDir` volume. In this case, you don't have to specify `spec.storage` field. This is useful for testing purposes.
@@ -234,7 +233,9 @@ elasticsearch.kubedb.com/es-topology-cluster created
     - `ingest.replicas` - specifies the number of ingest nodes.
     - `ingest.storage` - specifies the ingest node storage information that passed to the StatefulSet.
 
-Once these are handled correctly and the Elasticsearch object is deployed, you will see that the following objects are created:
+However, KubeDB also provides dedicated node support for other node roles like `data_hot`, `data_warm`, `data_cold`, `data_frozen`, `transform`, `coordinating`, `data_content` and `ml` for Topology clustering.
+
+Once these are handled correctly and the Elasticsearch object is deployed, you will see that the following resources are created:
 
 ```bash
 $ kubectl get all -n demo
@@ -273,7 +274,7 @@ es-topology-cluster   xpack-8.2.0   Ready    3m1s
 
 ### Insert Sample Data
 
-In this section, we are going to create few indexes in Elasticsearch. At first, we are going to port-forward the respective Service so that we can connect with the database from our local machine. Then, we are going to insert some data into the Elasticsearch.
+In this section, we are going to create few indexes in Elasticsearch. On the deployment of Elasticsearch yaml, the operator creates a governing service that is named after the Elasticsearch object name itself. We are going to use this object to port-forward and connect with the database from our local machine. Then, we are going to insert some data into the Elasticsearch.
 
 #### Port-forward the Service
 
@@ -353,7 +354,7 @@ $ curl -XPOST -k --user 'elastic:Gdrowr9je1g9ZvhF' "https://localhost:9200/music
 
 ```
 
-Now, let’s verify that the index have been created successfully.
+Now, let’s verify that the index has been created successfully.
 
 ```bash
 $ curl -XGET -k --user 'elastic:Gdrowr9je1g9ZvhF' "https://localhost:9200/_cat/indices?v&s=index&pretty"
@@ -673,7 +674,7 @@ $ curl -XGET -k --user 'elastic:Gdrowr9je1g9ZvhF' "https://localhost:9200/music/
 
 > You can see the database has been restored. The recovery of Elasticsearch has been successful. If you faced any difficulties in the recovery process, you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20AWS).
 
-We have made an in depth video on Elasticsearch Hot-Warm-Cold Architecture Management with Kibana in Kubernetes Using KubeDB. You can have a look into the video below:
+We have made an in depth tutorial on Elasticsearch Hot-Warm-Cold Architecture Management with Kibana in Kubernetes Using KubeDB. You can have a look into the video below:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/R-eYc2cUXQY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
