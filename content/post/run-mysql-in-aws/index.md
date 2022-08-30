@@ -454,7 +454,7 @@ NAME      INTEGRITY   SIZE        SNAPSHOT-COUNT   LAST-SUCCESSFUL-BACKUP   AGE
 s3-repo   true        3.681 MiB   1                59s                      7m7s
 ```
 
-Now if we check our azure storage container, we can see that the backup has been successful.
+Now if we check our Amazon S3 bucket, we can see that the backup has been successful.
 
 ![AWSSuccess](AWSStorageSuccess.png)
 
