@@ -57,7 +57,12 @@ spec:
 
 ## KubeVault Recommendation Engine
 
-In this release, we have introduced a recommendation engine to generate recommendations for vault resources.
+Recommendation Engine generates recommendation to automate the day-2 life cycle of Kubernetes objects. 
+KubeVault Recommendation Engine is a part of KubeVault operator which will run inside the KubeVault operator pod. 
+It watches the Vault Server custom resources and generates recommendation based on the Vault Server state. 
+Currently, Recommendation engine generates Rotate TLS recommendation for TLS secured Vault Server.
+
+In this release, we have introduced the KubeVault Recommendation Engine to generate recommendations for vault resources.
 Currently, it will generate **Rotate TLS** ops-request recommendations depending on the TLS certificate expiry date. We have already introduced Supervisor to execute the recommendation in a user-defined maintenance window. To install the Supervisor helm chart, please visit [here](https://github.com/kubeops/installer/tree/master/charts/supervisor).
 
 To see the generated recommendations:
