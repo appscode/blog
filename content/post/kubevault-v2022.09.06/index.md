@@ -1,6 +1,6 @@
 ---
-title: Introducing KubeVault v2022.09.06
-date: 2022-09-06
+title: Introducing KubeVault v2022.09.09
+date: 2022-09-09
 weight: 25
 authors:
   - Sakib Alamin
@@ -19,15 +19,15 @@ tags:
   - community
 ---
 
-We are very excited to announce the release of KubeVault v2022.09.06 Edition. 
-The KubeVault `v2022.09.06` contains numerous improvements from `KubeVault Operator` & `CLI` end. 
+We are very excited to announce the release of KubeVault v2022.09.09 Edition. 
+The KubeVault `v2022.09.09` contains numerous improvements from `KubeVault Operator` & `CLI` end. 
 It includes features for managing Day-2 lifecycle of Vault including Vault `Ops-request`, `Recommendation` generation for managing Vault TLS, updated `Health Checker`, `KubeVault CLI`, support for `Pod Disruption Budget`, etc. for Vault Cluster. 
 
-- [Install KubeVault](https://kubevault.com/docs/v2022.09.06/setup/)
+- [Install KubeVault](https://kubevault.com/docs/v2022.09.09/setup/)
 
 [KubeVault](https://kubevault.com) is a Kubernetes operator for [HashiCorp Vault](https://www.vaultproject.io/). The Vault is a tool for secrets management, encryption as a service, and privileged access management. The KubeVault operator makes it easy to deploy, maintain and manage Vault servers in Kubernetes. It also supports various secret engines management, policy management in the Kubernetes native way.
 
-In this post, we are going to highlight the major changes. You can find the complete commit by commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2022.09.06/README.md).
+In this post, we are going to highlight the major changes. You can find the complete commit by commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2022.09.09/README.md).
 
 ## Vault Ops-requests
 
@@ -110,7 +110,7 @@ spec:
 
 ```bash
 $ helm install kubevault appscode/kubevault \
-    --version v2022.09.06 \
+    --version v2022.09.09 \
     --namespace kubevault --create-namespace \
     --set kubevault-ops-manager.recommendationEngine.genRotateTLSRecommendationBeforeExpiryMonth=2 \
     --set-file global.license=/path/to/the/license.txt
@@ -177,7 +177,7 @@ root-token rotation successful
 
 Please try the latest release and give us your valuable feedback.
 
-- If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2022.09.06/setup).
+- If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2022.09.09/setup).
 
 ## Support
 
