@@ -33,7 +33,7 @@ After that we created another postgres server `restore-pg` in the demo namespace
 
 Take a deep dive into the full webinar below:
 
-<iframe width="560" height="315" src="https://www.youtube.com/watch?v=gR5UdN6Y99c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/gR5UdN6Y99c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 You can find the yamls used in the webinar [here](https://github.com/kubedb/project/tree/master/demo/postgresql/webinar-2022.09.07)
