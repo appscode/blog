@@ -19,7 +19,7 @@ You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/
 
 Here, are the major features that have been added in this release.
 
-##### Support Retry for Failed Backup
+#### Support Retry for Failed Backup
 
 In this release, we have added retry support for failed backup.You can now add a `retryConfig` field in your `BackupConfiguration`, `BackupBatch`, and `BackupBlueprint` spec.
 
@@ -38,7 +38,7 @@ Here,
 
 For more details, please check [here](https://stash.run/docs/latest/concepts/crds/backupconfiguration/#specretryconfig).
 
-##### Multiple BackupBlueprint support in auto-backup
+#### Multiple BackupBlueprint support in auto-backup
 
 You can now provide multiple BackupBlueprint names separated by a comma (`,`) in the Stash auto-backup annotation. Stash will create the respective BackupConfiguration and Repository for each BackupBlueprint. This will be particularly helpful when you want to keep backed-up data of different schedules into different backends.
 
@@ -48,23 +48,23 @@ Here, is a sample auto-backup annotation that shows passing multiple BackupBluep
 stash.appscode.com/backup-blueprint: daily-gcs-backup,weekly-s3-backup
 ```
 
-##### Support Kubernetes 1.25.x
+#### Support Kubernetes 1.25.x
 
 We have upgraded underlying Kubernetes libraries to v1.25.1. Stash should now work flawlessly in Kubernetes 1.25.x clusters.
 
-##### Upgrade CronJob APIs to v1
+#### Upgrade CronJob APIs to v1
 
 We have upgraded CronJob APIs from `batch/v1beta1` to `batch/v1`. For older clusters where `batch/v1` CronJob is not available, Stash automatically uses `batch/v1beta1` CronJob.
 
-##### Upgrade VolumeSnapshot APIs to v1
+#### Upgrade VolumeSnapshot APIs to v1
 
 We have also upgraded VolumeSnapshot APIs to `v1` version. The VolumeSnapshot features should now work in the newer clusters without any issues.
 
-##### Support acquiring license from license-proxyserver
+#### Support acquiring license from license-proxyserver
 
 We have added logic to acquire the license from a proxy license server running inside the cluster. This will let us introduce automatic license renewal in the future.
 
-##### Add Redis 7.0.5 addon
+#### Add Redis 7.0.5 addon
 
 We have added an addon for Redis 7.0.5. Now, you should be able to back up your Redis 7.x.x server using this addon.
 
@@ -80,7 +80,7 @@ We have added an addon for Redis 7.0.5. Now, you should be able to back up your 
 
 We have also made some major quality-of-life improvements to the product. Here are the notable changes.
 
-##### Refactored Codebase
+#### Refactored Codebase
 
 We have refactored the entire codebase. This refactoring has uncovered some hidden bugs. The codebase is now organized, modular, flexible, and easy to understand. This will help us to add new features or fix bugs rapidly.
 
@@ -92,7 +92,7 @@ We have now used structural logging throughout the codebase. Now, every log line
 
 We have removed the following feature in this release.
 
-##### Remove support for `ReplicaSet` and `ReplicationController`
+#### Remove support for `ReplicaSet` and `ReplicationController`
 
 Since the `ReplicaSet` and `ReplicationController` are no longer used independently to deploy an application, we have removed their backup support. You can backup their data using their parent Deployment.
 
