@@ -1,6 +1,6 @@
 ---
-title: KubeVault v1alpha1 to v1alpha2 Migration Procedure
-date: 2022-09-30
+title: KubeVault v1alpha1 to v1alpha2 Migration
+date: 2022-10-07
 weight: 20
 authors:
   - Sakib Alamin
@@ -9,6 +9,8 @@ tags:
   - ops-request
   - v1alpha1
   - v1alpha2
+  - migration
+  - operator
   - TLS
   - cert-manager
   - CLI
@@ -22,135 +24,201 @@ tags:
   - community
 ---
 
-# KubeVault Operator upgrade procedure for Officebrands
+[KubeVault](https://kubevault.com) is a Git-Ops ready, production-grade solution for deploying and configuring [HashiCorp Vault](https://www.vaultproject.io/) on Kubernetes.
 
-# Current setup of officebrands
+# Background
+
+This blog is based on our experience upgrading one of our `KubeVault Enterprise` users from KubeVault `v1alpha1` to KubeVault `v1alpha2`.
+The same steps can be followed carefully to get your KubeVault deployment upgraded to the latest version.
+I'm going to describe the procedure that we followed in detail.
+
+## Why the Upgrade?
+
+We wanted to ship all the new features & fixes to our client that were added in KubeVault `Operator`, v1alpha2 `APIs` & KubeVault `CLI`.
+Also, the `TLS` certificates that were issued were about to expire after a year. So, in order to upgrade the `Operator`, `CLI` & `TLS` certificates, the upgrade was a necessity.
+
+Some KubeVault Operator v1alpha2 features are `Vault Ops-request`, `Cert-manager` support, `Recommendation` generation for managing Vault `TLS`, updated `Health Checker`, support for `Pod Disruption Budget`, updated root-token & unseal-keys naming convention for `multi-cluster` usage, etc.
+And, from KubeVault `CLI` end you can now `get`, `set`, `delete`, `list`, and `sync` vault `unseal-keys` and `root-token` stored in various KMS stores.
+
+If you want to know more about KubeVault features, please check [this](https://kubevault.com) out.
+
+# Upgrade Procedure
+
+Prior to the upgrade, the KubeVault CLI that was in use was in version `v0.6.0-alpha.0` & the Operator version was `v2021.10.11`.
+
+Here's the commands for installing the respective versions:
 
 ```bash
-# CLI version they're using
+# to install KubeVault CLI v0.6.0-alpha.0
+
 $ curl -o kubectl-vault.tar.gz -fsSL https://github.com/kubevault/cli/releases/download/v0.6.0-alpha.0/kubectl-vault-linux-amd64.tar.gz \
   && tar zxvf kubectl-vault.tar.gz \
   && chmod +x kubectl-vault-linux-amd64 \
   && sudo mv kubectl-vault-linux-amd64 /usr/local/bin/kubectl-vault \
   && rm kubectl-vault.tar.gz LICENSE.md
 
+# to install KubeVault Operator v2021.10.11
 
-# The operator version they're using: v2021.10.11
-# validating webhook is false as they're using 1 unseal key
-# We've updated the validating webhook, so now unseal key can be set to 1 (prev. min value was 2)
 $ helm install kubevault appscode/kubevault \
     --version v2021.10.11 \
     --namespace kubevault --create-namespace \
     --set kubevault-operator.apiserver.enableValidatingWebhook=false \
-    --set-file global.license=/home/sakib/Documents/webinar/deploy/officebrands-upgrade/vault-license.txt
-
-# Current root-token & unseal-keys naming convention
-vault-root-token: M01HVTkyMFFWVW4weFE5WUNMZ3drYjh3
-vault-unseal-key-0: OTY5YmU2ZmQyMWVkYTg2NDI5MTk5ZWUyZjM3NTZlMzJlZTRlZmMzNjViN2RhOThhYmIxYjY4NWRmY2UxMDYyNw==
-
-# Get the root-token using the old CLI (no command for unseal-key)
-$ kubectl vault get-root-token vaultserver vault
-
+    --set-file global.license=/path/to/vault/license.txt
 ```
 
-# Check their KV values before doing anything (we must ensure those remain intact)
+The `Unsealer` mode used by them was `AWS KMS` & `Storage` used as `AWS S3`. The `VaultServer` configuration used is similar to the one given below.
+
+```yaml
+apiVersion: kubevault.com/v1alpha1
+kind: VaultServer
+metadata:
+  name: vault
+  namespace: default
+spec:
+  replicas: 1
+  tls:
+    certificates:
+    - alias: ca
+    - alias: server
+  monitor:
+    agent: prometheus.io
+  authMethods:
+  - path: kubernetes
+    type: kubernetes
+  backend:
+    s3:
+      bucket: <bucket-name>
+      region: <bucket-region>
+  unsealer:
+    mode:
+      awsKmsSsm:
+        kmsKeyID: <kms-key-id>
+        region: <kms-region>
+    secretShares: 1
+    secretThreshold: 1
+  version: 0.11.5
+```
+
+Using the KubeVault `CLI`, we got the decrypted `root-token` from `AWS KMS`, exported it in the environment variable & checked out the secrets stored in `KV` Secret Engine.
 
 ```bash
-$ kubectl exec -it -n demo vault-0 vault -- /bin/sh
+# previous root-token & unseal-keys naming convention
+
+vault-root-token: <root-token>
+vault-unseal-key-0: <unseal-key-0>
+
+# get the root-token using KubeVault CLI
+
+$ kubectl vault get-root-token vaultserver vault
+
+# Commands to interact with Vault
+
+$ kubectl exec -it vault-0 vault -- /bin/sh
 $ export VAULT_TOKEN=<token>
 $ export VAULT_ADDR='https://127.0.0.1:8200'
 $ export VAULT_SKIP_VERIFY=true
 
-# lists all the secret engines
-$ vault secrets list
+# Check out the secrets to ensure that they remain intact after the upgrade procedure
 
-$ vault kv get <path>
+$ vault secrets list
+$ vault kv get <secret-path>
+
 ```
 
-# Uninstall the older version & Install the latest Operator & CLI
+## Uninstall the Older Operator
 
 ```bash
-# uninstall kubevault (is any cleanup issue, delete them manually using above commands)
+# uninstall kubevault older operator
+
 $ helm uninstall kubevault --namespace kubevault
 
-# for older operator use kubectl delete <resource> -l app.kubernetes.io/name=kubevault-operator
+# in case any of these resources remain after helm uninstall, use kubectl delete <resource> -l app.kubernetes.io/name=kubevault-operator
+
 $ kubectl delete mutatingwebhookconfiguration -l app.kubernetes.io/name=kubevault-operator
 $ kubectl delete validatingwebhookconfiguration -l app.kubernetes.io/name=kubevault-operator
 $ kubectl delete apiservices -l app.kubernetes.io/name=kubevault-operator
 
-# for latest operator use kubectl delete <resource> -l app.kubernetes.io/name=kubevault-webhook-server
-$ kubectl delete mutatingwebhookconfiguration -l app.kubernetes.io/name=kubevault-webhook-server
-$ kubectl delete validatingwebhookconfiguration -l app.kubernetes.io/name=kubevault-webhook-server
-$ kubectl delete apiservices -l app.kubernetes.io/name=kubevault-webhook-server
+```
 
-# Latest KubeVault CLI install
+## Install the Latest Operator & CLI
+
+```bash
+# Install KubeVault CLI version v0.10.0
+
 $ curl -o kubectl-vault.tar.gz -fsSL https://github.com/kubevault/cli/releases/download/v0.10.0/kubectl-vault-linux-amd64.tar.gz \
   && tar zxvf kubectl-vault.tar.gz \
   && chmod +x kubectl-vault-linux-amd64 \
   && sudo mv kubectl-vault-linux-amd64 /usr/local/bin/kubectl-vault \
   && rm kubectl-vault.tar.gz LICENSE.md
 
-# Install the latest Vault Operator(no problem with the ValidatingWebhook)
+# Install the KubeVault Operator version v2022.09.22 
+
 $ helm install kubevault appscode/kubevault \
     --version v2022.09.22 \
     --namespace kubevault --create-namespace \
-    --set-file global.license=/home/sakib/Documents/webinar/deploy/officebrands-upgrade/vault-license.txt
+    --set-file global.license=/path/to/vault/license.txt
+```
 
+Now, if the Vault `Pod` is restarted, it'd expect the `root-token` & `unseal-keys` in the new naming convention which is: `k8s.<kubevault.com or cluster uid>.namespace.name`.
+So, before doing that we must update the root token & unseal keys in the new naming convention. We used the KubeVault CLI sync command to do that.
 
-# Sync the root-token & unseal-keys (note that: ignore namespace for officebrands or use default)
-# check the kms & ensure that root-token & unseal-keys are updated according to new nameing convention
+```bash
+# Sync the root-token & unseal-keys 
+# check the kms & ensure that root-token & unseal-keys are updated according to new naming convention
 # old root-token & unseal-keys are also there for safety purpose
-$ kubectl vault root-token sync vaultserver -n demo vault
-$ kubectl vault unseal-key sync vaultserver -n demo vault
 
-# **Now we update the certs & restarts the VaultServer** 
+$ kubectl vault root-token sync vaultserver vault
+$ kubectl vault unseal-key sync vaultserver vault
+```
 
-# Check out the unsealer log to ensure that correct root-token & unseal-keys naming convention is being used
-$ kubectl logs -f -n demo demo vault-0 vault-unsealer
+## Update the TLS Certificates
 
-# Once confirmed that the new naming convention is used, we can safely delete the old root-token & unseal-keys
+We decided to go with `Cert-manager` managed certificates this time. So, we first installed Cert-manager in our client cluster.
+Using the existing `CA` certs we created an `Issuer` & updated the `VaultServer` spec along with proper duration. To install Cert-manager visit [here](https://cert-manager.io/docs/installation/helm/).
+
+```yaml
+# Vault Issuer created using the existing vault-ca-certs
+
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+ name: vault-issuer
+ namespace: default
+spec:
+ ca:
+   secretName: vault-ca-certs
 
 ```
 
-## Useful commands
+```yaml
+# VaultServer spec with Issuer Ref & updated certificates duration
 
-```bash
-# Get the cluster UID
-$ kubectl get ns kube-system -o=jsonpath='{.metadata.uid}'
-
-# delete all the crds (note that: this is valid for old operator) & we don't need this!
-$ kubectl delete crds -l app.kubernetes.io/name=kubevault
+tls:
+    issuerRef:
+      apiGroup: "cert-manager.io"
+      kind: Issuer
+      name: vault-issuer
+    certificates:
+    - alias: ca
+      secretName: vault-ca-certs
+    - alias: server
+      duration: "9144h"
+      secretName: vault-server-certs
+    - alias: client
+      duration: "9144h"
+      secretName: vault-client-certs
 
 ```
 
-# Install Cert-manager
-
-```bash
-$ helm repo add jetstack https://charts.jetstack.io
-
-$ helm repo update
-
-$ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.9.1/cert-manager.crds.yaml
-
-$ helm install \
-  cert-manager jetstack/cert-manager \
-  --namespace cert-manager \
-  --create-namespace \
-  --version v1.9.1
-
-$ kubectl get pods --n cert-manager
-```
-
-# Yaml files
-
-## rotate tls yaml
+Now, all that was required was to run a Vault `Ops-request` to `rotate` the VaultServer `TLS`. Once, the `Ops-request` was successful
+Vault Pod came up with updated TLS certificates. Rotate TLS `Ops-request` looks similar to the one given below:
 
 ```yaml
 apiVersion: ops.kubevault.com/v1alpha1
 kind: VaultOpsRequest
 metadata:
-  name: rotate-tls
-  namespace: demo
+  name: renew-tls-2022
+  namespace: default
 spec:
   type: ReconfigureTLS
   vaultRef:
@@ -159,28 +227,16 @@ spec:
     issuerRef:
       apiGroup: "cert-manager.io"
       kind: Issuer
-      name: new-vault-issuer
+      name: vault-issuer
     rotateCertificates: true
+
 ```
 
-## Issuer yaml
-
-```yaml
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
- name: new-vault-issuer
- namespace: demo
-spec:
- ca:
-   secretName: vault-ca-certs
-```
+Once the upgrade was done, we went through the similar approach described above to verify the secrets in SecretEngine.
 
 ## What Next?
 
-Please try the latest release and give us your valuable feedback.
-
-* If you want to install **KubeVault**, please follow the installation instruction from [here](https://kubevault.com/docs/v2022.06.16/setup/).
+Please try the latest release and give us your valuable feedback. If you want to install **KubeVault**, please follow the installation instruction from [here](https://kubevault.com/docs/v2022.06.16/setup/).
 
 
 ## Support
