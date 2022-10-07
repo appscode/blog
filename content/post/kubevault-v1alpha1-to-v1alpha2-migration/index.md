@@ -30,17 +30,16 @@ tags:
 
 This blog is based on our experience upgrading one of our `KubeVault Enterprise` users from KubeVault `v1alpha1` to KubeVault `v1alpha2`.
 The same steps can be followed carefully to get your KubeVault deployment upgraded to the latest version.
-I'm going to describe the procedure that we followed in detail.
 
 ## Why the Upgrade?
 
 We wanted to ship all the new features & fixes to our client that were added in KubeVault `Operator`, v1alpha2 `APIs` & KubeVault `CLI`.
-Also, the `TLS` certificates that were issued were about to expire after a year. So, in order to upgrade the `Operator`, `CLI` & `TLS` certificates, the upgrade was a necessity.
+Also, the `TLS` certificates that were issued were about to expire after a year. So, in order to upgrade the `Operator`, `CLI` & `TLS` certificates, the upgrade was necessary.
 
 Some KubeVault Operator v1alpha2 features are `Vault Ops-request`, `Cert-manager` support, `Recommendation` generation for managing Vault `TLS`, updated `Health Checker`, support for `Pod Disruption Budget`, updated root-token & unseal-keys naming convention for `multi-cluster` usage, etc.
 And, from KubeVault `CLI` end you can now `get`, `set`, `delete`, `list`, and `sync` vault `unseal-keys` and `root-token` stored in various KMS stores.
 
-If you want to know more about KubeVault features, please check [this](https://kubevault.com) out.
+If you want to learn more about KubeVault features, please check [this](https://kubevault.com) out.
 
 # Upgrade Procedure
 
@@ -173,7 +172,7 @@ $ kubectl vault unseal-key sync vaultserver vault
 
 ## Update the TLS Certificates
 
-We decided to go with `Cert-manager` managed certificates this time. So, we first installed Cert-manager in our client cluster.
+We decided to go with `cert-manager` managed certificates this time. So, we first installed Cert-manager in our client cluster.
 Using the existing `CA` certs we created an `Issuer` & updated the `VaultServer` spec along with proper duration. To install Cert-manager visit [here](https://cert-manager.io/docs/installation/helm/).
 
 ```yaml
@@ -202,10 +201,10 @@ tls:
     - alias: ca
       secretName: vault-ca-certs
     - alias: server
-      duration: "9144h"
+      duration: "8952h"
       secretName: vault-server-certs
     - alias: client
-      duration: "9144h"
+      duration: "8952h"
       secretName: vault-client-certs
 
 ```
