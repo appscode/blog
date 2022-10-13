@@ -6,10 +6,10 @@ authors:
   - Sakib Alamin
 tags:
   - kubevault
-  - Ops-requests
-  - Recommendation
-  - CLI
-  - kubevault CLI
+  - ops-requests
+  - recommendation
+  - cli
+  - kubevault cli
   - kubernetes
   - secret-management
   - security

@@ -10,7 +10,7 @@ tags:
   - stash
   - backup
   - restore
-  - GKE
+  - gke
   - workload-identity
 ---
 

@@ -5,26 +5,26 @@ weight: 14
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes
-  - Database
-  - Kubernetes MariaDB
-  - Run Production-Grade Database
-  - Run & Manage MariaDB in EKS
-  - Run & Manage MariaDB in Amazon Elastic Kubernetes Service
-  - Manage MariaDB in Amazon EKS
-  - Run MariaDB in Amazon
-  - MariaDB
-  - KubeDB
-  - Amazon
-  - EKS
-  - Amazon EKS
-  - Amazon S3
-  - S3 Bucket
-  - AWS
-  - AWS S3
-  - Amazon Storage
-  - Backup & Restore MariaDB in Amazon S3
+  - cloud-native platform
+  - kubernetes
+  - database
+  - kubernetes mariadb
+  - run production-grade database
+  - run & manage mariadb in eks
+  - run & manage mariadb in amazon elastic kubernetes service
+  - manage mariadb in amazon eks
+  - run mariadb in amazon
+  - mariadb
+  - kubedb
+  - amazon
+  - eks
+  - amazon eks
+  - amazon s3
+  - s3 bucket
+  - aws
+  - aws s3
+  - amazon storage
+  - backup & restore mariadb in amazon s3
 ---
 
 ## Overview

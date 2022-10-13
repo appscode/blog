@@ -6,15 +6,15 @@ authors:
   - Mehedi Hasan
   - Tasdidur Rahman
 tags:
-  - kubeDB
-  - MySQL
-  - Read Replica
-  - Re-configure TLS
-  - Multi tanancy
-  - Schema Manager
+  - kubedb
+  - mysql
+  - read replica
+  - re-configure tls
+  - multi tanancy
+  - schema manager
   - kubevault
   - cert-manager
-  - Stash
+  - stash
   - kubernetes
   - secret-management
   - security

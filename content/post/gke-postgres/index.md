@@ -16,7 +16,7 @@ tags:
   - postgresql
   - redis
   - kubedb
-  - gke 
+  - gke
 ---
 
 ## Overview

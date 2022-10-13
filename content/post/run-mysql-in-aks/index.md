@@ -5,23 +5,23 @@ weight: 14
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes
-  - Database
-  - Kubernetes MySQL
-  - Run Production-Grade Database
-  - Run & Manage MySQL in AKS
-  - Run & Manage MySQL in Azure Kubernetes Service
-  - Manage MySQL in Microsoft AKS
-  - Run MySQL in Azure
-  - MySQL
-  - KubeDB
-  - Azure
-  - AKS
-  - Microsoft Azure
-  - Azure Storage Container
-  - Microsoft Azure Storage
-  - Azure Storage Blob
+  - cloud-native platform
+  - kubernetes
+  - database
+  - kubernetes mysql
+  - run production-grade database
+  - run & manage mysql in aks
+  - run & manage mysql in azure kubernetes service
+  - manage mysql in microsoft aks
+  - run mysql in azure
+  - mysql
+  - kubedb
+  - azure
+  - aks
+  - microsoft azure
+  - azure storage container
+  - microsoft azure storage
+  - azure storage blob
 ---
 
 ## Overview

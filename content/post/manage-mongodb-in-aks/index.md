@@ -5,21 +5,21 @@ weight: 14
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes
-  - Database
-  - Kubernetes MongoDB
-  - Run Production-Grade Database
-  - Run & Manage MongoDB in AKS
-  - Run & Manage MongoDB in Azure Kubernetes Service
-  - Manage MongoDB in Microsoft AKS
-  - Run MongoDB in Azure
-  - MongoDB
-  - KubeDB
-  - Microsoft Azure
-  - Azure Storage Container
-  - Microsoft Azure Storage
-  - Azure Storage Blob
+  - cloud-native platform
+  - kubernetes
+  - database
+  - kubernetes mongodb
+  - run production-grade database
+  - run & manage mongodb in aks
+  - run & manage mongodb in azure kubernetes service
+  - manage mongodb in microsoft aks
+  - run mongodb in azure
+  - mongodb
+  - kubedb
+  - microsoft azure
+  - azure storage container
+  - microsoft azure storage
+  - azure storage blob
 ---
 
 ## Overview

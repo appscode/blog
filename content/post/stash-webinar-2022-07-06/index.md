@@ -10,9 +10,9 @@ tags:
   - stash
   - backup
   - restore
-  - EKS
-  - IRSA
-  - Kube2iam
+  - eks
+  - irsa
+  - kube2iam
 ---
 
 ## Summary

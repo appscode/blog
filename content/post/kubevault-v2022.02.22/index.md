@@ -6,8 +6,8 @@ authors:
   - Sakib Alamin
 tags:
   - kubevault
-  - CLI
-  - kubevault CLI
+  - cli
+  - kubevault cli
   - kubernetes
   - secret-management
   - security

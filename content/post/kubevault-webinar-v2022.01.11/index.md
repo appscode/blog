@@ -7,8 +7,8 @@ authors:
 tags:
   - kubevault
   - cert-manager
-  - CLI
-  - kubevault CLI
+  - cli
+  - kubevault cli
   - kubernetes
   - secret-management
   - security

@@ -3,21 +3,21 @@ title: Deploy, Manage & Autoscaler inMemory MongoDB on Kubernetes using KubeDB
 date: 2022-08-05
 weight: 20
 authors:
-- Arnob kumar saha
+  - Arnob kumar saha
 tags:
-- kubedb
-- MongoDB
-- inmemory
-- kubernetes
-- replicaset
-- shard
-- cert-manager
-- availability
-- opsRequest
-- verticalScaling
-- horizontalScaling
-- vpa
-- autoscaling
+  - kubedb
+  - mongodb
+  - inmemory
+  - kubernetes
+  - replicaset
+  - shard
+  - cert-manager
+  - availability
+  - opsrequest
+  - verticalscaling
+  - horizontalscaling
+  - vpa
+  - autoscaling
 ---
 
 ## Summary

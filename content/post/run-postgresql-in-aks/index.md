@@ -5,23 +5,23 @@ weight: 14
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes
-  - Database
-  - Kubernetes PostgreSQL
-  - Run Production-Grade Database
-  - Run & Manage PostgreSQL in AKS
-  - Run & Manage PostgreSQL in Azure Kubernetes Service
-  - Manage PostgreSQL in Microsoft AKS
-  - Run PostgreSQL in Azure
-  - PostgreSQL
-  - KubeDB
-  - Azure
-  - AKS
-  - Microsoft Azure
-  - Azure Storage Container
-  - Microsoft Azure Storage
-  - Azure Storage Blob
+  - cloud-native platform
+  - kubernetes
+  - database
+  - kubernetes postgresql
+  - run production-grade database
+  - run & manage postgresql in aks
+  - run & manage postgresql in azure kubernetes service
+  - manage postgresql in microsoft aks
+  - run postgresql in azure
+  - postgresql
+  - kubedb
+  - azure
+  - aks
+  - microsoft azure
+  - azure storage container
+  - microsoft azure storage
+  - azure storage blob
 ---
 
 ## Overview

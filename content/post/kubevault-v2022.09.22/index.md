@@ -5,11 +5,11 @@ weight: 25
 authors:
   - Sakib Alamin
 tags:
-  - KubeVault
-  - Ops-requests
-  - Recommendation
-  - CLI
-  - KubeVault CLI
+  - kubevault
+  - ops-requests
+  - recommendation
+  - cli
+  - kubevault cli
   - kubernetes
   - secret-management
   - security

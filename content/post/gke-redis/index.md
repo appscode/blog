@@ -5,27 +5,27 @@ weight: 14
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes
-  - Database
-  - Kubernetes Redis
-  - Run Production-grade Database
-  - Run & Manage Redis in GKE
-  - Elasticsearch
-  - MariaDB
-  - Memcached
-  - MongoDB
-  - MySQL
-  - PostgreSQL
-  - Redis
-  - Percona XtraDB
-  - PgBouncer
-  - ProxySQL
-  - KubeDB
-  - Google Kubernetes Engine
-  - GKE
-  - Google Cloud Storage
-  - GCS
+  - cloud-native platform
+  - kubernetes
+  - database
+  - kubernetes redis
+  - run production-grade database
+  - run & manage redis in gke
+  - elasticsearch
+  - mariadb
+  - memcached
+  - mongodb
+  - mysql
+  - postgresql
+  - redis
+  - percona xtradb
+  - pgbouncer
+  - proxysql
+  - kubedb
+  - google kubernetes engine
+  - gke
+  - google cloud storage
+  - gcs
 ---
 
 ## Overview

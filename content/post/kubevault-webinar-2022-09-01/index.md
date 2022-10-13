@@ -7,10 +7,10 @@ authors:
 tags:
   - kubevault
   - ops-request
-  - TLS
+  - tls
   - cert-manager
-  - CLI
-  - kubevault CLI
+  - cli
+  - kubevault cli
   - kubernetes
   - secret-management
   - security
