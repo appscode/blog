@@ -36,7 +36,7 @@ It is required to install the followings to get started:
 
 Live demo of the webinar is started with provisioning a TLS secured `OpenSearch Cluster` of 4 nodes using `KubeDB Provisioner` Operator and a TLS secured single node `OpenSearch-Dashboards` using `KubeDB Dashboards` operator referring to the `OpenSearch` database.
 
-When the cluster and it's dashboard got ready, Horizontal scaling is demonstrated by horizontally upscaling aof the cluster using KubeDB `HorizontalScaling` OpsRequest. Then the OpenSearch cluster is scaled vertically with KubeDB `VerticalScaling` OpsRequest. Memory and CPU of the database containers were vertically scaled using this OpsRequest. Some basic CRUD operations using the `OpenSearch-Dashboards` was also shown in the process. 
+When the cluster and it's dashboard got ready, Horizontal scaling is demonstrated by horizontally upscaling of the cluster using KubeDB `HorizontalScaling` OpsRequest. Then the OpenSearch cluster is scaled vertically with KubeDB `VerticalScaling` OpsRequest. Memory and CPU of the database containers were vertically scaled using this OpsRequest. Some basic CRUD operations using the `OpenSearch-Dashboards` was also shown in the process. 
 
 After that, the initially provisioned `OpenSearch-1.2.2` was upgraded to `OpenSearch-1.3.2`  using KubeDB `Upgrade` OpsRequest. The `OpenSearch-Dashboards` also got upgraded to compatible version autonomously triggered by the `KubeDB Dashboards` operator after the `OpenSearch` cluster got upgraded. 
 
