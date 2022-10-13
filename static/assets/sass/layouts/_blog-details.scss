@@ -63,6 +63,7 @@
       flex-direction: column;
       padding: 8px;
       border-radius: 2px;
+      color: #333;
 
       .date {
         font-weight: 300;
@@ -213,7 +214,9 @@
     margin-bottom: 15px;
     border-radius: 4px;
   }
-
+  iframe {
+    margin-bottom: 20px;
+  }
   .inline-button {
     font-size: 16px;
   }
