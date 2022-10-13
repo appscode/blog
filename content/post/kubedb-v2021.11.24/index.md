@@ -1,6 +1,6 @@
 ---
 title: Announcing KubeDB & Stash v2021.11.24
-date: 2021-11-30
+date: "2021-11-30"
 weight: 25
 authors:
 - Tamal Saha
@@ -8,16 +8,16 @@ aliases:
 - /post/kubedb.v2021.11.24/
 tags:
 - cloud-native
-- kubernetes
 - database
 - elasticsearch
+- kubedb
+- kubernetes
 - mariadb
 - memcached
 - mongodb
 - mysql
 - postgresql
 - redis
-- kubedb
 ---
 
 We are pleased to announce the release of KubeDB and Stash `v2021.11.24`. This post lists all the major changes done in this release since `v2021.09.30`. The headline features of this release are `OpenSearch` support, `InnoDB Cluster` support for MySQL, support for PostgreSQL version `14.1` and `PostGIS`.

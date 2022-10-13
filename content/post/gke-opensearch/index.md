@@ -1,30 +1,30 @@
 ---
 title: Run & Manage OpenSearch in Google Kubernetes Engine (GKE) Using KubeDB
-date: 2022-02-14
+date: "2022-02-14"
 weight: 14
 authors:
 - Dipta Roy
 tags:
 - cloud-native platform
-- kubernetes
 - database
-- kubernetes opensearch
-- run production-grade database
 - elasticsearch
+- gcs
+- gke
+- google cloud storage
+- google kubernetes engine
+- kubedb
+- kubernetes
+- kubernetes opensearch
 - mariadb
 - memcached
 - mongodb
 - mysql
-- postgresql
-- redis
 - percona xtradb
 - pgbouncer
+- postgresql
 - proxysql
-- kubedb
-- google kubernetes engine
-- gke
-- google cloud storage
-- gcs
+- redis
+- run production-grade database
 ---
 
 ## Overview

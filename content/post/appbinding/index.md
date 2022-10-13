@@ -1,12 +1,12 @@
 ---
 title: The case for AppBinding
-date: 2019-01-01
+date: "2019-01-01"
 weight: 10
 authors:
 - Tamal Saha
 tags:
-- kubernetes
 - crd
+- kubernetes
 - service-catalog
 aliases:
 - /post/the-case-for-appbinding/

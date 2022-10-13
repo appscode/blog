@@ -1,30 +1,30 @@
 ---
 title: Run & Manage MariaDB in Google Kubernetes Engine (GKE) Using KubeDB
-date: 2022-01-31
+date: "2022-01-31"
 weight: 14
 authors:
 - Dipta Roy
 tags:
 - cloud-native platform
-- kubernetes
 - database
-- kubernetes mariadb
-- run production-grade database
 - elasticsearch
+- gcs
+- gke
+- google cloud storage
+- google kubernetes engine
+- kubedb
+- kubernetes
+- kubernetes mariadb
 - mariadb
 - memcached
 - mongodb
 - mysql
-- postgresql
-- redis
 - percona xtradb
 - pgbouncer
+- postgresql
 - proxysql
-- kubedb
-- google kubernetes engine
-- gke
-- google cloud storage
-- gcs
+- redis
+- run production-grade database
 ---
 
 ## Overview

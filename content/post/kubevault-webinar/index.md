@@ -1,20 +1,20 @@
 ---
 title: Manage HashiCorp Vault in Kubernetes Native Way Using KubeVault - Webinar
-date: 2021-08-16
+date: "2021-08-16"
 weight: 25
 authors:
 - Shohag Rana
 tags:
+- community
+- elasticsearch
+- enterprise
+- hashicorp
 - kubernetes
 - kubevault
+- raft
 - secret-management
 - security
 - vault
-- raft
-- elasticsearch
-- hashicorp
-- enterprise
-- community
 ---
 
 ## Summary

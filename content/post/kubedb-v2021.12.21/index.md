@@ -1,21 +1,21 @@
 ---
 title: Announcing KubeDB v2021.12.21 (Includes Log4j CVE Fixes)
-date: 2021-12-21
+date: "2021-12-21"
 weight: 25
 authors:
 - Md Kamol Hasan
 tags:
 - cloud-native
-- kubernetes
 - database
 - elasticsearch
+- kubedb
+- kubernetes
 - mariadb
 - memcached
 - mongodb
 - mysql
 - postgresql
 - redis
-- kubedb
 ---
 
 We are pleased to announce the release of KubeDB `v2021.12.21`. The headline feature of this release is that it has the support for **log4j CVEs fixed** images: `elasticsearch:7.16.2`,  `elasticsearch:6.8.22`, and `opensearch:1.2.2`. These docker images are using `Log4j 2.17.0`.

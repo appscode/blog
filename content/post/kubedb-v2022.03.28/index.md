@@ -1,23 +1,23 @@
 ---
 title: Announcing KubeDB v2022.03.28
-date: 2022-03-28
+date: "2022-03-28"
 weight: 25
 authors:
 - Tamal Saha
 tags:
 - cloud-native
-- kubernetes
 - database
 - elasticsearch
+- elasticsearch-dashboard
+- kibana
+- kubedb
+- kubernetes
 - mariadb
 - memcached
 - mongodb
 - mysql
 - postgresql
 - redis
-- kubedb
-- elasticsearch-dashboard
-- kibana
 - schema-manager
 ---
 

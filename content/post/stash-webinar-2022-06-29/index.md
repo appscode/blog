@@ -1,16 +1,16 @@
 ---
-title: "Using GKE Workload Identity with Stash "
-date: 2022-06-30
+title: 'Using GKE Workload Identity with Stash '
+date: "2022-06-30"
 weight: 15
 authors:
 - Hossain Mahmud
 tags:
-- cloud-native
-- kubernetes
-- stash
 - backup
-- restore
+- cloud-native
 - gke
+- kubernetes
+- restore
+- stash
 - workload-identity
 ---
 

@@ -1,27 +1,27 @@
 ---
 title: KubeVault v1alpha1 to v1alpha2 Migration
-date: 2022-10-07
+date: "2022-10-07"
 weight: 20
 authors:
 - Sakib Alamin
 tags:
-- kubevault
-- ops-request
-- v1alpha1
-- v1alpha2
-- migration
-- operator
-- tls
 - cert-manager
 - cli
-- kubevault cli
+- community
+- enterprise
+- hashicorp
 - kubernetes
+- kubevault
+- kubevault cli
+- migration
+- operator
+- ops-request
 - secret-management
 - security
+- tls
+- v1alpha1
+- v1alpha2
 - vault
-- hashicorp
-- enterprise
-- community
 ---
 
 [KubeVault](https://kubevault.com) is a Git-Ops ready, production-grade solution for deploying and configuring [HashiCorp Vault](https://www.vaultproject.io/) on Kubernetes.

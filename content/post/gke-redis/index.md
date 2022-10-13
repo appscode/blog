@@ -1,31 +1,31 @@
 ---
 title: Run & Manage Redis in Google Kubernetes Engine (GKE) Using KubeDB
-date: 2022-03-01
+date: "2022-03-01"
 weight: 14
 authors:
 - Dipta Roy
 tags:
 - cloud-native platform
-- kubernetes
 - database
-- kubernetes redis
-- run production-grade database
-- run & manage redis in gke
 - elasticsearch
+- gcs
+- gke
+- google cloud storage
+- google kubernetes engine
+- kubedb
+- kubernetes
+- kubernetes redis
 - mariadb
 - memcached
 - mongodb
 - mysql
-- postgresql
-- redis
 - percona xtradb
 - pgbouncer
+- postgresql
 - proxysql
-- kubedb
-- google kubernetes engine
-- gke
-- google cloud storage
-- gcs
+- redis
+- run & manage redis in gke
+- run production-grade database
 ---
 
 ## Overview

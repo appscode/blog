@@ -1,6 +1,6 @@
 ---
 title: KubeVault v0.3.0 - Tools for running HashiCorp Vault on Kubernetes
-date: 2020-01-13
+date: "2020-01-13"
 weight: 14
 authors:
 - Md Kamol Hasan

@@ -1,21 +1,21 @@
 ---
 title: Announcing KubeDB v2021.09.09
-date: 2021-09-13
+date: "2021-09-13"
 weight: 25
 authors:
 - Tamal Saha
 tags:
 - cloud-native
-- kubernetes
 - database
 - elasticsearch
+- kubedb
+- kubernetes
 - mariadb
 - memcached
 - mongodb
 - mysql
 - postgresql
 - redis
-- kubedb
 ---
 
 We are pleased to announce the release of KubeDB v2021.09.09. This post lists all the major changes done in this release since `v2021.08.23`. This release is primarily a bug fix release for v2021.08.23. We have also added support for MongoDB 5.0.2. The detailed commit by commit changelog can be found [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2021.09.09/README.md).

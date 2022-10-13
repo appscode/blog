@@ -1,24 +1,24 @@
 ---
 title: Deploy Sharded Redis Cluster on Kubernetes using KubeDB
-date: 2022-06-23
+date: "2022-06-23"
 weight: 20
 authors:
 - Abdullah Al Shaad
 tags:
-- kubedb
-- Redis
-- cluster
-- kubernetes
-- shard
 - cert-manager
-- opsRequest
-- horizontalScaling
-- verticalScaling
-- Reconfigure
-- versionUpgrade
-- enterprise
+- cluster
 - community
-- opsManager
+- enterprise
+- horizontalscaling
+- kubedb
+- kubernetes
+- opsmanager
+- opsrequest
+- reconfigure
+- redis
+- shard
+- versionupgrade
+- verticalscaling
 ---
 
 ## Summary

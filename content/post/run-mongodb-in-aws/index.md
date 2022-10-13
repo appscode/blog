@@ -1,32 +1,32 @@
 ---
 title: Run MongoDB in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB
-date: 2022-09-19
+date: "2022-09-19"
 weight: 14
 authors:
 - Dipta Roy
 tags:
-- cloud-native platform
-- kubernetes
-- database
-- kubernetes mongodb
-- run production-grade database
-- run & manage mongodb in aws
-- run & manage mongodb in amazon elastic kubernetes service
-- manage mongodb in amazon eks
-- run mongodb in amazon web services
-- mongodb
-- mongo
-- run & manage mongodb in eks
-- kubedb
-- mongodb database
 - amazon
-- kubedb mongodb
-- aws
 - amazon s3
 - amazon storage
+- aws
 - aws s3
-- s3 bucket
 - backup & restore mongodb in amazon s3
+- cloud-native platform
+- database
+- kubedb
+- kubedb mongodb
+- kubernetes
+- kubernetes mongodb
+- manage mongodb in amazon eks
+- mongo
+- mongodb
+- mongodb database
+- run & manage mongodb in amazon elastic kubernetes service
+- run & manage mongodb in aws
+- run & manage mongodb in eks
+- run mongodb in amazon web services
+- run production-grade database
+- s3 bucket
 ---
 
 ## Overview

@@ -1,12 +1,12 @@
 ---
-title: "Introducing ResourceDescriptor: A Generic API for defining Kubernetes Resource Graph"
-date: 2019-11-20
+title: 'Introducing ResourceDescriptor: A Generic API for defining Kubernetes Resource Graph'
+date: "2019-11-20"
 weight: 13
 authors:
 - Tamal Saha
 tags:
-- kubernetes
 - crd
+- kubernetes
 ---
 
 Kubernetes has own the container orchestrator war. One of the key contributors to its success is the ability to extend Kubernetes by the end users. The primary way users extend Kubernetes is by defining new resource types. This is called Custom Resource Definitions (CRD) in the Kubernetes parlance. Users can write a controller that can reconcile users' desired specification to a cluster. Controllers that capture operational knowledge of a software application are commonly know as Kubernetes operators.

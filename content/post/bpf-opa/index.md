@@ -1,16 +1,16 @@
 ---
 title: Secure Kubernetes using eBPF & Open Policy Agent
-date: 2019-11-17
+date: "2019-11-17"
 weight: 11
 authors:
 - Md Tahsin Rahman
 tags:
-- kubernetes
-- security
 - bpa
 - falco
+- kubernetes
 - opa
 - open-policy-agent
+- security
 ---
 
 Securing Kubernetes cluster is a multi-faceted task. Runtime security is one aspect of it. It ensures that the workloads deployed in the cluster doesn't do any malicious behaviors. For runtime instrumentation, we wanted to use Extended Berkeley Packet Filter (eBPF), a core technology in the Linux kernel.

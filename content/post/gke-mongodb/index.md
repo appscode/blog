@@ -1,22 +1,22 @@
 ---
 title: Manage MongoDB in GKE Using KubeDB
-date: 2021-07-12
+date: "2021-07-12"
 weight: 22
 authors:
 - Shohag Rana
 tags:
 - cloud-native
-- kubernetes
 - database
 - elasticsearch
+- gke
+- kubedb
+- kubernetes
 - mariadb
 - memcached
 - mongodb
 - mysql
 - postgresql
 - redis
-- kubedb
-- gke
 ---
 
 ## Overview

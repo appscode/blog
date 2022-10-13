@@ -1,22 +1,22 @@
 ---
 title: Elasticsearch Hot-Warm-Cold Architecture Management with Kibana in Kubernetes
-date: 2022-03-02
+date: "2022-03-02"
 weight: 20
 authors:
 - Kamol Hasan
 - Raihan Khan
 tags:
-- kubedb
-- elasticsearch
-- kibana
-- hot-warm-cold architecture
-- elasticsearchdashboard
-- logstash
-- filebeat
-- k8s-log-monitoring
-- index-lifecycle-management
-- enterprise
 - community
+- elasticsearch
+- elasticsearchdashboard
+- enterprise
+- filebeat
+- hot-warm-cold architecture
+- index-lifecycle-management
+- k8s-log-monitoring
+- kibana
+- kubedb
+- logstash
 ---
 
 ## Summary

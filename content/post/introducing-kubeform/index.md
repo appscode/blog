@@ -1,12 +1,12 @@
 ---
 title: Kubeform - Provision cloud resources using CRDs & Terraform
-date: 2019-11-17
+date: "2019-11-17"
 weight: 12
 authors:
 - Md Fahim Abrar
 tags:
-- kubernetes
 - kubeform
+- kubernetes
 - service-catalog
 - tarraform
 ---

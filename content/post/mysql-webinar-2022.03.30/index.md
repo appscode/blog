@@ -1,20 +1,20 @@
 ---
 title: Managing MySQL Semi-Synchronous Cluster Using KubeDB
-date: 2022-03-31
+date: "2022-03-31"
 weight: 20
 authors:
 - Mehedi Hasan
 tags:
-- kubedb
-- mysql
-- semisync
-- semi-synchronous replication
-- raft
-- errant replica
-- read replica
-- kubernetes
-- enterprise
 - community
+- enterprise
+- errant replica
+- kubedb
+- kubernetes
+- mysql
+- raft
+- read replica
+- semi-synchronous replication
+- semisync
 ---
 
 ## Summary

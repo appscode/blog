@@ -1,21 +1,21 @@
 ---
 title: Redis Sentinel Ops Requests - Day 2 Lifecycle Management for Redis Sentinel Using KubeDB
-date: 2022-09-29
+date: "2022-09-29"
 weight: 20
 authors:
 - Abdullah Al Shaad
 tags:
-- kubedb
-- Redis
-- sentinel
-- kubernetes
-- high-availability
 - cert-manager
-- opsRequest
-- horizontalScaling
-- enterprise
 - community
-- opsManager
+- enterprise
+- high-availability
+- horizontalscaling
+- kubedb
+- kubernetes
+- opsmanager
+- opsrequest
+- redis
+- sentinel
 ---
 
 ## Summary

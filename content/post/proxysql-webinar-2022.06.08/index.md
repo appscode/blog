@@ -1,16 +1,16 @@
 ---
 title: Deploy TLS secured ProxySQL Cluster for KubeDB provisioned MySQL Group Replication in Kubernetes
-date: 2022-06-08
+date: "2022-06-08"
 weight: 20
 authors:
 - Tasdidur Rahman
 tags:
 - kubedb
-- proxysql
-- mysql
 - kubernetes
-- provisioner
+- mysql
 - ops-manager
+- provisioner
+- proxysql
 ---
 
 ## Summary
