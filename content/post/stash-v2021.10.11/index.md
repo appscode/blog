@@ -3,13 +3,13 @@ title: Stash v2021.10.11 - Introducing NATS & ETCD Add-ons
 date: 2021-10-11
 weight: 15
 authors:
-  - Hossain Mahmud
+- Hossain Mahmud
 tags:
-  - kubernetes
-  - stash
-  - backup
-  - nats
-  - etcd
+- kubernetes
+- stash
+- backup
+- nats
+- etcd
 ---
 
 We are very excited to announce Stash v2021.10.11. In this release, we are introducing NATS and ETCD add-ons for Stash. We have also added TLS support for Redis Add-on.

@@ -3,15 +3,15 @@ title: Introducing Stash v2022.05.18
 date: 2022-05-18
 weight: 10
 authors:
-  - Piyush Kanti Das
+- Piyush Kanti Das
 tags:
-  - kubernetes
-  - stash
-  - backup
-  - restore
-  - docs
-  - nats
-  - elasticsearch
+- kubernetes
+- stash
+- backup
+- restore
+- docs
+- nats
+- elasticsearch
 ---
 
 We are very excited to announce Stash `v2022.05.18`.  In this release, we have added a few new features and improvements. We have squashed a few bugs as well. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2022.05.18/README.md). We are going to highlight the major changes in this post.

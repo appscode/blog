@@ -3,15 +3,16 @@ title: "PostgreSQL Backup with Wal-G and point in time Recover with KubeDB manag
 date: 2022-09-07
 weight: 26
 authors:
-  - Md Habibur Rahaman Emon
+- Md Habibur Rahaman Emon
 tags:
-  - kubedb
-  - postgresql
-  - wal-g
-  - kubernetes
-  - backup
-  - pitr
+- kubedb
+- postgresql
+- wal-g
+- kubernetes
+- backup
+- pitr
 ---
+
 ## Summary
 On Septempber 07, 2022, AppsCode held a webinar on **PostgreSQL Backup with Wal-G and point in time Recover with KubeDB managed Postgres Database**. The key contents of the webinars are:
 1) PostgreSQL Backup and Point in time Recovery

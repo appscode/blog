@@ -3,14 +3,14 @@ title: Announcing Voyager v2021.10.18
 date: 2021-10-18
 weight: 25
 authors:
-  - Tamal Saha
+- Tamal Saha
 tags:
-  - cloud-native
-  - kubernetes
-  - ingress
-  - gateway
-  - haproxy
-  - voyager
+- cloud-native
+- kubernetes
+- ingress
+- gateway
+- haproxy
+- voyager
 ---
 
 We are pleased to announce the release of Voyager v2021.10.18. This release is a patch release for `v2021.09.15`. The post highlights the import bug fixes in this release. The detailed commit by commit changelog can be found [here](https://github.com/voyagermesh/CHANGELOG/blob/master/releases/v2021.10.18/README.md).

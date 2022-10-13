@@ -3,25 +3,25 @@ title: Run & Manage MySQL in GKE Using KubeDB
 date: 2022-01-14
 weight: 14
 authors:
-  - Dipta Roy
+- Dipta Roy
 tags:
-  - cloud-native platform
-  - kubernetes
-  - database
-  - kubernetes mysql
-  - run production-grade database
-  - elasticsearch
-  - mariadb
-  - memcached
-  - mongodb
-  - mysql
-  - postgresql
-  - redis
-  - percona xtradb
-  - pgbouncer
-  - proxysql
-  - kubedb
-  - gke 
+- cloud-native platform
+- kubernetes
+- database
+- kubernetes mysql
+- run production-grade database
+- elasticsearch
+- mariadb
+- memcached
+- mongodb
+- mysql
+- postgresql
+- redis
+- percona xtradb
+- pgbouncer
+- proxysql
+- kubedb
+- gke
 ---
 
 ## Overview

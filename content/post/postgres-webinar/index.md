@@ -3,20 +3,21 @@ title: Managing Production Grade PostgreSQL in Kubernetes Using KubeDB - Webinar
 date: 2021-07-21
 weight: 25
 authors:
-  - Shohag Rana
+- Shohag Rana
 tags:
-  - cloud-native
-  - kubernetes
-  - database
-  - elasticsearch
-  - mariadb
-  - memcached
-  - mongodb
-  - mysql
-  - postgresql
-  - redis
-  - kubedb
+- cloud-native
+- kubernetes
+- database
+- elasticsearch
+- mariadb
+- memcached
+- mongodb
+- mysql
+- postgresql
+- redis
+- kubedb
 ---
+
 ## Summary
 
 AppsCode held a webinar on "Managing Production Grade PostgreSQL in Kubernetes Using KubeDB". This took place 15th July 2021. The contents of the webinar is shown below:

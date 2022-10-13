@@ -3,13 +3,13 @@ title: Stash v2021.03.17 - A Better User Experience
 date: 2021-03-18
 weight: 15
 authors:
-  - Emruz Hossain
+- Emruz Hossain
 tags:
-  - kubernetes
-  - stash
-  - backup
+- kubernetes
+- stash
+- backup
 aliases:
-  - /post/stash-v20201.03.17/
+- /post/stash-v20201.03.17/
 ---
 
 We are very excited to announce Stash `v2021.03.17`. In this release, we have focused on improving the user experience with Stash. We have simplified the installation process, improved KubeDB integration, added backup support for TLS secured databases, etc. We have also fixed various bugs and made other improvements.

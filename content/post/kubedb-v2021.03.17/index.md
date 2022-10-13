@@ -3,19 +3,19 @@ title: KubeDB v2021.03.17- Introducing MariaDB and Re-designed PostgreSQL operat
 date: 2021-03-18
 weight: 18
 authors:
-  - Md Kamol Hasan
+- Md Kamol Hasan
 tags:
-  - cloud-native
-  - kubernetes
-  - database
-  - elasticsearch
-  - mariadb
-  - memcached
-  - mongodb
-  - mysql
-  - postgresql
-  - redis
-  - kubedb
+- cloud-native
+- kubernetes
+- database
+- elasticsearch
+- mariadb
+- memcached
+- mongodb
+- mysql
+- postgresql
+- redis
+- kubedb
 ---
 
 We are pleased to announce [KubeDB v2021.03.17](https://kubedb.com/docs/v2021.03.17/setup/). This post lists all the major changes done in this release since `v2021.01.26`.  This release offers **MariaDB** support with Galera Clustering, Backup and Recovery, TLS and many more features. It also contains the fix for the **PostgreSQL data loss issue**. The  support for the PostgreSQL TLS configuration and the support for official **TimescaleDB** images has also been added to this release.

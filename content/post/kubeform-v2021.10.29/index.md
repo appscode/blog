@@ -3,19 +3,19 @@ title: Introducing Kubeform v2021.10.29
 date: 2021-11-02
 weight: 25
 authors:
-  - Sahadat Hossain
+- Sahadat Hossain
 tags:
-  - cloud-native
-  - kubernetes
-  - on-prem
-  - kubeform
-  - terraform
-  - remote-backend
-  - cli
-  - gcp
-  - linode
-  - aws
-  - azure
+- cloud-native
+- kubernetes
+- on-prem
+- kubeform
+- terraform
+- remote-backend
+- cli
+- gcp
+- linode
+- aws
+- azure
 ---
 
 > We have an upcoming webinar titled "Introducing Kubeform CLI & Remote Backend" on 10th November 2021, 12:30 PM ET. **Register** [here](https://appscode.com/webinar/) .

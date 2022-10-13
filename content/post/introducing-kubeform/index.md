@@ -3,12 +3,12 @@ title: Kubeform - Provision cloud resources using CRDs & Terraform
 date: 2019-11-17
 weight: 12
 authors:
-  - Md Fahim Abrar
+- Md Fahim Abrar
 tags:
-  - kubernetes
-  - kubeform
-  - service-catalog
-  - tarraform
+- kubernetes
+- kubeform
+- service-catalog
+- tarraform
 ---
 
 Kubeform by AppsCode is a Kubernetes operator for [Terraform](https://www.terraform.io/). Kubeform provides auto-generated Kubernetes CRDs for Terraform resources and modules so that you can manage any cloud infrastructure in a Kubernetes native way. You just write a CRD for a cloud infrastructure, apply it and Kubeform will create it for you! Kubeform currently supports 5 top cloud platforms. These are AWS, Google Cloud, Azure, Digitalocean and Linode.

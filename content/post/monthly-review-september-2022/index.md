@@ -3,27 +3,26 @@ title: Monthly Review - September, 2022
 date: 2022-10-01
 weight: 14
 authors:
-  - Dipta Roy
+- Dipta Roy
 tags:
-  - cloud-native platform
-  - kubernetes native data platform
-  - kubernetes native
-  - kubernetes
-  - database
-  - kubernetes database
-  - run production-grade database
-  - run & manage database in k8s
-  - run & manage database in kubernetes 
-  - manage database in kubernetes
-  - kubedb
-  - stash
-  - appscode
-  - kubevault
-  - voyager
-  - backup kubernetes statefulset
-  - running production-grade databases on kubernetes
+- cloud-native platform
+- kubernetes native data platform
+- kubernetes native
+- kubernetes
+- database
+- kubernetes database
+- run production-grade database
+- run & manage database in k8s
+- run & manage database in kubernetes
+- manage database in kubernetes
+- kubedb
+- stash
+- appscode
+- kubevault
+- voyager
+- backup kubernetes statefulset
+- running production-grade databases on kubernetes
 ---
-
 
 # Releases
 

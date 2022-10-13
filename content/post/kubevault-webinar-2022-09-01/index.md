@@ -3,21 +3,21 @@ title: KubeVault OpsRequest - Day 2 Life-cycle Management for Vault on Kubernete
 date: 2022-09-01
 weight: 20
 authors:
-  - Sakib Alamin
+- Sakib Alamin
 tags:
-  - kubevault
-  - ops-request
-  - tls
-  - cert-manager
-  - cli
-  - kubevault cli
-  - kubernetes
-  - secret-management
-  - security
-  - vault
-  - hashicorp
-  - enterprise
-  - community
+- kubevault
+- ops-request
+- tls
+- cert-manager
+- cli
+- kubevault cli
+- kubernetes
+- secret-management
+- security
+- vault
+- hashicorp
+- enterprise
+- community
 ---
 
 ## Summary

@@ -3,16 +3,16 @@ title: "Using EKS IRSA and Kube2iam with Stash"
 date: 2022-07-14
 weight: 15
 authors:
-  - Hossain Mahmud
+- Hossain Mahmud
 tags:
-  - cloud-native
-  - kubernetes
-  - stash
-  - backup
-  - restore
-  - eks
-  - irsa
-  - kube2iam
+- cloud-native
+- kubernetes
+- stash
+- backup
+- restore
+- eks
+- irsa
+- kube2iam
 ---
 
 ## Summary

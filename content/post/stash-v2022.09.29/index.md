@@ -3,12 +3,12 @@ title: Introducing Stash v2022.09.29
 date: 2022-09-29
 weight: 10
 authors:
-  - Emruz Hossain
+- Emruz Hossain
 tags:
-  - kubernetes
-  - stash
-  - backup
-  - restore
+- kubernetes
+- stash
+- backup
+- restore
 ---
 
 We are very excited to announce Stash `v2022.09.29`. It comes with a few new features, bug fixes, and major improvements to the codebase. We have also removed support for a few unused features. In this post, we are going to highlight the most significant changes.

@@ -3,18 +3,18 @@ title: AppsCode introduces KubeDB Enterprise - An Enterprise-grade Cloud Native 
 date: 2020-11-19
 weight: 16
 authors:
-  - Tamal Saha
+- Tamal Saha
 tags:
-  - cloud-native
-  - kubernetes
-  - database
-  - elasticsearch
-  - mariadb
-  - memcached
-  - mongodb
-  - mysql
-  - postgresql
-  - redis
+- cloud-native
+- kubernetes
+- database
+- elasticsearch
+- mariadb
+- memcached
+- mongodb
+- mysql
+- postgresql
+- redis
 ---
 
 SAN LEANDRO, Calif. -- AppsCode, a global leader in Enterprise-grade Kubernetes-native Data Platforms, has released KubeDB Enterprise Edition, a production-grade cloud-native database management solution for Kubernetes. KubeDB Enterprise edition is the open core version of popular open source project [KubeDB](https://github.com/kubedb). It includes all the features (clustering, etc.) of KubeDB Community Edition and extends it by automating Day 2 DBA tasks, such as database backup/recovery, upgrading version, horizontal and vertical scaling, TLS/SSL support, updating configuration post provisioning, connection pooling, etc. It works on Kubernetes clusters on bare-metal or public clouds. With KubeDB, developers don’t have to become DBAs or be afraid of vendor lock-in.

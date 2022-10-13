@@ -3,25 +3,25 @@ title: MySQL Read Replica and Multi tenancy Support by KubeDB
 date: 2022-01-27
 weight: 20
 authors:
-  - Mehedi Hasan
-  - Tasdidur Rahman
+- Mehedi Hasan
+- Tasdidur Rahman
 tags:
-  - kubedb
-  - mysql
-  - read replica
-  - re-configure tls
-  - multi tanancy
-  - schema manager
-  - kubevault
-  - cert-manager
-  - stash
-  - kubernetes
-  - secret-management
-  - security
-  - vault
-  - hashicorp
-  - enterprise
-  - community
+- kubedb
+- mysql
+- read replica
+- re-configure tls
+- multi tanancy
+- schema manager
+- kubevault
+- cert-manager
+- stash
+- kubernetes
+- secret-management
+- security
+- vault
+- hashicorp
+- enterprise
+- community
 ---
 
 ## Summary

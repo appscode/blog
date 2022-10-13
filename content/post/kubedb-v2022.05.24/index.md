@@ -3,24 +3,24 @@ title: Announcing KubeDB v2022.05.24
 date: 2022-05-24
 weight: 25
 authors:
-  - Md Kamol Hasan
+- Md Kamol Hasan
 tags:
-  - cloud-native
-  - kubernetes
-  - database
-  - elasticsearch
-  - mariadb
-  - memcached
-  - mongodb
-  - mysql
-  - postgresql
-  - redis
-  - kubedb
-  - elasticsearch-dashboard
-  - kibana
-  - opensearch
-  - opensearch-dashboard 
-  - schema-manager
+- cloud-native
+- kubernetes
+- database
+- elasticsearch
+- mariadb
+- memcached
+- mongodb
+- mysql
+- postgresql
+- redis
+- kubedb
+- elasticsearch-dashboard
+- kibana
+- opensearch
+- opensearch-dashboard
+- schema-manager
 ---
 
 We are pleased to announce the release of [KubeDB v2022.05.24](https://kubedb.com/docs/v2022.05.24/setup/). This post lists all the major changes done in this release since the last release. This release offers some major features like **MySQL Semi-Synchronous Replication**, **MongoDB Arbiter**, **PGBouncer**, **MariaDB Schema Manager**, **ProxySQL**, **Redesigned Redis**, **Elasticsearch V8**, **OpenSearch Dashboard**, etc. It also contains various improvments and bug fixes. You can find the detailed changelogs [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2022.05.24/README.md).

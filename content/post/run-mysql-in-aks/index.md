@@ -3,25 +3,25 @@ title: Run MySQL in Azure Kubernetes Service (AKS) Using KubeDB
 date: 2022-05-16
 weight: 14
 authors:
-  - Dipta Roy
+- Dipta Roy
 tags:
-  - cloud-native platform
-  - kubernetes
-  - database
-  - kubernetes mysql
-  - run production-grade database
-  - run & manage mysql in aks
-  - run & manage mysql in azure kubernetes service
-  - manage mysql in microsoft aks
-  - run mysql in azure
-  - mysql
-  - kubedb
-  - azure
-  - aks
-  - microsoft azure
-  - azure storage container
-  - microsoft azure storage
-  - azure storage blob
+- cloud-native platform
+- kubernetes
+- database
+- kubernetes mysql
+- run production-grade database
+- run & manage mysql in aks
+- run & manage mysql in azure kubernetes service
+- manage mysql in microsoft aks
+- run mysql in azure
+- mysql
+- kubedb
+- azure
+- aks
+- microsoft azure
+- azure storage container
+- microsoft azure storage
+- azure storage blob
 ---
 
 ## Overview

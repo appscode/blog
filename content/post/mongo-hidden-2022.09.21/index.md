@@ -3,24 +3,24 @@ title: Configure MongoDB Hidden-Node on Kubernetes using KubeDB
 date: 2022-09-22
 weight: 20
 authors:
-  - Arnob kumar saha
+- Arnob kumar saha
 tags:
-  - kubedb
-  - MongoDB
-  - Hidden
-  - Arbiter
-  - kubernetes
-  - replicaset
-  - shard
-  - cert-manager
-  - inMemory
-  - opsRequest
-  - Vertical scaling
-  - Horizontal scaling
-  - Reconfigure
-  - Volume expansion
-  - enterprise
-  - community
+- kubedb
+- MongoDB
+- Hidden
+- Arbiter
+- kubernetes
+- replicaset
+- shard
+- cert-manager
+- inMemory
+- opsRequest
+- Vertical scaling
+- Horizontal scaling
+- Reconfigure
+- Volume expansion
+- enterprise
+- community
 ---
 
 ## Summary
