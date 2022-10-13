@@ -1,15 +1,15 @@
 ---
 title: Announcing Voyager v2022.06.20
-date: 2022-06-20
+date: "2022-06-20"
 weight: 25
 authors:
 - Tamal Saha
 tags:
 - cloud-native
-- kubernetes
-- ingress
 - gateway
 - haproxy
+- ingress
+- kubernetes
 - voyager
 ---
 

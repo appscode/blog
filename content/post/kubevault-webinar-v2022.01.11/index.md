@@ -1,21 +1,21 @@
 ---
 title: Secure Secrets - A Cloud-Native Approach made simple with KubeVault
-date: 2022-01-13
+date: "2022-01-13"
 weight: 20
 authors:
 - Sakib Alamin
 tags:
-- kubevault
 - cert-manager
 - cli
-- kubevault cli
+- community
+- enterprise
+- hashicorp
 - kubernetes
+- kubevault
+- kubevault cli
 - secret-management
 - security
 - vault
-- hashicorp
-- enterprise
-- community
 ---
 
 ## Summary

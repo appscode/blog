@@ -1,24 +1,24 @@
 ---
 title: JWT/OIDC Auth method & Automation with KubeVault CLI
-date: 2022-07-20
+date: "2022-07-20"
 weight: 20
 authors:
 - Sakib Alamin
 tags:
-- kubevault
-- jwt
-- oidc
 - authentication
 - cert-manager
 - cli
-- kubevault cli
+- community
+- enterprise
+- hashicorp
+- jwt
 - kubernetes
+- kubevault
+- kubevault cli
+- oidc
 - secret-management
 - security
 - vault
-- hashicorp
-- enterprise
-- community
 ---
 
 ## Summary

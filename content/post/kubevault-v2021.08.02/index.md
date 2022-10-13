@@ -1,20 +1,20 @@
 ---
 title: Introducing KubeVault v2021.08.02
-date: 2021-08-02
+date: "2021-08-02"
 weight: 25
 authors:
 - Md Kamol Hasan
 tags:
+- community
+- elasticsearch
+- enterprise
+- hashicorp
 - kubernetes
 - kubevault
+- raft
 - secret-management
 - security
 - vault
-- raft
-- elasticsearch
-- hashicorp
-- enterprise
-- community
 ---
 
 We are very excited to announce KubeVault Enterprise Edition with the release `v2021.08.02`. The KubeVault `v2021.08.02` contains various feature improvements and bug fixes for a better user experience. It also comes with a KubeVault Community Edition which is **free of cost** but only limited to the `default` namespace.

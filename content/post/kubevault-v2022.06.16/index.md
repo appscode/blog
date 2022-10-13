@@ -1,20 +1,20 @@
 ---
 title: Introducing KubeVault v2022.06.16
-date: 2022-06-16
+date: "2022-06-16"
 weight: 25
 authors:
 - Sakib Alamin
 tags:
-- kubevault
 - cli
-- kubevault cli
+- community
+- enterprise
+- hashicorp
 - kubernetes
+- kubevault
+- kubevault cli
 - secret-management
 - security
 - vault
-- hashicorp
-- enterprise
-- community
 ---
 
 We are very excited to announce the release of KubeVault v2022.06.16 Edition. The KubeVault `v2022.06.16` contains VaultServer latest api version `v1alpha2`, update to authentication method with addition of `JWT/OIDC` auth method. A new `SecretEngine` for `MariaDB` has been added, `KubeVault CLI` has been updated along with various fixes on KubeVault resource sync. We're going to discuss some of them in details below.

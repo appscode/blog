@@ -1,23 +1,23 @@
 ---
 title: Managing MongoDB with Arbiter on Kubernetes using KubeDB
-date: 2022-06-06
+date: "2022-06-06"
 weight: 20
 authors:
 - Arnob kumar saha
 tags:
-- kubedb
-- mongodb
 - arbiter
+- cert-manager
+- community
+- cost reducing
+- enterprise
+- kubedb
 - kubernetes
+- mongodb
+- opsrequest
+- reconfigure
 - replicaset
 - shard
-- cert-manager
-- cost reducing
-- opsrequest
 - verticalscaling
-- reconfigure
-- enterprise
-- community
 ---
 
 ## Summary

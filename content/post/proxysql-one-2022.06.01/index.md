@@ -1,18 +1,18 @@
 ---
 title: Load Balance MySQL Group Replication with TLS secured ProxySQL Cluster
-date: 2022-06-06
+date: "2022-06-06"
 weight: 20
 authors:
 - Tasdidur Rahman
 tags:
 - cloud-native platform
-- kubernetes
 - database
+- kubedb
+- kubernetes
 - kubernetes proxysql
-- run production-grade database
 - mysql
 - proxysql
-- kubedb
+- run production-grade database
 ---
 
 #### Overview

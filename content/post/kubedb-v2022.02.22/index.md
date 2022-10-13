@@ -1,23 +1,23 @@
 ---
 title: Announcing KubeDB v2022.02.22
-date: 2022-02-22
+date: "2022-02-22"
 weight: 25
 authors:
 - Md Kamol Hasan
 tags:
 - cloud-native
-- kubernetes
 - database
 - elasticsearch
+- elasticsearch-dashboard
+- kibana
+- kubedb
+- kubernetes
 - mariadb
 - memcached
 - mongodb
 - mysql
 - postgresql
 - redis
-- kubedb
-- elasticsearch-dashboard
-- kibana
 - schema-manager
 ---
 

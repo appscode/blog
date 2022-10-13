@@ -1,22 +1,22 @@
 ---
 title: Manage MySQL in Openshift Using KubeDB
-date: 2021-07-06
+date: "2021-07-06"
 weight: 23
 authors:
 - Shohag Rana
 tags:
 - cloud-native
-- kubernetes
 - database
 - elasticsearch
+- kubedb
+- kubernetes
 - mariadb
 - memcached
 - mongodb
 - mysql
+- openshift
 - postgresql
 - redis
-- kubedb
-- openshift
 ---
 
 ## Overview

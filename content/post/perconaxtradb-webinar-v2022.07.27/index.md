@@ -1,16 +1,16 @@
 ---
 title: Managing Production Grade Percona XtraDB Cluster in Kubernetes using KubeDB
-date: 2022-07-29
+date: "2022-07-29"
 weight: 20
 authors:
 - Md. Alif Biswas
 tags:
-- kubedb
-- percona xtradb cluster
-- kubernetes
-- provisioner
 - clustering
 - galera
+- kubedb
+- kubernetes
+- percona xtradb cluster
+- provisioner
 ---
 
 ## Summary

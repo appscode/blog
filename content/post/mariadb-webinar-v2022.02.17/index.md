@@ -1,19 +1,19 @@
 ---
 title: MariaDB Auto-Scaling and Reconfiguration in Kubernetes Native way using KubeDB
-date: 2022-02-24
+date: "2022-02-24"
 weight: 20
 authors:
 - Md. Alif Biswas
 tags:
-- kubedb
-- mariadb
-- reconfigure
 - autoscaling
-- volume expansion
-- stash
+- kubedb
 - kubernetes
-- provisioner
+- mariadb
 - ops-manager
+- provisioner
+- reconfigure
+- stash
+- volume expansion
 ---
 
 ## Summary

@@ -1,15 +1,15 @@
 ---
 title: Introducing Stash v2022.07.09
-date: 2022-07-09
+date: "2022-07-09"
 weight: 10
 authors:
 - Piyush Kanti Das
 tags:
-- kubernetes
-- stash
 - backup
-- restore
 - hooks
+- kubernetes
+- restore
+- stash
 ---
 
 We are announcing Stash `v2022.07.09` which introduces a new feature and a few improvements.

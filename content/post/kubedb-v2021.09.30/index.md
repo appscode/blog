@@ -1,21 +1,21 @@
 ---
 title: Announcing KubeDB v2021.09.30
-date: 2021-09-30
+date: "2021-09-30"
 weight: 25
 authors:
 - Tamal Saha
 tags:
 - cloud-native
-- kubernetes
 - database
 - elasticsearch
+- kubedb
+- kubernetes
 - mariadb
 - memcached
 - mongodb
 - mysql
 - postgresql
 - redis
-- kubedb
 ---
 
 We are pleased to announce the release of KubeDB v2021.09.30. This post lists all the major changes done in this release since `v2021.09.09`. The headline features of this release are Redis Sentinel mode support and Offline volume expansion support for MongoDB. The detailed commit by commit changelog can be found [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2021.09.30/README.md).

@@ -1,25 +1,25 @@
 ---
 title: Run & Manage MongoDB in Azure Kubernetes Service (AKS) Using KubeDB
-date: 2022-03-28
+date: "2022-03-28"
 weight: 14
 authors:
 - Dipta Roy
 tags:
+- azure storage blob
+- azure storage container
 - cloud-native platform
-- kubernetes
 - database
+- kubedb
+- kubernetes
 - kubernetes mongodb
-- run production-grade database
+- manage mongodb in microsoft aks
+- microsoft azure
+- microsoft azure storage
+- mongodb
 - run & manage mongodb in aks
 - run & manage mongodb in azure kubernetes service
-- manage mongodb in microsoft aks
 - run mongodb in azure
-- mongodb
-- kubedb
-- microsoft azure
-- azure storage container
-- microsoft azure storage
-- azure storage blob
+- run production-grade database
 ---
 
 ## Overview

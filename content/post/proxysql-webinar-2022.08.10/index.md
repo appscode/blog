@@ -1,17 +1,17 @@
 ---
 title: ProxySQL Declarative Provisioning, Reconfiguration and Horizontal Scaling using KubeDB
-date: 2022-08-12
+date: "2022-08-12"
 weight: 20
 authors:
 - Tasdidur Rahman
 tags:
-- kubedb
-- proxysql
-- mysql
-- kubernetes
-- provisioner
-- ops-manager
 - custom-configuration
+- kubedb
+- kubernetes
+- mysql
+- ops-manager
+- provisioner
+- proxysql
 - reconfigure
 ---
 

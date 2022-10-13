@@ -1,13 +1,13 @@
 ---
 title: Stash v2021.03.17 - A Better User Experience
-date: 2021-03-18
+date: "2021-03-18"
 weight: 15
 authors:
 - Emruz Hossain
 tags:
+- backup
 - kubernetes
 - stash
-- backup
 aliases:
 - /post/stash-v20201.03.17/
 ---

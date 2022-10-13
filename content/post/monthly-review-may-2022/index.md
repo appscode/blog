@@ -1,25 +1,25 @@
 ---
 title: Monthly Review - May, 2022
-date: 2022-05-31
+date: "2022-05-31"
 weight: 14
 authors:
 - Dipta Roy
 tags:
-- cloud-native platform
-- kubernetes native data platform
-- kubernetes native
-- kubernetes
-- database
-- kubernetes database
-- run production-grade database
-- run & manage database in k8s
-- run & manage database in kubernetes
-- manage database in kubernetes
-- kubedb
-- stash
 - appscode
 - backup kubernetes statefulset
+- cloud-native platform
+- database
+- kubedb
+- kubernetes
+- kubernetes database
+- kubernetes native
+- kubernetes native data platform
+- manage database in kubernetes
+- run & manage database in k8s
+- run & manage database in kubernetes
+- run production-grade database
 - running production-grade databases on kubernetes
+- stash
 ---
 
 # Releases

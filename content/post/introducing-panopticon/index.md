@@ -1,6 +1,6 @@
 ---
 title: Introducing Panopticon, A Generic Kubernetes State Metrics Exporter
-date: 2021-08-23
+date: "2021-08-23"
 weight: 22
 authors:
 - Pulak Kanti Bhowmick

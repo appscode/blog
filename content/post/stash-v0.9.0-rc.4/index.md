@@ -1,13 +1,13 @@
 ---
 title: Stash v0.9.0-rc.4 - Introducing Batch Backup and Hooks
-date: 2020-01-24
+date: "2020-01-24"
 weight: 15
 authors:
 - Emruz Hossain
 tags:
+- backup
 - kubernetes
 - stash
-- backup
 ---
 
 We are very excited to announce Stash `v0.9.0-rc.4` which brings some cool features like batch backup and hooks. We have also added `Percona-XtraDB` addon. This version also comes with some bug fixes and general improvements.

@@ -1,30 +1,30 @@
 ---
 title: Run MariaDB in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB
-date: 2022-09-30
+date: "2022-09-30"
 weight: 14
 authors:
 - Dipta Roy
 tags:
-- cloud-native platform
-- kubernetes
-- database
-- kubernetes mariadb
-- run production-grade database
-- run & manage mariadb in eks
-- run & manage mariadb in amazon elastic kubernetes service
-- manage mariadb in amazon eks
-- run mariadb in amazon
-- mariadb
-- kubedb
 - amazon
-- eks
 - amazon eks
 - amazon s3
-- s3 bucket
+- amazon storage
 - aws
 - aws s3
-- amazon storage
 - backup & restore mariadb in amazon s3
+- cloud-native platform
+- database
+- eks
+- kubedb
+- kubernetes
+- kubernetes mariadb
+- manage mariadb in amazon eks
+- mariadb
+- run & manage mariadb in amazon elastic kubernetes service
+- run & manage mariadb in eks
+- run mariadb in amazon
+- run production-grade database
+- s3 bucket
 ---
 
 ## Overview

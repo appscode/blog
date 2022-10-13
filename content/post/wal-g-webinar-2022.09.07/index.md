@@ -1,16 +1,16 @@
 ---
-title: "PostgreSQL Backup with Wal-G and point in time Recover with KubeDB managed Postgres Database"
-date: 2022-09-07
+title: PostgreSQL Backup with Wal-G and point in time Recover with KubeDB managed Postgres Database
+date: "2022-09-07"
 weight: 26
 authors:
 - Md Habibur Rahaman Emon
 tags:
+- backup
 - kubedb
+- kubernetes
+- pitr
 - postgresql
 - wal-g
-- kubernetes
-- backup
-- pitr
 ---
 
 ## Summary

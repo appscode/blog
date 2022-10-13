@@ -1,22 +1,22 @@
 ---
 title: Introducing KubeVault v2021.09.27
-date: 2021-09-27
+date: "2021-09-27"
 weight: 25
 authors:
 - Sakib Alamin
 tags:
-- kubevault
-- kubedb
-- gitops
+- community
 - database
-- user-management
+- enterprise
+- gitops
+- hashicorp
+- kubedb
 - kubernetes
+- kubevault
 - secret-management
 - security
+- user-management
 - vault
-- hashicorp
-- enterprise
-- community
 ---
 
 We are very excited to announce the release of KubeVault v2021.09.27 Edition. The KubeVault `v2021.09.27` contains major rework of the CRDs for self-service mode usage with [KubeDB](https://kubedb.com) or GitOps use-cases. It makes managing user privileges extremely easy for `KubeDB` managed databases or any other databases as long as users provide necessary connection information.

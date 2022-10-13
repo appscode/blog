@@ -1,21 +1,21 @@
 ---
 title: Managing Production Grade Elasticsearch in Kubernetes Using KubeDB - Webinar
-date: 2021-06-25
+date: "2021-06-25"
 weight: 25
 authors:
 - Shohag Rana
 tags:
 - cloud-native
-- kubernetes
 - database
 - elasticsearch
+- kubedb
+- kubernetes
 - mariadb
 - memcached
 - mongodb
 - mysql
 - postgresql
 - redis
-- kubedb
 ---
 
 ## Summary

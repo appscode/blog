@@ -1,21 +1,21 @@
 ---
 title: Managing Cloud Infrastructure in Kubernetes using Kubeform - Webinar
-date: 2021-07-30
+date: "2021-07-30"
 weight: 25
 authors:
 - Shohag Rana
 tags:
 - cloud-native
-- kubernetes
 - database
 - elasticsearch
+- kubedb
+- kubernetes
 - mariadb
 - memcached
 - mongodb
 - mysql
 - postgresql
 - redis
-- kubedb
 ---
 
 ## Summary

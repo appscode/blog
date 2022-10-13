@@ -1,21 +1,21 @@
 ---
 title: Announcing KubeDB v2021.06.23 and Stash v2021.06.23
-date: 2021-06-23
+date: "2021-06-23"
 weight: 25
 authors:
 - Shohag Rana
 tags:
 - cloud-native
-- kubernetes
 - database
 - elasticsearch
+- kubedb
+- kubernetes
 - mariadb
 - memcached
 - mongodb
 - mysql
 - postgresql
 - redis
-- kubedb
 ---
 
 We are pleased to announce a dual release of [KubeDB v2021.06.23](https://kubedb.com/docs/v2021.06.23/setup/) and [Stash v2021.06.23](https://stash.run/docs/v2021.06.23/guides/latest/backends/overview/). This post lists all the major changes done in this release since `v2021.04.16`. This release offers support for the latest Kubernetes version v1.21.1, MongoDB 4.4.2, Elasticsearch 7.13.2. This release adds support for automated Day 2 operations for MariaDB and PostgreSQL databases. There has been various bug fixes across the board that improves the fault tolerance of the KubeDB operator. You can find the detailed change logs here: 

@@ -1,6 +1,6 @@
 ---
 title: Relicensing Stash & KubeDB
-date: 2020-06-30
+date: "2020-06-30"
 weight: 16
 authors:
 - Tamal Saha

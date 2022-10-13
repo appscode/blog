@@ -1,15 +1,15 @@
 ---
 title: Announcing Voyager v2021.10.18
-date: 2021-10-18
+date: "2021-10-18"
 weight: 25
 authors:
 - Tamal Saha
 tags:
 - cloud-native
-- kubernetes
-- ingress
 - gateway
 - haproxy
+- ingress
+- kubernetes
 - voyager
 ---
 

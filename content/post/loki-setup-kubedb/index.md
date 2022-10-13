@@ -1,19 +1,19 @@
 ---
 title: Use Loki with KubeDB
-date: 2022-05-20
+date: "2022-05-20"
 weight: 21
 authors:
 - Pulak Kanti Bhowmick
 tags:
-- log
-- monitoring
 - alert
-- loki
 - alertmanager
-- promtail
-- kubedb
 - grafana
+- kubedb
 - kubernetes
+- log
+- loki
+- monitoring
+- promtail
 ---
 
 For many years, logs have been an essential part of troubleshooting application and infrastructure performance. In Kubernetes, the logging mechanism becomes more crucial to managing and monitoring services and infrastructure.

@@ -1,17 +1,17 @@
 ---
 title: PostgreSQL Connection Pooling in Kubernetes using Kubedb PgBouncer
-date: 2022-05-27
+date: "2022-05-27"
 weight: 20
 authors:
 - Rakibul Hossain
 tags:
+- community
+- enterprise
 - kubedb
 - kubernetes
 - pgbouncer
 - postgres
 - statefulsets
-- enterprise
-- community
 ---
 
 ## Summary
