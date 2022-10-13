@@ -3,19 +3,19 @@ title: Challenges of Autoscaling Databases in Kubernetes
 date: 2022-05-18
 weight: 20
 authors:
-  - Md Kamol Hasan
-  - Md Fahim Abrar
+- Md Kamol Hasan
+- Md Fahim Abrar
 tags:
-  - kubedb
-  - mongodb
-  - auto-scaling
-  - horizontal-scaling
-  - vertical-scaling
-  - scaling
-  - elasticsearch
-  - statefulsets
-  - enterprise
-  - community
+- kubedb
+- mongodb
+- auto-scaling
+- horizontal-scaling
+- vertical-scaling
+- scaling
+- elasticsearch
+- statefulsets
+- enterprise
+- community
 ---
 
 ## Summary

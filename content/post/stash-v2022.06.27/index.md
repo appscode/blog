@@ -3,12 +3,12 @@ title: Introducing Stash v2022.06.27
 date: 2022-06-27
 weight: 10
 authors:
-  - Hossain Mahmud
+- Hossain Mahmud
 tags:
-  - kubernetes
-  - stash
-  - backup
-  - restore
+- kubernetes
+- stash
+- backup
+- restore
 ---
 
 We are announcing Stash `v2022.06.27` which include a critical bug fix for PostgreSQL and MongoDB addon. This release fixes a bug that was causing the license checker to fail in the backup and restore jobs for PostgreSQL ([#1077](https://github.com/stashed/postgres/pull/1077)) and MongoDB ([#1593](https://github.com/stashed/mongodb/pull/1593)) databases. This bug was introduced in [Stash v2022.06.21](https://blog.byte.builders/post/stash-v2022.06.21/) release. So, if you deployed Stash v2022.06.21 previously, you are recommended to upgrade to today's release.

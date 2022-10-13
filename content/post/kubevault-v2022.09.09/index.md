@@ -3,20 +3,20 @@ title: Introducing KubeVault v2022.09.09
 date: 2022-09-09
 weight: 25
 authors:
-  - Sakib Alamin
+- Sakib Alamin
 tags:
-  - kubevault
-  - ops-requests
-  - recommendation
-  - cli
-  - kubevault cli
-  - kubernetes
-  - secret-management
-  - security
-  - vault
-  - hashicorp
-  - enterprise
-  - community
+- kubevault
+- ops-requests
+- recommendation
+- cli
+- kubevault cli
+- kubernetes
+- secret-management
+- security
+- vault
+- hashicorp
+- enterprise
+- community
 ---
 
 We are very excited to announce the release of KubeVault v2022.09.09 Edition. 

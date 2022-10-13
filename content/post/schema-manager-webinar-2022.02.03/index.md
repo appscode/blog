@@ -3,25 +3,25 @@ title: MongoDB and PostgreSQL Multi-Tenancy Support by KubeDB Schema Manager
 date: 2022-02-03
 weight: 20
 authors:
-  - Arnob kumar saha
-  - rakibul hossain
+- Arnob kumar saha
+- rakibul hossain
 tags:
-  - kubedb
-  - mongodb
-  - postgresql
-  - multi tenancy
-  - schema manager
-  - kubevault
-  - cert-manager
-  - stash
-  - kubernetes
-  - secret-management
-  - security
-  - vault
-  - hashicorp
-  - shard
-  - enterprise
-  - community
+- kubedb
+- mongodb
+- postgresql
+- multi tenancy
+- schema manager
+- kubevault
+- cert-manager
+- stash
+- kubernetes
+- secret-management
+- security
+- vault
+- hashicorp
+- shard
+- enterprise
+- community
 ---
 
 ## Summary

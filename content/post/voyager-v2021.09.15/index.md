@@ -3,14 +3,14 @@ title: Announcing Voyager v2021.09.15
 date: 2021-09-16
 weight: 25
 authors:
-  - Tamal Saha
+- Tamal Saha
 tags:
-  - cloud-native
-  - kubernetes
-  - ingress
-  - gateway
-  - haproxy
-  - voyager
+- cloud-native
+- kubernetes
+- ingress
+- gateway
+- haproxy
+- voyager
 ---
 
 We are pleased to announce the release of Voyager v2021.09.15. This post lists all the major changes done in this release since `v12.0.0`. This release offers support for the latest `Kubernetes version 1.22` and upgrades HAProxy to `2.4.4`. Voyager v2021.09.15 introduces Community & Enterprise Edition and deprecates prior releases of Voyager operators. The detailed commit by commit changelog can be found [here](https://github.com/voyagermesh/CHANGELOG/blob/master/releases/v2021.09.15/README.md).

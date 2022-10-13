@@ -3,18 +3,18 @@ title: Introducing KubeVault v2022.02.22
 date: 2022-02-22
 weight: 25
 authors:
-  - Sakib Alamin
+- Sakib Alamin
 tags:
-  - kubevault
-  - cli
-  - kubevault cli
-  - kubernetes
-  - secret-management
-  - security
-  - vault
-  - hashicorp
-  - enterprise
-  - community
+- kubevault
+- cli
+- kubevault cli
+- kubernetes
+- secret-management
+- security
+- vault
+- hashicorp
+- enterprise
+- community
 ---
 
 We are very excited to announce the release of KubeVault v2022.02.22 Edition. The KubeVault `v2022.02.22` contains major improvements of the `KubeVault CLI` for better user experiences. Now, using `KubeVault CLI` you can `get`, `set`, `delete`, `list` and `sync` vault `unseal-keys` and `root-token`.

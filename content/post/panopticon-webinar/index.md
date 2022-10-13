@@ -3,23 +3,24 @@ title: Panopticon, A Generic Kubernetes State Metrics Exporter - Webinar
 date: 2021-08-30
 weight: 20
 authors:
-  - Shohag Rana
+- Shohag Rana
 tags:
-  - cloud-native
-  - kubernetes
-  - database
-  - elasticsearch
-  - mariadb
-  - memcached
-  - mongodb
-  - mysql
-  - postgresql
-  - redis
-  - kubedb
-  - panopticon
-  - prometheus
-  - metrics
+- cloud-native
+- kubernetes
+- database
+- elasticsearch
+- mariadb
+- memcached
+- mongodb
+- mysql
+- postgresql
+- redis
+- kubedb
+- panopticon
+- prometheus
+- metrics
 ---
+
 ## Summary
 
 AppsCode held a webinar on **"Panopticon: A Generic Kubernetes State Metrics Exporter"**. This took place on 26th August 2021. The contents of what took place at the webinar are shown below:

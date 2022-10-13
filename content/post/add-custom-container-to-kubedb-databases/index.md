@@ -3,14 +3,14 @@ title: A workaround of adding custom container to KubeDB managed Databases
 date: 2022-06-24
 weight: 25
 authors:
-  - Raihan Khan
+- Raihan Khan
 tags:
-  - kubedb
-  - container
-  - mysql
-  - filebeat
-  - statefulset
-  - mysqlopsrequest
+- kubedb
+- container
+- mysql
+- filebeat
+- statefulset
+- mysqlopsrequest
 ---
 
 ### Add custom containers in KubeDB managed Database

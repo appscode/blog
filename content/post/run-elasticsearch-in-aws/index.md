@@ -3,29 +3,29 @@ title: Run Elasticsearch in Amazon Elastic Kubernetes Service (Amazon EKS) Using
 date: 2022-08-29
 weight: 12
 authors:
-  - Dipta Roy
+- Dipta Roy
 tags:
-  - cloud-native platform
-  - kubernetes
-  - database
-  - kubernetes elasticsearch
-  - run production-grade database
-  - run & manage elasticsearch in aws
-  - run & manage elasticsearch in amazon elastic kubernetes service
-  - manage elasticsearch in amazon eks
-  - run elasticsearch in amazon web services
-  - elasticsearch
-  - xpack
-  - elasticstack
-  - run & manage elasticsearch in eks
-  - kubedb
-  - amazon
-  - aws
-  - amazon s3
-  - amazon storage
-  - aws s3
-  - s3 bucket
-  - backup & restore elasticsearch in amazon s3
+- cloud-native platform
+- kubernetes
+- database
+- kubernetes elasticsearch
+- run production-grade database
+- run & manage elasticsearch in aws
+- run & manage elasticsearch in amazon elastic kubernetes service
+- manage elasticsearch in amazon eks
+- run elasticsearch in amazon web services
+- elasticsearch
+- xpack
+- elasticstack
+- run & manage elasticsearch in eks
+- kubedb
+- amazon
+- aws
+- amazon s3
+- amazon storage
+- aws s3
+- s3 bucket
+- backup & restore elasticsearch in amazon s3
 ---
 
 ## Overview

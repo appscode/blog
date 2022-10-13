@@ -3,17 +3,17 @@ title: Introducing Stash v2022.05.12
 date: 2022-05-12
 weight: 10
 authors:
-  - Piyush Kanti Das
+- Piyush Kanti Das
 tags:
-  - kubernetes
-  - stash
-  - backup
-  - restore
-  - cross-namespace
-  - kubedump
-  - grafana
-  - cli
-  - docs
+- kubernetes
+- stash
+- backup
+- restore
+- cross-namespace
+- kubedump
+- grafana
+- cli
+- docs
 ---
 
 We are very excited to announce Stash `v2022.05.12`.  In this release, we have added exciting new features and improvements. We have squashed a few bugs as well. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2022.05.12/README.md). We are going to highlight the major changes in this post.

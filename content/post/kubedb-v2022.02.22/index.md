@@ -3,22 +3,22 @@ title: Announcing KubeDB v2022.02.22
 date: 2022-02-22
 weight: 25
 authors:
-  - Md Kamol Hasan
+- Md Kamol Hasan
 tags:
-  - cloud-native
-  - kubernetes
-  - database
-  - elasticsearch
-  - mariadb
-  - memcached
-  - mongodb
-  - mysql
-  - postgresql
-  - redis
-  - kubedb
-  - elasticsearch-dashboard
-  - kibana
-  - schema-manager
+- cloud-native
+- kubernetes
+- database
+- elasticsearch
+- mariadb
+- memcached
+- mongodb
+- mysql
+- postgresql
+- redis
+- kubedb
+- elasticsearch-dashboard
+- kibana
+- schema-manager
 ---
 
 We are pleased to announce the release of [KubeDB v2022.02.22](https://kubedb.com/docs/v2022.02.22/setup/). This post lists all the major changes done in this release since the last release. This release offers support for the **Schema Manager for multi-tenancy**, **MySQL read replica**, **ElasticsearchDashboard (Kibana)**, Elasticsearch configurable JVM heap, MongoDB reprovision opsRequest, MongoDB configurable ephemeral storage, MongoDB JS file support in reconfigure opsRequest, MariaDB storage and compute autoscaling, MariaDB offline volume expansion, MariaDB reconfigure opsRequest, Postgres offline volume expansion, Redis disable authentication, etc. You can find the detailed change logs [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2022.02.22/README.md).

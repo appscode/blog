@@ -3,15 +3,15 @@ title: "PostgreSQL Logical Replication using KubeDB in Kubernetes"
 date: 2022-08-29
 weight: 26
 authors:
- - Rakibul Hossain 
+- Rakibul Hossain
 tags:
- - kubedb
- - postgres
- - postgresql
- - logical replication
- - kubernetes
- - publisher
- - subscriber
+- kubedb
+- postgres
+- postgresql
+- logical replication
+- kubernetes
+- publisher
+- subscriber
 ---
 
 ## Summary

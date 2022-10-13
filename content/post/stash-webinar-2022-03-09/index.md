@@ -3,15 +3,15 @@ title: "Stash: Introducing a Better Cloud-Native Backup Experience"
 date: 2022-03-09
 weight: 15
 authors:
-  - Hossain Mahmud
+- Hossain Mahmud
 tags:
-  - cloud-native
-  - kubernetes
-  - stash
-  - backup
-  - restore
-  - cross-namespace
-  - cli
+- cloud-native
+- kubernetes
+- stash
+- backup
+- restore
+- cross-namespace
+- cli
 ---
 
 ## Summary

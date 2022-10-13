@@ -3,27 +3,27 @@ title: Run Elasticsearch with SearchGuard Plugin in Azure Kubernetes Service (AK
 date: 2022-06-03
 weight: 12
 authors:
-  - Dipta Roy
+- Dipta Roy
 tags:
-  - cloud-native platform
-  - kubernetes
-  - database
-  - kubernetes elasticsearch
-  - run production-grade database
-  - run & manage elasticsearch in aks
-  - run & manage elasticsearch in azure kubernetes service
-  - manage elasticsearch in microsoft aks
-  - run elasticsearch in azure
-  - elasticsearch
-  - searchguard
-  - run & manage searchguard in aks
-  - kubedb
-  - azure
-  - aks
-  - microsoft azure
-  - azure storage container
-  - microsoft azure storage
-  - azure storage blob
+- cloud-native platform
+- kubernetes
+- database
+- kubernetes elasticsearch
+- run production-grade database
+- run & manage elasticsearch in aks
+- run & manage elasticsearch in azure kubernetes service
+- manage elasticsearch in microsoft aks
+- run elasticsearch in azure
+- elasticsearch
+- searchguard
+- run & manage searchguard in aks
+- kubedb
+- azure
+- aks
+- microsoft azure
+- azure storage container
+- microsoft azure storage
+- azure storage blob
 ---
 
 ## Overview

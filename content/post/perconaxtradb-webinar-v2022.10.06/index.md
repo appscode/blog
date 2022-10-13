@@ -3,16 +3,16 @@ title: Manage Percona XtraDB Cluster Day-2 Operations using KubeDB
 date: 2022-10-10
 weight: 20
 authors:
-  - Md. Alif Biswas
+- Md. Alif Biswas
 tags:
-  - kubedb
-  - percona xtradb cluster
-  - kubernetes
-  - ops requests
-  - provisioner
-  - scaling
-  - upgrading
-  - reconfigure
+- kubedb
+- percona xtradb cluster
+- kubernetes
+- ops requests
+- provisioner
+- scaling
+- upgrading
+- reconfigure
 ---
 
 ## Summary

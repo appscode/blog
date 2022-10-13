@@ -3,16 +3,16 @@ title: "KubeDB AutoOps: Automate Day 2 Life-cycle Management for Databases on Ku
 date: 2022-04-18
 weight: 26
 authors:
-  - Pulak Kanti Bhowmick
+- Pulak Kanti Bhowmick
 tags:
-  - kubedb
-  - autoops
-  - supervisor
-  - recommendation
-  - maintenance-window
-  - approval-policy
-  - rotote-tls
-  - version-upgrade
+- kubedb
+- autoops
+- supervisor
+- recommendation
+- maintenance-window
+- approval-policy
+- rotote-tls
+- version-upgrade
 ---
 
 ## Summary

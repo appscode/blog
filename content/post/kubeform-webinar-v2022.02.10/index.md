@@ -3,21 +3,20 @@ title: Introducing Kubeform Module
 date: 2022-02-10
 weight: 25
 authors:
-  - Sahadat Hossain 
+- Sahadat Hossain
 tags:
-  - cloud-native
-  - kubernetes
-  - on-prem
-  - kubeform
-  - terraform
-  - module
-  - cli
-  - gcp
-  - linode
-  - aws
-  - azure
+- cloud-native
+- kubernetes
+- on-prem
+- kubeform
+- terraform
+- module
+- cli
+- gcp
+- linode
+- aws
+- azure
 ---
-
 
 On 10th Feb 2022, AppsCode held a webinar on **"Introducing Kubeform Module"**. Key contents of the webinar are:
 

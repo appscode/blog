@@ -3,24 +3,24 @@ title: Run MariaDB in Azure Kubernetes Service (AKS) Using KubeDB
 date: 2022-04-15
 weight: 14
 authors:
-  - Dipta Roy
+- Dipta Roy
 tags:
-  - cloud-native platform
-  - kubernetes
-  - database
-  - kubernetes mariadb
-  - run production-grade database
-  - run & manage mariadb in aks
-  - run & manage mariadb in azure kubernetes service
-  - manage mariadb in microsoft aks
-  - run mariadb in azure
-  - mariadb
-  - kubedb
-  - azure
-  - microsoft azure
-  - azure storage container
-  - microsoft azure storage
-  - azure storage blob
+- cloud-native platform
+- kubernetes
+- database
+- kubernetes mariadb
+- run production-grade database
+- run & manage mariadb in aks
+- run & manage mariadb in azure kubernetes service
+- manage mariadb in microsoft aks
+- run mariadb in azure
+- mariadb
+- kubedb
+- azure
+- microsoft azure
+- azure storage container
+- microsoft azure storage
+- azure storage blob
 ---
 
 ## Overview

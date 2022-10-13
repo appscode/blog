@@ -3,18 +3,18 @@ title: Managing Opensearch cluster in Kubernetes using KubeDB
 date: 2022-03-23
 weight: 20
 authors:
-  - Raihan Khan
+- Raihan Khan
 tags:
-  - kubedb
-  - opensearch
-  - opensearch-dashboard
-  - elasticsearch-dashboard
-  - elasticsearchopsrequest
-  - custom-branding
-  - custom-configuration
-  - database-query
-  - enterprise
-  - community
+- kubedb
+- opensearch
+- opensearch-dashboard
+- elasticsearch-dashboard
+- elasticsearchopsrequest
+- custom-branding
+- custom-configuration
+- database-query
+- enterprise
+- community
 ---
 
 ## Summary

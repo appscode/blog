@@ -3,14 +3,14 @@ title: Stash v2021.08.02 - Introducing Redis Addon and Kubernetes 1.22 Support
 date: 2021-08-02
 weight: 15
 authors:
-  - Emruz Hossain
+- Emruz Hossain
 tags:
-  - kubernetes
-  - stash
-  - backup
-  - redis
+- kubernetes
+- stash
+- backup
+- redis
 aliases:
-  - /post/stash-v2021.08.02/
+- /post/stash-v2021.08.02/
 ---
 
 We are very excited to announce Stash `v2021.08.02`. In this release, we are introducing Redis addon for Stash. We have also added support for Kubernetes version 1.22.

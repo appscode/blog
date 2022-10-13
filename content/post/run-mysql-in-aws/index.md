@@ -3,28 +3,28 @@ title: Run MySQL in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB
 date: 2022-08-16
 weight: 14
 authors:
-  - Dipta Roy
+- Dipta Roy
 tags:
-  - cloud-native platform
-  - kubernetes
-  - database
-  - kubernetes mysql
-  - run production-grade database
-  - run & manage mysql in eks
-  - run & manage mysql in amazon elastic kubernetes service
-  - manage mysql in amazon eks
-  - run mysql in amazon
-  - mysql
-  - kubedb
-  - amazon
-  - eks
-  - amazon eks
-  - amazon s3
-  - s3 bucket
-  - aws
-  - aws s3
-  - amazon storage
-  - backup & restore mysql in amazon s3
+- cloud-native platform
+- kubernetes
+- database
+- kubernetes mysql
+- run production-grade database
+- run & manage mysql in eks
+- run & manage mysql in amazon elastic kubernetes service
+- manage mysql in amazon eks
+- run mysql in amazon
+- mysql
+- kubedb
+- amazon
+- eks
+- amazon eks
+- amazon s3
+- s3 bucket
+- aws
+- aws s3
+- amazon storage
+- backup & restore mysql in amazon s3
 ---
 
 ## Overview

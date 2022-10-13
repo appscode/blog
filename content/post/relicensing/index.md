@@ -3,11 +3,10 @@ title: Relicensing Stash & KubeDB
 date: 2020-06-30
 weight: 16
 authors:
-  - Tamal Saha
+- Tamal Saha
 tags:
-  - appscode
+- appscode
 ---
-
 
 AppsCode is relicening various components of the [Stash](https://stash.run) and [KubeDB](https://kubedb.com) products. We have decided to use simple, standardized, plain-language software source code licenses from the [PolyForm Project](https://polyformproject.org/). Please see the table below for the upcoming changes:
 

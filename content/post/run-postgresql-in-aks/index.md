@@ -3,25 +3,25 @@ title: Run PostgreSQL in Azure Kubernetes Service (AKS) Using KubeDB
 date: 2022-07-01
 weight: 14
 authors:
-  - Dipta Roy
+- Dipta Roy
 tags:
-  - cloud-native platform
-  - kubernetes
-  - database
-  - kubernetes postgresql
-  - run production-grade database
-  - run & manage postgresql in aks
-  - run & manage postgresql in azure kubernetes service
-  - manage postgresql in microsoft aks
-  - run postgresql in azure
-  - postgresql
-  - kubedb
-  - azure
-  - aks
-  - microsoft azure
-  - azure storage container
-  - microsoft azure storage
-  - azure storage blob
+- cloud-native platform
+- kubernetes
+- database
+- kubernetes postgresql
+- run production-grade database
+- run & manage postgresql in aks
+- run & manage postgresql in azure kubernetes service
+- manage postgresql in microsoft aks
+- run postgresql in azure
+- postgresql
+- kubedb
+- azure
+- aks
+- microsoft azure
+- azure storage container
+- microsoft azure storage
+- azure storage blob
 ---
 
 ## Overview

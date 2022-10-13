@@ -3,27 +3,26 @@ title: Announcing KubeDB v2022.08.08
 date: 2022-08-08
 weight: 25
 authors:
-  - Md Kamol Hasan
-
+- Md Kamol Hasan
 tags:
-  - cloud-native
-  - kubernetes
-  - database
-  - elasticsearch
-  - mariadb
-  - memcached
-  - mongodb
-  - mysql
-  - postgresql
-  - redis
-  - kubedb
-  - elasticsearch-dashboard
-  - kibana
-  - opensearch
-  - opensearch-dashboard 
-  - schema-manager
-  - percona
-  - percona-xtradb
+- cloud-native
+- kubernetes
+- database
+- elasticsearch
+- mariadb
+- memcached
+- mongodb
+- mysql
+- postgresql
+- redis
+- kubedb
+- elasticsearch-dashboard
+- kibana
+- opensearch
+- opensearch-dashboard
+- schema-manager
+- percona
+- percona-xtradb
 ---
 
 We are pleased to announce the release of [KubeDB v2022.08.08](https://kubedb.com/docs/v2022.08.08/setup/). This post lists all the major changes done in this release since the last release.

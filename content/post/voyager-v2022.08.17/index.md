@@ -3,14 +3,14 @@ title: Announcing Voyager v2022.08.17
 date: 2022-08-17
 weight: 25
 authors:
-  - Tamal Saha
+- Tamal Saha
 tags:
-  - cloud-native
-  - kubernetes
-  - ingress
-  - gateway
-  - haproxy
-  - voyager
+- cloud-native
+- kubernetes
+- ingress
+- gateway
+- haproxy
+- voyager
 ---
 
 We are pleased to announce the release of Voyager v2022.08.17. In this release, we have released operator and HAProxy images to fix a number of CVEs. The detailed commit by commit changelog can be found [here](https://github.com/voyagermesh/CHANGELOG/blob/master/releases/v2022.08.17/README.md).

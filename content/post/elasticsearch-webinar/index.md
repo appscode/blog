@@ -3,20 +3,21 @@ title: Managing Production Grade Elasticsearch in Kubernetes Using KubeDB - Webi
 date: 2021-06-25
 weight: 25
 authors:
-  - Shohag Rana
+- Shohag Rana
 tags:
-  - cloud-native
-  - kubernetes
-  - database
-  - elasticsearch
-  - mariadb
-  - memcached
-  - mongodb
-  - mysql
-  - postgresql
-  - redis
-  - kubedb
+- cloud-native
+- kubernetes
+- database
+- elasticsearch
+- mariadb
+- memcached
+- mongodb
+- mysql
+- postgresql
+- redis
+- kubedb
 ---
+
 ## Summary
 
 AppsCode held a webinar on "Managing Production Grade Elasticsearch in Kubernetes Using KubeDB". This took place 24th June 2021. The contents of what took place at the webinar is shown below:

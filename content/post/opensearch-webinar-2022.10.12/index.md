@@ -3,16 +3,16 @@ title: Day 2 Lifecycle Management for OpenSearch Cluster Using KubeDB
 date: 2022-10-13
 weight: 20
 authors:
-  - Raihan Khan
+- Raihan Khan
 tags:
-  - kubedb
-  - opensearch cluster
-  - kubernetes
-  - ops requests
-  - provisioner
-  - scaling
-  - upgrading
-  - reconfigure
+- kubedb
+- opensearch cluster
+- kubernetes
+- ops requests
+- provisioner
+- scaling
+- upgrading
+- reconfigure
 ---
 
 ## Summary

@@ -3,19 +3,19 @@ title: MariaDB Alerting and Multi-Tenancy Support by KubeDB
 date: 2022-03-16
 weight: 20
 authors:
-  - Md. Alif Biswas
-  - Tasdidur Rahman
+- Md. Alif Biswas
+- Tasdidur Rahman
 tags:
-  - kubedb
-  - mariadb
-  - multi-tenancy
-  - schema-manager
-  - alerting
-  - prometheus
-  - galera
-  - kubernetes
-  - stash
-  - ops-manager
+- kubedb
+- mariadb
+- multi-tenancy
+- schema-manager
+- alerting
+- prometheus
+- galera
+- kubernetes
+- stash
+- ops-manager
 ---
 
 ## Summary

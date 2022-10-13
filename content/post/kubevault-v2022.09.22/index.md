@@ -3,20 +3,20 @@ title: Introducing KubeVault v2022.09.22
 date: 2022-09-22
 weight: 25
 authors:
-  - Sakib Alamin
+- Sakib Alamin
 tags:
-  - kubevault
-  - ops-requests
-  - recommendation
-  - cli
-  - kubevault cli
-  - kubernetes
-  - secret-management
-  - security
-  - vault
-  - hashicorp
-  - enterprise
-  - community
+- kubevault
+- ops-requests
+- recommendation
+- cli
+- kubevault cli
+- kubernetes
+- secret-management
+- security
+- vault
+- hashicorp
+- enterprise
+- community
 ---
 
 [KubeVault](https://kubevault.com) is a Git-Ops ready, production-grade solution for deploying and configuring [HashiCorp Vault](https://www.vaultproject.io/) on Kubernetes.

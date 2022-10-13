@@ -3,19 +3,19 @@ title: Introducing KubeVault v2022.01.11
 date: 2022-01-11
 weight: 25
 authors:
-  - Sakib Alamin
+- Sakib Alamin
 tags:
-  - kubevault
-  - cert-manager
-  - cli
-  - kubevault cli
-  - kubernetes
-  - secret-management
-  - security
-  - vault
-  - hashicorp
-  - enterprise
-  - community
+- kubevault
+- cert-manager
+- cli
+- kubevault cli
+- kubernetes
+- secret-management
+- security
+- vault
+- hashicorp
+- enterprise
+- community
 ---
 
 We are very excited to announce the release of KubeVault v2022.01.11 Edition. The KubeVault `v2022.01.11` contains major improvements of the `KubeVault CLI` for better user experiences, `cert-manager` integration for managing `TLS`, clean-up of the `unseal-keys` and `root-token` along with the `VaultServer` when the `TerminationPolicy` is set to `WipeOut`, newly added `Expired` phase for  `SecretAccessRequest` based on `TTL` or admin side revocation, as well as few bug fixes. We're going to demonstrate some of these improvements below.

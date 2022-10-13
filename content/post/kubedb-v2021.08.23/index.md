@@ -3,19 +3,19 @@ title: Announcing KubeDB v2021.08.23
 date: 2021-08-24
 weight: 25
 authors:
-  - Tamal Saha
+- Tamal Saha
 tags:
-  - cloud-native
-  - kubernetes
-  - database
-  - elasticsearch
-  - mariadb
-  - memcached
-  - mongodb
-  - mysql
-  - postgresql
-  - redis
-  - kubedb
+- cloud-native
+- kubernetes
+- database
+- elasticsearch
+- mariadb
+- memcached
+- mongodb
+- mysql
+- postgresql
+- redis
+- kubedb
 ---
 
 We are pleased to announce the release of KubeDB v2021.08.23. This post lists all the major changes done in this release since `v2021.06.23`. This release offers support for the latest `Kubernetes version 1.22`. The `KubeDB CLI` now has exciting new features. `MongoDB` now uses the official docker images. `Elasticsearch` supports the latest **xpack and opendistro versions** and provides pre-built Docker images with snapshot plugins. KubeDB managed `Redis` now provides Password Authentication for the default user. KubeDB v2021.08.23 brings further changes to the Community Edition and deprecates prior releases of KubeDB operators. The detailed commit by commit changelog can be found [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2021.08.23/README.md).

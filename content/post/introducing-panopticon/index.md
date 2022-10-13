@@ -3,26 +3,26 @@ title: Introducing Panopticon, A Generic Kubernetes State Metrics Exporter
 date: 2021-08-23
 weight: 22
 authors:
-  - Pulak Kanti Bhowmick
+- Pulak Kanti Bhowmick
 tags:
-  - cloud-native
-  - database
-  - elasticsearch
-  - grafana
-  - kubedb
-  - kubernetes
-  - kubernetes-exporter
-  - mariadb
-  - memcached
-  - metrics
-  - mongodb
-  - monitoring
-  - mysql
-  - panopticon
-  - postgresql
-  - prometheus
-  - prometheus-exporter
-  - redis
+- cloud-native
+- database
+- elasticsearch
+- grafana
+- kubedb
+- kubernetes
+- kubernetes-exporter
+- mariadb
+- memcached
+- metrics
+- mongodb
+- monitoring
+- mysql
+- panopticon
+- postgresql
+- prometheus
+- prometheus-exporter
+- redis
 ---
 
 We are excited to introduce `Panopticon`, a generic Kubernetes resource state metrics exporter. It comes with a lot of features and customization options.

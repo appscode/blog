@@ -3,25 +3,25 @@ title: Run Redis in Azure Kubernetes Service (AKS) Using KubeDB
 date: 2022-08-03
 weight: 14
 authors:
-  - Dipta Roy
+- Dipta Roy
 tags:
-  - cloud-native platform
-  - kubernetes
-  - database
-  - kubernetes redis
-  - run production-grade database
-  - run & manage redis in aks
-  - run & manage redis in azure kubernetes service
-  - manage redis in microsoft aks
-  - run redis in azure
-  - redis
-  - kubedb
-  - azure
-  - aks
-  - microsoft azure
-  - azure storage container
-  - microsoft azure storage
-  - azure storage blob
+- cloud-native platform
+- kubernetes
+- database
+- kubernetes redis
+- run production-grade database
+- run & manage redis in aks
+- run & manage redis in azure kubernetes service
+- manage redis in microsoft aks
+- run redis in azure
+- redis
+- kubedb
+- azure
+- aks
+- microsoft azure
+- azure storage container
+- microsoft azure storage
+- azure storage blob
 ---
 
 ## Overview

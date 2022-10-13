@@ -3,18 +3,18 @@ title: Introducing Kubeform v2021.07.28
 date: 2021-07-28
 weight: 25
 authors:
-  - Md Fahim Abrar
+- Md Fahim Abrar
 tags:
-  - cloud-native
-  - kubernetes
-  - on-prem
-  - kubeform
-  - terraform
-  - gcp
-  - linode
-  - aws
-  - azure
-  - equinix-metal
+- cloud-native
+- kubernetes
+- on-prem
+- kubeform
+- terraform
+- gcp
+- linode
+- aws
+- azure
+- equinix-metal
 ---
 
 > We have released `Kubeform v2021.08.02` with support for additional cloud services. You can find the full list [here](https://kubeform.com/pricing/). To try for FREE, visit our [installer webpage](https://kubeform.com/docs/v2021.08.02/setup/). Enjoy! 

@@ -3,22 +3,22 @@ title: Running Production-Grade Databases on Kubernetes - Challenges and Solutio
 date: 2022-05-26
 weight: 14
 authors:
-  - Tamal Saha
-  - Dipta Roy
+- Tamal Saha
+- Dipta Roy
 tags:
-  - cloud-native platform
-  - kubernetes native data platform
-  - kubernetes native
-  - kubernetes
-  - database
-  - kubernetes database
-  - run production-grade database
-  - run & manage database in k8s
-  - run & manage database in kubernetes 
-  - manage database in kubernetes
-  - kubedb
-  - stash
-  - running production-grade databases on kubernetes
+- cloud-native platform
+- kubernetes native data platform
+- kubernetes native
+- kubernetes
+- database
+- kubernetes database
+- run production-grade database
+- run & manage database in k8s
+- run & manage database in kubernetes
+- manage database in kubernetes
+- kubedb
+- stash
+- running production-grade databases on kubernetes
 ---
 
 As containers are taking over the world of software development, Kubernetes has emerged as the platform that lets developers seamlessly deploy, scale, run applications, and manage their life cycles. Kubernetes is a DevOps game-changer since it allows teams to focus on applications and deployment rather than worrying about the underlying infrastructure. Given the multi-cloud environment in which DevOps teams perform, Kubernetes abstracts the cloud provider and enables enterprises to build cloud-native applications that can run anywhere.
