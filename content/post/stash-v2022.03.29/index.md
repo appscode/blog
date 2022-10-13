@@ -37,7 +37,7 @@ Restic password is still required in your Secret to take backup or restore using
 
 ### Better Auto-backup Experience
 
-You can now keep your Repository and storage Secret separate from the application namespaces. This lets you configure a backup policy for your users without exposing their storage credentials to them. For more details, please check the auto-backup documentation from [here](https://stash.run/docs/latest/guides/auto-backup/).
+You can now keep your Repository and storage Secret separate from the application namespaces. This lets you configure a backup policy for your users without exposing their storage credentials to them. For more details, please check the auto-backup documentation from [here](https://stash.run/docs/latest/guides/auto-backup/overview/).
 
 ## Bug Fixes and Improvements
 
