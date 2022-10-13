@@ -1,5 +1,5 @@
 ---
-title: OpenSearch OpsRequests - Day 2 Lifecycle Management for OpenSearch Cluster Using KubeDB
+title: Day 2 Lifecycle Management for OpenSearch Cluster Using KubeDB
 date: 2022-10-13
 weight: 20
 authors:
