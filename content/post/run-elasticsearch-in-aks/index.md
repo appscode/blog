@@ -5,25 +5,25 @@ weight: 12
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes
-  - Database
-  - Kubernetes Elasticsearch
-  - Run Production-Grade Database
-  - Run & Manage Elasticsearch in AKS
-  - Run & Manage Elasticsearch in Azure Kubernetes Service
-  - Manage Elasticsearch in Microsoft AKS
-  - Run Elasticsearch in Azure
-  - Elasticsearch
-  - SearchGuard
-  - Run & Manage SearchGuard in AKS
-  - KubeDB
-  - Azure
-  - AKS
-  - Microsoft Azure
-  - Azure Storage Container
-  - Microsoft Azure Storage
-  - Azure Storage Blob
+  - cloud-native platform
+  - kubernetes
+  - database
+  - kubernetes elasticsearch
+  - run production-grade database
+  - run & manage elasticsearch in aks
+  - run & manage elasticsearch in azure kubernetes service
+  - manage elasticsearch in microsoft aks
+  - run elasticsearch in azure
+  - elasticsearch
+  - searchguard
+  - run & manage searchguard in aks
+  - kubedb
+  - azure
+  - aks
+  - microsoft azure
+  - azure storage container
+  - microsoft azure storage
+  - azure storage blob
 ---
 
 ## Overview

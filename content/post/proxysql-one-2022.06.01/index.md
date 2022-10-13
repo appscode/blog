@@ -5,14 +5,14 @@ weight: 20
 authors:
 - Tasdidur Rahman
 tags:
-- Cloud-native platform
-- Kubernetes
-- Database
-- Kubernetes ProxySQL
-- Run Production-grade Database
-- MySQL
-- ProxySQL
-- KubeDB
+- cloud-native platform
+- kubernetes
+- database
+- kubernetes proxysql
+- run production-grade database
+- mysql
+- proxysql
+- kubedb
 ---
 
 #### Overview

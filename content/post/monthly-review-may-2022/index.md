@@ -5,21 +5,21 @@ weight: 14
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes native data platform
-  - Kubernetes native
-  - Kubernetes
-  - Database
-  - Kubernetes Database
-  - Run Production-Grade Database
-  - Run & Manage Database in K8S
-  - Run & Manage Database in Kubernetes 
-  - Manage Database in Kubernetes
-  - KubeDB
-  - Stash
-  - AppsCode
-  - Backup Kubernetes Statefulset
-  - Running Production-Grade Databases on Kubernetes
+  - cloud-native platform
+  - kubernetes native data platform
+  - kubernetes native
+  - kubernetes
+  - database
+  - kubernetes database
+  - run production-grade database
+  - run & manage database in k8s
+  - run & manage database in kubernetes 
+  - manage database in kubernetes
+  - kubedb
+  - stash
+  - appscode
+  - backup kubernetes statefulset
+  - running production-grade databases on kubernetes
 ---
 
 # Releases

@@ -5,26 +5,26 @@ weight: 14
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes
-  - Database
-  - Kubernetes MySQL
-  - Run Production-Grade Database
-  - Run & Manage MySQL in EKS
-  - Run & Manage MySQL in Amazon Elastic Kubernetes Service
-  - Manage MySQL in Amazon EKS
-  - Run MySQL in Amazon
-  - MySQL
-  - KubeDB
-  - Amazon
-  - EKS
-  - Amazon EKS
-  - Amazon S3
-  - S3 Bucket
-  - AWS
-  - AWS S3
-  - Amazon Storage
-  - Backup & Restore MySQL in Amazon S3
+  - cloud-native platform
+  - kubernetes
+  - database
+  - kubernetes mysql
+  - run production-grade database
+  - run & manage mysql in eks
+  - run & manage mysql in amazon elastic kubernetes service
+  - manage mysql in amazon eks
+  - run mysql in amazon
+  - mysql
+  - kubedb
+  - amazon
+  - eks
+  - amazon eks
+  - amazon s3
+  - s3 bucket
+  - aws
+  - aws s3
+  - amazon storage
+  - backup & restore mysql in amazon s3
 ---
 
 ## Overview

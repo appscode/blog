@@ -5,7 +5,7 @@ weight: 20
 authors:
   - Raihan Khan
 tags:
-  - kubeDB
+  - kubedb
   - opensearch cluster
   - kubernetes
   - ops requests

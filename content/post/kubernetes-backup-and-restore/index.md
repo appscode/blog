@@ -5,20 +5,20 @@ weight: 14
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes native data platform
-  - Kubernetes native
-  - Kubernetes
-  - Database
-  - Kubernetes Volumes and Databases Recovery
-  - Kubernetes Database
-  - Recover Volumes and Databases in Kubernetes 
-  - Backup Databases in K8S
-  - Backup Volumes and Databases in Kubernetes 
-  - Restore Volumes and Databases in Kubernetes
-  - Stash
-  - Stash Kubernetes
-  - Backup and Restore Volumes and Databases in Kubernetes
+  - cloud-native platform
+  - kubernetes native data platform
+  - kubernetes native
+  - kubernetes
+  - database
+  - kubernetes volumes and databases recovery
+  - kubernetes database
+  - recover volumes and databases in kubernetes 
+  - backup databases in k8s
+  - backup volumes and databases in kubernetes 
+  - restore volumes and databases in kubernetes
+  - stash
+  - stash kubernetes
+  - backup and restore volumes and databases in kubernetes
 ---
 
 Over the last few years, we've progressed through the initial excitement and adoption stages of Kubernetes. As businesses adopt Kubernetes in production and the number of Kubernetes clusters and applications expands, it becomes necessary to have a data protection solution for their business applications and microservices.

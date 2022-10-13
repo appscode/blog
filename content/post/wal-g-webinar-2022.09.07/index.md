@@ -10,7 +10,7 @@ tags:
   - wal-g
   - kubernetes
   - backup
-  - PITR
+  - pitr
 ---
 ## Summary
 On Septempber 07, 2022, AppsCode held a webinar on **PostgreSQL Backup with Wal-G and point in time Recover with KubeDB managed Postgres Database**. The key contents of the webinars are:

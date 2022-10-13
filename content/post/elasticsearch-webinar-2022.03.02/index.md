@@ -6,15 +6,15 @@ authors:
   - Kamol Hasan
   - Raihan Khan
 tags:
-  - kubeDB
-  - Elasticsearch
-  - Kibana
-  - Hot-Warm-Cold Architecture
-  - ElasticsearchDashboard
-  - Logstash
-  - Filebeat
-  - K8s-log-monitoring
-  - Index-Lifecycle-Management
+  - kubedb
+  - elasticsearch
+  - kibana
+  - hot-warm-cold architecture
+  - elasticsearchdashboard
+  - logstash
+  - filebeat
+  - k8s-log-monitoring
+  - index-lifecycle-management
   - enterprise
   - community
 ---

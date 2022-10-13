@@ -6,19 +6,19 @@ authors:
   - Tamal Saha
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes native data platform
-  - Kubernetes native
-  - Kubernetes
-  - Database
-  - Kubernetes Database
-  - Run Production-Grade Database
-  - Run & Manage Database in K8S
-  - Run & Manage Database in Kubernetes 
-  - Manage Database in Kubernetes
-  - KubeDB
-  - Stash
-  - Running Production-Grade Databases on Kubernetes
+  - cloud-native platform
+  - kubernetes native data platform
+  - kubernetes native
+  - kubernetes
+  - database
+  - kubernetes database
+  - run production-grade database
+  - run & manage database in k8s
+  - run & manage database in kubernetes 
+  - manage database in kubernetes
+  - kubedb
+  - stash
+  - running production-grade databases on kubernetes
 ---
 
 As containers are taking over the world of software development, Kubernetes has emerged as the platform that lets developers seamlessly deploy, scale, run applications, and manage their life cycles. Kubernetes is a DevOps game-changer since it allows teams to focus on applications and deployment rather than worrying about the underlying infrastructure. Given the multi-cloud environment in which DevOps teams perform, Kubernetes abstracts the cloud provider and enables enterprises to build cloud-native applications that can run anywhere.

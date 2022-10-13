@@ -5,7 +5,7 @@ weight: 20
 authors:
   - Md. Alif Biswas
 tags:
-  - kubeDB
+  - kubedb
   - percona xtradb cluster
   - kubernetes
   - provisioner

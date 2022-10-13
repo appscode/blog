@@ -5,27 +5,27 @@ weight: 12
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes
-  - Database
-  - Kubernetes Elasticsearch
-  - Run Production-Grade Database
-  - Run & Manage Elasticsearch in AWS
-  - Run & Manage Elasticsearch in Amazon Elastic Kubernetes Service
-  - Manage Elasticsearch in Amazon EKS
-  - Run Elasticsearch in Amazon Web Services
-  - Elasticsearch
-  - Xpack
-  - ElasticStack
-  - Run & Manage Elasticsearch in EKS
-  - KubeDB
-  - Amazon
-  - AWS
-  - Amazon S3
-  - Amazon Storage
-  - AWS S3
-  - S3 Bucket
-  - Backup & Restore Elasticsearch in Amazon S3
+  - cloud-native platform
+  - kubernetes
+  - database
+  - kubernetes elasticsearch
+  - run production-grade database
+  - run & manage elasticsearch in aws
+  - run & manage elasticsearch in amazon elastic kubernetes service
+  - manage elasticsearch in amazon eks
+  - run elasticsearch in amazon web services
+  - elasticsearch
+  - xpack
+  - elasticstack
+  - run & manage elasticsearch in eks
+  - kubedb
+  - amazon
+  - aws
+  - amazon s3
+  - amazon storage
+  - aws s3
+  - s3 bucket
+  - backup & restore elasticsearch in amazon s3
 ---
 
 ## Overview
