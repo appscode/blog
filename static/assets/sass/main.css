@@ -11833,6 +11833,7 @@ ul.social-share-button li a i.fa {
           flex-direction: column;
   padding: 8px;
   border-radius: 2px;
+  color: #333;
 }
 
 .single-wizard .single-recent-blog .date-month .date {
@@ -11998,6 +11999,10 @@ ul.social-share-button li a i.fa {
   padding: 15px;
   margin-bottom: 15px;
   border-radius: 4px;
+}
+
+.blog-content iframe {
+  margin-bottom: 20px;
 }
 
 .blog-content .inline-button {
