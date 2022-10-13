@@ -5,28 +5,28 @@ weight: 14
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes
-  - Database
-  - Kubernetes MongoDB
-  - Run Production-Grade Database
-  - Run & Manage MongoDB in AWS
-  - Run & Manage MongoDB in Amazon Elastic Kubernetes Service
-  - Manage MongoDB in Amazon EKS
-  - Run MongoDB in Amazon Web Services
-  - MongoDB
-  - Mongo
-  - Run & Manage MongoDB in EKS
-  - KubeDB
-  - MongoDB Database
-  - Amazon
-  - KubeDB MongoDB
-  - AWS
-  - Amazon S3
-  - Amazon Storage
-  - AWS S3
-  - S3 Bucket
-  - Backup & Restore MongoDB in Amazon S3
+  - cloud-native platform
+  - kubernetes
+  - database
+  - kubernetes mongodb
+  - run production-grade database
+  - run & manage mongodb in aws
+  - run & manage mongodb in amazon elastic kubernetes service
+  - manage mongodb in amazon eks
+  - run mongodb in amazon web services
+  - mongodb
+  - mongo
+  - run & manage mongodb in eks
+  - kubedb
+  - mongodb database
+  - amazon
+  - kubedb mongodb
+  - aws
+  - amazon s3
+  - amazon storage
+  - aws s3
+  - s3 bucket
+  - backup & restore mongodb in amazon s3
 ---
 
 ## Overview

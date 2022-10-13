@@ -5,9 +5,9 @@ weight: 20
 authors:
   - Tasdidur Rahman 
 tags:
-  - KubeDB
-  - ProxySQL
-  - MySQL
+  - kubedb
+  - proxysql
+  - mysql
   - kubernetes
   - provisioner
   - ops-manager

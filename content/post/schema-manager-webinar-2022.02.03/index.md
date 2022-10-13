@@ -4,16 +4,16 @@ date: 2022-02-03
 weight: 20
 authors:
   - Arnob kumar saha
-  - Rakibul Hossain
+  - rakibul hossain
 tags:
-  - kubeDB
-  - MongoDB
-  - PostgreSQL
-  - Multi tenancy
-  - Schema Manager
+  - kubedb
+  - mongodb
+  - postgresql
+  - multi tenancy
+  - schema manager
   - kubevault
   - cert-manager
-  - Stash
+  - stash
   - kubernetes
   - secret-management
   - security

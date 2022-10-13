@@ -5,12 +5,12 @@ weight: 25
 authors:
   - Raihan Khan
 tags:
-  - kubeDB
+  - kubedb
   - container
-  - MySQL
-  - Filebeat
-  - StatefulSet
-  - MySQLOpsRequest
+  - mysql
+  - filebeat
+  - statefulset
+  - mysqlopsrequest
 ---
 
 ### Add custom containers in KubeDB managed Database

@@ -5,23 +5,23 @@ weight: 14
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes
-  - Database
-  - Kubernetes Redis
-  - Run Production-Grade Database
-  - Run & Manage Redis in AKS
-  - Run & Manage Redis in Azure Kubernetes Service
-  - Manage Redis in Microsoft AKS
-  - Run Redis in Azure
-  - Redis
-  - KubeDB
-  - Azure
-  - AKS
-  - Microsoft Azure
-  - Azure Storage Container
-  - Microsoft Azure Storage
-  - Azure Storage Blob
+  - cloud-native platform
+  - kubernetes
+  - database
+  - kubernetes redis
+  - run production-grade database
+  - run & manage redis in aks
+  - run & manage redis in azure kubernetes service
+  - manage redis in microsoft aks
+  - run redis in azure
+  - redis
+  - kubedb
+  - azure
+  - aks
+  - microsoft azure
+  - azure storage container
+  - microsoft azure storage
+  - azure storage blob
 ---
 
 ## Overview

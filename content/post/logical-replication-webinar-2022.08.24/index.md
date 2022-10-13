@@ -6,6 +6,7 @@ authors:
  - Rakibul Hossain 
 tags:
  - kubedb
+ - postgres
  - postgresql
  - logical replication
  - kubernetes

@@ -5,13 +5,13 @@ weight: 20
 authors:
 - Mehedi Hasan
 tags:
-- kubeDB
-- MySQL
-- SemiSync
-- Semi-synchronous Replication
+- kubedb
+- mysql
+- semisync
+- semi-synchronous replication
 - raft
 - errant replica
-- Read Replica
+- read replica
 - kubernetes
 - enterprise
 - community

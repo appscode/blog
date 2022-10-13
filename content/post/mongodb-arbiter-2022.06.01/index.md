@@ -6,16 +6,16 @@ authors:
 - Arnob kumar saha
 tags:
 - kubedb
-- MongoDB
-- Arbiter
+- mongodb
+- arbiter
 - kubernetes
 - replicaset
 - shard
 - cert-manager
 - cost reducing
-- opsRequest
-- verticalScaling
-- Reconfigure
+- opsrequest
+- verticalscaling
+- reconfigure
 - enterprise
 - community
 ---

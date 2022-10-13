@@ -5,12 +5,12 @@ weight: 20
 authors:
   - Md. Alif Biswas
 tags:
-  - kubeDB
-  - MariaDB
+  - kubedb
+  - mariadb
   - reconfigure
   - autoscaling
   - volume expansion
-  - Stash
+  - stash
   - kubernetes
   - provisioner
   - ops-manager

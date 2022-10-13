@@ -6,15 +6,15 @@ authors:
   - Md. Alif Biswas
   - Tasdidur Rahman
 tags:
-  - KubeDB
-  - MariaDB
+  - kubedb
+  - mariadb
   - multi-tenancy
   - schema-manager
   - alerting
   - prometheus
   - galera
   - kubernetes
-  - Stash
+  - stash
   - ops-manager
 ---
 

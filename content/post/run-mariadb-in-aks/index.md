@@ -5,22 +5,22 @@ weight: 14
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes
-  - Database
-  - Kubernetes MariaDB
-  - Run Production-Grade Database
-  - Run & Manage MariaDB in AKS
-  - Run & Manage MariaDB in Azure Kubernetes Service
-  - Manage MariaDB in Microsoft AKS
-  - Run MariaDB in Azure
-  - MariaDB
-  - KubeDB
-  - Azure
-  - Microsoft Azure
-  - Azure Storage Container
-  - Microsoft Azure Storage
-  - Azure Storage Blob
+  - cloud-native platform
+  - kubernetes
+  - database
+  - kubernetes mariadb
+  - run production-grade database
+  - run & manage mariadb in aks
+  - run & manage mariadb in azure kubernetes service
+  - manage mariadb in microsoft aks
+  - run mariadb in azure
+  - mariadb
+  - kubedb
+  - azure
+  - microsoft azure
+  - azure storage container
+  - microsoft azure storage
+  - azure storage blob
 ---
 
 ## Overview

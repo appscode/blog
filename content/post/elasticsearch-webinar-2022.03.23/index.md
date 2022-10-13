@@ -5,14 +5,14 @@ weight: 20
 authors:
   - Raihan Khan
 tags:
-  - KubeDB
-  - Opensearch
-  - Opensearch Dashboards
-  - ElasticsearchDashboard
-  - ElasticsearchOpsRequest
-  - Custom Branding
-  - Custom Configuration
-  - Database Query
+  - kubedb
+  - opensearch
+  - opensearch-dashboard
+  - elasticsearch-dashboard
+  - elasticsearchopsrequest
+  - custom-branding
+  - custom-configuration
+  - database-query
   - enterprise
   - community
 ---

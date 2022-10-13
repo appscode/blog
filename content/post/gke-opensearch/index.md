@@ -5,26 +5,26 @@ weight: 14
 authors:
   - Dipta Roy
 tags:
-  - Cloud-native platform
-  - Kubernetes
-  - Database
-  - Kubernetes OpenSearch
-  - Run Production-grade Database
-  - Elasticsearch
-  - MariaDB
-  - Memcached
-  - MongoDB
-  - MySQL
-  - PostgreSQL
-  - Redis
-  - Percona XtraDB
-  - PgBouncer
-  - ProxySQL
-  - KubeDB
-  - Google Kubernetes Engine
-  - GKE
-  - Google Cloud Storage
-  - GCS
+  - cloud-native platform
+  - kubernetes
+  - database
+  - kubernetes opensearch
+  - run production-grade database
+  - elasticsearch
+  - mariadb
+  - memcached
+  - mongodb
+  - mysql
+  - postgresql
+  - redis
+  - percona xtradb
+  - pgbouncer
+  - proxysql
+  - kubedb
+  - google kubernetes engine
+  - gke
+  - google cloud storage
+  - gcs
 ---
 
 ## Overview

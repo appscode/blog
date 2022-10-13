@@ -5,16 +5,16 @@ weight: 20
 authors:
   - Sakib Alamin
 tags:
-  - KubeVault
+  - kubevault
   - ops-request
   - v1alpha1
   - v1alpha2
   - migration
   - operator
-  - TLS
+  - tls
   - cert-manager
-  - CLI
-  - KubeVault CLI
+  - cli
+  - kubevault cli
   - kubernetes
   - secret-management
   - security
