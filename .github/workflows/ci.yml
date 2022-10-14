@@ -43,7 +43,7 @@ jobs:
 
       - name: Install Hugo Tools
         run: |
-          curl -fsSL -o hugo-tools https://github.com/appscodelabs/hugo-tools/releases/download/v0.2.23/hugo-tools-linux-amd64
+          curl -fsSL -o hugo-tools https://github.com/appscodelabs/hugo-tools/releases/download/v0.2.24/hugo-tools-linux-amd64
           chmod +x hugo-tools
           sudo mv hugo-tools /usr/local/bin/hugo-tools
 
@@ -60,7 +60,9 @@ jobs:
       - name: Build
         env:
           GOOGLE_CUSTOM_SEARCH_API_KEY: ${{ secrets.GOOGLE_CUSTOM_SEARCH_API_KEY }}
-        run: make gen-prod
+        run: |
+          make gen-prod
+          make verify
 
       - name: Check links
         run: |
