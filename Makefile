@@ -8,6 +8,17 @@ assets: hugo-tools
 	$(HUGO_TOOLS) docs-aggregator --only-assets
 	find ./data -name "*.json" -exec sed -i 's/https:\/\/cdn.appscode.com\/images/\/assets\/images/g' {} \;
 
+.PHONY: fmt
+fmt:
+	hugo-tools fmt-frontmatter ./content
+
+.PHONY: verify
+verify: fmt
+	# hugo-tools tag-stats ./content --invalid-only
+	@if !(git diff --exit-code HEAD); then \
+		echo "files are out of date, run make fmt"; exit 1; \
+	fi
+
 .PHONY: gen-draft
 gen-draft:
 	rm -rf public
@@ -36,7 +47,7 @@ release: gen-prod
 HUGO_TOOLS = $(shell pwd)/bin/hugo-tools
 .PHONY: hugo-tools
 hugo-tools: ## Download hugo-tools locally if necessary.
-	$(call go-get-tool,$(HUGO_TOOLS),appscodelabs/hugo-tools,v0.2.22)
+	$(call go-get-tool,$(HUGO_TOOLS),appscodelabs/hugo-tools,v0.2.24)
 
 # go-get-tool will 'curl' binary from GH repo $2 with version $3 and install it to $1.
 PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
