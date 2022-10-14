@@ -14,7 +14,7 @@ fmt:
 
 .PHONY: verify
 verify: fmt
-	# hugo-tools tag-stats ./content --invalid-only
+	hugo-tools tag-stats ./content --invalid-only
 	@if !(git diff --exit-code HEAD); then \
 		echo "files are out of date, run make fmt"; exit 1; \
 	fi
