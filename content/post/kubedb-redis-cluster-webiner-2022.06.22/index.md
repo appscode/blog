@@ -9,7 +9,7 @@ tags:
 - cluster
 - community
 - enterprise
-- horizontalscaling
+- horizontal-scaling
 - kubedb
 - kubernetes
 - opsmanager
@@ -17,8 +17,8 @@ tags:
 - reconfigure
 - redis
 - shard
-- versionupgrade
-- verticalscaling
+- version-upgrade
+- vertical-scaling
 ---
 
 ## Summary

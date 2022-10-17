@@ -14,9 +14,9 @@ tags:
 - kubernetes
 - kubevault
 - mongodb
-- multi tenancy
+- multi-tenancy
 - postgresql
-- schema manager
+- schema-manager
 - secret-management
 - security
 - shard

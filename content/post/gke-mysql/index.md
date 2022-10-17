@@ -5,23 +5,13 @@ weight: 14
 authors:
 - Dipta Roy
 tags:
-- cloud-native platform
+- cloud-native
 - database
 - elasticsearch
 - gke
 - kubedb
 - kubernetes
-- kubernetes mysql
-- mariadb
-- memcached
-- mongodb
 - mysql
-- percona xtradb
-- pgbouncer
-- postgresql
-- proxysql
-- redis
-- run production-grade database
 ---
 
 ## Overview

@@ -7,22 +7,16 @@ authors:
 tags:
 - aks
 - azure
-- azure storage blob
-- azure storage container
-- cloud-native platform
+- azure-storage
+- azure-container
+- cloud-native
 - database
 - elasticsearch
 - kubedb
 - kubernetes
-- kubernetes elasticsearch
-- manage elasticsearch in microsoft aks
-- microsoft azure
-- microsoft azure storage
-- run & manage elasticsearch in aks
-- run & manage elasticsearch in azure kubernetes service
-- run & manage searchguard in aks
-- run elasticsearch in azure
-- run production-grade database
+- kubernetes-elasticsearch
+- managed-dbaas
+- microsoft-azure
 - searchguard
 ---
 

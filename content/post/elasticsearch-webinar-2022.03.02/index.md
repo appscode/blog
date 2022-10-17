@@ -11,7 +11,7 @@ tags:
 - elasticsearchdashboard
 - enterprise
 - filebeat
-- hot-warm-cold architecture
+- hot-warm-cold
 - index-lifecycle-management
 - k8s-log-monitoring
 - kibana

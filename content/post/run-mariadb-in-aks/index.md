@@ -6,21 +6,16 @@ authors:
 - Dipta Roy
 tags:
 - azure
-- azure storage blob
-- azure storage container
-- cloud-native platform
+- azure-storage
+- azure-container
+- cloud-native
 - database
 - kubedb
 - kubernetes
-- kubernetes mariadb
-- manage mariadb in microsoft aks
+- kubernetes-mariadb
+- managed-dbaas
 - mariadb
-- microsoft azure
-- microsoft azure storage
-- run & manage mariadb in aks
-- run & manage mariadb in azure kubernetes service
-- run mariadb in azure
-- run production-grade database
+- microsoft-azure
 ---
 
 ## Overview

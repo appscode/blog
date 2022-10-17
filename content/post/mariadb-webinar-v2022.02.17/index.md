@@ -13,7 +13,7 @@ tags:
 - provisioner
 - reconfigure
 - stash
-- volume expansion
+- volume-expansion
 ---
 
 ## Summary

@@ -10,7 +10,7 @@ tags:
 - community
 - enterprise
 - hidden
-- horizontal scaling
+- horizontal-scaling
 - inmemory
 - kubedb
 - kubernetes
@@ -19,8 +19,8 @@ tags:
 - reconfigure
 - replicaset
 - shard
-- vertical scaling
-- volume expansion
+- vertical-scaling
+- volume-expansion
 ---
 
 ## Summary

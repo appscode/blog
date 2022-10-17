@@ -10,13 +10,8 @@ tags:
 - elasticsearch
 - kubedb
 - kubernetes
-- mariadb
-- memcached
-- mongodb
 - mysql
 - openshift
-- postgresql
-- redis
 ---
 
 ## Overview

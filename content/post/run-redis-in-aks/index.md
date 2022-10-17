@@ -7,21 +7,16 @@ authors:
 tags:
 - aks
 - azure
-- azure storage blob
-- azure storage container
-- cloud-native platform
+- azure-storage
+- azure-container
+- cloud-native
 - database
 - kubedb
 - kubernetes
-- kubernetes redis
-- manage redis in microsoft aks
-- microsoft azure
-- microsoft azure storage
+- kubernetes-redis
+- managed-dbaas
+- microsoft-azure
 - redis
-- run & manage redis in aks
-- run & manage redis in azure kubernetes service
-- run production-grade database
-- run redis in azure
 ---
 
 ## Overview

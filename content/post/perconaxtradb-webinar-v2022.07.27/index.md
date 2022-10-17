@@ -9,7 +9,7 @@ tags:
 - galera
 - kubedb
 - kubernetes
-- percona xtradb cluster
+- percona-xtradb
 - provisioner
 ---
 

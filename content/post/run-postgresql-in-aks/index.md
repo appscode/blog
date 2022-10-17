@@ -7,21 +7,16 @@ authors:
 tags:
 - aks
 - azure
-- azure storage blob
-- azure storage container
-- cloud-native platform
+- azure-storage
+- azure-container
+- cloud-native
 - database
 - kubedb
 - kubernetes
-- kubernetes postgresql
-- manage postgresql in microsoft aks
-- microsoft azure
-- microsoft azure storage
+- kubernetes-postgresql
+- managed-dbaas
+- microsoft-azure
 - postgresql
-- run & manage postgresql in aks
-- run & manage postgresql in azure kubernetes service
-- run postgresql in azure
-- run production-grade database
 ---
 
 ## Overview
