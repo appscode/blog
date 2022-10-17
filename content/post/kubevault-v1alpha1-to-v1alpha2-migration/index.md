@@ -12,7 +12,7 @@ tags:
 - hashicorp
 - kubernetes
 - kubevault
-- kubevault cli
+- kubevault-cli
 - migration
 - operator
 - ops-request
