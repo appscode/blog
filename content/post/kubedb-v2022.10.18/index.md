@@ -547,7 +547,9 @@ If `removeUnusedSentinel` is set to true, KubeDB checks if the old sentinel is m
   - Rotate Certificates
   - Update Certificates
 
-A sample YAML of `HorizontalScaling` Ops Requests is given below:
+Here are some sample YAMLs given for those OpsRequests
+
+#### Horizontal Scaling
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: RedisSentinelOpsRequest
@@ -560,6 +562,43 @@ spec:
     name: sentinel-tls
   horizontalScaling:
     replicas: 5
+```
+#### Vertical Scaling
+```yaml
+spec:
+  type: VerticalScaling  
+  ...
+  verticalScaling:
+    redissentinel:
+      requests:
+        memory: "600Mi"
+        cpu: "0.1"
+      limits:
+        memory: "600Mi"
+        cpu: "0.1"
+```
+#### Reconfigure TLS
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: RedisSentinelOpsRequest
+metadata:
+  name: tls-rotate-redis-sentinel
+  namespace: demo
+spec:
+  type: ReconfigureTLS
+  databaseRef:
+    name: sentinel-tls
+  tls:
+    rotateCertificates: true
+```
+
+#### Version Update
+```yaml
+spec:
+  type: UpdateVersion  
+  ...
+  upgrade:   
+    targetVersion: "7.0.5"
 ```
 
 ### New Version Support
