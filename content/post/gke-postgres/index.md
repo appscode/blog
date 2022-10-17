@@ -11,12 +11,7 @@ tags:
 - gke
 - kubedb
 - kubernetes
-- mariadb
-- memcached
-- mongodb
-- mysql
 - postgresql
-- redis
 ---
 
 ## Overview

@@ -7,21 +7,16 @@ authors:
 tags:
 - aks
 - azure
-- azure storage blob
-- azure storage container
-- cloud-native platform
+- azure-container
+- azure-storage
+- cloud-native
 - database
 - kubedb
 - kubernetes
-- kubernetes mysql
-- manage mysql in microsoft aks
-- microsoft azure
-- microsoft azure storage
+- kubernetes-mysql
+- managed-dbaas
+- microsoft-azure
 - mysql
-- run & manage mysql in aks
-- run & manage mysql in azure kubernetes service
-- run mysql in azure
-- run production-grade database
 ---
 
 ## Overview

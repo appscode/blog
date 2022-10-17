@@ -9,7 +9,7 @@ tags:
 - community
 - enterprise
 - high-availability
-- horizontalscaling
+- horizontal-scaling
 - kubedb
 - kubernetes
 - opsmanager

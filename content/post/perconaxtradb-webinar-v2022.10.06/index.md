@@ -7,8 +7,8 @@ authors:
 tags:
 - kubedb
 - kubernetes
-- ops requests
-- percona xtradb cluster
+- ops-requests
+- percona-xtradb
 - provisioner
 - reconfigure
 - scaling

@@ -11,7 +11,7 @@ tags:
 - hashicorp
 - kubernetes
 - kubevault
-- kubevault cli
+- kubevault-cli
 - secret-management
 - security
 - vault

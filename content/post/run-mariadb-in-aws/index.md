@@ -6,25 +6,19 @@ authors:
 - Dipta Roy
 tags:
 - amazon
-- amazon eks
-- amazon s3
-- amazon storage
+- amazon-eks
+- amazon-s3
+- amazon-storage
 - aws
-- aws s3
-- backup & restore mariadb in amazon s3
-- cloud-native platform
+- aws-s3
+- cloud-native
 - database
 - eks
 - kubedb
 - kubernetes
-- kubernetes mariadb
-- manage mariadb in amazon eks
+- kubernetes-mariadb
 - mariadb
-- run & manage mariadb in amazon elastic kubernetes service
-- run & manage mariadb in eks
-- run mariadb in amazon
-- run production-grade database
-- s3 bucket
+- s3-bucket
 ---
 
 ## Overview

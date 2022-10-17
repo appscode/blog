@@ -14,7 +14,7 @@ tags:
 - jwt
 - kubernetes
 - kubevault
-- kubevault cli
+- kubevault-cli
 - oidc
 - secret-management
 - security

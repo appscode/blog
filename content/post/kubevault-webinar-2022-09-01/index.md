@@ -12,7 +12,7 @@ tags:
 - hashicorp
 - kubernetes
 - kubevault
-- kubevault cli
+- kubevault-cli
 - ops-request
 - secret-management
 - security

@@ -7,8 +7,8 @@ authors:
 tags:
 - kubedb
 - kubernetes
-- opensearch cluster
-- ops requests
+- opensearch-cluster
+- ops-requests
 - provisioner
 - reconfigure
 - scaling

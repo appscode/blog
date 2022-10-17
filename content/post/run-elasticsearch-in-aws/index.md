@@ -6,25 +6,19 @@ authors:
 - Dipta Roy
 tags:
 - amazon
-- amazon s3
-- amazon storage
+- amazon-s3
+- amazon-storage
 - aws
-- aws s3
-- backup & restore elasticsearch in amazon s3
-- cloud-native platform
+- aws-s3
+- cloud-native
 - database
 - elasticsearch
 - elasticstack
 - kubedb
 - kubernetes
-- kubernetes elasticsearch
-- manage elasticsearch in amazon eks
-- run & manage elasticsearch in amazon elastic kubernetes service
-- run & manage elasticsearch in aws
-- run & manage elasticsearch in eks
-- run elasticsearch in amazon web services
-- run production-grade database
-- s3 bucket
+- kubernetes-elasticsearch
+- managed-dbaas
+- s3-bucket
 - xpack
 ---
 
