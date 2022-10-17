@@ -5,11 +5,13 @@ weight: 20
 authors:
 - Raihan Khan
 tags:
-- custom-branding
+- cloud-native
 - custom-configuration
 - dashboard
-- database-query
+- dbaas
+- elasticsearch
 - kubedb
+- kubernetes
 - opensearch
 - ops-manager
 ---
