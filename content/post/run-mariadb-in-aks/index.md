@@ -6,8 +6,8 @@ authors:
 - Dipta Roy
 tags:
 - azure
-- azure-storage
 - azure-container
+- azure-storage
 - cloud-native
 - database
 - kubedb

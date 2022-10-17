@@ -15,8 +15,8 @@ tags:
 - kubevault
 - multi-tenancy
 - mysql
-- reconfigure-tls
 - read-replica
+- reconfigure-tls
 - schema-manager
 - secret-management
 - security

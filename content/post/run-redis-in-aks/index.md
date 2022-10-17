@@ -7,8 +7,8 @@ authors:
 tags:
 - aks
 - azure
-- azure-storage
 - azure-container
+- azure-storage
 - cloud-native
 - database
 - kubedb
