@@ -5,16 +5,13 @@ weight: 14
 authors:
 - Dipta Roy
 tags:
+- azure
 - azure-storage
 - cloud-native
 - database
 - kubedb
 - kubernetes
-- kubernetes-mongodb
-- manage-mongodb
-- microsoft-azure
 - mongodb
-- run-mongodb
 ---
 
 ## Overview

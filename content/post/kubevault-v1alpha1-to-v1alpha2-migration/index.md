@@ -7,20 +7,16 @@ authors:
 tags:
 - cert-manager
 - cli
-- community
-- enterprise
 - hashicorp
 - kubernetes
 - kubevault
 - kubevault-cli
 - migration
 - operator
-- ops-request
+- ops-manager
 - secret-management
 - security
 - tls
-- v1alpha1
-- v1alpha2
 - vault
 ---
 

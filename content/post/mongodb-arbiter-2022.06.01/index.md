@@ -7,15 +7,12 @@ authors:
 tags:
 - arbiter
 - cert-manager
-- community
-- enterprise
 - kubedb
 - kubernetes
 - mongodb
-- opsrequest
+- ops-manager
 - reconfigure
 - replicaset
-- shard
 - vertical-scaling
 ---
 

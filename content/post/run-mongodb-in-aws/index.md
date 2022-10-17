@@ -6,20 +6,15 @@ authors:
 - Dipta Roy
 tags:
 - amazon
-- amazon-s3
-- amazon-storage
 - aws
-- aws-s3
 - cloud-native
 - database
 - kubedb
-- kubedb-mongodb
 - kubernetes
-- kubernetes-mongodb
 - mongo
 - mongodb
 - mongodb-database
-- s3-bucket
+- s3
 ---
 
 ## Overview

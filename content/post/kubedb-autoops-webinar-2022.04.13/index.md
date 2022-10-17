@@ -10,8 +10,8 @@ tags:
 - kubedb
 - maintenance-window
 - recommendation
-- rotote-tls
 - supervisor
+- tls
 - version-upgrade
 ---
 

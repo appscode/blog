@@ -5,13 +5,10 @@ weight: 20
 authors:
 - Rakibul Hossain
 tags:
-- community
-- enterprise
 - kubedb
 - kubernetes
 - pgbouncer
-- postgres
-- statefulsets
+- postgresql
 ---
 
 ## Summary

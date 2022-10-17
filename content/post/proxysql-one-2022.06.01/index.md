@@ -9,7 +9,6 @@ tags:
 - database
 - kubedb
 - kubernetes
-- kubernetes-proxysql
 - mysql
 - proxysql
 ---

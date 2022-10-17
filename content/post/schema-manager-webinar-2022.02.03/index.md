@@ -7,8 +7,6 @@ authors:
 - rakibul hossain
 tags:
 - cert-manager
-- community
-- enterprise
 - hashicorp
 - kubedb
 - kubernetes
@@ -19,7 +17,6 @@ tags:
 - schema-manager
 - secret-management
 - security
-- shard
 - stash
 - vault
 ---

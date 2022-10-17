@@ -11,7 +11,6 @@ tags:
 - kubernetes
 - restore
 - stash
-- timeout
 ---
 
 We are very excited to announce Stash `v2022.06.21`. This release adds support for Kubernetes `v1.24.x`. We have also introduces a few new features and improvements. We have squashed a few bugs as well. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2022.06.21/README.md).

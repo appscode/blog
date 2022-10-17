@@ -17,7 +17,6 @@ tags:
 - recover-volumes
 - restore-volumes
 - stash
-- stash-kubernetes
 ---
 
 Over the last few years, we've progressed through the initial excitement and adoption stages of Kubernetes. As businesses adopt Kubernetes in production and the number of Kubernetes clusters and applications expands, it becomes necessary to have a data protection solution for their business applications and microservices.

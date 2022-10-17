@@ -7,8 +7,6 @@ authors:
 tags:
 - cert-manager
 - cli
-- community
-- enterprise
 - hashicorp
 - kubernetes
 - kubevault

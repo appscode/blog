@@ -9,8 +9,12 @@ assets: hugo-tools
 	find ./data -name "*.json" -exec sed -i 's/https:\/\/cdn.appscode.com\/images/\/assets\/images/g' {} \;
 
 .PHONY: fmt
-fmt:
+fmt: hugo-tools
 	hugo-tools fmt-frontmatter ./content
+
+.PHONY: tags
+tags: hugo-tools
+	hugo-tools tag-stats ./content
 
 .PHONY: verify
 verify: fmt

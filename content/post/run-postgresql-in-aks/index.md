@@ -11,11 +11,9 @@ tags:
 - azure-storage
 - cloud-native
 - database
+- dbaas
 - kubedb
 - kubernetes
-- kubernetes-postgresql
-- managed-dbaas
-- microsoft-azure
 - postgresql
 ---
 

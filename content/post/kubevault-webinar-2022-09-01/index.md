@@ -7,13 +7,11 @@ authors:
 tags:
 - cert-manager
 - cli
-- community
-- enterprise
 - hashicorp
 - kubernetes
 - kubevault
 - kubevault-cli
-- ops-request
+- ops-manager
 - secret-management
 - security
 - tls

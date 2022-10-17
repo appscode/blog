@@ -8,7 +8,7 @@ tags:
 - kubedb
 - kubernetes
 - opensearch-cluster
-- ops-requests
+- ops-manager
 - provisioner
 - reconfigure
 - scaling

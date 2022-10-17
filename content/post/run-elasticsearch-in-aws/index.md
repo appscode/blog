@@ -6,19 +6,15 @@ authors:
 - Dipta Roy
 tags:
 - amazon
-- amazon-s3
-- amazon-storage
 - aws
-- aws-s3
 - cloud-native
 - database
+- dbaas
 - elasticsearch
 - elasticstack
 - kubedb
 - kubernetes
-- kubernetes-elasticsearch
-- managed-dbaas
-- s3-bucket
+- s3
 - xpack
 ---
 
