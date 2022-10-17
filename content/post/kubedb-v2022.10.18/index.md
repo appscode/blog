@@ -5,6 +5,7 @@ weight: 25
 authors:
 - Md. Alif Biswas
 tags:
+- autoscaler
 - cloud-native
 - database
 - elasticsearch
@@ -20,11 +21,10 @@ tags:
 - opensearch-dashboard
 - percona
 - percona-xtradb
-- postgresql
-- redis
-- proxysql
 - pgbouncer
-- autoscaler
+- postgresql
+- proxysql
+- redis
 - schema-manager
 ---
 
@@ -65,6 +65,8 @@ The supported values of `spec.opsRequestOptions.apply` is `IfReady` & `Always`.
 Use `IfReady` if you want to process the opsReq only when the database is Ready. And use `Always` if you want to process the execution of opsReq irrespective of the Database state.
 `spec.opsRequestOptions.timeout` specifies the maximum time for each step of the opsRequest(in seconds).
 If a step doesn't finish within the specified timeout, the ops request will result in failure.
+
+NB: We have also added Arbiter & HiddenNode support in MongoDB Autoscaler. We refer to the hidden-node corresponding section in MongoDB below, for that.
 
 Here is an example of the RedisAutoscaler object, where we want to autoscale the CPU & memory resources of the Redis pods.
 
@@ -117,6 +119,7 @@ spec:
 
 
 ## MongoDB
+### Hidden Node Support
 We introduce MongoDB hidden members in this latest release. A hidden member in mongoDB is a part of replica-set.
 It maintains the copy of the primary data set, but remains invisible to client applications. They are good for workloads with different usage patterns.
 Like, You are using inMemory databases for your primary & electable secondaries (to improve latency issue), but at the same time, you also want your data not to be lost in time of pod restart, then Hidden member is the solution for you. 
@@ -167,6 +170,95 @@ spec:
           storage: 15Gi
 ```
 
+### OpsRequests for Hidden Node
+We have also added all the possible opsRequests for Hidden node. Like `VerticalScaling`, `HorizontalScaling`, `Reconfigure` & `VolumeExpansion`. 
+
+Here are some sample given for those opsRequests :
+
+#### Volume Expansion
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: MongoDBOpsRequest
+metadata:
+  name: expansion
+  namespace: demo
+spec:
+  type: VolumeExpansion  
+  databaseRef:
+    name: mg-sh
+  volumeExpansion:
+    shard: 12Gi
+    hidden: 20Gi
+    mode: "Online"
+```
+
+#### Version Scaling
+```yaml
+spec:
+  type: VerticalScaling
+  ...
+  verticalScaling:
+    ...
+    hidden:
+      requests:
+        memory: "600Mi"
+        cpu: "600m"
+```
+
+#### Horizontal Scaling
+```yaml
+spec:
+  type: HorizontalScaling
+  ...
+  horizontalScaling:
+    ...
+    hidden:
+      replicas: 1
+```
+
+#### Reconfigure
+```yaml
+spec:
+  type: Reconfigure
+  ...
+  configuration:
+    ...
+    hidden:
+      configSecret:
+        name: log-conf <the secret nam with your hidden-node configurations>
+```
+
+### Autoscaler features
+We have added compute autoscaler support for MongoDB Arbiter & HiddenNode. Also Storage autoscaler support for Hidden Node.
+Here are the truncated examples:
+
+#### Compute autoscaling on Arbiter
+```yaml
+apiVersion: autoscaling.kubedb.com/v1alpha1
+kind: MongoDBAutoscaler
+...
+spec:
+  ...
+  compute:
+    arbiter:
+      trigger: "On"
+      podLifeTimeThreshold: 5m
+      minAllowed:
+        cpu: 540m
+        memory: 256Mi
+```
+
+#### Storage autoscaling on Hidden members
+```yaml
+spec:
+  ...
+  storage:
+    hidden:
+      trigger: "On"
+      usageThreshold: 30
+      scalingThreshold: 40
+      expansionMode: "Online"
+```
 
 ## MySQL
 ### New Version Support
