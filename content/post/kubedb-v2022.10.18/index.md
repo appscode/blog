@@ -28,14 +28,13 @@ tags:
 - schema-manager
 ---
 
-We are pleased to announce the release of [KubeDB v2022.10.18](https://kubedb.com/docs/v2022.10.18/setup/). This post lists all the major changes done in this release since the last release.
-This release offers some major features like **Externally Managed AuthSecret**, **Percona XtraDB OpRequests**, **ProxySQL OpsRequests**, **Redis Sentinel OpsRequests**, **PostgreSQL Logical Replication**, **MongoDB Hidden Members Support**, **Autoscaler Support for MySQL, Postgres, Redis, Redis Sentinel & PerconaXtraDB** etc.
-It also contains various improvements and bug fixes. `Kubernetes version 1.25` is supported in KubeDB from this release.  You can find the detailed changelogs [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2022.10.18/README.md).
+We are pleased to announce the release of [KubeDB v2022.10.18](https://kubedb.com/docs/v2022.10.18/setup/). This post lists all the major changes done in this release since the last release. `Kubernetes version 1.25` is supported in KubeDB from this release. This release offers some major features like **Externally Managed AuthSecret**, **Percona XtraDB OpRequests**, **ProxySQL OpsRequests**, **Redis Sentinel OpsRequests**, **PostgreSQL Logical Replication**, **MongoDB Hidden Member Support**, **Autoscaler Support for MySQL, Postgres, Redis, Redis Sentinel & PerconaXtraDB** etc.
+It also contains various improvements and bug fixes. You can find the detailed changelogs [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2022.10.18/README.md).
 
 ## Externally Managed AuthSecret
 
-In this release, we have introduced a new boolean field `externallyManaged` in the CRD of every database we support. If enabled, the operator will wait for the custom auth secret given in the `authSecret` field. It solves the problem like this [github issue](https://github.com/kubedb/project/issues/881) where you are using sealed secret and the KubeDB operator needs to wait until the secret is created.
-Here is an example for MariaDB using `Externally Managed Secrret`:
+In this release, we have introduced a new boolean field `externallyManaged` in the CRD of every database we support. If enabled, the operator will wait for the custom auth secret given in the `authSecret` field. It allows users to provide auth secrets via [Bitnami sealed secrets](https://github.com/bitnami-labs/sealed-secrets) or [external secrets](https://github.com/external-secrets/external-secrets) for GitOps. Here is an example for MariaDB using `Externally Managed Secrret`:
+
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: MariaDB
@@ -54,7 +53,7 @@ spec:
 ## KubeDB Autoscaler
 
 We have added Autoscaler support for MySQL, Postgres, Redis, RedisSentinel & PerconaXtraDB in this release.  
-We support `compute` (to autoscaler CPU & memory resources) & `storage` (to autoscaler persistent storage resources) autoscaling currently.
+We support `compute` (to autoscale CPU & memory resources) & `storage` (to autoscale persistent storage resources) autoscaling currently.
 The structure of those autoscaler yamls is similar for all databases, except, RedisSentinelAutoscaler doesn't support storage autoscaling.
 `compute` utilizes the `VerticalScale` OpsRequest & `storage` utilizes the `VolumeExpansion` OpsRequest internally while autoscaling.
 There are two more common fields in the CRDs spec :
@@ -62,9 +61,8 @@ There are two more common fields in the CRDs spec :
 2) `spec.opsRequestOptions` to control the behavior of the ops-manager operator. It has two fields `apply` and `timeout`.
 
 The supported values of `spec.opsRequestOptions.apply` is `IfReady` & `Always`.
-Use `IfReady` if you want to process the opsReq only when the database is Ready. And use `Always` if you want to process the execution of opsReq irrespective of the Database state.
-`spec.opsRequestOptions.timeout` specifies the maximum time for each step of the opsRequest(in seconds).
-If a step doesn't finish within the specified timeout, the ops request will result in failure.
+Use `IfReady` if you want to process the opsReq only when the database is `Ready`. And use `Always` if you want to process the execution of opsReq irrespective of the Database state.
+`spec.opsRequestOptions.timeout` specifies the maximum time for each step of the opsRequest(in seconds). If a step doesn't finish within the specified timeout, the ops request will result in failure.
 
 NB: We have also added Arbiter & HiddenNode support in MongoDB Autoscaler. We refer to the hidden-node corresponding section in MongoDB below, for that.
 
@@ -96,7 +94,9 @@ spec:
       podLifeTimeThreshold: 10m  # Specifies the minimum lifetime of a pod before update. (OOM is an exception in this case)
       resourceDiffPercentage: 20 # if the diff between current & recommended resource is less than ResourceDiffPercentage, autoscaler Operator will ignore the updating.
 ```
+
 Example of a PerconaXtraDBAutoscaler object, where we want to autoscale the storage resources.
+
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: PerconaXtraDBAutoscaler
@@ -119,12 +119,15 @@ spec:
 
 
 ## MongoDB
+
 ### Hidden Node Support
+
 We introduce MongoDB hidden members in this latest release. A hidden member in mongoDB is a part of replica-set.
 It maintains the copy of the primary data set, but remains invisible to client applications. They are good for workloads with different usage patterns.
 Like, You are using inMemory databases for your primary & electable secondaries (to improve latency issue), but at the same time, you also want your data not to be lost in time of pod restart, then Hidden member is the solution for you. 
 
 Here is a sample hidden member enabled mongoDB sharded cluster example:
+
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: MongoDB
@@ -171,11 +174,13 @@ spec:
 ```
 
 ### OpsRequests for Hidden Node
-We have also added all the possible opsRequests for Hidden node. Like `VerticalScaling`, `HorizontalScaling`, `Reconfigure` & `VolumeExpansion`. 
+
+We have also added all the possible opsRequests for MongoDB Hidden node. Like `VerticalScaling`, `HorizontalScaling`, `Reconfigure` & `VolumeExpansion`. 
 
 Here are some sample given for those opsRequests :
 
 #### Volume Expansion
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: MongoDBOpsRequest
@@ -193,6 +198,7 @@ spec:
 ```
 
 #### Version Scaling
+
 ```yaml
 spec:
   type: VerticalScaling
@@ -206,6 +212,7 @@ spec:
 ```
 
 #### Horizontal Scaling
+
 ```yaml
 spec:
   type: HorizontalScaling
@@ -217,6 +224,7 @@ spec:
 ```
 
 #### Reconfigure
+
 ```yaml
 spec:
   type: Reconfigure
@@ -229,10 +237,13 @@ spec:
 ```
 
 ### Autoscaler features
-We have added compute autoscaler support for MongoDB Arbiter & HiddenNode. Also Storage autoscaler support for Hidden Node.
+
+We have added compute autoscaler support for MongoDB Arbiter & HiddenNode and Storage autoscaler support for Hidden Node.
+
 Here are the truncated examples:
 
 #### Compute autoscaling on Arbiter
+
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: MongoDBAutoscaler
@@ -249,6 +260,7 @@ spec:
 ```
 
 #### Storage autoscaling on Hidden members
+
 ```yaml
 spec:
   ...
@@ -261,10 +273,12 @@ spec:
 ```
 
 ## MySQL
+
 ### New Version Support
-We have added the most recent MySQL versions.
-Now you can create a Standalone , Group Replication, Innodb Cluster, Read Replica and Semi-sync Cluster with `MySQL 8.0.31`
-You can get started with `mysql:8.0.31` by applying this simple yaml
+
+We have added the most recent MySQL version. Now you can create a Standalone , Group Replication, Innodb Cluster, Read Replica and Semi-sync Cluster with `MySQL 8.0.31`.
+You can get started with `mysql:8.0.31` by applying the yaml below:
+
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: MySQL
@@ -287,20 +301,24 @@ spec:
 ```
 
 ### BugFix and Improvement
+
 Several bugs in mysql ops request including mysql version upgrading and reconfigure TLS and Custom configuration are fixed.
 OpsRequest for innodb cluster were improved. And in this release innodbCluster is more stable in provisioning and failover.
 Now kubedb managed MySQL instance can automatically recover when some group member has extra transaction on it. It will clone from the Primary instance to recover.
 
-
 ## MariaDB
+
 Along with externally managed auth secret support, We have fixed bugs and made improvements in several places of MariaDB Provisioner, OpsRequests and Autoscaler.
 
 ## Percona XtraDB Cluster
 
 ### OpsRequests (Day-2 Operations)
+
 In this release we have introduced the PerconaXtraDB OpsRequests that simplify the day-2 operations of Percona XtraDB Cluster. 
 Here is the list of supported Percona XtraDB OpsRequests:
+
 #### Horizontal Scaling
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: PerconaXtraDBOpsRequest
@@ -315,7 +333,9 @@ spec:
     member: 5
   timeout: 5s
 ```
+
 #### Vertical Scaling
+
 ```yaml
 spec:
   type: VerticalScaling  
@@ -329,7 +349,9 @@ spec:
         memory: "600Mi"
         cpu: "0.1"
 ```
+
 #### Version Update
+
 ```yaml
 spec:
   type: Upgrade  
@@ -337,7 +359,9 @@ spec:
   upgrade:   
     targetVersion: "8.0.28"
 ```
+
 #### Reconfigure
+
 ```yaml
 spec:
   type: Reconfigure
@@ -346,7 +370,9 @@ spec:
     configSecret:
       name: px-config
 ```
+
 #### Reconfigure TLS
+
 ```yaml
 spec:
   type: ReconfigureTLS
@@ -367,7 +393,9 @@ spec:
       ipAddresses:
       - "127.0.0.1"
 ```
+
 #### Volume Expansion
+
 ```yaml
 spec:
   type: VolumeExpansion
@@ -378,6 +406,7 @@ spec:
 ```
 
 ### Grafana Dashboards
+
 Grafana dashboards, for better monitoring of KubeDB Provisioned Percona XtraDB Cluster, are added in this release. Here is the list of dashboards supported on
 KubeDB provisioned Percona XtraDB Cluster:
 - Summary dashboard shows overall summary of a Percona XtraDB Cluster instance.
@@ -386,8 +415,9 @@ KubeDB provisioned Percona XtraDB Cluster:
 - Galera Cluster dashboard shows Percona XtraDB replication related metrics.
 
 ### Externally Managed System User Secret
-Along with the externally managed auth secret, We are supporting externally managed system user secrets (monitor and replication user)
-We have fixed some bugs on the initialization scripts of KubeDB provisioned Percona XtraDB Cluster.
+
+Along with the externally managed auth secret, We are supporting externally managed system user secrets for monitor and replication user. We have fixed some bugs on the initialization scripts of KubeDB provisioned Percona XtraDB Cluster.
+
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: PerconaXtraDB
@@ -410,12 +440,12 @@ spec:
 ```
 
 ### Alerting
+
 We have added configurable alerting support for Percona XtraDB Cluster.
 
 ### New Version Support
+
 Percona XtraDB Cluster version `8.0.28` is now supported on KubeDB from this release.
-
-
 
 ## PostgreSQL Logical Replication
 
@@ -484,7 +514,9 @@ spec:
 ```
 
 ## Redis
+
 ### Redis Ops Requests in Sentinel Mode
+
 - Horizontal and Vertical Scaling
 - Version Update
 - Reconfigure
@@ -492,9 +524,11 @@ spec:
 - Volume Expansion
 - Replace Sentinel
 
-To run Redis Database Cluster and Sentinel Monitor Cluster in TLS-secured mode, both Redis and Sentinel need to be configured using the same `Issuer` or `ClusterIssuer` provided by `cert-manager`.
-So Adding TLS or Removing TLS in Redis Sentinel Mode should be done carefully as the Sentinel Monitor Cluster needs to be replaced as well. Because the existing Sentinel Monitor Cluster can not monitor the Redis Database Cluster anymore.
-So a new Sentinel Monitor Cluster is needed. Here is a sample YAML to add TLS in Redis Database Cluster running in Sentinel Mode.
+To run Redis Database Cluster and Redis Sentinel Cluster in TLS-secured mode, both Redis and Sentinel need to be configured using the same `Issuer` or `ClusterIssuer` provided by `cert-manager`.
+
+So Adding TLS or Removing TLS in Redis Sentinel Mode should be done carefully as the Redis Sentinel Cluster needs to be replaced as well. Because the existing Redis Sentinel Cluster can not monitor the Redis Database Cluster anymore.
+So a new Redis Sentinel Cluster is needed. Here is a sample YAML to add TLS in Redis Database Cluster running in Sentinel Mode.
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: RedisOpsRequest
@@ -517,10 +551,11 @@ spec:
       kind: ClusterIssuer
 ```
 
-In the TLS specification, users need to tell a new sentinel reference because if Redis Database Cluster is TLS enabled, the old Sentinel can not monitor anymore. So, KubeDB will look for a Sentinel Monitor Cluster which is TLS enabled. If the user did not create such a Sentinel Monitor Cluster, KubeDB would create one using the issuer given in the TLS specification.
+In the TLS specification, users need to tell a new sentinel reference because if Redis Database Cluster is TLS enabled, the old Sentinel can not monitor anymore. So, KubeDB will look for a Redis Sentinel Cluster which is TLS enabled. If the user did not create such a Redis Sentinel Cluster, KubeDB would create one using the issuer given in the TLS specification.
 
-In this release, we are introducing another Ops Request which enables users to replace the Sentinel Monitor Cluster of the Redis Database Cluster. Users need to provide a sentinel reference that replaces the old Sentinel. The user needs to create a Sentinel Monitor Cluster beforehand and provide a reference to that to perform the `ReplaceSentinel` Ops Request. 
+In this release, we are introducing another Ops Request which enables users to replace the Redis Sentinel Cluster of the Redis Database Cluster. Users need to provide a sentinel reference that replaces the old Sentinel. The user needs to create a Redis Sentinel Cluster beforehand and provide a reference to that to perform the `ReplaceSentinel` Ops Request. 
 A sample ReplaceSentinel Ops Requests YAML is given below:
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: RedisOpsRequest
@@ -538,7 +573,8 @@ spec:
     removeUnusedSentinel: true
 
 ```
-If `removeUnusedSentinel` is set to true, KubeDB checks if the old sentinel is monitoring any other Redis Database Cluster after the replacement. If no, KubeDB deletes the old Sentinel Monitor Cluster.
+
+If `removeUnusedSentinel` is set to true, KubeDB checks if the old sentinel is monitoring any other Redis Database Cluster after the replacement. If no, KubeDB deletes the old Redis Sentinel Cluster.
 
 ### Redis Sentinel Ops Request
 - Horizontal and Vertical Scaling
@@ -550,6 +586,7 @@ If `removeUnusedSentinel` is set to true, KubeDB checks if the old sentinel is m
 Here are some sample YAMLs given for those OpsRequests
 
 #### Horizontal Scaling
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: RedisSentinelOpsRequest
@@ -563,7 +600,9 @@ spec:
   horizontalScaling:
     replicas: 5
 ```
+
 #### Vertical Scaling
+
 ```yaml
 spec:
   type: VerticalScaling  
@@ -577,7 +616,9 @@ spec:
         memory: "600Mi"
         cpu: "0.1"
 ```
+
 #### Reconfigure TLS
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: RedisSentinelOpsRequest
@@ -593,6 +634,7 @@ spec:
 ```
 
 #### Version Update
+
 ```yaml
 spec:
   type: UpdateVersion  
@@ -604,15 +646,12 @@ spec:
 ### New Version Support
 KubeDB Redis is now supporting the latest Redis version 7.0.5.
 
-
-
-
-
-
 ## ProxySQL
 
 ### External MySQL
-KubeDB ProxySQL is now supporting externally managed MySQL servers as backend. The user need to create an appbinding with necessary information of that backend like following.
+
+KubeDB ProxySQL is now supporting externally managed MySQL servers as backend. The user needs to create an appbinding with necessary information of that backend like following.
+
 ```yaml
 apiVersion: appcatalog.appscode.com/v1alpha1
 kind: AppBinding
@@ -635,10 +674,12 @@ spec:
   type: mysql
   version: 5.7.36
 ```
+
 * **spec.clientConfig** contains all the necessary information for establishing connection . It is a required field .
 * **spec.secret.name** contains a secret name, which has key `username` and `password` and corresponding data in it. The credential provided with this secret can be root. If not , the credential must be privileged with `SELECT` and `INSERT` in `sys.*` and `mysql.*`. This is a required field.
 * **spec.tlsSecret.name** contains a secret name, which must include key `ca.crt` , `tls.crt` and `tls.key` . It is necessary for tls secured connection between ProxySQL and MySQL backend. It is an optional field.
 * **version** contains the MySQL server version. It is a required field.
+
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -650,6 +691,7 @@ data:
   username: bW9ub3g= # must be privileged with SELECT and INSERT on sys.* and mysql.*
   password: bW9ub3hwYXNz 
 ```
+
 With the below Yaml one can configure a KubeDB ProxySQL for the above-mentioned external MySQL. Just need to mention the appbinding name in the `spec.backend.name` section and the operator will do the rest.
 
 ```yaml
@@ -693,7 +735,9 @@ spec:
   healthChecker:
     failureThreshold: 3
 ```
-Lastly, there is a sample externally-managed auth secret. This secret is mentioned in the above ProxySQL yaml in the `spec.authSecret.name` section. This field is optional if absent the operator will create one itself and patch the name in the yaml. Whatever , this auth secret will be used in KubeDB ProxySQL to configure `admin-cluster_username` and `admin-cluster_password` variables. The secret must contain `username` and `password` key and corresponding data. Also the `password` must be alpha-numeric.
+
+Lastly, there is a sample externally-managed auth secret. This secret is mentioned in the above ProxySQL yaml in the `spec.authSecret.name` section. This field is optional if absent the operator will create one itself and patch the name in the yaml. In either case, this auth secret will be used in KubeDB ProxySQL to configure `admin-cluster_username` and `admin-cluster_password` variables. The secret must contain `username` and `password` key and corresponding data. Also the `password` must be alpha-numeric.
+
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -709,7 +753,9 @@ data:
 ### Ops-requests
 
 #### Update Version
+
 with `UpdateVersion` ops-request user can update ProxySQL version .
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: ProxySQLOpsRequest
@@ -723,10 +769,13 @@ spec:
   upgrade:
     targetVersion: "2.4.4-debian"
 ```
+
 Currently available versions : `2.3.2-debian`, `2.3.2-centos`, `2.4.4-debian`, `2.4.4-centos`
 
 #### Horizontal Scaling
+
 * Scale Up
+
 ```yaml 
 apiVersion: ops.kubedb.com/v1alpha1
 kind: ProxySQLOpsRequest
@@ -740,7 +789,9 @@ spec:
   horizontalScaling:
     member: 5
 ```
+
 * Scale Down
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: ProxySQLOpsRequest
@@ -754,10 +805,13 @@ spec:
   horizontalScaling:
     member: 3
 ```
+
 #### Reconfigure
+
 * Reconfigure User
     * Add User \
       Add user to `mysql_users` table.
+
     ```yaml
     ...
     spec:
@@ -774,8 +828,10 @@ spec:
             default_hostgroup: 3
           reqType: add
     ```
+
     * Delete User \
       Remove users from `mysql_users` table.
+
     ```yaml
     ...
     configuration:
@@ -785,6 +841,7 @@ spec:
           - username: D_Del
         reqType: delete
     ```
+
     * Update User Configuration \
       Update user configuration in `mysql_users` table
 
@@ -801,8 +858,10 @@ spec:
                 default_hostgroup: 3
             reqType: update
     ```
+
 * Reconfigure MySQL Query Rules \
   User can add, update and delete into mysql_query_rules table with this ops-request. Here we have provided a sample for update only. The other two are similar as the user reconfig ops requst .
+
 ```yaml
   ...
   configuration:
@@ -812,8 +871,10 @@ spec:
           active: 0
       reqType: update
 ```
+
 * Reconfigure Global Variables \
   Update global variables in ProxySQL server.
+
 ```yaml
   ...
   configuration:
@@ -826,8 +887,11 @@ spec:
 ```
 
 #### Reconfigure TLS
+
 Reconfigure all the TLS configuration with ReconfigureTLS ops-request. This is related to only proxysql frontend tls.
+
 * Add TLS
+
 ```yaml
 ...
 spec:
@@ -850,7 +914,9 @@ spec:
       emailAddresses: 
         - "tasdid@appscode.com"
 ```
+
 * Update TLS
+
 ```yaml
   ...
   tls:
@@ -877,20 +943,27 @@ spec:
       emailAddresses:
       - "md.alifbiswas@gmail.com"
 ```
+
 * Rotate TLS
+
 ```yaml
   ...
   tls:
     rotateCertificates: true
 ```
+
 * Remove TLS
+
 ```yaml
   ...
   tls:
     remove: true
 ```
+
 #### Restart
+
 Finally if the user wants to restart all the ProxySQL pods , this ops-request will be helpful.
+
 ```yaml
 ...
 spec:
