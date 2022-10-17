@@ -972,6 +972,10 @@ spec:
     name: proxy-server
 ```
 
+## Support for Private Registry
+
+In this release, we have fixed a bug related to using private Docker registry to detect Docker image dogest. This bug affects private registries using custom domain with self-signed tls certificates.
+
 ## What Next?
 
 Please try the latest release and give us your valuable feedback.
