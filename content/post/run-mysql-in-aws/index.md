@@ -6,25 +6,19 @@ authors:
 - Dipta Roy
 tags:
 - amazon
-- amazon eks
-- amazon s3
-- amazon storage
+- amazon-eks
+- amazon-s3
+- amazon-storage
 - aws
-- aws s3
-- backup & restore mysql in amazon s3
-- cloud-native platform
+- aws-s3
+- cloud-native
 - database
 - eks
 - kubedb
 - kubernetes
-- kubernetes mysql
-- manage mysql in amazon eks
+- kubernetes-mysql
 - mysql
-- run & manage mysql in amazon elastic kubernetes service
-- run & manage mysql in eks
-- run mysql in amazon
-- run production-grade database
-- s3 bucket
+- s3-bucket
 ---
 
 ## Overview

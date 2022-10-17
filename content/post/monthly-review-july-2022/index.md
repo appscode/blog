@@ -6,19 +6,13 @@ authors:
 - Dipta Roy
 tags:
 - appscode
-- backup kubernetes statefulset
-- cloud-native platform
+- cloud-native
 - database
 - kubedb
 - kubernetes
-- kubernetes database
-- kubernetes native
-- kubernetes native data platform
-- manage database in kubernetes
-- run & manage database in k8s
-- run & manage database in kubernetes
-- run production-grade database
-- running production-grade databases on kubernetes
+- kubernetes-database
+- kubernetes-native
+- managed-dbaas
 - stash
 ---
 

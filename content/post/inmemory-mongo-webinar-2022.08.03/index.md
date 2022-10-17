@@ -8,7 +8,7 @@ tags:
 - autoscaling
 - availability
 - cert-manager
-- horizontalscaling
+- horizontal-scaling
 - inmemory
 - kubedb
 - kubernetes
@@ -16,7 +16,7 @@ tags:
 - opsrequest
 - replicaset
 - shard
-- verticalscaling
+- vertical-scaling
 - vpa
 ---
 

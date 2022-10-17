@@ -7,7 +7,7 @@ authors:
 tags:
 - kubedb
 - kubernetes
-- logical replication
+- logical-replication
 - postgres
 - postgresql
 - publisher

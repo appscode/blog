@@ -5,21 +5,16 @@ weight: 14
 authors:
 - Dipta Roy
 tags:
-- azure storage blob
-- azure storage container
-- cloud-native platform
+- azure-storage
+- cloud-native
 - database
 - kubedb
 - kubernetes
-- kubernetes mongodb
-- manage mongodb in microsoft aks
-- microsoft azure
-- microsoft azure storage
+- kubernetes-mongodb
+- manage-mongodb
+- microsoft-azure
 - mongodb
-- run & manage mongodb in aks
-- run & manage mongodb in azure kubernetes service
-- run mongodb in azure
-- run production-grade database
+- run-mongodb
 ---
 
 ## Overview

@@ -6,27 +6,20 @@ authors:
 - Dipta Roy
 tags:
 - amazon
-- amazon s3
-- amazon storage
+- amazon-s3
+- amazon-storage
 - aws
-- aws s3
-- backup & restore mongodb in amazon s3
-- cloud-native platform
+- aws-s3
+- cloud-native
 - database
 - kubedb
-- kubedb mongodb
+- kubedb-mongodb
 - kubernetes
-- kubernetes mongodb
-- manage mongodb in amazon eks
+- kubernetes-mongodb
 - mongo
 - mongodb
-- mongodb database
-- run & manage mongodb in amazon elastic kubernetes service
-- run & manage mongodb in aws
-- run & manage mongodb in eks
-- run mongodb in amazon web services
-- run production-grade database
-- s3 bucket
+- mongodb-database
+- s3-bucket
 ---
 
 ## Overview

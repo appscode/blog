@@ -8,7 +8,6 @@ tags:
 - arbiter
 - cert-manager
 - community
-- cost reducing
 - enterprise
 - kubedb
 - kubernetes
@@ -17,7 +16,7 @@ tags:
 - reconfigure
 - replicaset
 - shard
-- verticalscaling
+- vertical-scaling
 ---
 
 ## Summary

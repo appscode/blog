@@ -13,11 +13,11 @@ tags:
 - kubedb
 - kubernetes
 - kubevault
-- multi tanancy
+- multi-tenancy
 - mysql
-- re-configure tls
-- read replica
-- schema manager
+- read-replica
+- reconfigure-tls
+- schema-manager
 - secret-management
 - security
 - stash
