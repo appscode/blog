@@ -6,13 +6,11 @@ authors:
 - Sakib Alamin
 tags:
 - cli
-- community
-- enterprise
 - hashicorp
 - kubernetes
 - kubevault
 - kubevault-cli
-- ops-requests
+- ops-manager
 - recommendation
 - secret-management
 - security

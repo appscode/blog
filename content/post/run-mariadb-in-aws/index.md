@@ -6,19 +6,14 @@ authors:
 - Dipta Roy
 tags:
 - amazon
-- amazon-eks
-- amazon-s3
-- amazon-storage
 - aws
-- aws-s3
 - cloud-native
 - database
 - eks
 - kubedb
 - kubernetes
-- kubernetes-mariadb
 - mariadb
-- s3-bucket
+- s3
 ---
 
 ## Overview

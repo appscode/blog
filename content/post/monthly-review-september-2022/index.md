@@ -8,12 +8,12 @@ tags:
 - appscode
 - cloud-native
 - database
+- dbaas
 - kubedb
 - kubernetes
 - kubernetes-database
 - kubernetes-native
 - kubevault
-- managed-dbaas
 - stash
 - voyager
 ---

@@ -5,9 +5,7 @@ weight: 25
 authors:
 - Shohag Rana
 tags:
-- community
 - elasticsearch
-- enterprise
 - hashicorp
 - kubernetes
 - kubevault

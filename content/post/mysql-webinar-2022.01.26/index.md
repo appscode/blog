@@ -7,8 +7,6 @@ authors:
 - Tasdidur Rahman
 tags:
 - cert-manager
-- community
-- enterprise
 - hashicorp
 - kubedb
 - kubernetes
@@ -16,11 +14,11 @@ tags:
 - multi-tenancy
 - mysql
 - read-replica
-- reconfigure-tls
 - schema-manager
 - secret-management
 - security
 - stash
+- tls
 - vault
 ---
 

@@ -5,7 +5,6 @@ weight: 20
 authors:
 - Mehedi Hasan
 tags:
-- errant-replica
 - kubedb
 - kubernetes
 - mysql

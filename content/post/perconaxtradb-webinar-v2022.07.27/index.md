@@ -5,10 +5,10 @@ weight: 20
 authors:
 - Md. Alif Biswas
 tags:
-- clustering
 - galera
 - kubedb
 - kubernetes
+- percona
 - percona-xtradb
 - provisioner
 ---

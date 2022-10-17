@@ -6,9 +6,9 @@ authors:
 - Tamal Saha
 tags:
 - cloud-native
+- dashboard
 - database
 - elasticsearch
-- elasticsearch-dashboard
 - kibana
 - kubedb
 - kubernetes

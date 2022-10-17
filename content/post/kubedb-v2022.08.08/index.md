@@ -6,9 +6,9 @@ authors:
 - Md Kamol Hasan
 tags:
 - cloud-native
+- dashboard
 - database
 - elasticsearch
-- elasticsearch-dashboard
 - kibana
 - kubedb
 - kubernetes
@@ -17,7 +17,6 @@ tags:
 - mongodb
 - mysql
 - opensearch
-- opensearch-dashboard
 - percona
 - percona-xtradb
 - postgresql

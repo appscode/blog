@@ -9,8 +9,7 @@ tags:
 - filebeat
 - kubedb
 - mysql
-- mysqlopsrequest
-- statefulset
+- ops-manager
 ---
 
 ### Add custom containers in KubeDB managed Database

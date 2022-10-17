@@ -11,7 +11,6 @@ tags:
 - grafana
 - kubedb
 - kubernetes
-- kubernetes-exporter
 - mariadb
 - memcached
 - metrics

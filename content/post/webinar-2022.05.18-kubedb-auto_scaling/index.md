@@ -7,14 +7,11 @@ authors:
 - Md Fahim Abrar
 tags:
 - auto-scaling
-- community
 - elasticsearch
-- enterprise
 - horizontal-scaling
 - kubedb
 - mongodb
 - scaling
-- statefulsets
 - vertical-scaling
 ---
 

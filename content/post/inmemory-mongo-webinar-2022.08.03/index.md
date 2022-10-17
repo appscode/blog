@@ -13,9 +13,8 @@ tags:
 - kubedb
 - kubernetes
 - mongodb
-- opsrequest
+- ops-manager
 - replicaset
-- shard
 - vertical-scaling
 - vpa
 ---

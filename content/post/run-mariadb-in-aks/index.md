@@ -10,12 +10,10 @@ tags:
 - azure-storage
 - cloud-native
 - database
+- dbaas
 - kubedb
 - kubernetes
-- kubernetes-mariadb
-- managed-dbaas
 - mariadb
-- microsoft-azure
 ---
 
 ## Overview

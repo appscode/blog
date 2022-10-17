@@ -6,13 +6,9 @@ authors:
 - Kamol Hasan
 - Raihan Khan
 tags:
-- community
+- dashboard
 - elasticsearch
-- elasticsearchdashboard
-- enterprise
 - filebeat
-- hot-warm-cold
-- index-lifecycle-management
 - k8s-log-monitoring
 - kibana
 - kubedb

@@ -11,12 +11,10 @@ tags:
 - azure-storage
 - cloud-native
 - database
+- dbaas
 - elasticsearch
 - kubedb
 - kubernetes
-- kubernetes-elasticsearch
-- managed-dbaas
-- microsoft-azure
 - searchguard
 ---
 

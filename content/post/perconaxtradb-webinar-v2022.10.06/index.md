@@ -7,7 +7,8 @@ authors:
 tags:
 - kubedb
 - kubernetes
-- ops-requests
+- ops-manager
+- percona
 - percona-xtradb
 - provisioner
 - reconfigure

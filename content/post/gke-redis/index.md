@@ -14,7 +14,6 @@ tags:
 - google-kubernetes-engine
 - kubedb
 - kubernetes
-- kubernetes-redis
 - redis
 ---
 

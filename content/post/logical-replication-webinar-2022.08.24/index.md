@@ -8,7 +8,6 @@ tags:
 - kubedb
 - kubernetes
 - logical-replication
-- postgres
 - postgresql
 - publisher
 - subscriber

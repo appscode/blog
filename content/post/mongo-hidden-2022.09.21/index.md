@@ -7,18 +7,15 @@ authors:
 tags:
 - arbiter
 - cert-manager
-- community
-- enterprise
 - hidden
 - horizontal-scaling
 - inmemory
 - kubedb
 - kubernetes
 - mongodb
-- opsrequest
+- ops-manager
 - reconfigure
 - replicaset
-- shard
 - vertical-scaling
 - volume-expansion
 ---

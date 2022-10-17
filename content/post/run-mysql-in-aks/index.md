@@ -11,11 +11,9 @@ tags:
 - azure-storage
 - cloud-native
 - database
+- dbaas
 - kubedb
 - kubernetes
-- kubernetes-mysql
-- managed-dbaas
-- microsoft-azure
 - mysql
 ---
 
