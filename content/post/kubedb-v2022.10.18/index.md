@@ -9,7 +9,7 @@ tags:
 - cloud-native
 - database
 - elasticsearch
-- elasticsearch-dashboard
+- gitops
 - kibana
 - kubedb
 - kubernetes
@@ -18,7 +18,6 @@ tags:
 - mongodb
 - mysql
 - opensearch
-- opensearch-dashboard
 - percona
 - percona-xtradb
 - pgbouncer
