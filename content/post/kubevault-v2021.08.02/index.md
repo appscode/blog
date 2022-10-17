@@ -5,9 +5,7 @@ weight: 25
 authors:
 - Md Kamol Hasan
 tags:
-- community
 - elasticsearch
-- enterprise
 - hashicorp
 - kubernetes
 - kubevault

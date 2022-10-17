@@ -5,9 +5,7 @@ weight: 25
 authors:
 - Sakib Alamin
 tags:
-- community
 - database
-- enterprise
 - gitops
 - hashicorp
 - kubedb

@@ -6,8 +6,6 @@ authors:
 - Sakib Alamin
 tags:
 - cli
-- community
-- enterprise
 - hashicorp
 - kubernetes
 - kubevault

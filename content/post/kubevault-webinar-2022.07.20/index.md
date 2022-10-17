@@ -8,8 +8,6 @@ tags:
 - authentication
 - cert-manager
 - cli
-- community
-- enterprise
 - hashicorp
 - jwt
 - kubernetes

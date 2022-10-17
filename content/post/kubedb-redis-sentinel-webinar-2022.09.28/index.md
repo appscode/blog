@@ -6,14 +6,11 @@ authors:
 - Abdullah Al Shaad
 tags:
 - cert-manager
-- community
-- enterprise
 - high-availability
 - horizontal-scaling
 - kubedb
 - kubernetes
-- opsmanager
-- opsrequest
+- ops-manager
 - redis
 - sentinel
 ---

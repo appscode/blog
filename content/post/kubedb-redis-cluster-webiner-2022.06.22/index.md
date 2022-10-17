@@ -6,17 +6,12 @@ authors:
 - Abdullah Al Shaad
 tags:
 - cert-manager
-- cluster
-- community
-- enterprise
 - horizontal-scaling
 - kubedb
 - kubernetes
-- opsmanager
-- opsrequest
+- ops-manager
 - reconfigure
 - redis
-- shard
 - version-upgrade
 - vertical-scaling
 ---

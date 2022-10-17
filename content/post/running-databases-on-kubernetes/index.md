@@ -8,11 +8,11 @@ authors:
 tags:
 - cloud-native
 - database
+- dbaas
 - kubedb
 - kubernetes
 - kubernetes-database
 - kubernetes-native
-- managed-dbaas
 - stash
 ---
 

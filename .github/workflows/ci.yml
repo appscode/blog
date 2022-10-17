@@ -64,6 +64,10 @@ jobs:
           make gen-prod
           make verify
 
+      - name: Print tags
+        run: |
+          make tags
+
       - name: Check links
         run: |
           hugo server --minify --config=config.yaml &>/dev/null &
