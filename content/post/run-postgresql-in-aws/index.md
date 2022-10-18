@@ -7,13 +7,13 @@ authors:
 tags:
 - amazon
 - aws
-- s3
 - cloud-native
 - database
 - eks
 - kubedb
 - kubernetes
 - postgresql
+- s3
 ---
 
 ## Overview
