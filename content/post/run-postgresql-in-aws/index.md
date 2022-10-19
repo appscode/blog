@@ -1,6 +1,6 @@
 ---
 title: Run PostgreSQL in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB
-date: "2022-10-18"
+date: "2022-10-19"
 weight: 14
 authors:
 - Dipta Roy
