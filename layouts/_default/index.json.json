@@ -1,0 +1,17 @@
+{{- $first := true -}}
+[
+    {{- range .Site.Pages -}}
+    {{- $text := "" -}}
+    {{ if .IsPage }}{{ $text = .Plain }}{{ else }}{{ $text = .Description }}{{ end }}
+    {{- if $text -}}
+    {{- if $first -}}{{$first = false }}{{else}},{{- end -}}
+    {{- $url := .RelPermalink -}}
+    {{ dict
+    "documentId" ( md5 $url )
+    "title" .Title
+    "url" $url
+    "text" (chomp $text)
+    | jsonify | chomp }}
+    {{- end -}}
+    {{- end -}}
+]
