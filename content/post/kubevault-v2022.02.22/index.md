@@ -17,7 +17,7 @@ tags:
 
 We are very excited to announce the release of KubeVault v2022.02.22 Edition. The KubeVault `v2022.02.22` contains major improvements of the `KubeVault CLI` for better user experiences. Now, using `KubeVault CLI` you can `get`, `set`, `delete`, `list` and `sync` vault `unseal-keys` and `root-token`.
 
-- [Install KubeVault](https://kubevault.com/docs/v2022.02.02/setup/)
+- [Install KubeVault](https://kubevault.com/docs/v2022.02.22/setup/)
 
 [KubeVault](https://kubevault.com) is a Kubernetes operator for [HashiCorp Vault](https://www.vaultproject.io/). The Vault is a tool for secrets management, encryption as a service, and privileged access management. The KubeVault operator makes it easy to deploy, maintain and manage Vault servers in Kubernetes. It also supports various secret engines management, policy management in the Kubernetes native way.
 
