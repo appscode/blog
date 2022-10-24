@@ -77,10 +77,10 @@
   <!-- owl carousel css -->
   <link rel="stylesheet" href="/assets/css/owl.carousel.min.css" />
   <!-- Custom CSS -->
-  {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
+  <!-- {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}" />
-  {{ end }}
-  <!-- <link rel="stylesheet" href="/assets/sass/main.css" /> -->
+  {{ end }} -->
+  <link rel="stylesheet" href="/assets/sass/main.css" />
   <script src="https://tag.clearbitscripts.com/v1/pk_81079761ad5191fbdb09e9f13ff41927/tags.js"></script>
   <script>
     (function () {

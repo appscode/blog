@@ -8704,11 +8704,9 @@ Responsive Classes
 .navbar-area {
   position: relative;
   z-index: 99;
-  background-color: #ffffff;
 }
 
 .navbar-appscode-wrapper {
-  background-color: #ffffff;
   border-bottom: 1px solid #dbdbde;
 }
 
@@ -10695,10 +10693,6 @@ Responsive Classes
           animation-name: fadeInUp;
   -webkit-animation-delay: 0.3s;
           animation-delay: 0.3s;
-}
-
-.hero-area-blog .single-blog-carousel .blog-title-content {
-  padding-left: 40px;
 }
 
 .hero-area-blog .blog-banner {

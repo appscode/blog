@@ -2,11 +2,9 @@
 .navbar-area {
   position: relative;
   z-index: 99;
-  background-color: $ac-white;
 }
 
 .navbar-appscode-wrapper {
-  background-color: $ac-white;
   border-bottom: 1px solid $ac-white-light;
 
   &.navbar-product {
