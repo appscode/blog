@@ -1,6 +1,9 @@
 // blog page 2022
 .hero-area-blog {
   padding: 170px 0 100px;
+  margin-top: -74px;
+  // background-repeat: no-repeat;
+  // background-color: $ac-primary;
 
   .blog-title-content {
     h1 {
@@ -14,6 +17,9 @@
       a {
         color: $ac-white;
         font-family: "Roboto Mono", monospace;
+        &:hover{
+          text-decoration: underline;
+        }
       }
     }
 
@@ -21,12 +27,13 @@
       font-family: "Inter";
       font-style: normal;
       font-weight: 400;
-      font-size: 21px;
+      font-size: 20px;
       line-height: 160%;
       color: #fdfdfd;
       margin-bottom: 40px;
-      width: 85%;
+      width: 95%;
     }
+
     .button.ac-button {
       font-size: 13px;
       height: 48px;
@@ -34,14 +41,22 @@
     }
   }
 }
+
+.blog-items-area {
+  background: #f2f5f7;
+  overflow: hidden;
+}
+
 .author {
   display: flex;
+
   .author-image {
     width: 80px;
     height: 80px;
     margin-right: 16px;
     border: 3px solid #e5eff9;
     overflow: hidden;
+
     img {
       transform: scale(1.6);
       margin-top: 20px;
@@ -50,9 +65,11 @@
 
   .information {
     color: #ffffff;
+
     h5 {
       line-height: 1;
       margin-bottom: 4px;
+
       a {
         font-family: "Roboto Mono";
         font-style: normal;
@@ -83,6 +100,7 @@
     }
   }
 }
+
 a.inline-button {
   font-weight: 600;
   font-size: 14px;
@@ -114,6 +132,69 @@ a.inline-button {
   }
 }
 
+// single blog card start
+.single-blog-card {
+  background-color: #fff;
+  display: block;
+  height: 170px;
+  padding: 32px 16px;
+
+  .user-info {
+    display: flex;
+    margin-bottom: 8px;
+
+    img {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      margin-right: 12px;
+    }
+
+    h6 {
+      font-family: "Roboto Mono";
+      font-style: normal;
+      font-weight: 500;
+      font-size: 13px;
+      line-height: 17px;
+
+      color: $ac-color-text;
+    }
+  }
+
+  h2 {
+    font-family: "Roboto";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 120%;
+    color: #1c1c1c;
+    margin-bottom: 16px;
+    letter-spacing: 0;
+  }
+
+  .card-bottom {
+    color: #666666;
+
+    .date-meta {
+      font-family: "Roboto Mono";
+      font-style: normal;
+      font-weight: 400;
+      font-size: 13px;
+      line-height: 17px;
+    }
+
+    .arrow-icon {
+      .w-5 {
+        path {
+        }
+      }
+    }
+  }
+}
+
+// single blog card end
+
+// ================================================================================================
 .meta {
   display: flex;
   align-items: center;
@@ -215,23 +296,23 @@ ul.social-share-button {
 }
 
 .search-filter-area {
-  margin: 30px 0;
-  margin: 30px 0;
-  position: sticky;
-  top: 60px;
   z-index: 99;
   background: #fff;
+  box-shadow: 0 1px 3px rgba(15, 20, 40, 0.08);
+  border-bottom: 1px solid $ac-white-light;
+  height: 64px;
+  position: sticky;
+  top: 0;
 
   .filter-wrapper {
-    border: 1px solid $ac-white-light;
-    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 20px;
   }
 
   .search-area {
+    width: 100%;
+
     .fa {
       font-size: 22px;
       margin-right: 1rem;
@@ -239,11 +320,12 @@ ul.social-share-button {
 
     input {
       border: none;
-      width: 300px;
+      width: 100%;
       font-size: 16px;
       font-weight: 500;
       padding-right: 1rem;
       color: $ac-color-heading;
+      padding: 22px 0;
 
       &:focus {
         outline: none;
@@ -253,7 +335,7 @@ ul.social-share-button {
 
       &::placeholder {
         font-weight: 400;
-        font-size: 16px;
+        font-size: 14px;
         line-height: 19px;
 
         /* place-holder-color */
@@ -317,6 +399,7 @@ ul.social-share-button {
         &.is-active {
           background-color: $ac-primary;
           color: $ac-white;
+
           svg {
             fill: $ac-white;
           }
@@ -327,12 +410,13 @@ ul.social-share-button {
 }
 
 .blog-items-area {
+  padding: 40px 0;
   .left-sidebar {
     margin-right: 30px;
     position: sticky;
-    top: 170px;
+    top: 0px;
     overflow-y: auto;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 0px);
 
     &::-webkit-scrollbar {
       display: none;
@@ -370,7 +454,7 @@ ul.social-share-button {
 
         label {
           font-weight: 400;
-          font-size: 16px;
+          font-size: 14px;
           line-height: 100%;
           color: #3e393e;
           padding-left: 10px;

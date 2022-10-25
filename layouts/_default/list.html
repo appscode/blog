@@ -13,6 +13,8 @@
         <div class="columns is-vcentered is-multiline single-blog-carousel">
           
           <div class="column is-8">
+           
+
             <div class="blog-title-content">
               <!-- title  -->
               <h1 class="is-ellipsis-3" data-aos="fade-up" data-aos-duration="500" title="{{ $p.Title }}"><a
@@ -56,34 +58,16 @@
 <!--============================== search and filter area start  ==============================-->
 <div class="search-filter-area">
   <div class="container">
-    <div class="columns">
-      <div class="column">
-        <div class="filter-wrapper">
-          <div class="search-area">
-            <label for="search"> <i class="fa fa-search"></i></label>
-            <input id="search" type="search" name="search" placeholder="Search 'KubeDB', 'Stash', 'AWS'">
-          </div>
-
-          <div class="filter-area">
-            <!-- viewing type  -->
-            <div class="viewing-mode">
-              <label>VIEW</label>
-              <button id="grid-btn-view" title="Grid View" class="is-active"><span class="material-symbols-outlined">
-                  <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24">
-                    <path
-                      d="M3 11V3h8v8Zm0 10v-8h8v8Zm10-10V3h8v8Zm0 10v-8h8v8ZM5 9h4V5H5Zm10 0h4V5h-4Zm0 10h4v-4h-4ZM5 19h4v-4H5ZM15 9Zm0 6Zm-6 0Zm0-6Z" />
-                  </svg>
-                </span></button>
-              <button id="list-btn-view" title="List View"><span class="material-symbols-outlined">
-                  <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24">
-                    <path
-                      d="M4 17q-.425 0-.712-.288Q3 16.425 3 16t.288-.713Q3.575 15 4 15t.713.287Q5 15.575 5 16t-.287.712Q4.425 17 4 17Zm0-4q-.425 0-.712-.288Q3 12.425 3 12t.288-.713Q3.575 11 4 11t.713.287Q5 11.575 5 12t-.287.712Q4.425 13 4 13Zm0-4q-.425 0-.712-.288Q3 8.425 3 8t.288-.713Q3.575 7 4 7t.713.287Q5 7.575 5 8t-.287.712Q4.425 9 4 9Zm3 8v-2h14v2Zm0-4v-2h14v2Zm0-4V7h14v2Z" />
-                  </svg>
-                </span></button>
-            </div>
-            <!-- viewing type  -->
-          </div>
-        </div>
+    <div class="filter-wrapper">
+      <div class="search-area is-flex">
+        <label class="width-20 is-flex mr-16" for="search">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+            <path fill-rule="evenodd"
+              d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+              clip-rule="evenodd" />
+          </svg>
+        </label>
+        <input id="search" type="search" name="search" placeholder="Search 'KubeDB', 'Stash', 'AWS'">
       </div>
     </div>
   </div>
@@ -255,7 +239,36 @@
             {{ range $idx, $p := $pages.ByDate.Reverse }}
 
             <div class="column is-4 each-blog">
-              <div class="single-blog">
+
+               <a href="{{ $p.RelPermalink }}" class="single-blog-card">
+                <div class="user-info">
+                  {{ range $author := $p.Params.authors }}
+                  <img src="assets/images/authors/{{ $author | urlize}}.jpg" alt="" width="20" height="20" loading="lazy" decoding="async">
+                  <h6 class="mr-12"> {{ $author }}</h6>
+                  {{ end }}
+                </div>
+                <h2 class="is-ellipsis-3" title="{{ $p.Title }}">{{ $p.Title }}</h2>
+
+                <div class="tags is-hidden">
+                  {{ range $tag := .Params.tags }}
+                  <span href="#" class="tag">{{ . }}</span>
+                  {{ end }}
+                </div>
+
+                <div class="card-bottom is-flex is-justify-content-space-between">
+                  <div class="date-meta">{{ $p.Date.Format "2-Jan-2006" }}</div>
+
+                  <div class="arrow-icon width-15">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                      <path fill-rule="evenodd"
+                        d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
+                        clip-rule="evenodd" />
+                    </svg>
+
+                  </div>
+                </div>
+               </a>
+              <!-- <div class="single-blog">
                 {{ $original := $p.Resources.GetMatch "hero.jpg" }}
                 {{ $cropped := $original.Resize "x170" }}
                 <figure class="image">
@@ -263,7 +276,7 @@
                       decoding="async"></a>
                 </figure>
                 <div class="p-15">
-                  <!-- meta description  -->
+                
                   <div class="meta">
                     <div class="tags is-hidden">
                       {{ range $tag := .Params.tags }}
@@ -278,14 +291,14 @@
                       <strong>{{ $p.Date.Format "2-Jan-2006" }}</strong>
                     </div>
                   </div>
-                  <!-- meta description  -->
+                
 
                   <h2 class="is-ellipsis-2" title="{{ $p.Title }}"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
                   </h2>
                   <p class="is-ellipsis-3">{{ $p.Summary }}</p>
                   <a href="{{ $p.RelPermalink }}" class="inline-button">READ MORE <i class="fa fa-arrow-right"></i></a>
                 </div>
-              </div>
+              </div> -->
             </div>
             {{ end }}
           </div>

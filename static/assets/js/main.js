@@ -4,12 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
     once: true,
   });
 
-  // grab an element
-  var header = document.querySelector("header");
-  // construct an instance of Headroom, passing the element
-  var headroom = new Headroom(header);
-  // initialise
-  headroom.init();
+  // Headroom js
+  // var header = document.querySelector("header");
+  // var headroom = new Headroom(header);
+  // headroom.init();
+
 
   // navbar for mobile device
   let navbar = document.querySelector(".navbar-burger");

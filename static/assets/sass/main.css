@@ -7969,7 +7969,6 @@ h2 {
   font-weight: 500;
   font-size: 48px;
   line-height: 130%;
-  letter-spacing: -0.57px;
 }
 
 h3 {
@@ -7980,7 +7979,6 @@ h3 {
 h4 {
   font-size: 24px;
   line-height: 130%;
-  letter-spacing: -0.25px;
 }
 
 h5 {
@@ -7992,7 +7990,6 @@ h6 {
   font-weight: 500;
   font-size: 18px;
   line-height: 130%;
-  letter-spacing: -0.15px;
 }
 
 h6.is-tiny {
@@ -10422,6 +10419,7 @@ Responsive Classes
 
 .hero-area-blog {
   padding: 170px 0 100px;
+  margin-top: -74px;
 }
 
 .hero-area-blog .blog-title-content h1 {
@@ -10438,21 +10436,30 @@ Responsive Classes
   font-family: "Roboto Mono", monospace;
 }
 
+.hero-area-blog .blog-title-content h1 a:hover {
+  text-decoration: underline;
+}
+
 .hero-area-blog .blog-title-content p {
   font-family: "Inter";
   font-style: normal;
   font-weight: 400;
-  font-size: 21px;
+  font-size: 20px;
   line-height: 160%;
   color: #fdfdfd;
   margin-bottom: 40px;
-  width: 85%;
+  width: 95%;
 }
 
 .hero-area-blog .blog-title-content .button.ac-button {
   font-size: 13px;
   height: 48px;
   font-family: "Roboto Mono", monospace;
+}
+
+.blog-items-area {
+  background: #f2f5f7;
+  overflow: hidden;
 }
 
 .author {
@@ -10540,6 +10547,59 @@ a.inline-button:hover:after {
 
 a.inline-button i.fa {
   padding-left: 0.5rem;
+}
+
+.single-blog-card {
+  background-color: #fff;
+  display: block;
+  height: 170px;
+  padding: 32px 16px;
+}
+
+.single-blog-card .user-info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.single-blog-card .user-info img {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.single-blog-card .user-info h6 {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 17px;
+  color: #3b3030;
+}
+
+.single-blog-card h2 {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 120%;
+  color: #1c1c1c;
+  margin-bottom: 16px;
+  letter-spacing: 0;
+}
+
+.single-blog-card .card-bottom {
+  color: #666666;
+}
+
+.single-blog-card .card-bottom .date-meta {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 17px;
 }
 
 .meta {
@@ -10661,18 +10721,18 @@ ul.social-share-button li a i.fa {
 }
 
 .search-filter-area {
-  margin: 30px 0;
-  margin: 30px 0;
-  position: -webkit-sticky;
-  position: sticky;
-  top: 60px;
   z-index: 99;
   background: #fff;
+  -webkit-box-shadow: 0 1px 3px rgba(15, 20, 40, 0.08);
+          box-shadow: 0 1px 3px rgba(15, 20, 40, 0.08);
+  border-bottom: 1px solid #dbdbde;
+  height: 64px;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
 }
 
 .search-filter-area .filter-wrapper {
-  border: 1px solid #dbdbde;
-  border-radius: 4px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -10682,7 +10742,10 @@ ul.social-share-button li a i.fa {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  padding: 10px 20px;
+}
+
+.search-filter-area .search-area {
+  width: 100%;
 }
 
 .search-filter-area .search-area .fa {
@@ -10692,11 +10755,12 @@ ul.social-share-button li a i.fa {
 
 .search-filter-area .search-area input {
   border: none;
-  width: 300px;
+  width: 100%;
   font-size: 16px;
   font-weight: 500;
   padding-right: 1rem;
   color: #1c1c1c;
+  padding: 22px 0;
 }
 
 .search-filter-area .search-area input:focus {
@@ -10708,7 +10772,7 @@ ul.social-share-button li a i.fa {
 
 .search-filter-area .search-area input::-webkit-input-placeholder {
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 19px;
   /* place-holder-color */
   color: #999999;
@@ -10716,7 +10780,7 @@ ul.social-share-button li a i.fa {
 
 .search-filter-area .search-area input:-ms-input-placeholder {
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 19px;
   /* place-holder-color */
   color: #999999;
@@ -10724,7 +10788,7 @@ ul.social-share-button li a i.fa {
 
 .search-filter-area .search-area input::-ms-input-placeholder {
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 19px;
   /* place-holder-color */
   color: #999999;
@@ -10732,7 +10796,7 @@ ul.social-share-button li a i.fa {
 
 .search-filter-area .search-area input::placeholder {
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 19px;
   /* place-holder-color */
   color: #999999;
@@ -10817,13 +10881,17 @@ ul.social-share-button li a i.fa {
   fill: #ffffff;
 }
 
+.blog-items-area {
+  padding: 40px 0;
+}
+
 .blog-items-area .left-sidebar {
   margin-right: 30px;
   position: -webkit-sticky;
   position: sticky;
-  top: 170px;
+  top: 0px;
   overflow-y: auto;
-  max-height: calc(100vh - 120px);
+  max-height: calc(100vh - 0px);
   /* Hide scrollbar for IE, Edge and Firefox */
   -ms-overflow-style: none;
   /* IE and Edge */
@@ -10866,7 +10934,7 @@ ul.social-share-button li a i.fa {
 
 .blog-items-area .left-sidebar .collapsable-menu .ac-single-checkbox label {
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 100%;
   color: #3e393e;
   padding-left: 10px;
