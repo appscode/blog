@@ -2,8 +2,8 @@
 .hero-area-blog {
   padding: 170px 0 100px;
   margin-top: -74px;
-  // background-repeat: no-repeat;
-  // background-color: $ac-primary;
+  background-image: url(/assets/images/bg-image/hero-bg.png);
+  background-repeat: no-repeat;
 
   .blog-title-content {
     h1 {
@@ -303,6 +303,7 @@ ul.social-share-button {
   height: 64px;
   position: sticky;
   top: 0;
+  overflow: hidden;
 
   .filter-wrapper {
     display: flex;
@@ -1193,6 +1194,12 @@ ul.social-share-button {
         font-size: 18px;
       }
     }
+  }
+}
+
+@media (min-width: 2000px){
+  .hero-area-blog {
+    background-image: url(/assets/images/bg-image/hero-bg-2x.png);
   }
 }
 

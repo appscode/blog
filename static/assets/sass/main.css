@@ -10420,6 +10420,8 @@ Responsive Classes
 .hero-area-blog {
   padding: 170px 0 100px;
   margin-top: -74px;
+  background-image: url(/assets/images/bg-image/hero-bg.png);
+  background-repeat: no-repeat;
 }
 
 .hero-area-blog .blog-title-content h1 {
@@ -10730,6 +10732,7 @@ ul.social-share-button li a i.fa {
   position: -webkit-sticky;
   position: sticky;
   top: 0;
+  overflow: hidden;
 }
 
 .search-filter-area .filter-wrapper {
@@ -11474,6 +11477,12 @@ ul.social-share-button li a i.fa {
   }
   .blog-items .blog-title-content h2 {
     font-size: 18px;
+  }
+}
+
+@media (min-width: 2000px) {
+  .hero-area-blog {
+    background-image: url(/assets/images/bg-image/hero-bg-2x.png);
   }
 }
 
