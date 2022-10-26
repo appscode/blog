@@ -13,8 +13,6 @@
         <div class="columns is-vcentered is-multiline single-blog-carousel">
           
           <div class="column is-8">
-           
-
             <div class="blog-title-content">
               <!-- title  -->
               <h1 class="is-ellipsis-3" data-aos="fade-up" data-aos-duration="500" title="{{ $p.Title }}"><a
@@ -32,9 +30,10 @@
 
           <div class="column is-4">
             <!-- author start  -->
+            {{ range $author := $p.Params.authors }}
             <div class="author">
               {{ range $author := first 1 $p.Params.authors }}
-              <a class="author-image"><img src="https://cdn.appscode.com/images/employees/masud.jpg"
+              <a class="author-image"><img src="assets/images/authors/{{ $author | urlize}}.jpg"
                   alt="author-image"></a>
               <div class="information">
                 <h5><a href="/authors/{{ $author | urlize }}">{{ $author }}</a></h5>
@@ -43,6 +42,7 @@
               </div>
               {{end}}
             </div>
+            {{ end }}
             <!-- author end -->
           </div>
         </div>
@@ -243,7 +243,7 @@
                <a href="{{ $p.RelPermalink }}" class="single-blog-card">
                 <div class="user-info">
                   {{ range $author := $p.Params.authors }}
-                  <img src="assets/images/authors/{{ $author | urlize}}.jpg" alt="" width="20" height="20" loading="lazy" decoding="async">
+                  <img src="assets/images/authors/{{ $author | urlize}}.jpg" alt="author" width="20" height="20" loading="lazy" decoding="async">
                   <h6 class="mr-12"> {{ $author }}</h6>
                   {{ end }}
                 </div>

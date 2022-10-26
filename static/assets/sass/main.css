@@ -9740,8 +9740,8 @@ a.nav-link.active:after {
 .button.ac-button:hover {
   background-color: var(--ac-primary);
   color: #ffffff;
-  -webkit-box-shadow: 2px 4px 24px rgba(0, 166, 81, 0.3) !important;
-          box-shadow: 2px 4px 24px rgba(0, 166, 81, 0.3) !important;
+  -webkit-box-shadow: 2px 4px 24px rgba(20, 14, 48, 0.336) !important;
+          box-shadow: 2px 4px 24px rgba(20, 14, 48, 0.336) !important;
   -webkit-transform: translateY(-2px);
           transform: translateY(-2px);
 }
@@ -10476,12 +10476,6 @@ Responsive Classes
   margin-right: 16px;
   border: 3px solid #e5eff9;
   overflow: hidden;
-}
-
-.author .author-image img {
-  -webkit-transform: scale(1.6);
-          transform: scale(1.6);
-  margin-top: 20px;
 }
 
 .author .information {
