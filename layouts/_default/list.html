@@ -33,7 +33,8 @@
             {{ range $author := $p.Params.authors }}
             <div class="author">
               {{ range $author := first 1 $p.Params.authors }}
-              <a class="author-image"><img src="assets/images/authors/{{ $author | urlize}}.jpg"
+              <a href="/authors/{{ $author | urlize }}" class="author-image"><img
+                  src="assets/images/authors/{{ $author | urlize}}.jpg"
                   alt="author-image"></a>
               <div class="information">
                 <h5><a href="/authors/{{ $author | urlize }}">{{ $author }}</a></h5>
@@ -55,6 +56,56 @@
 <!--============================== hero area 2022 end ==============================-->
 
 
+<!-- ============================= recent blog posts start ============================ -->
+<section class="recent-blog-posts">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <h6 class="section-title-small"><span class="icon-square"></span>RECENT BLOG POSTS </h6>
+      </div>
+    </div>
+    <div class="columns is-variable is-1-mobile is-1-tablet is-1-desktop is-1-widescreen is-2-fullhd is-multiline">
+      {{ range $idx, $p := $pages.ByDate.Reverse | first 6 }}
+
+      <div class="column is-4 each-blog">
+
+        <a href="{{ $p.RelPermalink }}" class="single-blog-card">
+          <div class="user-info">
+            {{ range $author := $p.Params.authors }}
+            <img src="assets/images/authors/{{ $author | urlize}}.jpg" alt="author" width="20" height="20"
+              loading="lazy" decoding="async">
+            <h6 class="mr-12"> {{ $author }}</h6>
+            {{ end }}
+          </div>
+          <h2 class="is-ellipsis-3" title="{{ $p.Title }}">{{ $p.Title }}</h2>
+
+          <div class="tags is-hidden">
+            {{ range $tag := .Params.tags }}
+            <span href="#" class="tag">{{ . }}</span>
+            {{ end }}
+          </div>
+
+          <div class="card-bottom is-flex is-justify-content-space-between">
+            <div class="date-meta">{{ $p.Date.Format "2-Jan-2006" }}</div>
+
+            <div class="arrow-icon width-15">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                <path fill-rule="evenodd"
+                  d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
+                  clip-rule="evenodd" />
+              </svg>
+
+            </div>
+          </div>
+        </a>
+        
+      </div>
+      {{ end }}
+    </div>
+  </div>
+</section>
+<!-- ============================= recent blog posts end ============================ -->
+
 <!--============================== search and filter area start  ==============================-->
 <div class="search-filter-area">
   <div class="container">
@@ -74,6 +125,7 @@
 </div>
 <!--============================== search and filter area end  ==============================-->
 
+<!-- =======================all blog items start======================== -->
 <section class="blog-items-area">
   <div class="container">
     <div class="columns">
@@ -238,16 +290,18 @@
             id="grid-view">
             {{ range $idx, $p := $pages.ByDate.Reverse }}
 
-            <div class="column is-4 each-blog">
+            <div class="column is-7 each-blog">
 
-               <a href="{{ $p.RelPermalink }}" class="single-blog-card">
+              <a href="{{ $p.RelPermalink }}" class="single-blog-card list-view">
                 <div class="user-info">
                   {{ range $author := $p.Params.authors }}
-                  <img src="assets/images/authors/{{ $author | urlize}}.jpg" alt="author" width="20" height="20" loading="lazy" decoding="async">
-                  <h6 class="mr-12"> {{ $author }}</h6>
+                  <img src="assets/images/authors/{{ $author | urlize}}.jpg" alt="author" width="20" height="20"
+                    loading="lazy" decoding="async">
+                  <h6 class="author mr-12"> {{ $author }}</h6>
                   {{ end }}
                 </div>
                 <h2 class="is-ellipsis-3" title="{{ $p.Title }}">{{ $p.Title }}</h2>
+                 <p class="is-ellipsis-2">{{ $p.Summary }}</p>
 
                 <div class="tags is-hidden">
                   {{ range $tag := .Params.tags }}
@@ -267,7 +321,7 @@
 
                   </div>
                 </div>
-               </a>
+              </a>
               <!-- <div class="single-blog">
                 {{ $original := $p.Resources.GetMatch "hero.jpg" }}
                 {{ $cropped := $original.Resize "x170" }}
@@ -303,65 +357,6 @@
             {{ end }}
           </div>
           <!-- grid view end  -->
-
-          <!-- list view start  -->
-          <div class="columns is-vcentered is-multiline is-hidden" id="list-view">
-            {{ range $idx, $p := $pages.ByDate.Reverse }}
-            <div class="columns each-blog">
-              <div class="column is-6">
-                <figure class="blog-banner image">
-                  {{ $original := $p.Resources.GetMatch "hero.jpg" }}
-                  {{ $cropped := $original.Resize "x250" }}
-                  <a href="{{ $p.RelPermalink }}">
-                    <img src="{{ $cropped.RelPermalink }}" alt="appscode-blog" loading="lazy" decoding="async"></a>
-                </figure>
-
-              </div>
-              <div class="column is-6">
-                <div class="blog-title-content">
-                  <!-- meta description  -->
-                  <div class="meta">
-                    <div class="tags is-hidden">
-                      {{ range $tag := .Params.tags }}
-                      <a href="#" class="tag">{{ . }}</a>
-                      {{ end }}
-                    </div>
-                    <div class="author">By
-                      {{ range $author := first 1 $p.Params.authors }}
-                      <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
-                      {{end}}
-
-                      {{ range $author := after 1 $p.Params.authors }}
-                      <span>&amp;</span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
-                      {{ end }}
-                    </div>
-
-                    <!-- date  -->
-                    <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> <strong>
-                        {{ $p.Date.Format "2-Jan-2006" }}</strong>
-                    </div>
-                    <!-- date  -->
-                  </div>
-                  <!-- meta description  -->
-                  <!-- title  -->
-                  <h2 class="is-ellipsis-2" title="{{ $p.Title }}"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
-                  </h2>
-                  <!-- title  -->
-
-
-
-                  <!-- summary  -->
-                  <p class="is-ellipsis-2">{{ $p.Summary }}</p>
-
-                  <a class="inline-button" href="{{ $p.RelPermalink }}">READ MORE <i class="fa fa-arrow-right"></i></a>
-                  <!-- summary  -->
-                </div>
-              </div>
-            </div>
-            {{ end }}
-          </div>
-          <!-- list view end -->
-
           <!--No Items-->
           <div>
             <p id="nodata-content" class="is-hidden">No data found</p>
@@ -372,5 +367,6 @@
   </div>
 </section>
 
+<!-- =======================all blog items end======================== -->
 
 {{ end }}

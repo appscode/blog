@@ -10459,9 +10459,32 @@ Responsive Classes
   font-family: "Roboto Mono", monospace;
 }
 
-.blog-items-area {
-  background: #f2f5f7;
-  overflow: hidden;
+.section-title-small {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: 1px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.section-title-small .icon-square {
+  width: 20px;
+  height: 20px;
+  background: #d9d9d9;
+  margin-right: 16px;
+  display: block;
+}
+
+.recent-blog-posts {
+  background-color: #f2f5f7;
+  padding: 40px 0 80px;
 }
 
 .author {
@@ -10550,6 +10573,45 @@ a.inline-button i.fa {
   display: block;
   height: 170px;
   padding: 32px 16px;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
+  border: 1px solid transparent;
+}
+
+.single-blog-card.list-view {
+  height: auto;
+  padding: 0 16px 32px;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border: 1px solid transparent;
+  border-bottom: 1px solid #dbdbde;
+}
+
+.single-blog-card.list-view:hover {
+  border: 1px solid transparent;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border-bottom: 1px solid #dbdbde;
+}
+
+.single-blog-card.list-view h2 {
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.single-blog-card.list-view p {
+  margin-bottom: 16px;
+  color: #3b3030;
+}
+
+.single-blog-card:hover {
+  -webkit-box-shadow: 0px 2px 30px rgba(44, 60, 74, 0.08);
+          box-shadow: 0px 2px 30px rgba(44, 60, 74, 0.08);
+  border: 1px solid var(--ac-primary);
+}
+
+.single-blog-card:hover h2 {
+  color: var(--ac-primary);
 }
 
 .single-blog-card .user-info {
@@ -10580,10 +10642,12 @@ a.inline-button i.fa {
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
-  line-height: 120%;
+  line-height: 130%;
   color: #1c1c1c;
   margin-bottom: 16px;
   letter-spacing: 0;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
 }
 
 .single-blog-card .card-bottom {
@@ -10722,6 +10786,7 @@ ul.social-share-button li a i.fa {
   -webkit-box-shadow: 0 1px 3px rgba(15, 20, 40, 0.08);
           box-shadow: 0 1px 3px rgba(15, 20, 40, 0.08);
   border-bottom: 1px solid #dbdbde;
+  border-top: 1px solid #dbdbde;
   height: 64px;
   position: -webkit-sticky;
   position: sticky;
@@ -10886,7 +10951,7 @@ ul.social-share-button li a i.fa {
   margin-right: 30px;
   position: -webkit-sticky;
   position: sticky;
-  top: 0px;
+  top: 100px;
   overflow-y: auto;
   max-height: calc(100vh - 0px);
   /* Hide scrollbar for IE, Edge and Firefox */

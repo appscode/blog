@@ -53,6 +53,7 @@ categoriesElement?.addEventListener("change",(event)=>{
 })
 
 searchElement?.addEventListener("input", (event) => {
+  searchElement.style.top = 0;
   let str = searchElement.value;
   searchKeyword = str.toLowerCase();
   filterList();
@@ -152,18 +153,27 @@ const isTagAvailable = (tags, author, heading) => {
   return flag;
 }
 
+
+
+
 const calculateTopVaue = () =>{
-  const pageUrl = window.location.href || "";
-  const pageWide = window.innerWidth;
-  let authorPage = false;
-  if(pageUrl.includes("authors")) authorPage = true;
-  if(authorPage){
-    if(pageWide>=768) return 400;
-    else return 500;
-  }else{
-    if(pageWide>=768) return 610;
-    else return 650;
-  }
+
+  const heroArea = document.querySelector('.hero-area-blog')
+  const recentBlog = document.querySelector('.recent-blog-posts')
+  let height = recentBlog.offsetHeight + recentBlog.offsetHeight + 100;
+  return height;
+  
+  // const pageUrl = window.location.href || "";
+  // const pageWide = window.innerWidth;
+  // let authorPage = false;
+  // if(pageUrl.includes("authors")) authorPage = true;
+  // if(authorPage){
+  //   if(pageWide>=768) return 400;
+  //   else return 400;
+  // }else{
+  //   if(pageWide>=768) return 1010;
+  //   else return 1050;
+  // }
 }
 
 
