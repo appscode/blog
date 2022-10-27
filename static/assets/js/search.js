@@ -130,13 +130,13 @@ const filterList = () => {
 
 //Check if tags & search keyword contains in cards tags, auther and heading
 const isTagAvailable = (tags, author, heading) => {
-  if (keywords.size === 0 && searchKeyword.length < 3) return true;
+  if (keywords.size === 0 && searchKeyword.length <=0) return true;
   let flag = false;
   if (keywords.size === 0) {
     flag |= tags.includes(searchKeyword);
     flag |= author.includes(searchKeyword);
     flag |= heading.includes(searchKeyword);
-  } else if (searchKeyword.length < 3) {
+  } else if (searchKeyword.length <=0) {
     let temFlag = true;
     keywords.forEach(key => {
       temFlag &= tags.includes(key);

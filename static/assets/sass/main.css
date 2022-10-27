@@ -10499,7 +10499,7 @@ Responsive Classes
   width: 80px;
   height: 80px;
   margin-right: 16px;
-  border: 3px solid #e5eff9;
+  border: 3px solid #e7e7f9;
   overflow: hidden;
 }
 
@@ -10594,6 +10594,13 @@ a.inline-button i.fa {
   border-bottom: 1px solid #dbdbde;
 }
 
+.single-blog-card.list-view .arrow-icon {
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
+}
+
 .single-blog-card.list-view h2 {
   margin-bottom: 8px;
   font-size: 18px;
@@ -10609,31 +10616,13 @@ a.inline-button i.fa {
           box-shadow: 0px 2px 30px rgba(44, 60, 74, 0.08);
 }
 
+.single-blog-card:hover .arrow-icon {
+  opacity: 1;
+  visibility: visible;
+}
+
 .single-blog-card:hover h2 {
   color: var(--ac-primary);
-}
-
-.single-blog-card .user-info {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  margin-bottom: 8px;
-}
-
-.single-blog-card .user-info img {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  margin-right: 12px;
-}
-
-.single-blog-card .user-info h6 {
-  font-family: "Roboto Mono";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 17px;
-  color: #3b3030;
 }
 
 .single-blog-card h2 {
@@ -10653,12 +10642,35 @@ a.inline-button i.fa {
   color: #666666;
 }
 
-.single-blog-card .card-bottom .date-meta {
+.date-meta {
   font-family: "Roboto Mono";
   font-style: normal;
   font-weight: 400;
   font-size: 13px;
   line-height: 17px;
+}
+
+.user-info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.user-info img {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.user-info h6 {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 17px;
+  color: #3b3030;
 }
 
 .meta {
@@ -11548,7 +11560,7 @@ ul.social-share-button li a i.fa {
                                     Responsive code end
 =================================================================================================*/
 .blog-details-area {
-  margin-top: 50px;
+  margin-top: -110px;
 }
 
 .blog-details-area h1 {
@@ -11567,7 +11579,7 @@ ul.social-share-button li a i.fa {
   max-height: 650px;
   overflow: hidden;
   border: 1px solid #e7e7e7;
-  border-radius: 10px;
+  border-radius: 4px;
 }
 
 .fig-style img {
@@ -11576,7 +11588,7 @@ ul.social-share-button li a i.fa {
       -ms-user-select: none;
           user-select: none;
   display: block;
-  border-radius: 8px;
+  border-radius: 4px;
 }
 
 .fig-style figcaption {
@@ -11592,8 +11604,9 @@ ul.social-share-button li a i.fa {
 .wizerd-items {
   position: -webkit-sticky;
   position: sticky;
-  top: 110px;
+  top: 30px;
   z-index: 99;
+  margin-top: 120px;
 }
 
 .single-wizard h4 {
@@ -11647,19 +11660,22 @@ ul.social-share-button li a i.fa {
 }
 
 .single-wizard .single-recent-blog .recent-blog-content {
-  width: calc(100% - 86px);
+  width: 100%;
 }
 
 .single-wizard .single-recent-blog .recent-blog-content h2 {
   font-weight: 500;
   font-size: 16px;
   line-height: 120%;
-  /* or 19px */
   letter-spacing: 0.25px;
+  margin-bottom: 8px;
 }
 
 .single-wizard .single-recent-blog .recent-blog-content h2 a {
   color: #1c1c1c;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 130%;
 }
 
 .single-wizard .single-recent-blog .recent-blog-content .meta {
@@ -11753,6 +11769,7 @@ ul.social-share-button li a i.fa {
   font-size: 16px;
   text-align: justify;
   margin-bottom: 20px;
+  line-height: 180%;
 }
 
 .blog-content p a {

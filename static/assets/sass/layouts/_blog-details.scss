@@ -1,5 +1,5 @@
 .blog-details-area {
-  margin-top: 50px;
+  margin-top: -110px;
   h1 {
     font-weight: 700;
     font-size: 42px;
@@ -17,11 +17,11 @@
   max-height: 650px;
   overflow: hidden;
   border: 1px solid #e7e7e7;
-  border-radius: 10px;
+  border-radius: 4px;
   img {
     user-select: none;
     display: block;
-    border-radius: 8px;
+    border-radius: 4px;
   }
   figcaption {
     max-width: 80%;
@@ -36,8 +36,9 @@
 .sticky-social-menu,
 .wizerd-items {
   position: sticky;
-  top: 110px;
+  top: 30px;
   z-index: 99;
+  margin-top: 120px;
 }
 
 .single-wizard {
@@ -79,16 +80,18 @@
     }
 
     .recent-blog-content {
-      width: calc(100% - 86px);
+      width: 100%;
       h2 {
         font-weight: 500;
         font-size: 16px;
         line-height: 120%;
-        /* or 19px */
-
         letter-spacing: 0.25px;
+        margin-bottom: 8px;
         a {
           color: $ac-color-heading;
+          font-weight: 500;
+          font-size: 16px;
+          line-height: 130%;
         }
       }
 
@@ -174,6 +177,7 @@
     font-size: 16px;
     text-align: justify;
     margin-bottom: 20px;
+    line-height: 180%;
     a {
       font-weight: 500;
       position: relative;

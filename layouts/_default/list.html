@@ -34,7 +34,7 @@
             <div class="author">
               {{ range $author := first 1 $p.Params.authors }}
               <a href="/authors/{{ $author | urlize }}" class="author-image"><img
-                  src="assets/images/authors/{{ $author | urlize}}.jpg"
+                  src="/assets/images/authors/{{ $author | urlize}}.jpg"
                   alt="author-image"></a>
               <div class="information">
                 <h5><a href="/authors/{{ $author | urlize }}">{{ $author }}</a></h5>
@@ -72,7 +72,7 @@
         <a href="{{ $p.RelPermalink }}" class="single-blog-card">
           <div class="user-info">
             {{ range $author := $p.Params.authors }}
-            <img src="assets/images/authors/{{ $author | urlize}}.jpg" alt="author" width="20" height="20"
+            <img src="/assets/images/authors/{{ $author | urlize}}.jpg" alt="author" width="20" height="20"
               loading="lazy" decoding="async">
             <h6 class="mr-12"> {{ $author }}</h6>
             {{ end }}
@@ -295,7 +295,7 @@
               <a href="{{ $p.RelPermalink }}" class="single-blog-card list-view">
                 <div class="user-info">
                   {{ range $author := $p.Params.authors }}
-                  <img src="assets/images/authors/{{ $author | urlize}}.jpg" alt="author" width="20" height="20"
+                  <img src="/assets/images/authors/{{ $author | urlize}}.jpg" alt="author" width="20" height="20"
                     loading="lazy" decoding="async">
                   <h6 class="author mr-12"> {{ $author }}</h6>
                   {{ end }}

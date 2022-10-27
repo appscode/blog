@@ -44,6 +44,7 @@
     }
   }
 }
+
 // section title small start
 .section-title-small {
   font-family: "Roboto Mono";
@@ -63,6 +64,7 @@
     display: block;
   }
 }
+
 // section title small end
 .recent-blog-posts {
   background-color: #f2f5f7;
@@ -80,7 +82,7 @@
     width: 80px;
     height: 80px;
     margin-right: 16px;
-    border: 3px solid #e5eff9;
+    border: 3px solid #e7e7f9;
     overflow: hidden;
 
     // img {
@@ -157,6 +159,7 @@ a.inline-button {
     padding-left: 0.5rem;
   }
 }
+
 // single blog card start
 .single-blog-card {
   background-color: #fff;
@@ -164,6 +167,7 @@ a.inline-button {
   height: 170px;
   padding: 32px 16px;
   transition: 0.3s ease-in-out;
+
   // border: 1px solid transparent;
   &.list-view {
     height: auto;
@@ -171,48 +175,41 @@ a.inline-button {
     box-shadow: none;
     border: 1px solid transparent;
     border-bottom: 1px solid $ac-white-light;
+
     &:hover {
       // border: 1px solid transparent;
       box-shadow: none;
       border-bottom: 1px solid $ac-white-light;
     }
+
+    .arrow-icon {
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s ease-in-out;
+    }
+
     h2 {
       margin-bottom: 8px;
       font-size: 18px;
     }
+
     p {
       margin-bottom: 16px;
       color: $ac-color-text;
     }
   }
+
   &:hover {
     box-shadow: 0px 2px 30px rgba(44, 60, 74, 0.08);
     // border: 1px solid $ac-primary;
 
+    .arrow-icon {
+      opacity: 1;
+      visibility: visible;
+    }
+
     h2 {
       color: $ac-primary;
-    }
-  }
-
-  .user-info {
-    display: flex;
-    margin-bottom: 8px;
-
-    img {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      margin-right: 12px;
-    }
-
-    h6 {
-      font-family: "Roboto Mono";
-      font-style: normal;
-      font-weight: 500;
-      font-size: 13px;
-      line-height: 17px;
-
-      color: $ac-color-text;
     }
   }
 
@@ -231,20 +228,42 @@ a.inline-button {
   .card-bottom {
     color: #666666;
 
-    .date-meta {
-      font-family: "Roboto Mono";
-      font-style: normal;
-      font-weight: 400;
-      font-size: 13px;
-      line-height: 17px;
-    }
-
     .arrow-icon {
       .w-5 {
         path {
         }
       }
     }
+  }
+}
+
+.date-meta {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 17px;
+}
+
+.user-info {
+  display: flex;
+  margin-bottom: 8px;
+
+  img {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    margin-right: 12px;
+  }
+
+  h6 {
+    font-family: "Roboto Mono";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 17px;
+
+    color: $ac-color-text;
   }
 }
 

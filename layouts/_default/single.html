@@ -26,7 +26,7 @@
 
           <div class="column is-5">
             <!-- is-justify-content-flex-end  -->
-              <div class="is-flex ml-20">
+              <div class="is-flex is-justify-content-flex-end ml-20">
                 <!-- author start  -->
                 {{ range $author := .Params.authors }}
                 <div class="author ml-10">
@@ -80,12 +80,12 @@
         </div> -->
         <!--sticky  social menu end -->
       <!-- </div> -->
-      <div class="column is-7">
+      <div class="column is-7 mr-70">
         <!-- blog large image start -->
         <figure class="fig-style mb-20">
           {{ $original := .Resources.GetMatch "hero.jpg" }}
           {{ $cropped := $original.Fill "1300x650" }}
-          <img data-aos="fade-up" data-aos-duration="600" src="{{ $cropped.RelPermalink }}" alt="" loading="lazy"
+          <img data-aos="fade-up" data-aos-duration="600" load="" src="{{ $cropped.RelPermalink }}" alt="" loading="lazy"
             decoding="async">
           <!-- <figcaption>capture operational knowledge in a software form</figcaption> -->
           </a>
@@ -112,22 +112,36 @@
       <div class="column is-4">
         <div class="wizerd-items">
           <div class="single-wizard ml-30">
-            <h4>Recent Blogs</h4>
+            <h6 class="section-title-small mb-20"><span class="icon-square"></span>RECENT BLOG POSTS </h6>
             {{ range first 5 (where site.RegularPages.ByDate.Reverse "Type" "in" "posts" )}}
             <!-- recent-blog  -->
             <div class="single-recent-blog">
-              <!-- date and month  -->
-              <a href="{{.RelPermalink}}" class="date-month">
-                <span class="date">{{.PublishDate.Day}}</span>
-                <span class="month">{{.PublishDate.Format "Jan" | upper}}</span>
-              </a>
-              <!-- date and month  -->
-
               <!-- content  -->
               <div class="recent-blog-content">
+                <!-- date  -->
+                 <div class="date-meta is-flex is-align-items-center">
+                  <div class="width-20 mr-8 has-text-grey"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                    </svg>
+                  </div>
+                   {{ .PublishDate.Format "2-Jan-2006" }}
+                 </div>
+                <!-- date  -->
                 <h2 class="is-ellipsis-2" title="{{.Title}}"><a href="{{.RelPermalink}}">{{.Title}}</a></h2>
                 {{ range $author := first 1 .Params.authors }}
-                <div class="meta"><span class="pr-5">By</span> <a href="/authors/{{ $author | urlize }}"> {{ $author }} </a></div>
+
+               
+                <!-- <div class="meta"><span class="pr-5">By</span> <a href="/authors/{{ $author | urlize }}"> {{ $author }} </a></div> -->
+
+                  <div class="user-info">
+                    <img src="/assets/images/authors/{{ $author | urlize}}.jpg" alt="author" width="20" height="20"
+                      loading="lazy" decoding="async">
+                    <h6 class="mr-12"> {{ $author }}</h6>
+                  </div>
+
                 {{ end }}
               </div>
               <!-- content  -->
@@ -140,7 +154,7 @@
 
 
           <div class="single-wizard ml-30">
-            <h4>Popular tags</h4>
+            <h6 class="section-title-small mb-20"><span class="icon-square"></span>POPULAR TAGS </h6>
             <div class="tags">
               {{ range $tag := .Params.tags }}
               <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
