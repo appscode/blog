@@ -10431,6 +10431,8 @@ Responsive Classes
   font-size: 40px;
   margin-bottom: 20px;
   letter-spacing: 0;
+  color: #ffffff;
+  font-family: "Roboto Mono", monospace;
 }
 
 .hero-area-blog .blog-title-content h1 a {
@@ -10575,7 +10577,6 @@ a.inline-button i.fa {
   padding: 32px 16px;
   -webkit-transition: 0.3s ease-in-out;
   transition: 0.3s ease-in-out;
-  border: 1px solid transparent;
 }
 
 .single-blog-card.list-view {
@@ -10588,7 +10589,6 @@ a.inline-button i.fa {
 }
 
 .single-blog-card.list-view:hover {
-  border: 1px solid transparent;
   -webkit-box-shadow: none;
           box-shadow: none;
   border-bottom: 1px solid #dbdbde;
@@ -10607,7 +10607,6 @@ a.inline-button i.fa {
 .single-blog-card:hover {
   -webkit-box-shadow: 0px 2px 30px rgba(44, 60, 74, 0.08);
           box-shadow: 0px 2px 30px rgba(44, 60, 74, 0.08);
-  border: 1px solid var(--ac-primary);
 }
 
 .single-blog-card:hover h2 {
@@ -11549,7 +11548,7 @@ ul.social-share-button li a i.fa {
                                     Responsive code end
 =================================================================================================*/
 .blog-details-area {
-  margin-top: 100px;
+  margin-top: 50px;
 }
 
 .blog-details-area h1 {
