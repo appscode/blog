@@ -31,7 +31,7 @@
                 {{ range $author := .Params.authors }}
                 <div class="author ml-10">
                   <a href="/authors/{{ $author | urlize }}" class="author-image"><img
-                      src="/assets/images/authors/{{ $author | urlize}}.jpg" alt="author-image"></a>
+                      src="/assets/images/authors/profile-photos-84x84/{{ $author | urlize}}.jpg" alt="author-image"></a>
                   <div class="information">
                     <h5><a href="/authors/{{ $author | urlize }}">{{ $author }}</a></h5>
                     <p class="designation">Senior Software Engineer</p>
@@ -85,8 +85,7 @@
         <figure class="fig-style mb-20">
           {{ $original := .Resources.GetMatch "hero.jpg" }}
           {{ $cropped := $original.Fill "1300x650" }}
-          <img data-aos="fade-up" data-aos-duration="600" load="" src="{{ $cropped.RelPermalink }}" alt="" loading="lazy"
-            decoding="async">
+          <img src="{{ $cropped.RelPermalink }}" alt="{{ .Title }}">
           <!-- <figcaption>capture operational knowledge in a software form</figcaption> -->
           </a>
         </figure>

@@ -68,7 +68,7 @@
 // section title small end
 .recent-blog-posts {
   background-color: #f2f5f7;
-  padding: 40px 0 80px;
+  padding: 40px 0 50px;
 }
 
 // .blog-items-area {
@@ -82,7 +82,7 @@
     width: 80px;
     height: 80px;
     margin-right: 16px;
-    border: 3px solid #e7e7f9;
+    border: 2px solid rgba(255, 255, 255, 0.1);
     overflow: hidden;
 
     // img {
@@ -218,7 +218,7 @@ a.inline-button {
     font-style: normal;
     font-weight: 500;
     font-size: 16px;
-    line-height: 130%;
+    line-height: 150%;
     color: #1c1c1c;
     margin-bottom: 16px;
     letter-spacing: 0;
@@ -608,7 +608,7 @@ ul.social-share-button {
   h2 {
     font-weight: 500;
     font-size: 18px;
-    line-height: 130%;
+    line-height: 150%;
     margin-bottom: 15px;
     transition: 0.3s ease-in-out;
 
@@ -650,7 +650,7 @@ ul.social-share-button {
     h2 {
       font-weight: 500;
       font-size: 24px;
-      line-height: 130%;
+      line-height: 150%;
       letter-spacing: -0.5px;
       margin-bottom: 15px;
 

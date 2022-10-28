@@ -34,7 +34,7 @@
             <div class="author">
               {{ range $author := first 1 $p.Params.authors }}
               <a href="/authors/{{ $author | urlize }}" class="author-image"><img
-                  src="/assets/images/authors/{{ $author | urlize}}.jpg"
+                  src="/assets/images/authors/profile-photos-84x84/{{ $author | urlize}}.jpg"
                   alt="author-image"></a>
               <div class="information">
                 <h5><a href="/authors/{{ $author | urlize }}">{{ $author }}</a></h5>
