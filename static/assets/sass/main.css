@@ -10655,11 +10655,14 @@ a.inline-button i.fa {
   display: -ms-flexbox;
   display: flex;
   margin-bottom: 8px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .user-info img {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   margin-right: 12px;
 }
@@ -11769,7 +11772,7 @@ ul.social-share-button li a i.fa {
   font-size: 16px;
   text-align: justify;
   margin-bottom: 20px;
-  line-height: 180%;
+  line-height: 190%;
 }
 
 .blog-content p a {

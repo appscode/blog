@@ -65,14 +65,15 @@
       </div>
     </div>
     <div class="columns is-variable is-1-mobile is-1-tablet is-1-desktop is-1-widescreen is-2-fullhd is-multiline">
-      {{ range $idx, $p := $pages.ByDate.Reverse | first 6 }}
+      {{ range $idx, $p := $pages.ByDate.Reverse | first 3 }}
 
       <div class="column is-4 each-blog">
 
         <a href="{{ $p.RelPermalink }}" class="single-blog-card">
           <div class="user-info">
             {{ range $author := $p.Params.authors }}
-            <img src="/assets/images/authors/{{ $author | urlize}}.jpg" alt="author" width="20" height="20"
+            <img src="/assets/images/authors/profile-photos-28x28/{{ $author | urlize}}.jpg" alt="author" width="20"
+              height="20"
               loading="lazy" decoding="async">
             <h6 class="mr-12"> {{ $author }}</h6>
             {{ end }}
@@ -295,7 +296,8 @@
               <a href="{{ $p.RelPermalink }}" class="single-blog-card list-view">
                 <div class="user-info">
                   {{ range $author := $p.Params.authors }}
-                  <img src="/assets/images/authors/{{ $author | urlize}}.jpg" alt="author" width="20" height="20"
+                  <img src="/assets/images/authors/profile-photos-28x28/{{ $author | urlize}}.jpg" alt="author"
+                    width="20" height="20"
                     loading="lazy" decoding="async">
                   <h6 class="author mr-12"> {{ $author }}</h6>
                   {{ end }}
