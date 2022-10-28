@@ -5,17 +5,17 @@
 <section class="author-hero-area">
   <div class="container">
     <div class="columns">
-      <div class="column is-8 is-offset-2 has-text-centered">
+      <div class="column is-8">
         <div class="author-content" data-aos="fade-up" data-aos-duration="500">
-          <figure class="image">
+          <figure class="image width-80">
             <img src="{{ $author.profile }}" loading="lazy" decoding="async" />
           </figure>
-          <h3 data-aos="fade-up" data-aos-duration="600">{{ $author.name }}</h3>
-          <p data-aos="fade-up" data-aos-duration="800">
+          <h3 class="has-text-white" data-aos="fade-up" data-aos-duration="600">{{ $author.name }}</h3>
+          <p class="has-text-white" data-aos="fade-up" data-aos-duration="800">
             {{ $author.biography }}
           </p>
           <div class="social-share">
-            <ul class="social-share-button is-justify-content-center">
+            <ul class="social-share-button">
               {{ if $author.twitter }}
               <li>
                 <a href="{{ $author.twitter }}" target="_blank" rel="noopener" class="twitter"
@@ -56,8 +56,14 @@
     <div class="columns">
       <div class="column">
         <div class="filter-wrapper">
-          <div class="search-area">
-            <label for="search"> <i class="fa fa-search"></i></label>
+          <div class="search-area is-flex">
+            <label class="width-20 is-flex mr-16" for="search">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                <path fill-rule="evenodd"
+                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                  clip-rule="evenodd" />
+              </svg>
+            </label>
             <input id="search" type="search" name="search" placeholder="Search 'KubeDB', 'Stash', 'AWS'" />
           </div>
         </div>
@@ -68,7 +74,7 @@
 <!--============================== search and filter area end  ==============================-->
 
 <!-- all blog content start  -->
-<div class="blog-items-area section-padding-60">
+<div class="blog-items-area author-page">
   <div class="container">
     <div class="columns">
       <!-- left sidebar start  -->
@@ -232,39 +238,40 @@
           <!-- grid view start -->
           <div class="columns is-multiline" id="grid-view">
             {{ range $idx, $p := .RegularPages.ByDate.Reverse }}
-
             <div class="column is-4 each-blog">
-              <div class="single-blog">
-                {{ $original := $p.Resources.GetMatch "hero.jpg" }}
-                {{ $cropped := $original.Resize "x170" }}
-                <figure class="image">
-                  <a href="{{ $p.RelPermalink }}"><img src="{{ $cropped.RelPermalink }}" alt="" loading="lazy"
-                      decoding="async"></a>
-                </figure>
-                <div class="p-15">
-                  <!-- meta description  -->
-                  <div class="meta">
-                    <div class="tags is-hidden">
-                      {{ range $tag := .Params.tags }}
-                      <a href="#" class="tag">{{ . }}</a>
-                      {{ end }}
-                    </div>
-                    {{ range $author := $p.Params.authors }}
-                    <div class="author"><i class="fa fa-user"></i> <a
-                        href="/authors/{{ $author | urlize }}">{{ $author }}</a></div>
-                    {{ end }}
-                    <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                      <strong>{{ $p.Date.Format "2-Jan-2006" }}</strong>
-                    </div>
-                  </div>
-                  <!-- meta description  -->
+               <a href="{{ $p.RelPermalink }}" class="single-blog-card">
+                <div class="is-flex"> {{ range $author := $p.Params.authors }}
+                  <div class="user-info">
 
-                  <h2 class="is-ellipsis-2" title="{{ $p.Title }}"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
-                  </h2>
-                  <p class="is-ellipsis-3">{{ $p.Summary }}</p>
-                  <a href="{{ $p.RelPermalink }}" class="inline-button">READ MORE <i class="fa fa-arrow-right"></i></a>
-                </div>
-              </div>
+                    <img src="/assets/images/authors/profile-photos-28x28/{{ $author | urlize}}.jpg" alt="author"
+                      width="20" height="20" loading="lazy" decoding="async">
+                    <h6 class="mr-12"> {{ $author }}</h6>
+
+                  </div>
+                  {{end}}</div>
+                 <h2 class="is-ellipsis-2" title="">{{ $p.Title }}</h2>
+
+                 <div class="tags is-hidden">
+                   {{ range $tag := .Params.tags }}
+
+                   <span href="#" class="tag">{{.}}</span>
+                   {{ end }}
+
+                 </div>
+
+                 <div class="card-bottom is-flex is-justify-content-space-between">
+                   <div class="date-meta">{{ $p.Date.Format "2-Jan-2006" }}</div>
+
+                   <div class="arrow-icon width-15">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                       <path fill-rule="evenodd"
+                         d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
+                         clip-rule="evenodd"></path>
+                     </svg>
+
+                   </div>
+                 </div>
+               </a>
             </div>
             {{ end }}
           </div>

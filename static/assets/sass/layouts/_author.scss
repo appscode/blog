@@ -1,29 +1,16 @@
 .author-hero-area {
-  padding: 100px 0 40px;
+  background-image: url(/assets/images/bg-image/hero-bg.png);
+  margin-top: -74px;
+  padding: 100px 0 100px;
 }
 
-.author-content {
-  .image {
-    width: 165px;
-    height: 165px;
-    margin: 0 auto;
-    border-radius: 50%;
-    overflow: hidden;
-
-    img {
-      height: 100%;
-      width: 100%;
-    }
+.author-page {
+  .blog-items {
+    margin-top: 16px;
   }
 
-  p {
-    font-size: 16px;
-  }
-
-  .image,
-  h3,
-  p {
-    margin-bottom: 15px;
+  .single-blog-card {
+    border: 1px solid $ac-white-light;
   }
 }
 

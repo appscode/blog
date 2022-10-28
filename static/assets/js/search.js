@@ -160,20 +160,8 @@ const calculateTopVaue = () =>{
 
   const heroArea = document.querySelector('.hero-area-blog')
   const recentBlog = document.querySelector('.recent-blog-posts')
-  let height = recentBlog.offsetHeight + recentBlog.offsetHeight + 100;
+  let height = heroArea.offsetHeight + recentBlog.offsetHeight;
   return height;
-  
-  // const pageUrl = window.location.href || "";
-  // const pageWide = window.innerWidth;
-  // let authorPage = false;
-  // if(pageUrl.includes("authors")) authorPage = true;
-  // if(authorPage){
-  //   if(pageWide>=768) return 400;
-  //   else return 400;
-  // }else{
-  //   if(pageWide>=768) return 1010;
-  //   else return 1050;
-  // }
 }
 
 

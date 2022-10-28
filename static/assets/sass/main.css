@@ -10479,14 +10479,14 @@ Responsive Classes
 .section-title-small .icon-square {
   width: 20px;
   height: 20px;
-  background: #d9d9d9;
+  background: var(--ac-primary);
   margin-right: 16px;
   display: block;
 }
 
 .recent-blog-posts {
   background-color: #f2f5f7;
-  padding: 40px 0 50px;
+  padding: 60px 0 70px;
 }
 
 .author {
@@ -10581,17 +10581,17 @@ a.inline-button i.fa {
 
 .single-blog-card.list-view {
   height: auto;
-  padding: 0 16px 32px;
+  padding: 0;
   -webkit-box-shadow: none;
           box-shadow: none;
   border: 1px solid transparent;
-  border-bottom: 1px solid #dbdbde;
+  border-bottom: 1px dotted #dbdbde;
+  padding: 16px 0;
 }
 
 .single-blog-card.list-view:hover {
   -webkit-box-shadow: none;
           box-shadow: none;
-  border-bottom: 1px solid #dbdbde;
 }
 
 .single-blog-card.list-view .arrow-icon {
@@ -10957,17 +10957,16 @@ ul.social-share-button li a i.fa {
   fill: #ffffff;
 }
 
-.blog-items-area {
-  padding: 40px 0;
-}
-
 .blog-items-area .left-sidebar {
-  margin-right: 30px;
+  margin-right: 70px;
+  padding-top: 16px;
   position: -webkit-sticky;
   position: sticky;
-  top: 100px;
+  top: 64px;
   overflow-y: auto;
-  max-height: calc(100vh - 0px);
+  padding-right: 30px;
+  border-right: 1px solid #dbdbde;
+  height: calc(100vh - 0px);
   /* Hide scrollbar for IE, Edge and Firefox */
   -ms-overflow-style: none;
   /* IE and Edge */
@@ -11581,7 +11580,6 @@ ul.social-share-button li a i.fa {
 .fig-style {
   max-height: 650px;
   overflow: hidden;
-  border: 1px solid #e7e7e7;
   border-radius: 4px;
 }
 
@@ -12159,30 +12157,17 @@ ul.social-share-button li a i.fa {
                                     Responsive code end
 =================================================================================================*/
 .author-hero-area {
-  padding: 100px 0 40px;
+  background-image: url(/assets/images/bg-image/hero-bg.png);
+  margin-top: -74px;
+  padding: 100px 0 100px;
 }
 
-.author-content .image {
-  width: 165px;
-  height: 165px;
-  margin: 0 auto;
-  border-radius: 50%;
-  overflow: hidden;
+.author-page .blog-items {
+  margin-top: 16px;
 }
 
-.author-content .image img {
-  height: 100%;
-  width: 100%;
-}
-
-.author-content p {
-  font-size: 16px;
-}
-
-.author-content .image,
-.author-content h3,
-.author-content p {
-  margin-bottom: 15px;
+.author-page .single-blog-card {
+  border: 1px solid #dbdbde;
 }
 
 /*=================================================================================================

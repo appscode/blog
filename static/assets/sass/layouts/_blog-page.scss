@@ -59,7 +59,7 @@
   .icon-square {
     width: 20px;
     height: 20px;
-    background: rgba(217, 217, 217, 1);
+    background: $ac-primary;
     margin-right: 16px;
     display: block;
   }
@@ -68,7 +68,7 @@
 // section title small end
 .recent-blog-posts {
   background-color: #f2f5f7;
-  padding: 40px 0 50px;
+  padding: 60px 0 70px;
 }
 
 // .blog-items-area {
@@ -171,15 +171,15 @@ a.inline-button {
   // border: 1px solid transparent;
   &.list-view {
     height: auto;
-    padding: 0 16px 32px;
+    padding: 0;
     box-shadow: none;
     border: 1px solid transparent;
-    border-bottom: 1px solid $ac-white-light;
+    border-bottom: 1px dotted $ac-white-light;
+    padding: 16px 0;
 
     &:hover {
       // border: 1px solid transparent;
       box-shadow: none;
-      border-bottom: 1px solid $ac-white-light;
     }
 
     .arrow-icon {
@@ -249,6 +249,7 @@ a.inline-button {
   display: flex;
   margin-bottom: 8px;
   align-items: center;
+
   img {
     width: 24px;
     height: 24px;
@@ -487,14 +488,17 @@ ul.social-share-button {
 }
 
 .blog-items-area {
-  padding: 40px 0;
+
 
   .left-sidebar {
-    margin-right: 30px;
+    margin-right: 70px;
+    padding-top: 16px;
     position: sticky;
-    top: 100px;
+    top: 64px;
     overflow-y: auto;
-    max-height: calc(100vh - 0px);
+    padding-right: 30px;
+    border-right: 1px solid $ac-white-light;
+    height: calc(100vh - 0px);
 
     &::-webkit-scrollbar {
       display: none;
