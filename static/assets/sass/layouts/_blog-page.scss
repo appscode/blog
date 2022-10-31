@@ -551,6 +551,9 @@ ul.social-share-button {
           user-select: none;
           cursor: pointer;
         }
+        input {
+          accent-color: $ac-primary;
+        }
       }
     }
   }

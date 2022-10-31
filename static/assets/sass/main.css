@@ -11033,6 +11033,10 @@ ul.social-share-button li a i.fa {
   cursor: pointer;
 }
 
+.blog-items-area .left-sidebar .collapsable-menu .ac-single-checkbox input {
+  accent-color: var(--ac-primary);
+}
+
 .single-blog {
   border: 1px solid #dbdbde;
   border-radius: 4px;
