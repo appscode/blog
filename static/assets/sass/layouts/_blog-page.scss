@@ -32,7 +32,7 @@
       font-weight: 400;
       font-size: 20px;
       line-height: 160%;
-      color: #fdfdfd;
+      color: #dbdbdb;
       margin-bottom: 40px;
       width: 95%;
     }
@@ -180,6 +180,7 @@ a.inline-button {
     &:hover {
       // border: 1px solid transparent;
       box-shadow: none;
+
       h2 {
         text-decoration: underline;
       }
@@ -332,6 +333,10 @@ ul.social-share-button {
     justify-content: center;
     border-radius: 50%;
     margin-right: 1rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
 
     a {
       width: 46px;
@@ -493,8 +498,6 @@ ul.social-share-button {
 }
 
 .blog-items-area {
-
-
   .left-sidebar {
     margin-right: 70px;
     padding-top: 16px;
