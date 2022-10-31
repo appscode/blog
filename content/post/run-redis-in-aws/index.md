@@ -44,7 +44,7 @@ e5b4a1a0-5a67-4657-b390-db7200108bae
 
 ### Step 2: Get License
 
-Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the license.txt file. For this tutorial we will use KubeDB Enterprise Edition.
+Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the license.txt file. For this tutorial, we will use KubeDB Enterprise Edition.
 
 ![License Server](AppscodeLicense.png)
 
