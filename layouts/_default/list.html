@@ -35,7 +35,7 @@
               {{ range $author := first 1 $p.Params.authors }}
               <a href="/authors/{{ $author | urlize }}" class="author-image"><img
                   src="/assets/images/authors/profile-photos-84x84/{{ $author | urlize}}.jpg"
-                  alt="author-image"></a>
+                  alt="author-image" height="76" width="76"></a>
               <div class="information">
                 <a href="/authors/{{ $author | urlize }}" class="author-name">{{ $author }}</a>
                 <p class="designation has-text-light">Designation</p>
