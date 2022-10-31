@@ -248,7 +248,7 @@
               <div class="subscription-form">
                 <form method="post" action="https://listmonk.appscode.com/subscription/form"
                   id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="navbar-form" target="_blank"
-                  novalidate role="email" role="email">
+                  novalidate role="form">
                   <label for="email">Subscribe to Our Newsletter</label>
                   <p class="spam-message">No spam, we promise. Your mail address is secure</p>
                   <div class="field has-addons">
@@ -257,7 +257,8 @@
                       <input type="hidden" id="afbbc" name="l" value="afbbc974-e163-4467-be49-040e399520f3" />
                       <input class="input" name="email" id="mce-EMAIL" type="email"
                         placeholder="Your work email address" required />
-                      <button id="mc-embedded-subscribe" type="submit" name="subscribe" class="button">
+                      <button id="mc-embedded-subscribe" type="submit" name="subscribe" aria-label="subscribe"
+                        class="button">
                         <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
                       </button>
                     </div>
@@ -389,7 +390,7 @@
   <!-- footer area end -->
 
   <!-- go-to-top start  -->
-  <button class="go-to-top" id="goTop">
+  <button class="go-to-top" id="goTop" aria-label="got-to-top">
     <i class="fa fa-angle-up" aria-hidden="true"></i>
   </button>
   <!-- go-to-top end -->

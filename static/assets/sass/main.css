@@ -10507,18 +10507,14 @@ Responsive Classes
   color: #ffffff;
 }
 
-.author .information h5 {
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-.author .information h5 a {
+.author .information a.author-name {
   font-family: "Roboto Mono";
   font-style: normal;
   font-weight: 500;
   font-size: 18px;
   line-height: 24px;
   color: #ffffff;
+  margin-bottom: 4px;
 }
 
 .author .information .designation {
@@ -10673,12 +10669,13 @@ a.inline-button i.fa {
   margin-right: 12px;
 }
 
-.user-info h6 {
+.user-info p.author {
   font-family: "Roboto Mono";
   font-style: normal;
   font-weight: 500;
   font-size: 13px;
   line-height: 17px;
+  margin-bottom: 0;
   color: #3b3030;
 }
 

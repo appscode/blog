@@ -94,18 +94,14 @@
   .information {
     color: #ffffff;
 
-    h5 {
-      line-height: 1;
+    a.author-name {
+      font-family: "Roboto Mono";
+      font-style: normal;
+      font-weight: 500;
+      font-size: 18px;
+      line-height: 24px;
+      color: #ffffff;
       margin-bottom: 4px;
-
-      a {
-        font-family: "Roboto Mono";
-        font-style: normal;
-        font-weight: 500;
-        font-size: 18px;
-        line-height: 24px;
-        color: #ffffff;
-      }
     }
 
     .designation {
@@ -262,12 +258,13 @@ a.inline-button {
     margin-right: 12px;
   }
 
-  h6 {
+  p.author {
     font-family: "Roboto Mono";
     font-style: normal;
     font-weight: 500;
     font-size: 13px;
     line-height: 17px;
+    margin-bottom: 0;
 
     color: $ac-color-text;
   }

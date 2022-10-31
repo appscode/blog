@@ -37,7 +37,7 @@
                   src="/assets/images/authors/profile-photos-84x84/{{ $author | urlize}}.jpg"
                   alt="author-image"></a>
               <div class="information">
-                <h5><a href="/authors/{{ $author | urlize }}">{{ $author }}</a></h5>
+                <a href="/authors/{{ $author | urlize }}" class="author-name">{{ $author }}</a>
                 <p class="designation">Designation</p>
                 <a href="appscode.com" class="company">AppsCode Inc</a>
               </div>
@@ -61,7 +61,7 @@
   <div class="container">
     <div class="columns">
       <div class="column">
-        <h6 class="section-title-small"><span class="icon-square"></span>RECENT BLOG POSTS </h6>
+        <p class="section-title-small"><span class="icon-square"></span>RECENT BLOG POSTS </p>
       </div>
     </div>
     <div class="columns is-variable is-1-mobile is-1-tablet is-1-desktop is-1-widescreen is-2-fullhd is-multiline">
@@ -75,7 +75,7 @@
             <img src="/assets/images/authors/profile-photos-28x28/{{ $author | urlize}}.jpg" alt="author" width="20"
               height="20"
               loading="lazy" decoding="async">
-            <h6 class="mr-12"> {{ $author }}</h6>
+            <p class="mr-12 author"> {{ $author }}</p>
             {{ end }}
           </div>
           <h2 class="is-ellipsis-3" title="{{ $p.Title }}">{{ $p.Title }}</h2>
@@ -211,13 +211,6 @@
 
               <!-- single ac-checkbox start  -->
               <div class="ac-single-checkbox">
-                <input class="is-checkradio ac-checkbox" id="alert" type="checkbox" name="checkbox" />
-                <label for="alert">Alert</label>
-              </div>
-              <!-- single ac-checkbox end -->
-
-              <!-- single ac-checkbox start  -->
-              <div class="ac-single-checkbox">
                 <input class="is-checkradio ac-checkbox" id="backup" type="checkbox" name="checkbox" />
                 <label for="backup">Backup</label>
               </div>
@@ -298,7 +291,7 @@
                   <img src="/assets/images/authors/profile-photos-28x28/{{ $author | urlize}}.jpg" alt="author"
                     width="20" height="20"
                     loading="lazy" decoding="async">
-                  <h6 class="author mr-12"> {{ $author }}</h6>
+                  <p class="author mr-12"> {{ $author }}</p>
                   {{ end }}
                 </div>
                 <h2 class="is-ellipsis-3" title="{{ $p.Title }}">{{ $p.Title }}</h2>
