@@ -9,12 +9,12 @@ tags:
 - aws
 - cloud-native
 - database
+- dbaas
 - eks
 - kubedb
 - kubernetes
-- s3
-- dbaas
 - redis
+- s3
 ---
 
 ## Overview
