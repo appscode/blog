@@ -53,22 +53,23 @@
 <section class="blog-details-area">
   <div class="container">
     <div class="columns">
-      <!-- <div class="column is-1"> -->
+      <div class="column is-2">
         <!-- sticky social menu start  -->
-        <!-- <div class="sticky-social-menu">
+        <div class="sticky-social-menu">
           <div class="social-share">
-            <ul class="social-share-button is-flex-direction-row">
+            <ul class="social-share-button is-flex-direction-column">
               <li>
-                <a title="Twitter" href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title | htmlEscape }}"
+                <a title="Share with Twitter" href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title | htmlEscape }}"
                   class="twitter" aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
               </li>
               <li>
-                <a title="Linkedin"
+                <a title="Share with Linkedin"
                   href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title | htmlEscape }}&summary={{ .Summary | htmlEscape }}&source=LinkedIn"
                   class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
               </li>
               <li>
-                <a title="Facebook" href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" class="facebook"
+                <a title="Share with Facebook" href="http://www.facebook.com/sharer.php?u={{ .Permalink }}"
+                  class="facebook"
                   aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
               </li>
               <li>
@@ -77,16 +78,15 @@
               </li>
             </ul>
           </div>
-        </div> -->
+        </div>
         <!--sticky  social menu end -->
-      <!-- </div> -->
-      <div class="column is-7 mr-70">
+      </div>
+      <div class="column is-8">
         <!-- blog large image start -->
         <figure class="fig-style mb-20">
           {{ $original := .Resources.GetMatch "hero.jpg" }}
           {{ $cropped := $original.Fill "1300x650" }}
           <img src="{{ $cropped.RelPermalink }}" alt="{{ .Title }}">
-          <!-- <figcaption>capture operational knowledge in a software form</figcaption> -->
           </a>
         </figure>
         <!-- blog large image end -->
@@ -96,7 +96,13 @@
         <div class="blog-content">
 
           {{ .Content }}
-
+          <hr>
+          <h4>TAGS </h4>
+          <div class="tags mb-30">
+            {{ range $tag := .Params.tags }}
+            <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
+            {{ end }}
+          </div>
         </div>
         <!-- blog-content end -->
 
@@ -107,59 +113,6 @@
         </div>
         {{ end }}
         <!-- blog comments area end -->
-      </div>
-      <div class="column is-4">
-        <div class="wizerd-items">
-          <div class="single-wizard ml-30">
-            <h6 class="section-title-small mb-20">RECENT BLOG POSTS </h6>
-            {{ range first 5 (where site.RegularPages.ByDate.Reverse "Type" "in" "posts" )}}
-            <!-- recent-blog  -->
-            <div class="single-recent-blog">
-              <!-- content  -->
-              <div class="recent-blog-content">
-                <!-- date  -->
-                 <div class="date-meta is-flex is-align-items-center">
-                  <div class="width-18 mr-8 has-text-grey"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                    </svg>
-                  </div>
-                   {{ .PublishDate.Format "2-Jan-2006" }}
-                 </div>
-                <!-- date  -->
-                <h2 class="is-ellipsis-2" title="{{.Title}}"><a href="{{.RelPermalink}}">{{.Title}}</a></h2>
-                {{ range $author := first 1 .Params.authors }}
-
-               
-                <!-- <div class="meta"><span class="pr-5">By</span> <a href="/authors/{{ $author | urlize }}"> {{ $author }} </a></div> -->
-                 <a href="/authors/{{ $author | urlize }}">
-                  <div class="user-info">
-                    <img src="/assets/images/authors/profile-photos-28x28/{{ $author | urlize}}.jpg" alt="author"
-                      width="20" height="20"
-                      loading="lazy" decoding="async">
-                    <h6 class="mr-12"> {{ $author }}</h6>
-                  </div>
-                  </a>
-                {{ end }}
-              </div>
-              <!-- content  -->
-            </div>
-            <!-- recent-blog  -->
-            {{ end }}
-          </div>
-
-
-          <div class="single-wizard ml-30 mt-30">
-            <h6 class="section-title-small mb-20">POPULAR TAGS </h6>
-            <div class="tags">
-              {{ range $tag := .Params.tags }}
-              <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
-              {{ end }}
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>

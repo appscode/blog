@@ -180,6 +180,9 @@ a.inline-button {
     &:hover {
       // border: 1px solid transparent;
       box-shadow: none;
+      h2 {
+        text-decoration: underline;
+      }
     }
 
     .arrow-icon {
@@ -191,6 +194,7 @@ a.inline-button {
     h2 {
       margin-bottom: 8px;
       font-size: 18px;
+      transition: 0.3s ease-in-out;
     }
 
     p {
@@ -308,6 +312,7 @@ ul.social-share-button {
   padding: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
 
   &.is-flex-direction-column {
     align-items: flex-start;

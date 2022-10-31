@@ -10594,6 +10594,10 @@ a.inline-button i.fa {
           box-shadow: none;
 }
 
+.single-blog-card.list-view:hover h2 {
+  text-decoration: underline;
+}
+
 .single-blog-card.list-view .arrow-icon {
   opacity: 0;
   visibility: hidden;
@@ -10604,6 +10608,8 @@ a.inline-button i.fa {
 .single-blog-card.list-view h2 {
   margin-bottom: 8px;
   font-size: 18px;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
 }
 
 .single-blog-card.list-view p {
@@ -10718,6 +10724,9 @@ ul.social-share-button {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 ul.social-share-button.is-flex-direction-column {
@@ -11562,7 +11571,7 @@ ul.social-share-button li a i.fa {
                                     Responsive code end
 =================================================================================================*/
 .blog-details-area {
-  margin-top: -110px;
+  margin-top: 30px;
 }
 
 .blog-details-area h1 {
@@ -11607,7 +11616,6 @@ ul.social-share-button li a i.fa {
   position: sticky;
   top: 30px;
   z-index: 99;
-  margin-top: 120px;
 }
 
 .single-wizard h4 {
@@ -12160,6 +12168,10 @@ ul.social-share-button li a i.fa {
   background-image: url(/assets/images/bg-image/hero-bg.png);
   margin-top: -74px;
   padding: 100px 0 100px;
+}
+
+.author-content figure {
+  margin: 0 auto 15px;
 }
 
 .author-page .blog-items {
