@@ -43,6 +43,23 @@
       font-family: "Roboto Mono", monospace;
     }
   }
+  .author{
+    margin-left: 10px;
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+  &:has(.author:nth-child(2)) {
+
+    .information {
+      a.author-name{
+        font-size: 14px;
+      }
+      .designation {
+        font-size: 11px;
+      }
+    }
+  }
 }
 
 // section title small start
@@ -71,9 +88,6 @@
   padding: 60px 0 70px;
 }
 
-// .blog-items-area {
-//   overflow: hidden;
-// }
 
 .author {
   display: flex;
@@ -85,10 +99,6 @@
     border: 2px solid #fafbfc;
     overflow: hidden;
 
-    // img {
-    //   transform: scale(1.6);
-    //   margin-top: 20px;
-    // }
   }
 
   .information {
@@ -686,33 +696,6 @@ ul.social-share-button {
   padding-left: 10px;
 }
 
-// category start
-.widget-title {
-  position: relative;
-  z-index: 1;
-  margin-left: -8px;
-
-  &:before {
-    position: absolute;
-    content: "";
-    left: 0;
-    top: 0;
-    width: 5px;
-    height: 100%;
-    background: #333;
-    padding-left: 5px;
-    border-radius: 2px;
-  }
-
-  h3 {
-    font-size: 22px;
-    font-weight: 700;
-    padding-left: 15px;
-    margin-bottom: 10px;
-    line-height: 1;
-  }
-}
-
 .blog-category {
   height: calc(100vh - 150px);
   overflow-y: auto;
@@ -1040,7 +1023,7 @@ ul.social-share-button {
 
       h1 {
         font-size: 24px;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
       }
 
       .meta {
@@ -1048,7 +1031,7 @@ ul.social-share-button {
       }
 
       p {
-        margin-bottom: 10px;
+        margin-bottom: 24px;
       }
 
       .social-share {
@@ -1185,7 +1168,8 @@ ul.social-share-button {
       }
 
       p {
-        margin-bottom: 10px;
+        margin-bottom: 24px;
+        font-size: 16px;
       }
 
       .social-share {
@@ -1201,42 +1185,11 @@ ul.social-share-button {
       margin-right: 4px;
     }
   }
-
-  .single-blog {
-    .image {
-      img {
-        max-height: 145px;
-      }
-    }
-
-    .meta {
-      i.fa {
-        font-size: 13px;
-        margin-right: 0.2rem;
-      }
-
-      .author {
-        a {
-          font-size: 13px;
-        }
-      }
-
-      .date {
-        strong {
-          font-size: 13px;
-        }
-      }
-
-      a.inline-button {
-        font-size: 12px;
-      }
-    }
-
-    h2 {
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
+  .single-blog-card {
+    padding: 16px;
+    height: 150px;
   }
+
 
   .search-filter-area {
     .filter-wrapper {
