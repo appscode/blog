@@ -10833,6 +10833,9 @@ ul.social-share-button li a i.fa {
   }
 }
 @media (min-width: 1408px) and (max-width: 1600px) {
+  .hero-area-blog {
+    padding: 150px 0 80px;
+  }
   .hero-area-blog .blog-title-content h1 {
     font-size: 32px;
     letter-spacing: 0.3px;
