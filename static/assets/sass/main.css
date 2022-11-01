@@ -10842,7 +10842,7 @@ ul.social-share-button li a i.fa {
   }
   .hero-area-blog .blog-title-content p {
     margin-bottom: 24px;
-    font-size: 16px;
+    font-size: 18px;
   }
   .hero-area-blog .blog-title-content .social-share {
     margin-top: 20px;
@@ -11055,7 +11055,7 @@ ul.social-share-button li a i.fa {
 }
 .blog-content p {
   font-size: 16px;
-  text-align: justify;
+  font-size: 18px;
   margin-bottom: 20px;
   line-height: 190%;
 }
@@ -11087,7 +11087,7 @@ ul.social-share-button li a i.fa {
   border-radius: 4px;
   background-color: #1c2c41;
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 22px;
 }
 .blog-content figure {
@@ -11107,7 +11107,7 @@ ul.social-share-button li a i.fa {
   margin-bottom: 30px;
 }
 .blog-content ul li {
-  font-size: 16px;
+  font-size: 18px;
   list-style: disc;
   margin-bottom: 15px;
 }
@@ -11118,7 +11118,7 @@ ul.social-share-button li a i.fa {
   border-radius: 2px;
 }
 .blog-content ul li pre {
-  font-size: 14px;
+  font-size: 16px;
   margin-left: -20px;
 }
 .blog-content ol {
@@ -11126,7 +11126,7 @@ ul.social-share-button li a i.fa {
   margin-bottom: 30px;
 }
 .blog-content ol li {
-  font-size: 16px;
+  font-size: 18px;
   margin-bottom: 15px;
 }
 .blog-content ol li:last-child {
@@ -11140,7 +11140,7 @@ ul.social-share-button li a i.fa {
   margin-bottom: 30px;
 }
 .blog-content ol li {
-  font-size: 16px;
+  font-size: 18px;
   margin-bottom: 15px;
 }
 .blog-content ol li:last-child {
