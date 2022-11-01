@@ -43,18 +43,21 @@
       font-family: "Roboto Mono", monospace;
     }
   }
-  .author{
+
+  .author {
     margin-left: 10px;
+
     &:first-child {
       margin-left: 0;
     }
   }
-  &:has(.author:nth-child(2)) {
 
+  &:has(.author:nth-child(2)) {
     .information {
-      a.author-name{
+      a.author-name {
         font-size: 14px;
       }
+
       .designation {
         font-size: 11px;
       }
@@ -88,7 +91,6 @@
   padding: 60px 0 70px;
 }
 
-
 .author {
   display: flex;
 
@@ -98,7 +100,6 @@
     margin-right: 16px;
     border: 2px solid #fafbfc;
     overflow: hidden;
-
   }
 
   .information {
@@ -558,6 +559,7 @@ ul.social-share-button {
           user-select: none;
           cursor: pointer;
         }
+
         input {
           accent-color: $ac-primary;
         }
@@ -794,7 +796,8 @@ ul.social-share-button {
 // Extra small devices (portrait phones, less than 768px)
 @media (max-width: 768px) {
   .hero-area-blog {
-    margin-top: 70px !important;
+    padding: 100px 0 50px;
+    margin-top: -64px !important;
 
     .single-blog-carousel {
       .blog-title-content {
@@ -811,61 +814,25 @@ ul.social-share-button {
     }
   }
 
+  .recent-blog-posts {
+    padding: 30px 0;
+  }
+
   .search-filter-area {
-    top: 50px;
+    top: 0;
+  }
 
-    .filter-area {
-      .viewing-mode {
-        margin-right: 0.1rem;
-      }
-    }
-
-    .filter-wrapper {
-      padding: 6px 10px;
-
-      .search-area {
-        display: flex;
-
-        label {
-          i.fa {
-            font-size: 16px;
-          }
+  .blog-items-area {
+    .left-sidebar {
+      height: auto;
+      margin-right: 0;
+      border-right: none;
+      padding-right: 15px;
+      border-bottom: 1px solid $ac-white-light;
+      .collapsable-menu {
+        &:last-child {
+          margin-bottom: 0;
         }
-
-        input {
-          width: 180px;
-        }
-      }
-    }
-
-    .viewing-mode {
-      button {
-        margin-right: 0.5rem;
-      }
-
-      label {
-        display: none;
-      }
-    }
-  }
-
-  .single-blog {
-    .meta {
-      margin-bottom: 10px;
-      margin-top: 10px;
-    }
-  }
-
-  .columns.each-blog {
-    flex-direction: column;
-  }
-
-  .blog-items {
-    .blog-title-content {
-      h2 {
-        font-size: 18px;
-        letter-spacing: -0.5px;
-        font-weight: 500;
       }
     }
   }
@@ -1162,6 +1129,7 @@ ul.social-share-button {
 @media (min-width: 1408px) and (max-width: 1600px) {
   .hero-area-blog {
     padding: 150px 0 80px;
+
     .blog-title-content {
       h1 {
         font-size: 32px;
@@ -1186,11 +1154,11 @@ ul.social-share-button {
       margin-right: 4px;
     }
   }
+
   .single-blog-card {
     padding: 16px;
     height: 150px;
   }
-
 
   .search-filter-area {
     .filter-wrapper {

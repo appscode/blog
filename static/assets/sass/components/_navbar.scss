@@ -70,47 +70,6 @@
     }
   }
 
-  &.documentation-menu {
-    margin-left: 349px;
-    background-color: $ac-white;
-    border-left: 1px solid $ac-white-light;
-
-    .mega-menu-wrapper {
-      top: 104px;
-    }
-
-    .navbar-right {
-      width: 100%;
-      justify-content: space-between;
-
-      .ac-searchbar {
-        width: 49%;
-      }
-    }
-
-    ul {
-      .nav-item {
-        .link {
-          &.is-active {
-            position: relative;
-            z-index: 1;
-
-            &:after {
-              position: absolute;
-              content: "";
-              left: 0;
-              bottom: -8px;
-              width: 100%;
-              height: 4px;
-              background: $ac-primary;
-              border-radius: 3px 3px 0 0;
-            }
-          }
-        }
-      }
-    }
-  }
-
   .navbar-left {
     display: flex;
     align-items: center;
@@ -140,6 +99,9 @@
 
     .button {
       margin-left: 2.5rem;
+      &.is-primary {
+        border: 1px solid $ac-white-light;
+      }
     }
   }
 
@@ -855,6 +817,12 @@
 Responsive Classes
 *****************************************/
 @media (max-width: 1023.98px) {
+  .navbar-burger {
+    span {
+      background-color: $ac-white;
+    }
+  }
+
   .navbar-appscode {
     &.container {
       padding: 1rem 15px;
@@ -899,6 +867,7 @@ Responsive Classes
       justify-content: flex-start;
       flex-direction: column;
       align-items: flex-start;
+      background-color: $ac-primary;
 
       .is-flex.is-justify-content-space-between {
         flex-direction: column;

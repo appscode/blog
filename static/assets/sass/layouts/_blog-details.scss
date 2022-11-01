@@ -1,5 +1,6 @@
 .blog-details-area {
   margin-top: 30px;
+
   h1 {
     font-weight: 700;
     font-size: 42px;
@@ -8,6 +9,7 @@
 
     letter-spacing: -2px;
   }
+
   .meta {
     margin-bottom: 20px;
   }
@@ -18,11 +20,13 @@
   overflow: hidden;
   // border: 1px solid #e7e7e7;
   border-radius: 4px;
+
   img {
     user-select: none;
     display: block;
     border-radius: 4px;
   }
+
   figcaption {
     max-width: 80%;
     margin: 0 auto;
@@ -32,6 +36,7 @@
     border-bottom: 1px solid $ac-white-light;
   }
 }
+
 //sticky social link
 .sticky-social-menu,
 .wizerd-items {
@@ -52,6 +57,7 @@
   .single-recent-blog {
     margin-bottom: 1rem;
     display: flex;
+
     .date-month {
       width: 70px;
       height: 70px;
@@ -80,12 +86,14 @@
 
     .recent-blog-content {
       width: 100%;
+
       h2 {
         font-weight: 500;
         font-size: 16px;
         line-height: 120%;
         letter-spacing: 0.25px;
         margin-bottom: 8px;
+
         a {
           color: $ac-color-heading;
           font-weight: 500;
@@ -98,6 +106,7 @@
         margin-top: 0.5rem;
         font-size: 14px;
         margin-bottom: 0;
+
         a {
           font-weight: 400;
           line-height: 150%;
@@ -106,6 +115,7 @@
     }
   }
 }
+
 //code block style
 .code-block-heading {
   display: flex;
@@ -116,6 +126,7 @@
   overflow: hidden;
   border: 1px solid #d1d5d9;
   border-bottom: transparent;
+
   .code-title {
     h4 {
       font-size: 16px;
@@ -124,6 +135,7 @@
       margin-bottom: 0;
     }
   }
+
   .copy-and-download {
     .download-here,
     .copy-here {
@@ -133,23 +145,28 @@
       font-size: 20px;
       cursor: copy;
     }
+
     .download-here {
       cursor: pointer;
     }
   }
 }
+
 .highlight {
   pre {
     background-color: #1c2c41 !important;
     font-size: 14px;
     line-height: 22px;
     margin-bottom: 20px;
+
     code {
       color: #f1f1f1;
     }
   }
+
   margin-bottom: 40px;
 }
+
 .blog-content {
   h1,
   h2,
@@ -159,27 +176,34 @@
     line-height: 130%;
     margin-bottom: 10px;
   }
+
   h1 {
     font-size: 36px;
   }
+
   h2 {
     font-size: 24px;
   }
+
   h3 {
     font-size: 20px;
   }
+
   h4 {
     font-size: 18px;
   }
+
   p {
     font-size: 16px;
     // text-align: justify;
     font-size: 18px;
     margin-bottom: 20px;
     line-height: 190%;
+
     a {
       font-weight: 500;
       position: relative;
+
       &:after {
         position: absolute;
         content: "";
@@ -191,18 +215,21 @@
         border-radius: 50px;
         transition: 0.3s ease-in-out;
       }
+
       &:hover {
         &:after {
           width: 100%;
         }
       }
     }
+
     img {
       border: 1px solid $ac-white-light;
       padding: 15px;
       border-radius: 8px;
     }
   }
+
   pre {
     margin-bottom: 15px;
     border-radius: 4px;
@@ -211,70 +238,88 @@
     font-size: 16px;
     line-height: 22px;
   }
+
   figure {
     border: 1px solid $ac-white-light;
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 4px;
   }
+
   iframe {
     margin-bottom: 20px;
   }
+
   .inline-button {
     font-size: 16px;
   }
+
   ul {
     padding-left: 20px;
     margin-bottom: 30px;
+
     li {
       font-size: 18px;
       list-style: disc;
       margin-bottom: 15px;
+
       &:last-child {
         margin-bottom: 0;
       }
+
       code {
         border-radius: 2px;
       }
+
       pre {
         font-size: 16px;
         margin-left: -20px;
       }
     }
   }
+
   ol {
     padding-left: 20px;
     margin-bottom: 30px;
+
     li {
       font-size: 18px;
       margin-bottom: 15px;
+
       &:last-child {
         margin-bottom: 0;
       }
+
       code {
         border-radius: 2px;
       }
     }
   }
+
   ol {
     padding-left: 20px;
     margin-bottom: 30px;
+
     li {
       font-size: 18px;
       margin-bottom: 15px;
+
       &:last-child {
         margin-bottom: 0;
       }
+
       code {
         border-radius: 2px;
       }
     }
   }
+
   blockquote {
     position: relative;
     z-index: 1;
     padding-left: 20px;
     opacity: 0.9;
+
     &::before {
       position: absolute;
       content: "";
@@ -286,27 +331,33 @@
       border-radius: 2px;
     }
   }
+
   .bb-quote-msg {
     position: relative;
     z-index: 1;
+
     p {
       font-weight: 500;
       margin-bottom: 15px;
       color: #1c2c41;
     }
+
     .quote-icon {
       position: absolute;
       left: -50px;
       top: 10px;
     }
+
     .name-descriptor {
       font-size: 16px;
       margin-bottom: 20px;
+
       &::before {
         content: url(/assets/images/icons/line.svg);
         position: absolute;
         left: -60px;
       }
+
       span {
         font-size: 16px;
       }
@@ -320,6 +371,7 @@
       padding: 5px 20px;
     }
   }
+
   .tab-content {
     h2 {
       margin-top: 0;
@@ -327,13 +379,16 @@
       line-height: 40px;
     }
   }
+
   table {
     margin-bottom: 20px;
+
     td,
     th {
       border: 1px solid $ac-white-light;
       padding: 10px 20px;
     }
+
     th {
       font-weight: 500;
     }
@@ -347,36 +402,45 @@
 // Extra small devices (portrait phones, less than 576px)
 @media (max-width: 768px) {
   .blog-details-area {
-    margin-top: 80px;
+    margin-top: 30px;
+
     h1 {
       font-size: 24px;
       letter-spacing: -0.5px;
       margin-bottom: 10px;
     }
   }
+
   ul.social-share-button.is-flex-direction-column {
     display: flex;
     flex-direction: row !important;
+    justify-content: flex-start;
+
     li {
       margin-right: 10px;
       margin-bottom: 0;
     }
   }
+
   iframe {
     width: 100%;
     height: auto;
   }
+
   .single-wizard.ml-30 {
     margin-left: 0 !important;
   }
+
   .single-wizard {
     .single-recent-blog {
       .date-month {
         width: 60px;
         height: 60px;
+
         .date {
           font-size: 18px;
         }
+
         .month {
           font-size: 14px;
         }
@@ -393,24 +457,30 @@
       line-height: 130%;
       letter-spacing: -0.3px;
     }
+
     h1 {
       font-size: 24px;
     }
+
     h2 {
       font-size: 20px;
     }
+
     h3 {
       font-size: 18px;
     }
+
     h4 {
       font-size: 16px;
     }
+
     p {
       font-size: 14px;
       text-align: justify;
       margin-bottom: 20px;
       line-height: 1.6;
     }
+
     iframe {
       width: 300px !important;
       height: 200px !important;
@@ -426,6 +496,7 @@
 @media (min-width: 769px) and (max-width: 1023.98px) {
   .blog-details-area {
     margin-top: 80px;
+
     h1 {
       font-size: 32px;
     }
@@ -435,23 +506,28 @@
   .wizerd-items {
     top: 70px;
   }
+
   .blog-content {
     iframe {
       width: 400px !important;
       height: 225px !important;
     }
   }
+
   .single-wizard.ml-30 {
     margin-left: 0 !important;
   }
+
   .single-wizard {
     .single-recent-blog {
       .date-month {
         width: 60px;
         height: 60px;
+
         .date {
           font-size: 18px;
         }
+
         .month {
           font-size: 14px;
         }
@@ -464,6 +540,7 @@
 @media (min-width: 1024px) and (max-width: 1215px) {
   .blog-details-area {
     margin-top: 100px;
+
     h1 {
       font-size: 32px;
     }
@@ -473,27 +550,33 @@
   .wizerd-items {
     top: 100px;
   }
+
   iframe {
     width: 100%;
     height: auto;
   }
+
   .single-wizard.ml-30 {
     margin-left: 0 !important;
   }
+
   .single-wizard {
     .single-recent-blog {
       .date-month {
         width: 60px;
         height: 60px;
+
         .date {
           font-size: 18px;
         }
+
         .month {
           font-size: 14px;
         }
       }
     }
   }
+
   .blog-content {
     iframe {
       width: 510px !important;
@@ -510,24 +593,29 @@
       letter-spacing: -1.5px;
       margin-bottom: 15px;
     }
+
     .meta {
       margin-bottom: 15px;
     }
   }
+
   .single-wizard {
     .single-recent-blog {
       .date-month {
         width: 60px;
         height: 60px;
+
         .date {
           font-size: 18px;
         }
+
         .month {
           font-size: 14px;
         }
       }
     }
   }
+
   .blog-content {
     iframe {
       width: 500px !important;
@@ -550,24 +638,29 @@
       letter-spacing: -1.5px;
       margin-bottom: 15px;
     }
+
     .meta {
       margin-bottom: 15px;
     }
   }
+
   .single-wizard {
     .single-recent-blog {
       .date-month {
         width: 60px;
         height: 60px;
+
         .date {
           font-size: 18px;
         }
+
         .month {
           font-size: 14px;
         }
       }
     }
   }
+
   .blog-content {
     iframe {
       width: 700px !important;
