@@ -7,6 +7,12 @@
 .author-content {
   figure {
     margin: 0 auto 15px;
+
+    &.image {
+      img {
+        border: 2px solid $ac-white-light;
+      }
+    }
   }
 }
 
