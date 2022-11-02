@@ -3,7 +3,7 @@ title: Announcing KubeDB v2022.10.18
 date: "2022-10-18"
 weight: 25
 authors:
-- Md. Alif Biswas
+- Md Alif Biswas
 tags:
 - autoscaler
 - cloud-native

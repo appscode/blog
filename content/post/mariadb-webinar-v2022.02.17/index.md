@@ -3,7 +3,7 @@ title: MariaDB Auto-Scaling and Reconfiguration in Kubernetes Native way using K
 date: "2022-02-24"
 weight: 20
 authors:
-- Md. Alif Biswas
+- Md Alif Biswas
 tags:
 - autoscaling
 - kubedb
