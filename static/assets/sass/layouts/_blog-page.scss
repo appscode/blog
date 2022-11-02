@@ -7,6 +7,9 @@
   min-height: 62vh;
   display: flex;
   align-items: center;
+  &.author-page {
+    min-height: auto;
+  }
 
   .blog-title-content {
     h1 {

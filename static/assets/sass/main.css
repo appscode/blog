@@ -10073,6 +10073,10 @@ Responsive Classes
           align-items: center;
 }
 
+.hero-area-blog.author-page {
+  min-height: auto;
+}
+
 .hero-area-blog .blog-title-content h1 {
   line-height: 130%;
   font-style: normal;
