@@ -3,34 +3,11 @@ let searchKeyword = "";
 let viewType = "grid-view";
 
 const searchElement = document.getElementById("search");
-const gridView = document.getElementById("grid-view");
-const listView = document.getElementById("list-view");
-const gridViewBtn = document.getElementById("grid-btn-view");
-const listViewBtn = document.getElementById("list-btn-view");
 const productElement = document.getElementById("products");
 const categoriesElement = document.getElementById("categories");
 const productBtn = document.getElementById("product-btn");
 const categoriesBtn = document.getElementById("categories-btn");
 const nodataElement = document.getElementById("nodata-content");
-
-
-gridViewBtn?.addEventListener("click", (event) => {
-  gridViewBtn.classList.add("is-active");
-  gridView.classList.remove("is-hidden");
-  listViewBtn.classList.remove("is-active");
-  listView.classList.add("is-hidden");
-  viewType = "grid-view";
-  filterList();
-})
-
-listViewBtn?.addEventListener("click", (event) => {
-  listViewBtn.classList.add("is-active");
-  listView.classList.remove("is-hidden");
-  gridViewBtn.classList.remove("is-active");
-  gridView.classList.add("is-hidden");
-  viewType = "list-view";
-  filterList();
-})
 
 productElement?.addEventListener("change",(event)=>{
   let elementName = event.target.id || "";
@@ -157,10 +134,10 @@ const isTagAvailable = (tags, author, heading) => {
 
 
 const calculateTopVaue = () =>{
-
   const heroArea = document.querySelector('.hero-area-blog')
   const recentBlog = document.querySelector('.recent-blog-posts')
-  let height = heroArea.offsetHeight + recentBlog.offsetHeight;
+  const authorHeroArea = document.querySelector('.author-hero-area')
+  let height = (heroArea ? heroArea.offsetHeight : 0) + (recentBlog ? recentBlog.offsetHeight : 0) + (authorHeroArea ? authorHeroArea.offsetHeight : 0);
   return height;
 }
 
