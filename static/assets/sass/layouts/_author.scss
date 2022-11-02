@@ -24,6 +24,12 @@
 
 // Extra small devices (portrait phones, less than 576px)
 @media (max-width: 768px) {
+  .author-page {
+    .single-blog-card {
+      min-height: auto;
+      padding: 24px 16px;
+    }
+  }
 }
 
 // Small devices (landscape phones, 576px and up)
@@ -32,6 +38,12 @@
 
 // Medium devices (tablets, 769px and up)
 @media (min-width: 769px) and (max-width: 1023.98px) {
+  .author-page {
+    .single-blog-card {
+      min-height: auto;
+      padding: 24px 16px;
+    }
+  }
 }
 
 // Large devices (desktops, 1024px and up)

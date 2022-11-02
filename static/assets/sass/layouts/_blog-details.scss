@@ -42,7 +42,7 @@
 .wizerd-items {
   position: sticky;
   top: 30px;
-  z-index: 99;
+  z-index: 9;
 }
 
 .single-wizard {
@@ -475,8 +475,7 @@
     }
 
     p {
-      font-size: 14px;
-      text-align: justify;
+      font-size: 16px;
       margin-bottom: 20px;
       line-height: 1.6;
     }
@@ -484,6 +483,12 @@
     iframe {
       width: 300px !important;
       height: 200px !important;
+    }
+    ol,
+    ul {
+      li {
+        font-size: 16px;
+      }
     }
   }
 }
@@ -495,7 +500,7 @@
 // Medium devices (tablets, 769px and up)
 @media (min-width: 769px) and (max-width: 1023.98px) {
   .blog-details-area {
-    margin-top: 80px;
+    margin-top: 40px;
 
     h1 {
       font-size: 32px;
