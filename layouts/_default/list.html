@@ -29,7 +29,7 @@
           </div>
 
           <div class="column is-4">
-           <div class="is-flex">
+           <div class="is-flex authors">
              <!-- author start  -->
              {{ range $author := $p.Params.authors }}
              <div class="author">
@@ -40,7 +40,7 @@
                <div class="information">
                  <a href="/authors/{{ $author | urlize }}" class="author-name">{{ $author }}</a>
                  <p class="designation has-text-light">Designation</p>
-                 <a href="appscode.com" class="company has-text-light">AppsCode Inc</a>
+                 <a href="https://appscode.com" target="_blank" class="company has-text-light">AppsCode Inc</a>
                </div>
                {{end}}
              </div>
@@ -318,37 +318,6 @@
                   </div>
                 </div>
               </a>
-              <!-- <div class="single-blog">
-                {{ $original := $p.Resources.GetMatch "hero.jpg" }}
-                {{ $cropped := $original.Resize "x170" }}
-                <figure class="image">
-                  <a href="{{ $p.RelPermalink }}"><img src="{{ $cropped.RelPermalink }}" alt="" loading="lazy"
-                      decoding="async"></a>
-                </figure>
-                <div class="p-15">
-                
-                  <div class="meta">
-                    <div class="tags is-hidden">
-                      {{ range $tag := .Params.tags }}
-                      <a href="#" class="tag">{{ . }}</a>
-                      {{ end }}
-                    </div>
-                    {{ range $author := $p.Params.authors }}
-                    <div class="author"><i class="fa fa-user"></i> <a
-                        href="/authors/{{ $author | urlize }}">{{ $author }}</a></div>
-                    {{ end }}
-                    <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                      <strong>{{ $p.Date.Format "2-Jan-2006" }}</strong>
-                    </div>
-                  </div>
-                
-
-                  <h2 class="is-ellipsis-2" title="{{ $p.Title }}"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
-                  </h2>
-                  <p class="is-ellipsis-3">{{ $p.Summary }}</p>
-                  <a href="{{ $p.RelPermalink }}" class="inline-button">READ MORE <i class="fa fa-arrow-right"></i></a>
-                </div>
-              </div> -->
             </div>
             {{ end }}
           </div>

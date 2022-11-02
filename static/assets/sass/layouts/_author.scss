@@ -3,11 +3,13 @@
   margin-top: -74px;
   padding: 100px 0 100px;
 }
+
 .author-content {
   figure {
     margin: 0 auto 15px;
   }
 }
+
 .author-page {
   .blog-items {
     margin-top: 16px;
@@ -48,6 +50,12 @@
 
 // Large devices (desktops, 1024px and up)
 @media (min-width: 1024px) and (max-width: 1215px) {
+  .author-page {
+    .single-blog-card {
+      min-height: auto;
+      padding: 24px 16px;
+    }
+  }
 }
 
 // Extra large devices (large desktops, 1216px and up)
@@ -57,6 +65,13 @@
 @media (min-width: 1408px) and (max-width: 1600px) {
   .author-hero-area {
     padding: 100px 0 20px;
+  }
+
+  .author-page {
+    .single-blog-card {
+      min-height: auto;
+      padding: 24px 16px;
+    }
   }
 }
 

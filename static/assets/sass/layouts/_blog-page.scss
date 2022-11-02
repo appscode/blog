@@ -794,14 +794,22 @@ ul.social-share-button {
 =================================================================================================*/
 
 @media (max-width: 480px) {
-  .authors {
-    flex-direction: column;
-
-    .author {
-      margin-left: 0;
-      margin-bottom: 10px;
+   .authors {
+      flex-direction: row !important;
+      &:has(.author:nth-child(2)) {
+        .author {
+          flex-direction: column !important;
+          margin-left: 20px !important;
+          margin-bottom: 0 !important;
+          a {
+            margin-bottom: 8px;
+          }
+          p.designation {
+            margin-bottom: 0;
+          }
+        }
+      }
     }
-  }
 }
 
 // Extra small devices (portrait phones, less than 768px)
@@ -886,15 +894,17 @@ ul.social-share-button {
 
     .authors {
       flex-direction: row !important;
-      .author {
-        flex-direction: column !important;
-        margin-left: 20px !important;
-        margin-bottom: 0 !important;
-        a {
-          margin-bottom: 8px;
-        }
-        p.designation {
-          margin-bottom: 0;
+      &:has(.author:nth-child(2)) {
+        .author {
+          flex-direction: column !important;
+          margin-left: 20px !important;
+          margin-bottom: 0 !important;
+          a {
+            margin-bottom: 8px;
+          }
+          p.designation {
+            margin-bottom: 0;
+          }
         }
       }
     }
@@ -1026,24 +1036,29 @@ ul.social-share-button {
     }
     .authors {
       flex-direction: row !important;
-      .author {
-        a {
-          margin-bottom: 8px;
+      &:has(.author:nth-child(2)) {
+        .author {
+          flex-direction: column !important;
+          margin-left: 20px !important;
+          margin-bottom: 0 !important;
+          a {
+            margin-bottom: 8px;
+          }
+          p.designation {
+            margin-bottom: 0;
+          }
         }
-        flex-direction: column !important;
-        margin-left: 20px !important;
-        margin-bottom: 0 !important;
       }
     }
   }
 
   .search-filter-area {
-    top: 60px;
+    top: 0;
   }
 
   .blog-items-area {
     .left-sidebar {
-      top: 6px;
+      top: 62px;
     }
   }
 

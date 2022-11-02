@@ -110,17 +110,6 @@
     // ac-button from mixin
     &.is-primary {
       @include ac-button($ac-primary);
-      // &:hover {
-      //   background: linear-gradient(
-      //     -45deg,
-      //     $ac-primary,
-      //     #940148,
-      //     #4c346f,
-      //     #3334f5
-      //   );
-      //   background-size: 100% 100%;
-      //   animation: gradient 5s ease infinite;
-      // }
     }
    
     &.is-link {
