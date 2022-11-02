@@ -4,6 +4,9 @@
   margin-top: -74px;
   background-image: url(/assets/images/bg-image/hero-bg.png);
   background-repeat: no-repeat;
+  min-height: 62vh;
+  display: flex;
+  align-items: center;
 
   .blog-title-content {
     h1 {
@@ -794,22 +797,22 @@ ul.social-share-button {
 =================================================================================================*/
 
 @media (max-width: 480px) {
-   .authors {
-      flex-direction: row !important;
-      &:has(.author:nth-child(2)) {
-        .author {
-          flex-direction: column !important;
-          margin-left: 20px !important;
-          margin-bottom: 0 !important;
-          a {
-            margin-bottom: 8px;
-          }
-          p.designation {
-            margin-bottom: 0;
-          }
+  .authors {
+    flex-direction: row !important;
+    &:has(.author:nth-child(2)) {
+      .author {
+        flex-direction: column !important;
+        margin-left: 20px !important;
+        margin-bottom: 0 !important;
+        a {
+          margin-bottom: 8px;
+        }
+        p.designation {
+          margin-bottom: 0;
         }
       }
     }
+  }
 }
 
 // Extra small devices (portrait phones, less than 768px)

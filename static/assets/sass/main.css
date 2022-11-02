@@ -10064,6 +10064,13 @@ Responsive Classes
   margin-top: -74px;
   background-image: url(/assets/images/bg-image/hero-bg.png);
   background-repeat: no-repeat;
+  min-height: 62vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .hero-area-blog .blog-title-content h1 {
