@@ -120,6 +120,7 @@
       font-size: 18px;
       list-style: disc;
       margin-bottom: 15px;
+      line-height: 190%;
 
       &:last-child {
         margin-bottom: 0;
@@ -143,24 +144,7 @@
     li {
       font-size: 18px;
       margin-bottom: 15px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      code {
-        border-radius: 2px;
-      }
-    }
-  }
-
-  ol {
-    padding-left: 20px;
-    margin-bottom: 30px;
-
-    li {
-      font-size: 18px;
-      margin-bottom: 15px;
+      line-height: 190%;
 
       &:last-child {
         margin-bottom: 0;

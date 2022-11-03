@@ -11503,6 +11503,7 @@ ul.social-share-button li a i.fa {
   font-size: 18px;
   list-style: disc;
   margin-bottom: 15px;
+  line-height: 190%;
 }
 
 .blog-content ul li:last-child {
@@ -11526,24 +11527,7 @@ ul.social-share-button li a i.fa {
 .blog-content ol li {
   font-size: 18px;
   margin-bottom: 15px;
-}
-
-.blog-content ol li:last-child {
-  margin-bottom: 0;
-}
-
-.blog-content ol li code {
-  border-radius: 2px;
-}
-
-.blog-content ol {
-  padding-left: 20px;
-  margin-bottom: 30px;
-}
-
-.blog-content ol li {
-  font-size: 18px;
-  margin-bottom: 15px;
+  line-height: 190%;
 }
 
 .blog-content ol li:last-child {
