@@ -10,6 +10,7 @@
 
   &.author-page {
     min-height: auto;
+
     .blog-title-content {
       &:hover {
         h1 {
@@ -25,6 +26,7 @@
         text-decoration: underline;
       }
     }
+
     h1 {
       line-height: 130%;
       font-style: normal;
@@ -56,6 +58,7 @@
       font-size: 13px;
       height: 48px;
       font-family: "Roboto Mono", monospace;
+
       &:hover {
         border: 1px solid $ac-white-light;
       }
@@ -106,10 +109,12 @@
 .recent-blog-posts {
   background-color: #f2f5f7;
   padding: 60px 0 70px;
+
   .button.is-mini {
     border: 1px solid $ac-white-light !important;
     transition: 0.3s ease-in-out;
     color: $ac-color-heading;
+
     &:hover {
       border: $ac-primary;
       color: $ac-white;
@@ -859,6 +864,14 @@ ul.social-share-button {
           margin-top: 20px;
         }
       }
+    }
+  }
+
+  .section-title-small {
+    letter-spacing: 0;
+
+    .icon-square {
+      display: none;
     }
   }
 
