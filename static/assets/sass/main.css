@@ -8905,9 +8905,7 @@ Responsive Classes
 }
 
 .navbar-appscode .navbar-left .navbar-brand a img {
-  height: 1.875rem;
-  -webkit-filter: brightness(3);
-          filter: brightness(3);
+  height: 3.125rem;
 }
 
 .navbar-appscode .navbar-right {
@@ -9258,7 +9256,7 @@ Responsive Classes
     width: 100%;
   }
   .navbar-appscode .navbar-left .navbar-brand a img {
-    height: 1.5rem !important;
+    height: 2rem !important;
   }
   .navbar-appscode .navbar-left ul {
     position: absolute;
@@ -10953,10 +10951,6 @@ ul.social-share-button li a i.fa {
   margin-bottom: 15px;
 }
 
-.blog-items .blog-title-content {
-  padding-left: 20px;
-}
-
 .blog-items .blog-title-content:hover h2 a {
   color: var(--ac-primary);
 }
@@ -11146,9 +11140,6 @@ ul.social-share-button li a i.fa {
   .hero-area-blog {
     padding: 120px 0 60px;
   }
-  .hero-area-blog .blog-title-content {
-    padding-left: 20px;
-  }
   .hero-area-blog .blog-title-content h1 {
     font-size: 24px;
     margin-bottom: 5px;
@@ -11226,9 +11217,6 @@ ul.social-share-button li a i.fa {
 @media (min-width: 1024px) and (max-width: 1407px) {
   .hero-area-blog {
     padding: 120px 0 60px;
-  }
-  .hero-area-blog .blog-title-content {
-    padding-left: 20px;
   }
   .hero-area-blog .blog-title-content h1 {
     font-size: 24px;

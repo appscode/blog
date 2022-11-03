@@ -682,7 +682,6 @@ ul.social-share-button {
 
 .blog-items {
   .blog-title-content {
-    padding-left: 20px;
 
     &:hover {
       h2 {
@@ -910,7 +909,6 @@ ul.social-share-button {
     padding: 120px 0 60px;
 
     .blog-title-content {
-      padding-left: 20px;
 
       h1 {
         font-size: 24px;
@@ -1007,45 +1005,6 @@ ul.social-share-button {
       margin-bottom: 10px;
     }
   }
-
-  // .blog-items {
-  //   .blog-title-content {
-  //     h2 {
-  //       font-size: 18px;
-  //       letter-spacing: -0.2px;
-  //       font-weight: 500;
-  //       margin-bottom: 10px;
-  //     }
-
-  //     .meta {
-  //       margin-bottom: 10px;
-
-  //       i.fa {
-  //         font-size: 13px;
-  //         margin-right: 0.2rem;
-  //       }
-
-  //       .author {
-  //         margin-right: 15px;
-
-  //         a {
-  //           font-size: 13px;
-  //         }
-  //       }
-
-  //       .date {
-  //         strong {
-  //           font-size: 13px;
-  //         }
-  //       }
-
-  //       a.inline-button {
-  //         font-size: 12px;
-  //         letter-spacing: 1px;
-  //       }
-  //     }
-  //   }
-  // }
 }
 
 @media (min-width: 850px) and (max-width: 1023px) {
@@ -1057,7 +1016,6 @@ ul.social-share-button {
     padding: 120px 0 60px;
 
     .blog-title-content {
-      padding-left: 20px;
 
       h1 {
         font-size: 24px;
