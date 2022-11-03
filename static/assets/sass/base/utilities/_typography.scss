@@ -1,7 +1,7 @@
 // Typography
 @import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500;1,700&display=swap");
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap");
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap");
 
@@ -33,33 +33,27 @@ h6 {
   font-style: normal;
   font-weight: 500;
   color: $ac-color-heading;
+
   &.is-gradient {
-      background: linear-gradient(
-        -45deg,
-        $ac-primary,
-        #940148,
-        #4c346f,
-        #3334f5
-      );
-      background-size: 300% 300%;
-      animation: gradient 5s ease infinite;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    background: linear-gradient(-45deg, $ac-primary, #940148, #4c346f, #3334f5);
+    background-size: 300% 300%;
+    animation: gradient 5s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 h1 {
   font-weight: 300;
   font-size: 60px;
   line-height: 130%;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
 }
 
 h2 {
   font-weight: 500;
   font-size: 48px;
   line-height: 130%;
-
 }
 
 h3 {
@@ -139,3 +133,115 @@ strong {
 .is-font-bold {
   font-weight: 700;
 }
+
+// blog details page start
+.blog-content {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 130%;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+  }
+
+  h5 {
+    font-size: 1rem;
+  }
+
+  h6 {
+    font-size: 0.875rem;
+  }
+}
+
+// blog details page end
+
+/*=================================================================================================
+                                    Responsive code start
+=================================================================================================*/
+
+@mixin small-blog-content-typography {
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+  }
+
+  h5 {
+    font-size: 1rem;
+  }
+
+  h6 {
+    font-size: 0.875rem;
+  }
+}
+
+// Extra small devices (portrait phones, less than 576px)
+@media (max-width: 768px) {
+  .blog-content {
+    @include small-blog-content-typography;
+  }
+}
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) and (max-width: 768px) {
+  .blog-content {
+    @include small-blog-content-typography;
+  }
+}
+
+// Medium devices (tablets, 769px and up)
+@media (min-width: 769px) and (max-width: 1023.98px) {
+  .blog-content {
+    @include small-blog-content-typography;
+  }
+}
+
+// Large devices (desktops, 1024px and up)
+@media (min-width: 1024px) and (max-width: 1215px) {
+  .blog-content {
+    @include small-blog-content-typography;
+  }
+}
+
+// Extra large devices (large desktops, 1216px and up)
+@media (min-width: 1216px) and (max-width: 1407px) {
+  .blog-content {
+    @include small-blog-content-typography;
+  }
+}
+
+@media (min-width: 1408px) and (max-width: 1600px) {
+}
+
+/*=================================================================================================
+                                    Responsive code end
+=================================================================================================*/

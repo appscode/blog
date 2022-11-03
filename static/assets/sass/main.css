@@ -7962,7 +7962,7 @@ h1 {
   font-weight: 300;
   font-size: 60px;
   line-height: 130%;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
 }
 
 h2 {
@@ -8047,6 +8047,152 @@ strong {
   font-weight: 700;
 }
 
+.blog-content h1,
+.blog-content h2,
+.blog-content h3,
+.blog-content h4,
+.blog-content h5,
+.blog-content h6 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  line-height: 130%;
+}
+
+.blog-content h1 {
+  font-size: 2rem;
+}
+
+.blog-content h2 {
+  font-size: 1.5rem;
+}
+
+.blog-content h3 {
+  font-size: 1.25rem;
+}
+
+.blog-content h4 {
+  font-size: 1.125rem;
+}
+
+.blog-content h5 {
+  font-size: 1rem;
+}
+
+.blog-content h6 {
+  font-size: 0.875rem;
+}
+
+/*=================================================================================================
+                                    Responsive code start
+=================================================================================================*/
+@media (max-width: 768px) {
+  .blog-content h1 {
+    font-size: 1.75rem;
+  }
+  .blog-content h2 {
+    font-size: 1.5rem;
+  }
+  .blog-content h3 {
+    font-size: 1.25rem;
+  }
+  .blog-content h4 {
+    font-size: 1.125rem;
+  }
+  .blog-content h5 {
+    font-size: 1rem;
+  }
+  .blog-content h6 {
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 768px) {
+  .blog-content h1 {
+    font-size: 1.75rem;
+  }
+  .blog-content h2 {
+    font-size: 1.5rem;
+  }
+  .blog-content h3 {
+    font-size: 1.25rem;
+  }
+  .blog-content h4 {
+    font-size: 1.125rem;
+  }
+  .blog-content h5 {
+    font-size: 1rem;
+  }
+  .blog-content h6 {
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023.98px) {
+  .blog-content h1 {
+    font-size: 1.75rem;
+  }
+  .blog-content h2 {
+    font-size: 1.5rem;
+  }
+  .blog-content h3 {
+    font-size: 1.25rem;
+  }
+  .blog-content h4 {
+    font-size: 1.125rem;
+  }
+  .blog-content h5 {
+    font-size: 1rem;
+  }
+  .blog-content h6 {
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1215px) {
+  .blog-content h1 {
+    font-size: 1.75rem;
+  }
+  .blog-content h2 {
+    font-size: 1.5rem;
+  }
+  .blog-content h3 {
+    font-size: 1.25rem;
+  }
+  .blog-content h4 {
+    font-size: 1.125rem;
+  }
+  .blog-content h5 {
+    font-size: 1rem;
+  }
+  .blog-content h6 {
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 1216px) and (max-width: 1407px) {
+  .blog-content h1 {
+    font-size: 1.75rem;
+  }
+  .blog-content h2 {
+    font-size: 1.5rem;
+  }
+  .blog-content h3 {
+    font-size: 1.25rem;
+  }
+  .blog-content h4 {
+    font-size: 1.125rem;
+  }
+  .blog-content h5 {
+    font-size: 1rem;
+  }
+  .blog-content h6 {
+    font-size: 0.875rem;
+  }
+}
+
+/*=================================================================================================
+                                    Responsive code end
+=================================================================================================*/
 /* ======================
   Global CSS start
 ========================*/
@@ -11204,13 +11350,6 @@ ul.social-share-button li a i.fa {
   margin-top: 30px;
 }
 
-.blog-details-area h1 {
-  font-weight: 700;
-  font-size: 42px;
-  line-height: 130%;
-  /* or 55px */
-}
-
 .blog-details-area .meta {
   margin-bottom: 20px;
 }
@@ -11262,34 +11401,8 @@ ul.social-share-button li a i.fa {
   color: #f1f1f1;
 }
 
-.blog-content h1,
-.blog-content h2,
-.blog-content h3,
-.blog-content h4 {
-  font-weight: 600;
-  line-height: 130%;
-  margin-bottom: 10px;
-}
-
-.blog-content h1 {
-  font-size: 36px;
-}
-
-.blog-content h2 {
-  font-size: 24px;
-}
-
-.blog-content h3 {
-  font-size: 20px;
-}
-
-.blog-content h4 {
-  font-size: 18px;
-}
-
 .blog-content p {
-  font-size: 16px;
-  font-size: 18px;
+  font-size: 1.125rem;
   margin-bottom: 20px;
   line-height: 190%;
 }
@@ -11489,11 +11602,6 @@ ul.social-share-button li a i.fa {
   .blog-details-area {
     margin-top: 30px;
   }
-  .blog-details-area h1 {
-    font-size: 24px;
-    letter-spacing: -0.5px;
-    margin-bottom: 10px;
-  }
   ul.social-share-button.is-flex-direction-column {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -11514,26 +11622,6 @@ ul.social-share-button li a i.fa {
     width: 100%;
     height: auto;
   }
-  .blog-content h1,
-  .blog-content h2,
-  .blog-content h3 {
-    font-weight: 700;
-    margin-bottom: 10px;
-    line-height: 130%;
-    letter-spacing: -0.3px;
-  }
-  .blog-content h1 {
-    font-size: 24px;
-  }
-  .blog-content h2 {
-    font-size: 20px;
-  }
-  .blog-content h3 {
-    font-size: 18px;
-  }
-  .blog-content h4 {
-    font-size: 16px;
-  }
   .blog-content p {
     font-size: 16px;
     margin-bottom: 20px;
@@ -11553,9 +11641,6 @@ ul.social-share-button li a i.fa {
   .blog-details-area {
     margin-top: 40px;
   }
-  .blog-details-area h1 {
-    font-size: 32px;
-  }
   .sticky-social-menu,
   .wizerd-items {
     top: 70px;
@@ -11569,9 +11654,6 @@ ul.social-share-button li a i.fa {
 @media (min-width: 1024px) and (max-width: 1215px) {
   .blog-details-area {
     margin-top: 50px;
-  }
-  .blog-details-area h1 {
-    font-size: 32px;
   }
   .sticky-social-menu,
   .wizerd-items {
@@ -11588,11 +11670,6 @@ ul.social-share-button li a i.fa {
 }
 
 @media (min-width: 1216px) and (max-width: 1407px) {
-  .blog-details-area h1 {
-    font-size: 32px;
-    letter-spacing: -1.5px;
-    margin-bottom: 15px;
-  }
   .blog-details-area .meta {
     margin-bottom: 15px;
   }
@@ -11607,11 +11684,6 @@ ul.social-share-button li a i.fa {
 }
 
 @media (min-width: 1408px) and (max-width: 1600px) {
-  .blog-details-area h1 {
-    font-size: 32px;
-    letter-spacing: -1.5px;
-    margin-bottom: 15px;
-  }
   .blog-details-area .meta {
     margin-bottom: 15px;
   }

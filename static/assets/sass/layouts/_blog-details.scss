@@ -1,13 +1,6 @@
 .blog-details-area {
   margin-top: 30px;
 
-  h1 {
-    font-weight: 700;
-    font-size: 42px;
-    line-height: 130%;
-    /* or 55px */
-  }
-
   .meta {
     margin-bottom: 20px;
   }
@@ -59,35 +52,9 @@
 }
 
 .blog-content {
-  h1,
-  h2,
-  h3,
-  h4 {
-    font-weight: 600;
-    line-height: 130%;
-    margin-bottom: 10px;
-  }
-
-  h1 {
-    font-size: 36px;
-  }
-
-  h2 {
-    font-size: 24px;
-  }
-
-  h3 {
-    font-size: 20px;
-  }
-
-  h4 {
-    font-size: 18px;
-  }
-
   p {
-    font-size: 16px;
     // text-align: justify;
-    font-size: 18px;
+    font-size: 1.125rem;
     margin-bottom: 20px;
     line-height: 190%;
 
@@ -294,12 +261,6 @@
 @media (max-width: 768px) {
   .blog-details-area {
     margin-top: 30px;
-
-    h1 {
-      font-size: 24px;
-      letter-spacing: -0.5px;
-      margin-bottom: 10px;
-    }
   }
 
   ul.social-share-button.is-flex-direction-column {
@@ -319,31 +280,6 @@
   }
 
   .blog-content {
-    h1,
-    h2,
-    h3 {
-      font-weight: 700;
-      margin-bottom: 10px;
-      line-height: 130%;
-      letter-spacing: -0.3px;
-    }
-
-    h1 {
-      font-size: 24px;
-    }
-
-    h2 {
-      font-size: 20px;
-    }
-
-    h3 {
-      font-size: 18px;
-    }
-
-    h4 {
-      font-size: 16px;
-    }
-
     p {
       font-size: 16px;
       margin-bottom: 20px;
@@ -354,6 +290,7 @@
       width: 300px !important;
       height: 200px !important;
     }
+
     ol,
     ul {
       li {
@@ -371,10 +308,6 @@
 @media (min-width: 769px) and (max-width: 1023.98px) {
   .blog-details-area {
     margin-top: 40px;
-
-    h1 {
-      font-size: 32px;
-    }
   }
 
   .sticky-social-menu,
@@ -394,10 +327,6 @@
 @media (min-width: 1024px) and (max-width: 1215px) {
   .blog-details-area {
     margin-top: 50px;
-
-    h1 {
-      font-size: 32px;
-    }
   }
 
   .sticky-social-menu,
@@ -421,12 +350,6 @@
 // Extra large devices (large desktops, 1216px and up)
 @media (min-width: 1216px) and (max-width: 1407px) {
   .blog-details-area {
-    h1 {
-      font-size: 32px;
-      letter-spacing: -1.5px;
-      margin-bottom: 15px;
-    }
-
     .meta {
       margin-bottom: 15px;
     }
@@ -449,12 +372,6 @@
 
 @media (min-width: 1408px) and (max-width: 1600px) {
   .blog-details-area {
-    h1 {
-      font-size: 32px;
-      letter-spacing: -1.5px;
-      margin-bottom: 15px;
-    }
-
     .meta {
       margin-bottom: 15px;
     }
