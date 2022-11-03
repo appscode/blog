@@ -13,19 +13,18 @@
         <div class="columns is-vcentered is-multiline single-blog-carousel">
           
           <div class="column is-8">
-            <div class="blog-title-content">
+            <a href="{{ $p.RelPermalink }}" class="blog-title-content is-block">
               <!-- title  -->
-              <h1 class="is-ellipsis-3" data-aos="fade-up" data-aos-duration="500" title="{{ $p.Title }}"><a
-                  href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h1>
+              <h1 class="is-ellipsis-3" data-aos="fade-up" data-aos-duration="500" title="{{ $p.Title }}">{{ $p.Title }}</h1>
               <!-- title  -->
 
               <!-- summary  -->
               <p class="is-ellipsis-2 has-text-light" data-aos="fade-up" data-aos-duration="700">{{ $p.Summary }}</p>
 
-              <a class="button ac-button is-secondary" href="{{ $p.RelPermalink }}" data-aos="fade-up"
-                data-aos-duration="800">CONTINUE READING</a>
+              <button class="button ac-button is-secondary" data-aos="fade-up"
+                data-aos-duration="800">CONTINUE READING</button>
               <!-- summary  -->
-            </div>
+            </a>
           </div>
 
           <div class="column is-4">
@@ -68,7 +67,26 @@
   <div class="container">
     <div class="columns">
       <div class="column">
-        <p class="section-title-small"><span class="icon-square"></span>RECENT BLOG POSTS </p>
+       <div class="is-flex is-justify-content-space-between">
+         <p class="section-title-small">
+           <span class="icon-square">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+               stroke="currentColor" class="w-6 h-6">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+             </svg>
+           </span>
+           RECENT BLOG POSTS </p>
+           <a href="#allpost" class="button ac-button is-mini is-rounded">SEE ALL POSTS
+            <span class="icon width-20 ml-8 p-3">
+            <svg
+                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                 <path fill-rule="evenodd"
+                   d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
+                   clip-rule="evenodd" />
+               </svg>
+              </span>
+            </a>
+       </div>
       </div>
     </div>
     <div class="columns is-variable is-1-mobile is-1-tablet is-1-desktop is-1-widescreen is-2-fullhd is-multiline">
@@ -115,7 +133,7 @@
 <!-- ============================= recent blog posts end ============================ -->
 
 <!--============================== search and filter area start  ==============================-->
-<div class="search-filter-area">
+<div class="search-filter-area" id="allpost">
   <div class="container">
     <div class="filter-wrapper">
       <div class="search-area is-flex">
@@ -134,7 +152,7 @@
 <!--============================== search and filter area end  ==============================-->
 
 <!-- =======================all blog items start======================== -->
-<section class="blog-items-area">
+<section class="blog-items-area" >
   <div class="container">
     <div class="columns">
       <div class="column is-3">

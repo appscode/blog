@@ -38,6 +38,13 @@
       width: 28px;
       height: 28px;
     }
+    &.is-rounded {
+      border-radius: 50px !important;
+    }
+    &.is-mini {
+      font-size: 0.75rem;
+      height: 36px;
+    }
 
     &.is-normal {
       height: 45px;

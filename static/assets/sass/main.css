@@ -9548,6 +9548,15 @@ a.nav-link.active:after {
   height: 28px;
 }
 
+.button.ac-button.is-rounded {
+  border-radius: 50px !important;
+}
+
+.button.ac-button.is-mini {
+  font-size: 0.75rem;
+  height: 36px;
+}
+
 .button.ac-button.is-normal {
   height: 45px;
   font-size: 15px;
@@ -10193,7 +10202,7 @@ Responsive Classes
   line-height: 30px;
   border-radius: 50%;
   color: #fff;
-  background: #333;
+  background: var(--ac-primary);
   border: none;
   opacity: 0;
   cursor: pointer;
@@ -10223,6 +10232,14 @@ Responsive Classes
   min-height: auto;
 }
 
+.hero-area-blog.author-page .blog-title-content:hover h1 {
+  text-decoration: none;
+}
+
+.hero-area-blog .blog-title-content:hover h1 {
+  text-decoration: underline;
+}
+
 .hero-area-blog .blog-title-content h1 {
   line-height: 130%;
   font-style: normal;
@@ -10237,10 +10254,6 @@ Responsive Classes
 .hero-area-blog .blog-title-content h1 a {
   color: #ffffff;
   font-family: "Roboto Mono", monospace;
-}
-
-.hero-area-blog .blog-title-content h1 a:hover {
-  text-decoration: underline;
 }
 
 .hero-area-blog .blog-title-content p {
@@ -10258,6 +10271,10 @@ Responsive Classes
   font-size: 13px;
   height: 48px;
   font-family: "Roboto Mono", monospace;
+}
+
+.hero-area-blog .blog-title-content .button.ac-button:hover {
+  border: 1px solid #dbdbde;
 }
 
 .hero-area-blog .author {
@@ -10294,7 +10311,6 @@ Responsive Classes
 .section-title-small .icon-square {
   width: 20px;
   height: 20px;
-  background: var(--ac-primary);
   margin-right: 16px;
   display: block;
 }
@@ -10302,6 +10318,18 @@ Responsive Classes
 .recent-blog-posts {
   background-color: #f2f5f7;
   padding: 60px 0 70px;
+}
+
+.recent-blog-posts .button.is-mini {
+  border: 1px solid #dbdbde !important;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
+  color: #1c1c1c;
+}
+
+.recent-blog-posts .button.is-mini:hover {
+  border: var(--ac-primary);
+  color: #ffffff;
 }
 
 .author {
@@ -10338,7 +10366,7 @@ Responsive Classes
   font-weight: 400;
   font-size: 13px;
   line-height: 160%;
-  color: #ffffff;
+  color: #dddddd;
   margin-bottom: 8px;
 }
 
