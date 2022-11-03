@@ -7,6 +7,7 @@
   min-height: 62vh;
   display: flex;
   align-items: center;
+
   &.author-page {
     min-height: auto;
   }
@@ -180,8 +181,8 @@ a.inline-button {
   min-height: 185px;
   padding: 32px 16px;
   transition: 0.3s ease-in-out;
+  border: 1px solid $ac-white-light;
 
-  // border: 1px solid transparent;
   &.list-view {
     height: auto;
     padding: 0;
@@ -802,14 +803,17 @@ ul.social-share-button {
 @media (max-width: 480px) {
   .authors {
     flex-direction: row !important;
+
     &:has(.author:nth-child(2)) {
       .author {
         flex-direction: column !important;
         margin-left: 20px !important;
         margin-bottom: 0 !important;
+
         a {
           margin-bottom: 8px;
         }
+
         p.designation {
           margin-bottom: 0;
         }
@@ -900,14 +904,17 @@ ul.social-share-button {
 
     .authors {
       flex-direction: row !important;
+
       &:has(.author:nth-child(2)) {
         .author {
           flex-direction: column !important;
           margin-left: 20px !important;
           margin-bottom: 0 !important;
+
           a {
             margin-bottom: 8px;
           }
+
           p.designation {
             margin-bottom: 0;
           }
@@ -1016,6 +1023,7 @@ ul.social-share-button {
 @media (min-width: 1024px) and (max-width: 1407px) {
   .hero-area-blog {
     padding: 120px 0 60px;
+
     .blog-title-content {
       padding-left: 20px;
 
@@ -1040,16 +1048,20 @@ ul.social-share-button {
       //   }
       // }
     }
+
     .authors {
       flex-direction: row !important;
+
       &:has(.author:nth-child(2)) {
         .author {
           flex-direction: column !important;
           margin-left: 20px !important;
           margin-bottom: 0 !important;
+
           a {
             margin-bottom: 8px;
           }
+
           p.designation {
             margin-bottom: 0;
           }

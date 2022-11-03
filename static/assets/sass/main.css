@@ -10388,6 +10388,7 @@ a.inline-button i.fa {
   padding: 32px 16px;
   -webkit-transition: 0.3s ease-in-out;
   transition: 0.3s ease-in-out;
+  border: 1px solid #dbdbde;
 }
 
 .single-blog-card.list-view {
