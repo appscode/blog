@@ -7924,7 +7924,7 @@ body {
   font-family: "Roboto", sans-serif;
   font-weight: 400;
   font-size: 1rem;
-  color: #3b3030;
+  color: #607080;
   scroll-behavior: smooth;
 }
 
@@ -8036,7 +8036,7 @@ hr {
 }
 
 strong {
-  color: #000000;
+  color: #607080;
 }
 
 .is-font-medium {
@@ -8547,7 +8547,7 @@ strong {
 .ac-custom-select .ss-multi-selected {
   min-height: 45px !important;
   border: 1px solid #a6abbd;
-  color: #3b3030;
+  color: #607080;
   padding: 0 15px;
 }
 
@@ -8559,7 +8559,7 @@ strong {
 .ac-custom-select .ss-single-selected .placeholder,
 .ac-custom-select .ss-multi-selected .placeholder {
   font-size: 15px;
-  color: #3b3030;
+  color: #607080;
   font-weight: 500;
 }
 
@@ -8602,7 +8602,7 @@ strong {
 
 .ac-custom-select .ss-content .ss-list .ss-option {
   font-size: 14px;
-  color: #3b3030;
+  color: #607080;
   -webkit-transition: 0.3s ease-in-out;
   transition: 0.3s ease-in-out;
 }
@@ -9057,7 +9057,7 @@ Responsive Classes
 
 .back-button {
   display: none !important;
-  color: #3b3030;
+  color: #607080;
   margin-bottom: 10px !important;
   background-color: transparent;
 }
@@ -9845,7 +9845,7 @@ a.nav-link.active:after {
   margin: 0;
   padding: 0;
   font-size: 0.875rem;
-  color: #3b3030;
+  color: #607080;
   font-weight: 500;
   border: none;
   background: transparent;
@@ -10031,7 +10031,7 @@ Responsive Classes
 
 .all-contact-info li a,
 p.spam-message {
-  color: #3b3030;
+  color: #607080;
   display: inline-block;
   font-size: 14px;
   font-family: "Roboto", sans-serif;
@@ -10049,7 +10049,7 @@ p.spam-message {
 }
 
 .footer-link li a {
-  color: #3b3030;
+  color: #607080;
   font-size: 14px;
   display: block;
   padding: 8px 0;
@@ -10078,7 +10078,7 @@ p.spam-message {
 
 .footer-bottom p {
   font-size: 14px;
-  color: #3b3030;
+  color: #607080;
   margin-bottom: 0;
 }
 
@@ -10425,7 +10425,7 @@ a.inline-button i.fa {
 
 .single-blog-card.list-view p {
   margin-bottom: 16px;
-  color: #3b3030;
+  color: #607080;
 }
 
 .single-blog-card:hover {
@@ -10491,7 +10491,7 @@ a.inline-button i.fa {
   font-size: 13px;
   line-height: 17px;
   margin-bottom: 0;
-  color: #3b3030;
+  color: #607080;
 }
 
 .meta {
@@ -10525,7 +10525,7 @@ a.inline-button i.fa {
   font-weight: 500;
   font-size: 16px;
   line-height: 160%;
-  color: #000000;
+  color: #607080;
 }
 
 ul.social-share-button {
@@ -11372,7 +11372,7 @@ ul.social-share-button li a i.fa {
 .fig-style figcaption {
   max-width: 80%;
   margin: 0 auto;
-  color: #3b3030;
+  color: #607080;
   opacity: 0.8;
   padding: 10px 0;
   border-bottom: 1px solid #dbdbde;
