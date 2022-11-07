@@ -682,7 +682,6 @@ ul.social-share-button {
 
 .blog-items {
   .blog-title-content {
-
     &:hover {
       h2 {
         a {
@@ -909,7 +908,6 @@ ul.social-share-button {
     padding: 120px 0 60px;
 
     .blog-title-content {
-
       h1 {
         font-size: 24px;
         margin-bottom: 5px;
@@ -1016,7 +1014,6 @@ ul.social-share-button {
     padding: 120px 0 60px;
 
     .blog-title-content {
-
       h1 {
         font-size: 24px;
         margin-bottom: 8px;
@@ -1187,12 +1184,15 @@ ul.social-share-button {
 
   .single-blog-card {
     padding: 16px;
-    height: 150px;
   }
-
+  .recent-blog-posts {
+    .single-blog-card {
+      min-height: 155px;
+    }
+  }
   .search-filter-area {
     .filter-wrapper {
-      padding: 6px 12px;
+      padding: 0px 12px;
 
       .search-area {
         .fa {

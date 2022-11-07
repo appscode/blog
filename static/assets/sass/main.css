@@ -10728,10 +10728,12 @@ ul.social-share-button li a i.fa {
   }
   .single-blog-card {
     padding: 16px;
-    height: 150px;
+  }
+  .recent-blog-posts .single-blog-card {
+    min-height: 155px;
   }
   .search-filter-area .filter-wrapper {
-    padding: 6px 12px;
+    padding: 0px 12px;
   }
   .search-filter-area .filter-wrapper .search-area .fa {
     font-size: 18px;
@@ -11091,7 +11093,7 @@ ul.social-share-button li a i.fa {
     padding: 100px 0 20px;
   }
   .author-page .single-blog-card {
-    min-height: auto;
+    min-height: 170px;
     padding: 24px 16px;
   }
 }
