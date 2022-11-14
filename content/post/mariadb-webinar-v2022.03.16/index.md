@@ -3,7 +3,7 @@ title: MariaDB Alerting and Multi-Tenancy Support by KubeDB
 date: "2022-03-16"
 weight: 20
 authors:
-- Md. Alif Biswas
+- Md Alif Biswas
 - Tasdidur Rahman
 tags:
 - alerting

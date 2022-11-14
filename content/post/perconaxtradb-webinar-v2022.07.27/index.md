@@ -3,7 +3,7 @@ title: Managing Production Grade Percona XtraDB Cluster in Kubernetes using Kube
 date: "2022-07-29"
 weight: 20
 authors:
-- Md. Alif Biswas
+- Md Alif Biswas
 tags:
 - galera
 - kubedb
