@@ -3,34 +3,11 @@ let searchKeyword = "";
 let viewType = "grid-view";
 
 const searchElement = document.getElementById("search");
-const gridView = document.getElementById("grid-view");
-const listView = document.getElementById("list-view");
-const gridViewBtn = document.getElementById("grid-btn-view");
-const listViewBtn = document.getElementById("list-btn-view");
 const productElement = document.getElementById("products");
 const categoriesElement = document.getElementById("categories");
 const productBtn = document.getElementById("product-btn");
 const categoriesBtn = document.getElementById("categories-btn");
 const nodataElement = document.getElementById("nodata-content");
-
-
-gridViewBtn?.addEventListener("click", (event) => {
-  gridViewBtn.classList.add("is-active");
-  gridView.classList.remove("is-hidden");
-  listViewBtn.classList.remove("is-active");
-  listView.classList.add("is-hidden");
-  viewType = "grid-view";
-  filterList();
-})
-
-listViewBtn?.addEventListener("click", (event) => {
-  listViewBtn.classList.add("is-active");
-  listView.classList.remove("is-hidden");
-  gridViewBtn.classList.remove("is-active");
-  gridView.classList.add("is-hidden");
-  viewType = "list-view";
-  filterList();
-})
 
 productElement?.addEventListener("change",(event)=>{
   let elementName = event.target.id || "";
@@ -53,6 +30,7 @@ categoriesElement?.addEventListener("change",(event)=>{
 })
 
 searchElement?.addEventListener("input", (event) => {
+  searchElement.style.top = 0;
   let str = searchElement.value;
   searchKeyword = str.toLowerCase();
   filterList();
@@ -129,13 +107,13 @@ const filterList = () => {
 
 //Check if tags & search keyword contains in cards tags, auther and heading
 const isTagAvailable = (tags, author, heading) => {
-  if (keywords.size === 0 && searchKeyword.length < 3) return true;
+  if (keywords.size === 0 && searchKeyword.length <=0) return true;
   let flag = false;
   if (keywords.size === 0) {
     flag |= tags.includes(searchKeyword);
     flag |= author.includes(searchKeyword);
     flag |= heading.includes(searchKeyword);
-  } else if (searchKeyword.length < 3) {
+  } else if (searchKeyword.length <=0) {
     let temFlag = true;
     keywords.forEach(key => {
       temFlag &= tags.includes(key);
@@ -152,18 +130,15 @@ const isTagAvailable = (tags, author, heading) => {
   return flag;
 }
 
+
+
+
 const calculateTopVaue = () =>{
-  const pageUrl = window.location.href || "";
-  const pageWide = window.innerWidth;
-  let authorPage = false;
-  if(pageUrl.includes("authors")) authorPage = true;
-  if(authorPage){
-    if(pageWide>=768) return 400;
-    else return 500;
-  }else{
-    if(pageWide>=768) return 450;
-    else return 650;
-  }
+  const heroArea = document.querySelector('.hero-area-blog')
+  const recentBlog = document.querySelector('.recent-blog-posts')
+  const authorHeroArea = document.querySelector('.author-hero-area')
+  let height = (heroArea ? heroArea.offsetHeight : 0) + (recentBlog ? recentBlog.offsetHeight : 0) + (authorHeroArea ? authorHeroArea.offsetHeight : 0);
+  return height;
 }
 
 

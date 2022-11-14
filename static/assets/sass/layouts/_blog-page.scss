@@ -1,212 +1,170 @@
 // blog page 2022
 .hero-area-blog {
-  &:hover {
-    .owl-nav {
-      opacity: 1;
-      visibility: visible;
-    }
-  }
-  .owl-item.active {
-    h1 {
-      -webkit-animation-duration: 1s;
-      animation-duration: 1s;
-      -webkit-animation-fill-mode: both;
-      animation-fill-mode: both;
-      animation-name: fadeInDown;
-      animation-delay: 0.3s;
-    }
-    p {
-      -webkit-animation-duration: 1s;
-      animation-duration: 1s;
-      -webkit-animation-fill-mode: both;
-      animation-fill-mode: both;
-      animation-name: fadeInUp;
-      animation-delay: 0.3s;
-    }
-    .meta {
-      -webkit-animation-duration: 1s;
-      animation-duration: 1s;
-      -webkit-animation-fill-mode: both;
-      animation-fill-mode: both;
-      animation-name: fadeInUp;
-      animation-delay: 0.5s;
-    }
-    .social-share {
-      -webkit-animation-duration: 1s;
-      animation-duration: 1s;
-      -webkit-animation-fill-mode: both;
-      animation-fill-mode: both;
-      animation-name: fadeInUp;
-      animation-delay: 0.7s;
-    }
-    a.inline-button {
-      -webkit-animation-duration: 1s;
-      animation-duration: 1s;
-      -webkit-animation-fill-mode: both;
-      animation-fill-mode: both;
-      animation-name: fadeInUp;
-      animation-delay: 0.3s;
-    }
-  }
-  .single-blog-carousel {
+  padding: 170px 0 100px;
+  margin-top: -74px;
+  background-image: url(/assets/images/bg-image/hero-bg.png);
+  background-repeat: no-repeat;
+  min-height: 62vh;
+  display: flex;
+  align-items: center;
+
+  &.author-page {
+    min-height: auto;
+
     .blog-title-content {
-      padding-left: 40px;
-    }
-  }
-
-  .blog-banner {
-    background-color: #333333;
-    background-image: url(/assets/images/bg-image/pattern-1.png);
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    z-index: 1;
-    &::after {
-      position: absolute;
-      content: "";
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: #1c1c1c;
-      z-index: -1;
-      opacity: 0.7;
-    }
-
-    img {
-      object-fit: contain;
+      &:hover {
+        h1 {
+          text-decoration: none;
+        }
+      }
     }
   }
 
   .blog-title-content {
     &:hover {
       h1 {
-        a {
-          color: $ac-primary;
-        }
-      }
-
-      a.inline-button {
-        &::after {
-          width: 100%;
-        }
+        text-decoration: underline;
       }
     }
 
     h1 {
-      font-style: normal;
-      font-weight: 600;
-      font-size: 36px;
       line-height: 130%;
-      letter-spacing: -0.5px;
-      margin-bottom: 15px;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 40px;
+      margin-bottom: 20px;
+      letter-spacing: 0;
+      color: $ac-white;
+      font-family: "Roboto Mono", monospace;
 
       a {
-        color: $ac-color-heading;
+        color: $ac-white;
+        font-family: "Roboto Mono", monospace;
       }
     }
 
     p {
+      font-family: "Inter";
+      font-style: normal;
       font-weight: 400;
-      font-size: 16px;
+      font-size: 20px;
       line-height: 160%;
-      margin-bottom: 20px;
+      color: #dbdbdb;
+      margin-bottom: 40px;
+      width: 95%;
     }
 
-    .social-share {
-      margin-top: 40px;
+    .button.ac-button {
+      font-size: 13px;
+      height: 48px;
+      font-family: "Roboto Mono", monospace;
 
-      label {
-        font-style: normal;
-        font-weight: 600;
-        font-size: 16px;
-        line-height: 160%;
-        color: #3e393e;
-        margin-bottom: 15px;
-        display: block;
-      }
-    }
-  }
-
-  .owl-nav {
-    opacity: 0;
-    visibility: hidden;
-    transition: 0.3s ease-in-out;
-    display: flex;
-    justify-content: space-between;
-    position: absolute;
-    width: 100%;
-    top: 50%;
-    font-size: 16px;
-
-    button {
-      width: 40px;
-      height: 40px;
-      background-color: $ac-white !important;
-      color: #1c1c1c !important;
-      border-radius: 50%;
-      box-shadow: 0 2px 45px rgba(0, 0, 0, 0.1);
-      border: 1px solid $ac-white-light !important;
-      transition: 0.3s ease-in-out;
       &:hover {
-        border: 1px solid $ac-primary !important;
-        transform: scale(1.2);
-      }
-
-      &.owl-prev {
-        margin-left: -20px;
-      }
-
-      &.owl-next {
-        margin-right: -20px;
+        border: 1px solid $ac-white-light;
       }
     }
   }
 
-  // .owl-dots {
-  //   display: flex;
-  //   flex-direction: column;
-  //   .owl-dot {
-  //     background-color: #333 !important;
-  //     width: 8px;
-  //     height: 8px;
-  //     border-radius: 5px;
-  //     margin-bottom: 2px;
-  //     &.active {
-  //       background-color: $ac-primary !important;
-  //       width: 30px;
-  //     }
-  //   }
-  // }
+  .author {
+    margin-left: 10px;
+
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+
+  &:has(.author:nth-child(2)) {
+    .information {
+      a.author-name {
+        font-size: 14px;
+      }
+
+      .designation {
+        font-size: 11px;
+      }
+    }
+  }
 }
 
-button.slide {
-  background: #fff;
-  border: none;
-  box-shadow: 6px 6px 19px 2px rgba(0, 0, 0, 0.1);
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
+// section title small start
+.section-title-small {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: 1px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
 
-.hero-area-thumbnail {
-  position: relative;
-  z-index: 1;
-
-  .slider-button {
-    position: absolute;
-    right: -40px;
-    top: 50%;
-    margin-top: -40px;
+  .icon-square {
+    width: 20px;
+    height: 20px;
+    margin-right: 16px;
+    display: block;
   }
 }
 
-button.slide img {
-  width: 30px;
+// section title small end
+.recent-blog-posts {
+  background-color: #f2f5f7;
+  padding: 60px 0 70px;
+
+  .button.is-mini {
+    border: 1px solid $ac-white-light !important;
+    transition: 0.3s ease-in-out;
+    color: $ac-color-heading;
+
+    &:hover {
+      border: $ac-primary;
+      color: $ac-white;
+    }
+  }
+}
+
+.author {
+  display: flex;
+
+  .author-image {
+    width: 80px;
+    height: 80px;
+    margin-right: 16px;
+    border: 2px solid #fafbfc;
+    overflow: hidden;
+  }
+
+  .information {
+    color: #ffffff;
+
+    a.author-name {
+      font-family: "Roboto Mono";
+      font-style: normal;
+      font-weight: 500;
+      font-size: 18px;
+      line-height: 24px;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .designation {
+      font-family: "Roboto";
+      font-style: normal;
+      font-weight: 400;
+      font-size: 13px;
+      line-height: 160%;
+      color: #dddddd;
+      margin-bottom: 8px;
+    }
+
+    a.company {
+      font-family: "Roboto Mono";
+      font-style: normal;
+      font-weight: 400;
+      font-size: 13px;
+      line-height: 160%;
+      color: #ffffff;
+    }
+  }
 }
 
 a.inline-button {
@@ -240,6 +198,123 @@ a.inline-button {
   }
 }
 
+// single blog card start
+.single-blog-card {
+  background-color: #fff;
+  display: block;
+  min-height: 185px;
+  padding: 32px 16px;
+  transition: 0.3s ease-in-out;
+  border: 1px solid $ac-white-light;
+
+  &.list-view {
+    height: auto;
+    padding: 0;
+    box-shadow: none;
+    border: 1px solid transparent;
+    border-bottom: 1px dotted $ac-white-light;
+    padding: 16px 0;
+
+    &:hover {
+      // border: 1px solid transparent;
+      box-shadow: none;
+
+      h2 {
+        text-decoration: underline;
+      }
+    }
+
+    .arrow-icon {
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s ease-in-out;
+    }
+
+    h2 {
+      margin-bottom: 8px;
+      font-size: 18px;
+      transition: 0.3s ease-in-out;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: $ac-color-text;
+    }
+  }
+
+  &:hover {
+    box-shadow: 0px 2px 30px rgba(44, 60, 74, 0.08);
+    // border: 1px solid $ac-primary;
+
+    .arrow-icon {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    h2 {
+      color: $ac-primary;
+    }
+  }
+
+  h2 {
+    font-family: "Roboto";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 150%;
+    color: #1c1c1c;
+    margin-bottom: 16px;
+    letter-spacing: 0;
+    transition: 0.3s ease-in-out;
+  }
+
+  .card-bottom {
+    color: #666666;
+
+    .arrow-icon {
+      .w-5 {
+        path {
+        }
+      }
+    }
+  }
+}
+
+.date-meta {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 17px;
+}
+
+.user-info {
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+
+  img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 12px;
+  }
+
+  p.author {
+    font-family: "Roboto Mono";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 17px;
+    margin-bottom: 0;
+
+    color: $ac-color-text;
+  }
+}
+
+// single blog card end
+
+// ================================================================================================
 .meta {
   display: flex;
   align-items: center;
@@ -268,7 +343,7 @@ a.inline-button {
       font-size: 16px;
       line-height: 160%;
 
-      color: #000000;
+      color: $ac-color-text;
     }
   }
 }
@@ -277,6 +352,7 @@ ul.social-share-button {
   padding: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
 
   &.is-flex-direction-column {
     align-items: flex-start;
@@ -296,6 +372,10 @@ ul.social-share-button {
     justify-content: center;
     border-radius: 50%;
     margin-right: 1rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
 
     a {
       width: 46px;
@@ -341,23 +421,25 @@ ul.social-share-button {
 }
 
 .search-filter-area {
-  margin: 30px 0;
-  margin: 30px 0;
-  position: sticky;
-  top: 60px;
   z-index: 99;
   background: #fff;
+  box-shadow: 0 1px 3px rgba(15, 20, 40, 0.08);
+  border-bottom: 1px solid $ac-white-light;
+  border-top: 1px solid $ac-white-light;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
 
   .filter-wrapper {
-    border: 1px solid $ac-white-light;
-    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 20px;
   }
 
   .search-area {
+    width: 100%;
+
     .fa {
       font-size: 22px;
       margin-right: 1rem;
@@ -365,11 +447,12 @@ ul.social-share-button {
 
     input {
       border: none;
-      width: 300px;
+      width: 100%;
       font-size: 16px;
       font-weight: 500;
       padding-right: 1rem;
       color: $ac-color-heading;
+      padding: 22px 0;
 
       &:focus {
         outline: none;
@@ -379,7 +462,7 @@ ul.social-share-button {
 
       &::placeholder {
         font-weight: 400;
-        font-size: 16px;
+        font-size: 14px;
         line-height: 19px;
 
         /* place-holder-color */
@@ -443,6 +526,7 @@ ul.social-share-button {
         &.is-active {
           background-color: $ac-primary;
           color: $ac-white;
+
           svg {
             fill: $ac-white;
           }
@@ -454,11 +538,14 @@ ul.social-share-button {
 
 .blog-items-area {
   .left-sidebar {
-    margin-right: 30px;
+    margin-right: 70px;
+    padding-top: 16px;
     position: sticky;
-    top: 170px;
+    top: 64px;
     overflow-y: auto;
-    max-height: calc(100vh - 120px);
+    padding-right: 30px;
+    border-right: 1px solid $ac-white-light;
+    height: calc(100vh - 0px);
 
     &::-webkit-scrollbar {
       display: none;
@@ -496,12 +583,16 @@ ul.social-share-button {
 
         label {
           font-weight: 400;
-          font-size: 16px;
+          font-size: 14px;
           line-height: 100%;
           color: #3e393e;
           padding-left: 10px;
           user-select: none;
           cursor: pointer;
+        }
+
+        input {
+          accent-color: $ac-primary;
         }
       }
     }
@@ -572,7 +663,7 @@ ul.social-share-button {
   h2 {
     font-weight: 500;
     font-size: 18px;
-    line-height: 130%;
+    line-height: 150%;
     margin-bottom: 15px;
     transition: 0.3s ease-in-out;
 
@@ -591,8 +682,6 @@ ul.social-share-button {
 
 .blog-items {
   .blog-title-content {
-    padding-left: 20px;
-
     &:hover {
       h2 {
         a {
@@ -614,7 +703,7 @@ ul.social-share-button {
     h2 {
       font-weight: 500;
       font-size: 24px;
-      line-height: 130%;
+      line-height: 150%;
       letter-spacing: -0.5px;
       margin-bottom: 15px;
 
@@ -636,33 +725,6 @@ ul.social-share-button {
   position: sticky;
   top: 120px;
   padding-left: 10px;
-}
-
-// category start
-.widget-title {
-  position: relative;
-  z-index: 1;
-  margin-left: -8px;
-
-  &:before {
-    position: absolute;
-    content: "";
-    left: 0;
-    top: 0;
-    width: 5px;
-    height: 100%;
-    background: #333;
-    padding-left: 5px;
-    border-radius: 2px;
-  }
-
-  h3 {
-    font-size: 22px;
-    font-weight: 700;
-    padding-left: 15px;
-    margin-bottom: 10px;
-    line-height: 1;
-  }
 }
 
 .blog-category {
@@ -760,10 +822,33 @@ ul.social-share-button {
                                     Responsive code start
 =================================================================================================*/
 
+@media (max-width: 480px) {
+  .authors {
+    flex-direction: row !important;
+
+    &:has(.author:nth-child(2)) {
+      .author {
+        flex-direction: column !important;
+        margin-left: 20px !important;
+        margin-bottom: 0 !important;
+
+        a {
+          margin-bottom: 8px;
+        }
+
+        p.designation {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
 // Extra small devices (portrait phones, less than 768px)
 @media (max-width: 768px) {
   .hero-area-blog {
-    margin-top: 70px !important;
+    padding: 100px 0 50px;
+    margin-top: -64px !important;
 
     .single-blog-carousel {
       .blog-title-content {
@@ -780,61 +865,34 @@ ul.social-share-button {
     }
   }
 
+  .section-title-small {
+    letter-spacing: 0;
+
+    .icon-square {
+      display: none;
+    }
+  }
+
+  .recent-blog-posts {
+    padding: 30px 0;
+  }
+
   .search-filter-area {
-    top: 50px;
+    top: 0;
+  }
 
-    .filter-area {
-      .viewing-mode {
-        margin-right: 0.1rem;
-      }
-    }
+  .blog-items-area {
+    .left-sidebar {
+      height: auto;
+      margin-right: 0;
+      border-right: none;
+      padding-right: 15px;
+      border-bottom: 1px solid $ac-white-light;
 
-    .filter-wrapper {
-      padding: 6px 10px;
-
-      .search-area {
-        display: flex;
-
-        label {
-          i.fa {
-            font-size: 16px;
-          }
+      .collapsable-menu {
+        &:last-child {
+          margin-bottom: 0;
         }
-
-        input {
-          width: 180px;
-        }
-      }
-    }
-
-    .viewing-mode {
-      button {
-        margin-right: 0.5rem;
-      }
-
-      label {
-        display: none;
-      }
-    }
-  }
-
-  .single-blog {
-    .meta {
-      margin-bottom: 10px;
-      margin-top: 10px;
-    }
-  }
-
-  .columns.each-blog {
-    flex-direction: column;
-  }
-
-  .blog-items {
-    .blog-title-content {
-      h2 {
-        font-size: 18px;
-        letter-spacing: -0.5px;
-        font-weight: 500;
       }
     }
   }
@@ -847,9 +905,9 @@ ul.social-share-button {
 // Medium devices (tablets, 769px and up)
 @media (min-width: 769px) and (max-width: 1023.98px) {
   .hero-area-blog {
-    .blog-title-content {
-      padding-left: 20px;
+    padding: 120px 0 60px;
 
+    .blog-title-content {
       h1 {
         font-size: 24px;
         margin-bottom: 5px;
@@ -871,34 +929,36 @@ ul.social-share-button {
         }
       }
     }
+
+    .authors {
+      flex-direction: row !important;
+
+      &:has(.author:nth-child(2)) {
+        .author {
+          flex-direction: column !important;
+          margin-left: 20px !important;
+          margin-bottom: 0 !important;
+
+          a {
+            margin-bottom: 8px;
+          }
+
+          p.designation {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
   }
 
-  .search-filter-area {
-    top: 50px;
-
-    .filter-wrapper {
-      padding: 6px 12px;
-
-      .search-area {
-        .fa {
-          font-size: 18px;
-          margin-right: 0.75rem;
-        }
-      }
-    }
-
-    .filter-area {
-      .viewing-mode {
-        button {
-          margin-right: 0.5rem;
-        }
-      }
-    }
+  .single-blog-card {
+    padding: 12px 16px;
   }
 
   .blog-items-area {
     .left-sidebar {
-      top: 120px;
+      top: 60px;
+      margin-right: 0;
     }
   }
 
@@ -943,56 +1003,20 @@ ul.social-share-button {
       margin-bottom: 10px;
     }
   }
+}
 
-  .blog-items {
-    .blog-title-content {
-      h2 {
-        font-size: 18px;
-        letter-spacing: -0.2px;
-        font-weight: 500;
-        margin-bottom: 10px;
-      }
-
-      .meta {
-        margin-bottom: 10px;
-
-        i.fa {
-          font-size: 13px;
-          margin-right: 0.2rem;
-        }
-
-        .author {
-          margin-right: 15px;
-
-          a {
-            font-size: 13px;
-          }
-        }
-
-        .date {
-          strong {
-            font-size: 13px;
-          }
-        }
-
-        a.inline-button {
-          font-size: 12px;
-          letter-spacing: 1px;
-        }
-      }
-    }
-  }
+@media (min-width: 850px) and (max-width: 1023px) {
 }
 
 // Large devices (desktops, 1024px and up)
 @media (min-width: 1024px) and (max-width: 1407px) {
   .hero-area-blog {
-    .blog-title-content {
-      padding-left: 20px;
+    padding: 120px 0 60px;
 
+    .blog-title-content {
       h1 {
         font-size: 24px;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
       }
 
       .meta {
@@ -1000,45 +1024,46 @@ ul.social-share-button {
       }
 
       p {
-        margin-bottom: 10px;
+        margin-bottom: 24px;
       }
 
-      .social-share {
-        margin-top: 20px;
+      // .social-share {
+      //   margin-top: 20px;
 
-        label {
-          margin-bottom: 10px;
+      //   label {
+      //     margin-bottom: 10px;
+      //   }
+      // }
+    }
+
+    .authors {
+      flex-direction: row !important;
+
+      &:has(.author:nth-child(2)) {
+        .author {
+          flex-direction: column !important;
+          margin-left: 20px !important;
+          margin-bottom: 0 !important;
+
+          a {
+            margin-bottom: 8px;
+          }
+
+          p.designation {
+            margin-bottom: 0;
+          }
         }
       }
     }
   }
 
   .search-filter-area {
-    top: 60px;
-
-    .filter-wrapper {
-      padding: 6px 12px;
-
-      .search-area {
-        .fa {
-          font-size: 18px;
-          margin-right: 0.75rem;
-        }
-      }
-    }
-
-    .filter-area {
-      .viewing-mode {
-        button {
-          margin-right: 0.5rem;
-        }
-      }
-    }
+    top: 0;
   }
 
   .blog-items-area {
     .left-sidebar {
-      top: 120px;
+      top: 62px;
     }
   }
 
@@ -1130,6 +1155,8 @@ ul.social-share-button {
 
 @media (min-width: 1408px) and (max-width: 1600px) {
   .hero-area-blog {
+    padding: 150px 0 80px;
+
     .blog-title-content {
       h1 {
         font-size: 32px;
@@ -1137,7 +1164,8 @@ ul.social-share-button {
       }
 
       p {
-        margin-bottom: 10px;
+        margin-bottom: 24px;
+        font-size: 18px;
       }
 
       .social-share {
@@ -1154,45 +1182,17 @@ ul.social-share-button {
     }
   }
 
-  .single-blog {
-    .image {
-      img {
-        max-height: 145px;
-      }
-    }
-
-    .meta {
-      i.fa {
-        font-size: 13px;
-        margin-right: 0.2rem;
-      }
-
-      .author {
-        a {
-          font-size: 13px;
-        }
-      }
-
-      .date {
-        strong {
-          font-size: 13px;
-        }
-      }
-
-      a.inline-button {
-        font-size: 12px;
-      }
-    }
-
-    h2 {
-      font-size: 16px;
-      margin-bottom: 10px;
+  .single-blog-card {
+    padding: 16px;
+  }
+  .recent-blog-posts {
+    .single-blog-card {
+      min-height: 155px;
     }
   }
-
   .search-filter-area {
     .filter-wrapper {
-      padding: 6px 12px;
+      padding: 0px 12px;
 
       .search-area {
         .fa {
@@ -1235,6 +1235,12 @@ ul.social-share-button {
         font-size: 18px;
       }
     }
+  }
+}
+
+@media (min-width: 2000px) {
+  .hero-area-blog {
+    background-image: url(/assets/images/bg-image/hero-bg-2x.png);
   }
 }
 

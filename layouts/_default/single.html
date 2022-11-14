@@ -1,30 +1,79 @@
 {{ define "main" }}
 
+<!--============================== hero area 2022 start  ==============================-->
+<section class="hero-area-blog author-page">
+  <div class="container">
+    <div class="slider-wrapper">
+      <div class="single-slider">
+        <div class="columns is-vcentered is-multiline single-blog-carousel">
 
+          <div class="column is-7">
+            <div class="blog-title-content">
+             <div class="date is-flex has-text-white">
+               <div class="width-20 mr-8"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                   stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                   <path stroke-linecap="round" stroke-linejoin="round"
+                     d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                 </svg>
+               </div>
+               <strong class="has-text-white">{{ .Date.Format "2-Jan-2006" }}</strong>
+             </div>
+              <!-- title  -->
+              <h1 data-aos="fade-up" data-aos-duration="500">{{ .Title }}</h1>
+              <!-- summary  -->
+            </div>
+          </div>
+
+          <div class="column is-5">
+            <!-- is-justify-content-flex-end  -->
+              <div class="is-flex authors">
+                <!-- author start  -->
+                {{ range $author := .Params.authors }}
+                <div class="author">
+                  <a href="/authors/{{ $author | urlize }}" class="author-image"><img
+                      src="/assets/images/authors/profile-photos-84x84/{{ $author | urlize}}.jpg" alt="author-image"></a>
+                  <div class="information">
+                    <a href="/authors/{{ $author | urlize }}" class="author-name">{{ $author }}</a>
+                    <p class="designation">Senior Software Engineer</p>
+                    <a href="https://appscode.com" target="_blank" class="company">AppsCode Inc</a>
+                  </div>
+                </div>
+                <!-- author end -->
+                {{end}}
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+<!--============================== hero area 2022 end =================================-->
 <!-- blog details area start  -->
 <section class="blog-details-area">
   <div class="container">
     <div class="columns">
-      <div class="column is-1">
+      <div class="column is-2">
         <!-- sticky social menu start  -->
         <div class="sticky-social-menu">
           <div class="social-share">
             <ul class="social-share-button is-flex-direction-column">
               <li>
-                <a title="Twitter" href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title | htmlEscape }}"
+                <a title="Share with Twitter" href="http://twitter.com/share?url={{ .Permalink }}&text={{ .Title | htmlEscape }}"
                   class="twitter" aria-label="share on Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
               </li>
               <li>
-                <a title="Linkedin"
+                <a title="Share with Linkedin"
                   href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title | htmlEscape }}&summary={{ .Summary | htmlEscape }}&source=LinkedIn"
                   class="linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
               </li>
               <li>
-                <a title="Facebook" href="http://www.facebook.com/sharer.php?u={{ .Permalink }}" class="facebook"
+                <a title="Share with Facebook" href="http://www.facebook.com/sharer.php?u={{ .Permalink }}"
+                  class="facebook"
                   aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
               </li>
               <li>
-                <a href="mailto:?subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i
+                <a href="mailto:?&subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i
                     class="fa fa-envelope-o" aria-hidden="true"></i></a>
               </li>
             </ul>
@@ -32,39 +81,18 @@
         </div>
         <!--sticky  social menu end -->
       </div>
-      <div class="column is-7">
-
-        <h1 data-aos="fade-up" data-aos-duration="500">{{ .Title }}</h1>
-
-        <!-- meta description  -->
-        <div class="meta" data-aos="fade-up" data-aos-duration="800">
-          {{ range $author := first 1 .Params.authors }}
-          <div class="author"><i class="fa fa-user"></i> <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
-          </div>
-          {{ end }}
-          <div class="date"><i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-            <strong>{{ .Date.Format "2-Jan-2006" }}</strong>
-          </div>
-        </div>
-        <!-- meta description  -->
-
-        <!-- blog large image start -->
-        <figure class="fig-style mb-20">
-          {{ $original := .Resources.GetMatch "hero.jpg" }}
-          {{ $cropped := $original.Fill "1300x650" }}
-          <img data-aos="fade-up" data-aos-duration="600" src="{{ $cropped.RelPermalink }}" alt="" loading="lazy"
-            decoding="async">
-          <!-- <figcaption>capture operational knowledge in a software form</figcaption> -->
-          </a>
-        </figure>
-        <!-- blog large image end -->
-
-
+      <div class="column is-8">
         <!-- blog-content start  -->
         <div class="blog-content">
 
           {{ .Content }}
-
+          <hr>
+          <h4>TAGS </h4>
+          <div class="tags mb-30">
+            {{ range $tag := .Params.tags }}
+            <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
+            {{ end }}
+          </div>
         </div>
         <!-- blog-content end -->
 
@@ -75,46 +103,6 @@
         </div>
         {{ end }}
         <!-- blog comments area end -->
-      </div>
-      <div class="column is-4">
-        <div class="wizerd-items">
-          <div class="single-wizard ml-30">
-            <h4>Recent Blogs</h4>
-            {{ range first 5 (where site.RegularPages.ByDate.Reverse "Type" "in" "posts" )}}
-            <!-- recent-blog  -->
-            <div class="single-recent-blog">
-              <!-- date and month  -->
-              <a href="{{.RelPermalink}}" class="date-month">
-                <span class="date">{{.PublishDate.Day}}</span>
-                <span class="month">{{.PublishDate.Format "Jan" | upper}}</span>
-              </a>
-              <!-- date and month  -->
-
-              <!-- content  -->
-              <div class="recent-blog-content">
-                <h2 class="is-ellipsis-2" title="{{.Title}}"><a href="{{.RelPermalink}}">{{.Title}}</a></h2>
-                {{ range $author := first 1 .Params.authors }}
-                <div class="meta"><span class="pr-5">By</span> <a href="/authors/{{ $author | urlize }}"> {{ $author }} </a></div>
-                {{ end }}
-              </div>
-              <!-- content  -->
-            </div>
-            <!-- recent-blog  -->
-            {{ end }}
-
-
-          </div>
-
-
-          <div class="single-wizard ml-30">
-            <h4>Popular tags</h4>
-            <div class="tags">
-              {{ range $tag := .Params.tags }}
-              <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
-              {{ end }}
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
