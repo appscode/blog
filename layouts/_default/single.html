@@ -27,25 +27,21 @@
           <div class="column is-5">
             <!-- is-justify-content-flex-end  -->
             <div class="is-flex authors">
-              <!-- author start  -->
-                {{ range $authorName := .Params.authors }}
-                    {{$author:=dict}}
-                    {{ range site.Data.authors }}
-                      {{if eq .name $authorName }}
-                        {{ $author = . }}
-                      {{ end }}
-                    {{end}}
-                    <div class="author">
-                    <a href="/authors/{{ $authorName | urlize }}" class="author-image"><img
-                        src="{{$author.profile}}"
-                        alt="author-image" height="76" width="76"></a>
-                    <div class="information">
-                      <a href="/authors/{{ $authorName | urlize }}" class="author-name">{{ $author.name }}</a>
-                      <p class="designation has-text-light">{{$author.designation}}</p>
-                      <a href="https://appscode.com" target="_blank" class="company has-text-light">AppsCode Inc</a>
-                    </div>
-                  </div>
-                {{end}}
+             {{ range $authorName := .Params.authors }}
+                {{ range site.Data.authors }}
+                  {{ if eq .name $authorName}}
+                      <div class="author">
+                        <a href="/authors/{{ .name | urlize }}" class="author-image"><img
+                            src="{{.profile}}"
+                            alt="author-image" height="76" width="76"></a>
+                        <div class="information">
+                          <a href="/authors/{{ .name | urlize }}" class="author-name">{{ .name }}</a>
+                          <p class="designation has-text-light">{{.designation}}</p>
+                          <a href="https://appscode.com" target="_blank" class="company has-text-light">AppsCode Inc</a>
+                      </div>
+                  {{ end }}
+                {{ end}}
+              {{ end }}
              <!-- author end -->
               </div>
           </div>
