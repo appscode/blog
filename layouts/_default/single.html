@@ -1,7 +1,7 @@
 {{ define "main" }}
 
 <!--============================== hero area 2022 start  ==============================-->
-<section class="hero-area-blog author-page">
+<section class="hero-area-blog author-page blog-details-page">
   <div class="container">
     <div class="slider-wrapper">
       <div class="single-slider">
@@ -9,14 +9,14 @@
 
           <div class="column is-7">
             <div class="blog-title-content">
-             <div class="date is-flex has-text-white">
+             <div class="date is-flex has-text-light">
                <div class="width-20 mr-8"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                    <path stroke-linecap="round" stroke-linejoin="round"
                      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                  </svg>
                </div>
-               <strong class="has-text-white">{{ .Date.Format "2-Jan-2006" }}</strong>
+               <strong class="has-text-light">{{ .Date.Format "2-Jan-2006" }}</strong>
              </div>
               <!-- title  -->
               <h1 data-aos="fade-up" data-aos-duration="500">{{ .Title }}</h1>
@@ -26,29 +26,33 @@
 
           <div class="column is-5">
             <!-- is-justify-content-flex-end  -->
-              <div class="is-flex authors">
-                <!-- author start  -->
-                {{ range $author := .Params.authors }}
-                <div class="author">
-                  <a href="/authors/{{ $author | urlize }}" class="author-image"><img
-                      src="/assets/images/authors/profile-photos-84x84/{{ $author | urlize}}.jpg" alt="author-image"></a>
-                  <div class="information">
-                    <a href="/authors/{{ $author | urlize }}" class="author-name">{{ $author }}</a>
-                    <p class="designation">Senior Software Engineer</p>
-                    <a href="https://appscode.com" target="_blank" class="company">AppsCode Inc</a>
-                  </div>
-                </div>
-                <!-- author end -->
-                {{end}}
+            <div class="is-flex authors">
+             {{ range $authorName := .Params.authors }}
+                {{ range site.Data.authors }}
+                  {{ if eq .name $authorName}}
+                      <div class="author">
+                        <a href="/authors/{{ .name | urlize }}" class="author-image"><img
+                            src="{{.profile}}"
+                            alt="author-image" height="76" width="76"></a>
+                        <div class="information">
+                          <a href="/authors/{{ .name | urlize }}" class="author-name">{{ .name }}</a>
+                          <p class="designation has-text-light">{{.designation}}</p>
+                          <a href="https://appscode.com" target="_blank" class="company has-text-light">AppsCode Inc</a>
+                      </div>
+                  {{ end }}
+                {{ end}}
+              {{ end }}
+             <!-- author end -->
               </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
 </section>
 <!--============================== hero area 2022 end =================================-->
+
+
 <!-- blog details area start  -->
 <section class="blog-details-area">
   <div class="container">
@@ -73,7 +77,8 @@
                   aria-label="share on Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
               </li>
               <li>
-                <a href="mailto:?&subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i
+                <a title="Share with Email"
+                  href="mailto:?&subject={{ .Title | htmlEscape }}&body={{ .Permalink | htmlEscape }}"><i
                     class="fa fa-envelope-o" aria-hidden="true"></i></a>
               </li>
             </ul>
@@ -82,9 +87,18 @@
         <!--sticky  social menu end -->
       </div>
       <div class="column is-8">
+         
         <!-- blog-content start  -->
         <div class="blog-content">
-
+          <!-- blog large image start -->
+          <figure class="fig-style mb-20">
+            {{ $original := .Resources.GetMatch "hero.jpg" }}
+            {{ $cropped := $original.Fill "1300x650" }}
+            <img src="{{ $cropped.RelPermalink }}" alt="{{ .Title }}">
+            <!-- <figcaption>capture operational knowledge in a software form</figcaption> -->
+            </a>
+          </figure>
+          <!-- blog large image end -->
           {{ .Content }}
           <hr>
           <h4>TAGS </h4>
