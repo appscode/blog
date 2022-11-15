@@ -30,25 +30,24 @@
           <div class="column is-4">
            <div class="is-flex authors">
              <!-- author start  -->
-             <div class="author">
-               {{ range $authorName := first 1 $p.Params.authors }}
+               {{ range $authorName := $p.Params.authors }}
                   {{$author:=dict}}
                   {{ range site.Data.authors }}
                     {{if eq .name $authorName }}
                       {{ $author = . }}
                     {{ end }}
                   {{end}}
+                <div class="author">
                   <a href="/authors/{{ $authorName | urlize }}" class="author-image"><img
                       src="{{$author.profile}}"
                       alt="author-image" height="76" width="76"></a>
                   <div class="information">
-
-                  <a href="/authors/{{ $authorName | urlize }}" class="author-name">{{ $author.name }}</a>
-                  <p class="designation has-text-light">{{$author.designation}}</p>
-                  <a href="https://appscode.com" target="_blank" class="company has-text-light">AppsCode Inc</a>
-               </div>
+                    <a href="/authors/{{ $authorName | urlize }}" class="author-name">{{ $author.name }}</a>
+                    <p class="designation has-text-light">{{$author.designation}}</p>
+                    <a href="https://appscode.com" target="_blank" class="company has-text-light">AppsCode Inc</a>
+                  </div>
+                </div>
                {{end}}
-             </div>
              <!-- author end -->
            </div>
           </div>

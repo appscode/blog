@@ -55,6 +55,12 @@
     .button {
       margin-left: 2.5rem;
 
+      &.is-secondary {
+        &:hover {
+          border: 1px solid $ac-white-light;
+        }
+      }
+
       &.is-primary {
         border: 1px solid $ac-white-light;
       }
@@ -94,11 +100,11 @@
         z-index: 1;
 
         &.is-active {
-          color: $ac-primary;
+          color: $ac-white-light;
         }
 
         &:hover {
-          color: $ac-primary;
+          color: $ac-white-light;
         }
 
         .fa {
