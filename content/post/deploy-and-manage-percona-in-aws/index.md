@@ -10,11 +10,11 @@ tags:
 - cloud-native
 - database
 - eks
+- horizontal-scaling
 - kubedb
 - kubernetes
 - percona-xtradb
 - s3
-- horizontal-scaling
 - vertical-scaling
 ---
 
