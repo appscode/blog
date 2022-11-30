@@ -429,7 +429,7 @@ spec:
 ```
 Here,
 
-- `spec.proxyref.name` specifies that we are performing horizontal scaling operation on `percona-cluster` database.
+- `spec.proxyRef.name` specifies that we are performing horizontal scaling operation on `proxy-server`.
 - `spec.type` specifies that we are performing `HorizontalScaling` on our database.
 - `spec.horizontalScaling.member` specifies the desired replicas after scaling.
 
@@ -512,7 +512,7 @@ spec:
 
 Here,
 
-- `spec.databaseRef.name` specifies that we are performing horizontal scaling operation on `percona-cluster` database.
+- `spec.proxyRef.name` specifies that we are performing horizontal scaling operation on `proxy-server`.
 - `spec.type` specifies that we are performing `HorizontalScaling` on our database.
 - `spec.horizontalScaling.member` specifies the desired replicas after scaling.
 
