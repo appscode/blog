@@ -30,7 +30,7 @@ Panopticon is a generic state metrics exporter for Kubernetes resources. It can 
 
 ## Install Panopticon in Kubernetes
 
-Panopticon is an enterprise product. It needs a license to run it. To grab a trial license, please visit [here](https://license-issuer.appscode.com/).
+Panopticon is an enterprise product. It needs a license to run it. To grab a trial license, please visit [here](https://license-issuer.appscode.com/?p=panopticon-enterprise).
 
 If you already have an enterprise license for KubeDB or Stash, you do not need to issue a new license for Panopticon. Your existing KubeDB or Stash license will work with Panopticon. 
 
