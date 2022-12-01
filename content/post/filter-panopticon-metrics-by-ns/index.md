@@ -121,13 +121,13 @@ You can create a new ServiceMonitor by copying the above example and add `metric
 
 ```yaml
 metricRelabelings:
-- action: drop
-    regex: demo
+- action: keep
+    regex: (demo|kubeops)
     sourceLabels:
     - namespace
 ```
 
-The above `metricRelabelings` configuration will drop any Panopticon metrics from the demo namespace. You can modify or add such `metricsRelabelings` according to your need. Please visit [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#metric_relabel_configs) to know more about metrics relabel configs.
+The above `metricRelabelings` configuration will keep Panopticon metrics from the demo and kubeops namespace and drop metrics from other namespaces. You can modify or add such `metricsRelabelings` according to your need. Please visit [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#metric_relabel_configs) to know more about metrics relabel configs.
 
 The Service Monitor object yaml after adding the above `metricRelabelings` configuration looks like the below:
 
@@ -145,8 +145,8 @@ spec:
     interval: 10s
     port: api
     metricRelabelings:  # added metrics relabeling configuration
-    - action: drop     
-      regex: demo
+    - action: keep
+      regex: (demo|kubeops)
       sourceLabels:
       - namespace
     relabelings:
@@ -178,6 +178,7 @@ Pros:
 
 Cons:
 - Metrics for target resources from all the namespaces are available to Panopticon. It might be possible for Prometheus to scrape all the metrics for misconfiguration.
+- If users want to collect metrics from a newly created namespace or don't want to collect metrics from a namespace anymore, users need to update the existing Service Monitor relabeling config every time.
 
 ## Support
 
