@@ -49,7 +49,7 @@ $ helm install panopticon appscode/panopticon -n kubeops \
     --set-file license=/path/to/license-file.txt
 ```
 
-## Panopticon 
+## Filter metrics using Panopticon 
 
 Panopticon provides a custom resource definition called `MetricsConfiguration`. It holds the target resource's group, version, kind, and a list of metrics to collect from the target resources. Be default, Panopticon collects metrics from resources from all namespaces. It was not possible before to restrict Panopticon to expose metrics for a subset of Kubernetes namespaces. 
 
