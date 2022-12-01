@@ -49,11 +49,11 @@ $ helm install panopticon appscode/panopticon -n kubeops \
     --set-file license=/path/to/license-file.txt
 ```
 
-## Filter metrics using Panopticon
+## Panopticon 
 
-Panopticon provides a custom resource definition called `MetricsConfiguration`. It holds the target resource's group, version, kind, and a list of metrics to collect from the target resources. Previously, Panopticon collected metrics from resources from all namespaces. It was not possible to filter Panopticon metrics by namespaces before. 
+Panopticon provides a custom resource definition called `MetricsConfiguration`. It holds the target resource's group, version, kind, and a list of metrics to collect from the target resources. Be default, Panopticon collects metrics from resources from all namespaces. It was not possible before to restrict Panopticon to expose metrics for a subset of Kubernetes namespaces. 
 
-Recently we have added namespace selector support in Panopticon. Now you can filter Panopticon metrics by namespaces. To do so, you have to set `namespaceSelector` value while installing Panopticon. `namespaceSelector` accepts a string that is parsable using [labels.Parse()](https://pkg.go.dev/k8s.io/apimachinery/pkg/labels#Parse) method.
+Recently we have added namespace selector support in Panopticon. Now you can restrict Panopticon to expose metrics for a subset of Kubernetes namespaces. To do so, you have to set `namespaceSelector` value while installing Panopticon. `namespaceSelector` accepts any valid [Kubernetes label selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors) string.
 
 ```bash
 $ helm install panopticon appscode/panopticon -n kubeops \
@@ -69,11 +69,11 @@ $ helm install panopticon appscode/panopticon -n kubeops \
 Pros: 
 - Panopticon will only generate metrics for the resources in the selected namespaces. Other resource metrics are entirely skipped from Panopticon.
 - Prometheus can't scrape other namespaces metrics as they are not generated.
-- Metrics collection only from the desired namespaces becomes possible.
+- This can be used to expose only **Rancher project specific metrics** to the project Prometheus server.
 
 Cons:
 - As Panopticon only collects metrics from resources in the selected namespaces, resource metrics from other namespace is skipped.
-- Users can not collect those metrics without changing the configuration. To collect metrics from other namespaces, users have to add a label to the namespace object according to namespaceSelector or upgrade helm installation with updated namespaceSelector.
+- Users can not collect those metrics without changing the configuration. To collect metrics from other namespaces, users have to add a label to the namespace object according to `namespaceSelector`, upgrade helm installation with updated `namespaceSelector` or deploy Panopticon separetely using a different `namespaceSelector`.
 
 ## Filter metrics using Prometheus Service Monitor
 
@@ -117,7 +117,7 @@ spec:
       app.kubernetes.io/name: panopticon
 ```
 
-You can add `metricsRelabelings` config in api endpoint to filter metrics by namespaces.
+You can create a new ServiceMonitor by copying the above example and add `metricsRelabelings` config in api endpoint to filter metrics by namespaces.
 
 ```yaml
 metricRelabelings:
