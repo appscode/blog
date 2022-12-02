@@ -35,7 +35,7 @@ This webinar was focused on the Vault `Backup` & `Restore` solution using `Stash
 In this webinar, initially we talked about various `CRDs` associated with `KubeVault` & `Stash` e.g: `VaultServer`, `Function`, `Task`, `BackupConfiguration`, `RestoreSession`, etc. We also discussed the workflow of the backup & restoration process in different scenarios. Later, we demonstrated the full flow of the `Backup` & `Restore` process using `Stash`.
 
 
-> A step-by-step guide to re-create the process & the manifest files used during the webinar can be found [here](https://github.com/kubevault/demo). 
+> A step-by-step guide to re-create the process & the manifest files used during the webinar can be found [here](https://github.com/kubevault/demo/tree/master/webinar-12-01-22). 
 
   Take a deep dive into the full webinar below:
 
