@@ -43,7 +43,6 @@ $ helm repo update
 $ helm install panopticon appscode/panopticon -n kubeops \
     --create-namespace \
     --version v2022.06.14 \
-    --set apiserver.enableValidatingWebhook=false \
     --set monitoring.enabled=true \
     --set monitoring.agent=prometheus.io/operator \
     --set monitoring.serviceMonitor.labels.release=<prometheus-service-monitor-selector-label> \
@@ -65,7 +64,8 @@ $ helm install panopticon appscode/panopticon -n kubeops \
     --set monitoring.agent=prometheus.io/operator \
     --set monitoring.serviceMonitor.labels.release=<prometheus-service-monitor-selector-label> \
     --set namespaceSelector='environment in (production)' \
-    --set-file license=kubedb-license.txt
+    --set-file license=kubedb-license.txt \
+    --set apiserver.enableValidatingWebhook=false
 ```
 
 Pros: 
