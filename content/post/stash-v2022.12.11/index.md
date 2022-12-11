@@ -27,11 +27,11 @@ In this release, we are introducing [Hashicorp Vault](https://github.com/stashed
 
 #### Add Postgres 15.1 addon
 
-We have added an addon for Postgres 15.1. Now, you should be able to back up your Postgres 15.x.x using this addon.
+We have added support for Postgres 15.1. Now, you should be able to backup/restore your Postgres 15.x.x using this addon.
 
 ### Bug Fixes
 
-- Fixed passing PodRuntimeSettings to backup/Restore job ([#1489](https://github.com/stashed/stash/pull/1489)).
+- Fixed passing PodRuntimeSettings to backup/restore job ([#1489](https://github.com/stashed/stash/pull/1489)).
 - Fixed addon info handling from KubeDB AppBinding ([#1487](https://github.com/stashed/stash/pull/1487)).
 - Fixed a bug that was causing locked Repository ([#192](https://github.com/stashed/apimachinery/pull/192)).
 - Added missing user permission for appcatalog group ([#284](https://github.com/stashed/installer/pull/284)).
