@@ -23,11 +23,11 @@ Here, are the major features that have been added in this release.
 
 #### Introducing Vault addon
 
-In this release, we have introduced [Hashicorp Vault](https://github.com/stashed/vault) addon. You can now backup and recover your Hashicorp Vault using Stash.
+In this release, we are introducing [Hashicorp Vault](https://github.com/stashed/vault) addon. You can now backup and recover your Hashicorp Vault using Stash Enterprise.
 
 #### Add Postgres 15.1 addon
 
-We have added an addon for Postgres 7.0.5. Now, you should be able to back up your Postgres 15.x.x using this addon.
+We have added an addon for Postgres 15.1. Now, you should be able to back up your Postgres 15.x.x using this addon.
 
 ### Bug Fixes
 
