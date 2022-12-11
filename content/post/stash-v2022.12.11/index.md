@@ -7,9 +7,9 @@ authors:
 tags:
 - backup
 - kubernetes
+- postgres
 - restore
 - stash
-- postgres
 - vault
 ---
 
