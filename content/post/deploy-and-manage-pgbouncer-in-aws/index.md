@@ -8,14 +8,14 @@ tags:
 - amazon
 - aws
 - cloud-native
+- conncection-pooling
 - database
 - eks
 - kubedb
 - kubernetes
+- pgbouncer
 - postgresql
 - s3
-- conncection-pooling
-- pgbouncer
 ---
 
 ## Overview
