@@ -16,11 +16,9 @@ tags:
 - vault
 ---
 
-We are very excited to announce the release of KubeVault v2022.12.28 Edition. In this release, the `SecretEngine` for `Redis` has been added, `KubeVault CLI` has been updated for generating `SecretProviderClass` for `Redis`. We're going to discuss some of them in details below.
-
-- [Install KubeVault](https://kubevault.com/docs/v2022.12.28/setup/)
-
 [KubeVault](https://kubevault.com) is a Kubernetes operator for [HashiCorp Vault](https://www.vaultproject.io/). The Vault is a tool for secrets management, encryption as a service, and privileged access management. The KubeVault operator makes it easy to deploy, maintain and manage Vault servers in Kubernetes. It also supports various secret engines management, policy management in the Kubernetes native way.
+
+We are very excited to announce the release of [KubeVault v2022.12.28](https://kubevault.com/docs/v2022.12.28/setup/) Edition. In this release, the `SecretEngine` for `Redis` has been added, `KubeVault CLI` has been updated for generating `SecretProviderClass` for `Redis`.
 
 In this post, we are going to highlight the major changes. You can find the complete commit by commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2022.12.28/README.md).
 
