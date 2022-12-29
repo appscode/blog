@@ -24,9 +24,7 @@ In this post, we are going to highlight the major changes. You can find the comp
 
 ## Redis SecretEngine
 
-Redis Secret can be used to generate dynamic credentials for Redis Standalone database using Vault. First, we need to enable a `SecretEngine` for  `Redis`
-and then we can create different roles with different set of permissions using `RedisRole`. Then Vault will generate credentials for the role when user request for credentials.
-We can also mount the secret in a pod using `SecretProviderClass`
+Redis Secret can be used to generate dynamic credentials for Redis Standalone database using Vault. First, we need to enable a `SecretEngine` for  `Redis` and then we can create different roles with different set of permissions using `RedisRole`. Then Vault will generate credentials for the role when user request for credentials. We can also mount the secret in a pod using `SecretProviderClass`
 
   Now, `Redis` SecretEngine can be enabled, configured & `RedisRole` can also be created with `KubeVault`.
   Here's a sample yaml for Redis `SecretEngine` & `RedisRole`:
