@@ -16,7 +16,7 @@ tags:
 - vault
 ---
 
-We are very excited to announce the release of KubeVault v2022.12.28 Edition. In the release KubeVault `v2022.12.28` the `SecretEngine` for `Redis` has been added, `KubeVault CLI` has been updated for generating `SecretProviderClass` for `Redis`. We're going to discuss some of them in details below.
+We are very excited to announce the release of KubeVault v2022.12.28 Edition. In this release, the `SecretEngine` for `Redis` has been added, `KubeVault CLI` has been updated for generating `SecretProviderClass` for `Redis`. We're going to discuss some of them in details below.
 
 - [Install KubeVault](https://kubevault.com/docs/v2022.12.28/setup/)
 
