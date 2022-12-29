@@ -22,7 +22,7 @@ We are very excited to announce the release of [KubeVault v2022.12.28](https://k
 
 In this post, we are going to highlight the major changes. You can find the complete commit by commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2022.12.28/README.md).
 
-- **Redis SecretEngine**
+## Redis SecretEngine
 
 Redis Secret can be used to generate dynamic credentials for Redis Standalone database using Vault. First, we need to enable a `SecretEngine` for  `Redis`
 and then we can create different roles with different set of permissions using `RedisRole`. Then Vault will generate credentials for the role when user request for credentials.
