@@ -195,7 +195,7 @@ Let's save this yaml configuration into `mysql-quickstart.yaml`
 Then create the above MySQL CRO
 
 ```bash
-$ kubectl create -f mysql.yaml 
+$ kubectl create -f mysql-quickstart.yaml
 mysql.kubedb.com/mysql-quickstart created
 ```
 
@@ -277,7 +277,7 @@ spec:
   acme:
     # server: https://acme-v02.api.letsencrypt.org/directory
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: tamal@appscode.com
+    email: diptaroy@appscode.com
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
       name: bytebuilders-xyz-acme
@@ -287,7 +287,7 @@ spec:
     - selector: {}
       dns01:
         cloudflare:
-          email: tamal@appscode.com
+          email: diptaroy@appscode.com
           apiTokenSecretRef:
             name: bytebuilders-xyz-cloudflare
             key: api-token
@@ -503,7 +503,7 @@ Bye
 
 ```
 
-> We have successfully access and use the MySQL database. More information about Run & Manage Production-Grade MySQL Database on Kubernetes can be found [HERE](https://kubedb.com/kubernetes/databases/run-and-manage-mysql-on-kubernetes/)
+> We have successfully access and use the MySQL database from developer side. More information about Run & Manage Production-Grade MySQL Database on Kubernetes can be found [HERE](https://kubedb.com/kubernetes/databases/run-and-manage-mysql-on-kubernetes/)
 
 We have made an in depth tutorial on Managing Semi-synchronous MySQL Cluster Using KubeDB in Kubernetes. You can have a look into the video below:
 
