@@ -1,5 +1,5 @@
 ---
-title: How to use Ingress with MySQL in Linode Kubernetes Engine (LKE)
+title: Expose KubeDB Managed MySQL Server Using Nginx-Ingress Controller
 date: "2022-12-30"
 weight: 14
 authors:
@@ -20,7 +20,7 @@ tags:
 ## Overview
 
 KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are MySQL, MongoDB, MariaDB, Elasticsearch, Redis, PostgreSQL, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/).
-In this tutorial we will show how to use Ingress with MySQL in Linode Kubernetes Engine (LKE). We will cover the following steps:
+In this tutorial we will show how to expose KubeDB managed MySQL server using nginx-ingress controller. We will cover the following steps:
 
 1) Install KubeDB
 2) Deploy Sample MySQL Database
@@ -349,7 +349,7 @@ kubectl apply -f ingress.yaml
 ingress.networking.k8s.io/kubedb created
 ```
 
-Now, set tcp port to expose MySQL database,
+Now, setup ingress to expose MySQL database,
 
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
