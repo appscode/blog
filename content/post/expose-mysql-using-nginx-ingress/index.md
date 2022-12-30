@@ -349,7 +349,7 @@ kubectl apply -f ingress.yaml
 ingress.networking.k8s.io/kubedb created
 ```
 
-Now, setup ingress to expose MySQL database,
+Now, install Nginx ingress controller to set TCP port and expose the MySQL database:
 
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
