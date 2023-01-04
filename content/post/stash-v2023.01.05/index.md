@@ -11,7 +11,7 @@ tags:
 - stash
 ---
 
-We are announcing Stash `v2023.01.05` which includes a bug fix and few improvements. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2023.01.05/README.md). In this post, we are going to highlight the changes.
+We are announcing Stash `v2023.01.05` which includes a few fixes and improvements. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2023.01.05/README.md). In this post, we are going to highlight the changes.
 
 ### Bug Fixes
 
