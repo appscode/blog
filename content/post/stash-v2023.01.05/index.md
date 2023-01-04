@@ -15,12 +15,16 @@ We are announcing Stash `v2023.01.05` which includes a bug fix and few improveme
 
 ### Bug Fixes
 
-- Fixed upserting temporary volume ([1498](https://github.com/stashed/stash/pull/1498)).
+- Fixed a bug for which the temporary volume created by Stash was not updating correctly ([1498](https://github.com/stashed/stash/pull/1498)).
+- Fixed a bug that was causing null pointer exception while checking for the license. ([1497](https://github.com/stashed/stash/pull/1497))
 
 ### Improvments
 
-- We have added `stash` prefix in the temporary volume and cache directory ([196](https://github.com/stashed/apimachinery/pull/196)).
-- We have added `stash` prefix in the output directory for addons.([289](https://github.com/stashed/installer/pull/289)).
+- We have added `stash` prefix to the temporary volume to prevent overwriting to existing volume with the name `tmp`([196](https://github.com/stashed/apimachinery/pull/196)). We have also added this prefix to the cache directory.
+
+- We have added `stash` prefix in the output directory for addons to match with the mount path of the temporary directory. ([289](https://github.com/stashed/installer/pull/289)).
+
+
 
 ## What Next?
 
