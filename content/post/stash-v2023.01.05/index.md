@@ -22,7 +22,7 @@ We are announcing Stash `v2023.01.05` which includes a few bug fixes and improve
 
 - We have added `stash` prefix to the temporary volume to prevent overwriting to existing volume with the name `tmp-dir` ([#196](https://github.com/stashed/apimachinery/pull/196)). We have also added this prefix to the cache directory.
 
-- We have added `stash` prefix in the output directory for addons to match with the mount path of the temporary directory ([#289](https://github.com/stashed/installer/pull/289)).
+- We have added `stash` prefix in the output directory for addons to match with the mount path of the temporary volume ([#289](https://github.com/stashed/installer/pull/289)).
 
 
 
