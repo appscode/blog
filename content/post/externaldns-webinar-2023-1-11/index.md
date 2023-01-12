@@ -1,19 +1,19 @@
 ---
-title: 'Manage ExternalDNS with CRD and Kubernetes Operator'
+title: Manage ExternalDNS with CRD and Kubernetes Operator
 date: "2023-1-11"
 weight: 26
 authors:
 - Rasel Hossain
-  tags:
-- dns
-- external-dns
-- external-dns-operator
-- dns-provider
-- operator
-- google
-- route53
+tags:
 - azure
 - cloudflare
+- dns
+- dns-provider
+- external-dns
+- external-dns-operator
+- google
+- operator
+- route53
 ---
 
 ## Summary
