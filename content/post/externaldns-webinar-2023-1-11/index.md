@@ -1,6 +1,6 @@
 ---
 title: Manage ExternalDNS with CRD and Kubernetes Operator
-date: "2023-1-11"
+date: "2023-01-12"
 weight: 26
 authors:
 - Rasel Hossain
