@@ -214,9 +214,9 @@ NAME                                                            STATUS    AGE
 vaultpolicy.policy.kubevault.com/vault-auth-method-controller   Success   64s
 ```
 
-### Use KubeVault CLI
+### Use Vault CLI
 
-We will connect to the Vault by using `KubeVault CLI`. Therefore, we need to export the necessary environment varibles and port-forward the service. 
+We will connect to the Vault by using `Vault CLI`. Therefore, we need to export the necessary environment varibles and port-forward the service. 
 
 ```bash
 $ export VAULT_ADDR=http://127.0.0.1:8200
