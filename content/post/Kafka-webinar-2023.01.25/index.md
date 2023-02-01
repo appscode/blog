@@ -22,7 +22,7 @@ AppsCode held a webinar on **“Managing TLS secure Kafka on Kubernetes using Ku
 - Kafka's new Kraft mode and why it's better
 - Provision Apache Kafka with KubeDB
 - Kafka clustering
-- create publish, and consume event from kafka
+- Create, publish, and consume event from kafka
 
 ## Description of the Webinar
 
@@ -50,6 +50,6 @@ Please try the latest release and give us your valuable feedback.
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To receive product announcements, follow us on [Twitter](https://twitter.com/KubeVault).
+To receive product announcements, follow us on [Twitter](https://twitter.com/kubedb).
 
 If you have found a bug with KubeDB or want to request new features, please [file an issue](https://github.com/kubedb/project/issues/new).
