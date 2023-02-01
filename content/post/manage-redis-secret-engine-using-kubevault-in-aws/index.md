@@ -21,7 +21,7 @@ tags:
 
 ## Overview
 
-KubeVault provides various ways to configure your Vault deployment. You can pick your preferred Storage Backend, Unsealer Mode, TLS Mode, Secret Engines that you want to allow to attach with this VaultServer, Termination Policy to prevent accidental deletion or clean-up Vault deployment in a systematic way, Monitoring, etc. KubeVault is a Git-Ops ready, production-grade solution for deploying and configuring Hashicorp's Vault on Kubernetes. You can find the guides and detailed information in [KubeVault](https://kubevault.com/).
+KubeVault is a Git-Ops ready, production-grade solution for deploying and configuring Hashicorp's Vault on Kubernetes. KubeVault provides various ways to configure your Vault deployment. You can pick your preferred Storage Backend, Unsealer Mode, TLS Mode, Secret Engines that you want to allow to attach with this VaultServer, Termination Policy to prevent accidental deletion or clean-up Vault deployment in a systematic way, Monitoring, etc. You can find the guides and detailed information in [KubeVault Documentation](https://kubevault.com/docs/latest/welcome/).
 In this tutorial, we will show how to Manage Redis Secret Engine using KubeVault in Amazon Elastic Kubernetes Service (Amazon EKS). We will cover the following steps:
 
 1) Install KubeDB
@@ -98,17 +98,17 @@ NAMESPACE   NAME                                                  READY   STATUS
 kubevault   kubevault-kubevault-operator-86b8c7f688-6ln65         1/1     Running   0          22s
 kubevault   kubevault-kubevault-webhook-server-8554c7cd7f-j9w6q   1/1     Running   0          22s
 ```
-#### Install KubeVault CLI
+### Install KubeVault CLI
 
 KubeVault provides a `kubectl` plugin to interact with KubeVault resources. Let's install [KubeVault CLI](https://kubevault.com/docs/latest/setup/install/kubectl_plugin/)
 
-#### Install Secret-store CSI Driver
+### Install Secret-store CSI Driver
 
 ```bash
 $ helm repo add secrets-store-csi-driver https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
 $ helm install csi-secrets-store secrets-store-csi-driver/secrets-store-csi-driver --namespace kube-system
 ```
-#### Install Vault specific CSI Provider
+### Install Vault specific CSI Provider
 
 ```bash
 $ helm repo add hashicorp https://helm.releases.hashicorp.com
@@ -127,7 +127,7 @@ $ kubectl create namespace demo
 namespace/demo created
 ```
 
-Here, We need to create a storage secret for our backend.
+We need to create a storage secret for our backend. here, we are using Amazon EKS.
 
 ```bash
 $ echo -n '<your-secret-key-id-here>' > secret_key
@@ -137,6 +137,7 @@ $ kubectl create secret generic -n demo aws-secret \
     --from-file=./access_key
 secret/aws-secret created
 ```
+Also, We have created an `S3` bucket in Amazon to use this as our Vault Backend. We have created a bucket named `vault-demo-1` in `us-east-1` region. KubeVault supports various storage backends, you can find the details in [Storage Backend](https://kubevault.com/docs/latest/concepts/vault-server-crds/storage/overview/) 
 
 ## Deploy VaultServer
 
@@ -172,12 +173,12 @@ spec:
   terminationPolicy: WipeOut
 ```
 In this yaml, 
-- `spec.replicas` specifies the number of Vault nodes to deploy. It has to be a positive number.
+- `spec.replicas` specifies the number of Vault nodes to deploy. It has to be a positive number. Note: Amazon EKS does not support HA for Vault. As we using Amazon EKS as our backend it has to be 1.
 - `spec.version` specifies the name of the `VaultServerVersion` CRD. This CRD holds the image name and version of the Vault, Unsealer, and Exporter.
 - `spec.allowedSecretEngines` defines the Secret Engine informations which to be granted in this Vault Server.
 - `spec.backend` is a required field that contains the Vault backend storage configuration.
 - `spec.unsealer` specifies `Unsealer` configuration. `Unsealer` handles automatic initializing and unsealing of Vault.
-- `spec.terminationPolicy` is an optional field that gives flexibility whether to nullify(reject) the delete operation of `VaultServer` CRD or which resources KubeVault operator should keep or delete when you delete `VaultServer` CRD.
+- `spec.terminationPolicy` field is *Wipeout* means that vault will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubevault.com/docs/latest/concepts/vault-server-crds/vaultserver/#specterminationpolicy).
 
 Let’s save this yaml configuration into `vault.yaml` and deploy it,
 
@@ -213,47 +214,7 @@ NAME                                                            STATUS    AGE
 vaultpolicy.policy.kubevault.com/vault-auth-method-controller   Success   64s
 ```
 
-#### Get the Secret Keys of Unsealer
-
-```bash
-$ kubectl get secret -n demo
-NAME                                   TYPE                                  DATA   AGE
-aws-secret                             Opaque                                2      6m29s
-default-token-nrwj8                    kubernetes.io/service-account-token   3      6m36s
-vault-k8s-token-reviewer-token-flfzg   kubernetes.io/service-account-token   3      4m43s
-vault-keys                             Opaque                                6      4m32s
-vault-token-wwszh                      kubernetes.io/service-account-token   3      4m43s
-vault-vault-config                     Opaque                                1      4m43s
-
-$ kubectl get secret -n demo vault-keys -oyaml
-apiVersion: v1
-data:
-  k8s.2903de3f-2693-44e3-b50d-aad10b403c1e.demo.vault-root-token: aHZzLnNsUUZPNkNCN1haaVRzdEtITlV2cUYzaA==
-  k8s.2903de3f-2693-44e3-b50d-aad10b403c1e.demo.vault-unseal-key-0: NmQyMzU2Y2M3NjY3OGQ4M2I3MDNmZDlkNWZhMTRhYzQ3MjY3Y2RjMTAyZDBkMDExMGM4OWEwZjZlNDM5ZGM0YWQ4
-  k8s.2903de3f-2693-44e3-b50d-aad10b403c1e.demo.vault-unseal-key-1: Njc3NzYyZGMwZjY3YTg5ZWEyNTFmZTZhNzg1NTE0N2RiNTY5YjM5MzQ1ZDQ4MzRlODlhZDU3OTNiM2NlNjBhZjA5
-  k8s.2903de3f-2693-44e3-b50d-aad10b403c1e.demo.vault-unseal-key-2: MTMyYWIyY2NhMmIzNzk1ZDg3YmRiNmQ3NDQxODQ3NDJhZTQ5ZjU5YzlmNWE3YjhhNGVlMzc0MjIzOGI3MGJmYjZm
-  k8s.2903de3f-2693-44e3-b50d-aad10b403c1e.demo.vault-unseal-key-3: ZWY1YWRhZjA5MzZkY2E2NTBjNGFhYjY4MzI3MTA2YmJlYWE2NzZkMDdjYmMyYzMxOWVmYjI1M2ViYjc0NDZiYTFm
-  k8s.2903de3f-2693-44e3-b50d-aad10b403c1e.demo.vault-unseal-key-4: Y2ZkOTVlYWNmZWUyZjBlZGZjYmU4MzcwYTYxYmNlODRkNzgyNjMzMjViZjVhNzdiNTI5ZTIxMzYwYzQyNDAxMjVi
-kind: Secret
-metadata:
-  creationTimestamp: "2023-01-26T05:25:58Z"
-  name: vault-keys
-  namespace: demo
-  resourceVersion: "10024"
-  uid: 2cf62853-8128-4762-884e-104a17e49208
-type: Opaque
-```
-
-#### Get Vault Root Token
-
-Here, we are going to get the root token of our `VaultServer`,
-
-```bash
-$ kubectl vault root-token get vaultserver vault -n demo --value-only
-hvs.slQFO6CB7XZiTstKHNUvqF3h
-```
-
-### Port-forward the Service
+### Use KubeVault CLI
 
 We will connect to the Vault by using `KubeVault CLI`. Therefore, we need to export the necessary environment varibles and port-forward the service. 
 
@@ -429,7 +390,7 @@ NAME              STATUS    AGE
 write-read-role   Success   2m
 ```
 
-#### Create Service Account
+### Create Service Account
 
 To create a `SecretAccessRequest`, we need to provide a `ServiceAccount` for that. Let's create a `ServiceAccount`,
 
@@ -576,7 +537,9 @@ We have made an in depth video on Manage Redis Secrets using KubeVault along wit
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
+To receive product announcements of KubeVault, follow us on [Twitter](https://twitter.com/KubeVault).
+
+To receive product announcements of KubeDB, follow us on [Twitter](https://twitter.com/KubeDB).
 
 To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
 
