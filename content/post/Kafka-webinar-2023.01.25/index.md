@@ -1,6 +1,6 @@
 ---
 title: Managing TLS secure Kafka on Kubernetes using KubeDB
-date: "2023-01-25"
+date: "2023-02-01"
 weight: 20
 authors:
 - Raihan Khan
