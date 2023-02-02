@@ -16,8 +16,8 @@ tags:
 
 ## Summary
 
-On FEB 1st, 2023, AppsCode held a webinar on **"MariaDB and Percona-XtraDB Support for KubeDB ProxySQL, ProxySQL Dashboard & Alerts"**. <br>
-The essential contents fo this webinar are: <br>
+On February 1st, 2023, AppsCode held a webinar on **"MariaDB and Percona-XtraDB Support for KubeDB ProxySQL, ProxySQL Dashboard & Alerts"**. <br>
+The essential contents for this webinar are: <br>
 * MariaDB and Percona-XtraDB backend support for KubeDB ProxySQL
 * Grafana dashboard for KubeDB ProxySQL
 * Prometheus alerts for KubeDB ProxySQL
@@ -26,7 +26,7 @@ The essential contents fo this webinar are: <br>
 
 ## Description of the Webinar
 
-The speaker started the webinar mentioning the updated backend support that have been recently integrated to KubeDB ProxySQL. Starting with the new MariaDB backend support demonstration, the speaker ended up showing the Percona-XtraDB backend support with the user synchronization and TLS.
+The webinar started by mentioning the updated backend support that has been recently integrated to KubeDB ProxySQL. Starting with the new MariaDB backend support demonstration, and ended up showing the Percona-XtraDB backend support with the user synchronization and TLS.
 
 Later in the demonstration the newly added Grafana Dashboards were introduced to the viewers. 
 
@@ -48,6 +48,6 @@ Please try the latest release and give us your valuable feedback.
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To receive product announcements, follow us on [Twitter](https://twitter.com/KubeVault).
+To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
 
 If you have found a bug with KubeDB or want to request new features, please [file an issue](https://github.com/kubedb/project/issues/new).
