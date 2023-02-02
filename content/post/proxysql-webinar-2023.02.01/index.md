@@ -7,8 +7,8 @@ authors:
 tags:
 - kubedb
 - kubernetes
-- mysql
 - mariadb
+- mysql
 - percona-xtradb
 - provisioner
 - proxysql
