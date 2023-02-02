@@ -34,7 +34,7 @@ Prometheus Alerts for KubeDB ProxySQL were also discussed in the last part and s
 
 Take a deep dive into the full webinar below:
 
-<iframe style="height: 500px; width: 800px" src="https://www.youtube.com/embed/CvTHbXNL29k" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe style="height: 500px; width: 888px" src="https://www.youtube.com/embed/lQ6EdG7q_CY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## What Next?
 
