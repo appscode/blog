@@ -35,7 +35,11 @@ We have faced issues related to pulling image from `insecure registry`.Now you c
 Operator will use that plus any image pull secret in the `db.spec.podTemplate` to get the docker image digest.
 
 ```bash
-kubectl create secret docker-registry regcred --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword>
+kubectl create secret docker-registry regcred \
+  --namespace kubedb \
+  --docker-server=<your-registry-server> \
+  --docker-username=<your-name> \
+  --docker-password=<your-pword>
 ```
 
 ```bash
@@ -48,8 +52,8 @@ kubectl create secret docker-registry regcred --docker-server=<your-registry-ser
   --set kubedb-dashboard.enabled=true \
   --set kubedb-schema-manager.enabled=true \
   --set-file global.license=/path/to/the/license.txt\
-  --set global.imagePullSecrets[0].name=sec1
-  --set insecureRegistries[0]=harbor.example.com
+  --set global.imagePullSecrets[0].name=regcred
+  --set global.insecureRegistries[0]=harbor.example.com
 ```
 
 ## Pg-coordinator Leader Switch
