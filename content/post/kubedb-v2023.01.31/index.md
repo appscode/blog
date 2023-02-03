@@ -1,6 +1,6 @@
 ---
 title: Announcing KubeDB v2023.01.31
-date: "2023-02-02"
+date: "2023-01-31"
 weight: 25
 authors:
 - Mehedi Hasan
