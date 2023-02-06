@@ -1,6 +1,6 @@
 ---
 title: Connect AWS EKS Clusters with Submariner
-date: "2023-02-03"
+date: "2023-02-06"
 weight: 26
 authors:
 - Pulak Kanti Bhowmick
