@@ -16,13 +16,13 @@ tags:
 
 ## Submariner
 
-[Submariner](https://github.com/submariner-io/submariner) is CNCF sandbox project which can enable direct networking between Pods and Services in different Kubernetes clusters, either on-premises or in the cloud.
+[Submariner](https://github.com/submariner-io/submariner) is a CNCF sandbox project which can enable direct networking between Pods and Services in different Kubernetes clusters, either on-premises or in the cloud.
 
 In this blog post, I am going to show how can you connect two AWS EKS Kubernetes clusters with default vpc cni using Submariner.
 
 ## Installation & Verify
 
-1. At first, we have to create two kubernetes cluster. To do so, we'll use [eksctl](https://eksctl.io/).
+1. At first, we have to create two Kubernetes clusters. To do so, we'll use [eksctl](https://eksctl.io/).
 
 submariner-1.yaml:
 ```yaml
@@ -66,7 +66,7 @@ To create:
 eksctl create cluster -f submariner2.yaml
 ```
 
-Note: According to Submariner [prerequisites](https://submariner.io/getting-started/#prerequisites): `Worker node IPs on all connected clusters must be outside of the Pod/Service CIDR ranges.`. To make sure this, we are using two different vpc cidr blocks for the clusters.
+Note: According to Submariner [prerequisites](https://submariner.io/getting-started/#prerequisites): `Worker node IPs on all connected clusters must be outside of the Pod/Service CIDR ranges.`. To make sure of this, we are using two different vpc cidr blocks for the clusters.
 
 2. Now, we are going to install Submariner broker in Submariner-1 cluster. Here we are using [subctl](https://submariner.io/operations/deployment/subctl/) CLI tool.
 
@@ -118,7 +118,7 @@ Cluster "submariner-2.us-east-2.eksctl.io"
 
 4. Let's prepare AWS Clusters for Submariner. Submariner Gateway nodes need to be able to accept traffic over UDP ports (4500 and 4490 by default). Submariner also uses UDP port 4800 to encapsulate traffic from the worker and master nodes to the Gateway nodes, and TCP port 8080 to retrieve metrics from the Gateway nodes. Ref: [Submariner doc](https://submariner.io/getting-started/quickstart/openshift/aws/#prepare-aws-clusters-for-submariner)
 
-So, we need to open those ports from associate security group. 
+So, we need to open those ports from the associate security group. 
 
 Then, we can verify connectivity with `subctl`.
 
@@ -140,7 +140,7 @@ GATEWAY                         CLUSTER     REMOTE IP      NAT   CABLE DRIVER   
 ip-192-168-31-89.ec2.internal   cluster-a   <remote-ip>    yes   libreswan      10.100.0.0/16, 192.168.0.0/16   connected   11.40141ms 
 ```
 
-Both cluster connection status is showing `connected`. If not, then you can find out the reason by running `subctl diagnose all` command.
+Both cluster connection statuses are showing `connected`. If not, then you can find out the reason by running `subctl diagnose all` command.
 
 5. Let's deploy an nginx in Submariner-1 cluster and export via `subctl`.
 ```bash
@@ -156,7 +156,7 @@ nginx   ClusterIP   10.100.39.195   <none>        80/TCP    10s
 ~ $ subctl export service nginx -n demo
  ✓ Service exported successfully
 ```
-Note: By default, in cluster created by `eksctl`, Pods & Nodes are sharing IPs from a single IP cidr range shown above as `Cluster CIDRs`. AWS ENI attached with the Nodes have a source/destination check enabled which can block traffic from any non GW node to GW node in any cluster. To allow such traffic, we need to disable the source/destination check from the attached ENI(Not recommended in production). To be more specific, nginx service from submariner-1 cluster has IP from 10.100.0.0/16 cidr range. But Pods in submariner-2 cluster have IP from 10.0.0.0/16 cidr range. As packets are travelling from non GW node to GW with svc IP from 10.100.0.0/16 range, ENI drops those packets.
+Note: By default, in a cluster created by `eksctl`, Pods & Nodes are sharing IPs from a single IP CIDR range shown above as `Cluster CIDRs`. AWS ENI attached with the Nodes has a source/destination check enabled which can block traffic from any non-GW node to a GW node in any cluster. To allow such traffic, we need to disable the source/destination check from the attached ENI(Not recommended in production). To be more specific, the nginx service from the submariner-1 cluster has an IP from the 10.100.0.0/16 CIDR range. But Pods in the submariner-2 cluster have IP from the 10.0.0.0/16 CIDR range. As packets are traveling from non-GW node to GW with svc IP from 10.100.0.0/16 range, ENI drops those packets.
 
 Let's verify from submariner-2 cluster:
 
