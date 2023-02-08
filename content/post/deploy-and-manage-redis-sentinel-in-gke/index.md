@@ -243,6 +243,7 @@ redis.kubedb.com/redis created
 ```
 In this yaml,
 * Here, we can see in the `spec.version` field specifies the version of Redis. Here, we are using Redis `version 7.0.5`. You can list the KubeDB supported versions of Redis by running `$ kubectl get redisversions` command.
+* `spec.sentinelRef.name` and `spec.sentinelRef.namespace` specifies the sentinel instance which will monitor this Redis database.
 * Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
 * Lastly, the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/latest/guides/redis/concepts/redis/#specterminationpolicy).
 
@@ -369,7 +370,7 @@ spec:
   databaseRef:
     name: sentinel
   horizontalScaling:
-    replicas: 4
+    replicas: 5
 ```
 Here,
 
@@ -396,9 +397,9 @@ We can see from the above output that the `RedisSentinelOpsRequest` has succeede
 
 ```bash
 $ kubectl get redissentinel -n demo sentinel -o json | jq '.spec.replicas'
-4
+5
 ```
-> From all the above outputs we can see that the replicas of the sentinel is now increased to 4. That means we have successfully scaled up the Redis Sentinel.
+> From all the above outputs we can see that the replicas of the sentinel is now increased to 5. That means we have successfully scaled up the Redis Sentinel.
 
 ### Scale Down Replicas
 
@@ -419,7 +420,7 @@ spec:
   databaseRef:
     name: sentinel
   horizontalScaling:
-    replicas: 2
+    replicas: 3
 ```
 
 Here,
@@ -447,10 +448,10 @@ We can see from the above output that the `RedisSentinelOpsRequest` has succeede
 
 ```bash
 $ kubectl get redissentinel -n demo sentinel -o json | jq '.spec.replicas'
-2
+3
 ```
 
-> From all the above outputs we can see that the replicas of the Redis sentinel is decreased to 2. That means we have successfully scaled down the Redis sentinel.
+> From all the above outputs we can see that the replicas of the Redis sentinel is decreased to 3. That means we have successfully scaled down the Redis sentinel.
 
 We have made an in depth video on Redis Sentinel Ops Requests - Day 2 Lifecycle Management for Redis Sentinel Using KubeDB. You can have a look into the video below:
 
