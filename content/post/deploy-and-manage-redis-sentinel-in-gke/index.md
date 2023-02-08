@@ -1,6 +1,6 @@
 ---
 title: Deploy and Manage Redis in Sentinel Mode in Google Kubernetes Engine (GKE)
-date: "2022-02-07"
+date: "2023-02-07"
 weight: 14
 authors:
 - Dipta Roy
