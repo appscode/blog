@@ -21,6 +21,12 @@ tags:
 # Releases
 
 
+#### Announcing KubeDB v2023.01.31
+
+We are pleased to announce the release of KubeDB **v2023.01.31**. This post lists all the major changes done in this release since the last release. The release was mainly focus on some hot fix regarding Private Registry `ImagePull`, Postgres `pg-coordinator leader switch` issue and running Kibana and OpenSearch dashboard as `non root` user.
+
+Link: https://blog.byte.builders/post/kubedb-v2023.01.31/
+
 #### Introducing Stash v2023.01.05
 
 We are announcing Stash **v2023.01.05** which includes a bug fix and few improvements. It comes with a couple of exciting new features, a few bug fixes, and improvements to the codebase. In this post, we are going to highlight the most significant changes.
