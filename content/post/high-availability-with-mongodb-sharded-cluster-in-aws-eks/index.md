@@ -1,5 +1,5 @@
 ---
-title: High Availability with MongoDB Sharded Cluster in Amazon Elastic Kubernetes Service (Amazon EKS) using KubeDB
+title: Deploy and Manage MongoDB Sharded Cluster in Amazon Elastic Kubernetes Service (Amazon EKS) using KubeDB
 date: "2023-02-15"
 weight: 14
 authors:
@@ -594,9 +594,9 @@ $ kubectl get pod -n demo mongodb-shard-shard0-0 -o json | jq '.spec.containers[
 ```
 > The above output verifies that we have successfully scaled down the resources of the MongoDB sharded cluster.
 
-We have made an in depth tutorial on Configure MongoDB Hidden Node on Kubernetes using KubeDB. You can have a look into the video below:
+If you want to learn more about Production-Grade MongoDB you can have a look into that playlist below:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/4sVig7wJzug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLoiT1Gv2KR1jZmdzRaQW28eX4zR9lvUqf" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Support
 
