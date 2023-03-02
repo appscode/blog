@@ -15,7 +15,7 @@ We are announcing Stash `v2023.02.28` which includes a few bug fixes. You can fi
 
 ### Bug Fixes
 
-- Fixed a bug causing Batch Backups to get stuck in the Running phase when using the `VolumeSnapshotter` driver ([#1500](https://github.com/stashed/stash/pull/1500)).
+- Fixed a bug causing batch backup to get stuck in the `Running` phase when using the `VolumeSnapshotter` driver ([#1500](https://github.com/stashed/stash/pull/1500)).
 - Fixed a bug that prevented the autobackup template from fully resolving.
 
 ## What Next?
