@@ -1,6 +1,6 @@
 ---
 title: Introducing KubeVault v2023.03.03
-date: "2023-03-06"
+date: "2023-03-03"
 weight: 25
 authors:
 - Abdullah Al Shaad
