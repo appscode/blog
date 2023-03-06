@@ -133,7 +133,7 @@ spec:
     name: demo-pg
 ```
 
-## ElasticSearch
+## Elasticsearch
 Latest versions for  OpenSearch  `2.0.1` and `2.5.0` added in this release. Now, you can provision and manage `OpenSearch V2` with `Elasticsearch` CRD using KubeDB.
 Check out all the currently supported Opensearch Versions using the following command.
 ```bash
@@ -163,7 +163,7 @@ spec:
 ```
 We recommend upgrading to OpenSearch `2.0.1` before upgrading to any other V2 minor versions.
 
-## ElasticSearch Dashboard
+## Elasticsearch Dashboard
 
 Along with support for Opensearch V2, KubeDB also brings support for Opensearch Dashboards version `2.0.1` & `2.5.0` in this release. Visualize Opensearch data easily and conveniently by provisioning Opensearch-Dashboards in your cluster using KubeDB. Use the following YAML to deploy TLS secured Opensearch-Dashboards with `ElasticsearchDashboard` CRD.
 ```yaml
