@@ -30,7 +30,7 @@ Link: https://blog.byte.builders/post/kubedb-v2023.02.28/
 
 #### Introducing Stash v2023.02.28
 
-We are announcing Stash **v2023.02.28** which includes a few bug fixes. You can find the complete changelog here . In this post, we are going to highlight the changes.
+We are announcing Stash **v2023.02.28** which includes a few bug fixes. In this post, we are going to highlight the changes.
 
 Link: https://blog.byte.builders/post/stash-v2023.02.28/
 
@@ -40,6 +40,7 @@ Link: https://blog.byte.builders/post/stash-v2023.02.28/
 We are pleased to announce the release of Voyager **v2023.02.22**. In this release, we have updated HAProxy image to 2.6.9 and fixed various bugs. In this post, we are going to highlight the changes.
 
 Link: https://blog.byte.builders/post/voyager-v2023.02.22/
+
 
 
 # Webinars
@@ -54,12 +55,11 @@ AppsCode held a webinar on “MariaDB and Percona-XtraDB Support for KubeDB Prox
 - Prometheus alerts for KubeDB ProxySQL
 - Q&A session
 
-
 Link: https://blog.byte.builders/post/proxysql-webinar-2023.02.01/
 
 
-# Blogs Published
 
+# Blogs Published
 
 #### Redis - A Powerful Database Cache Server
 
