@@ -5,16 +5,15 @@ weight: 14
 authors:
 - Dipta Roy
 tags:
-- amazon
-- aws
 - cloud-native
 - database
 - dbaas
-- eks
+- gcp
+- gcs
+- gke
 - kubedb
 - kubernetes
 - redis
-- s3
 - sentinel
 ---
 
