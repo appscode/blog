@@ -1,6 +1,6 @@
 ---
 title: Monitor Percona XtraDB with Grafana Dashboard in Google Kubernetes Engine (GKE)
-date: "2022-03-03"
+date: "2023-03-03"
 weight: 14
 authors:
 - Dipta Roy
