@@ -141,7 +141,7 @@ $ kubectl get esversion | grep opensearch
 opensearch-1.1.0            1.1.0     OpenSearch     opensearchproject/opensearch:1.1.0             29h
 opensearch-1.2.2            1.2.2     OpenSearch     opensearchproject/opensearch:1.2.2             29h
 opensearch-1.3.2            1.3.2     OpenSearch     opensearchproject/opensearch:1.3.2             29h
-opensearch-2.0.1            2.5.0     OpenSearch     opensearchproject/opensearch:2.0.1             29h
+opensearch-2.0.1            2.0.1     OpenSearch     opensearchproject/opensearch:2.0.1             29h
 opensearch-2.5.0            2.5.0     OpenSearch     opensearchproject/opensearch:2.5.0             29h
 ```
 
