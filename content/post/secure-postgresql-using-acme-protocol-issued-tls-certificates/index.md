@@ -13,9 +13,9 @@ tags:
 - kubernetes
 - linode
 - lke
-- postgresql
-- pgbouncer
 - nginx
+- pgbouncer
+- postgresql
 ---
 
 ## Overview
@@ -555,7 +555,7 @@ testdb=# \q
 
 We have made an in depth tutorial on Managing ACME protocol based Certificates in PgBouncer Using KubeDB in Kubernetes. You can have a look into the video below:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/icT0jCvuXCA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/vpFyDSo4yuk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Support
 
@@ -565,6 +565,8 @@ To receive product announcements, follow us on [Twitter](https://twitter.com/Kub
 
 To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
 
-More about [MySQL in Kubernetes](https://kubedb.com/kubernetes/databases/run-and-manage-mysql-on-kubernetes/)
+More about [PgBouncer in Kubernetes](https://kubedb.com/kubernetes/databases/run-and-manage-pgbouncer-on-kubernetes/)
+
+More about [PostgreSQL in Kubernetes](https://kubedb.com/kubernetes/databases/run-and-manage-postgres-on-kubernetes/)
 
 If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
