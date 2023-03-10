@@ -23,7 +23,7 @@ tags:
 
 #### Announcing KubeDB v2023.02.28
 
-We are pleased to announce the release of KubeDB **v2023.02.28**. This post lists all the major changes done in this release since the last release. The release include new features `Combined PEM Certifiacte` `Postgres StandAlone to High Availibility`, `ACME Protocol based certificate support for ProxySQL & PgBouncer` and new verisons for `MySQL:8.0.32`, `5.7.41`, `OpenSearch 2.0.1`, `2.5.0`, `Redis: 6.0.18`, `6.2.11`, `7.0.9`.
+We are pleased to announce the release of KubeDB **v2023.02.28**. This post lists all the major changes done in this release since the last release. The release includes new features `Combined PEM Certificate` `PostgreSQL Standalone to High Availibility`, `ACME Protocol based certificate support for ProxySQL & PgBouncer` and new verisons for `MySQL:8.0.32`, `5.7.41`, `OpenSearch 2.0.1`, `2.5.0`, `Redis: 6.0.18`, `6.2.11`, `7.0.9`.
 
 Link: https://blog.byte.builders/post/kubedb-v2023.02.28/
 
