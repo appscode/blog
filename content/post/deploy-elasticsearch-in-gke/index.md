@@ -5,16 +5,16 @@ weight: 12
 authors:
 - Dipta Roy
 tags:
+- gke
+- gcs
 - cloud-native
 - database
 - dbaas
 - elasticsearch
 - elasticstack
-- gcp
-- gcs
-- gke
 - kubedb
 - kubernetes
+- gcp
 - xpack
 ---
 
@@ -445,7 +445,7 @@ For this tutorial we are going to use GCS bucket. You can find other setups [her
 
 ![My Empty Storage](GCSStorageEmpty.png)
 
-At first we need to create a secret so that we can access the Amazon S3 bucket. We can do that by the following code:
+At first we need to create a secret so that we can access the GCS bucket. We can do that by the following code:
 
 ```bash
 $ echo -n 'YOURPASSWORD' > RESTIC_PASSWORD
@@ -474,7 +474,7 @@ spec:
     storageSecretName: gcs-secret
 ```
 
-This repository CRO specifies the `gcs-secret` we created before and stores the name and path to the S3 storage bucket. It also specifies the location to the container where we want to backup our database.
+This repository CRO specifies the `gcs-secret` we created before and stores the name and path to the GCS bucket. It also specifies the location to the container where we want to backup our database.
 > Here, My bucket name is `stash-testing`. Don't forget to change `spec.backend.gcs.bucket` to your bucket name.
 
 Lets create this repository,
@@ -516,7 +516,7 @@ backupconfiguration.stash.appscode.com/es-topology-cluster-backup created
 ```
 
 * `BackupConfiguration` creates a cronjob that backs up the specified database (`spec.target`) every 5 minutes.
-* `spec.repository` contains the repository name that we have created before called `s3-repo`.
+* `spec.repository` contains the repository name that we have created before called `gcs-repo`.
 * `spec.target.ref` contains the reference to the appbinding that we want to backup.
 * `spec.schedule` specifies that we want to backup the database at 5 minutes interval.
 * `spec.retentionPolicy` specifies the policy to follow for cleaning old snapshots. 
