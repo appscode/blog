@@ -5,16 +5,16 @@ weight: 12
 authors:
 - Dipta Roy
 tags:
-- gke
-- gcs
 - cloud-native
 - database
 - dbaas
 - elasticsearch
 - elasticstack
+- gcp
+- gcs
+- gke
 - kubedb
 - kubernetes
-- gcp
 - xpack
 ---
 
