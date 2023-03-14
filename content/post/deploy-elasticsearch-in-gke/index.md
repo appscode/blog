@@ -5,6 +5,7 @@ weight: 12
 authors:
 - Dipta Roy
 tags:
+- backup
 - cloud-native
 - database
 - dbaas
@@ -15,12 +16,13 @@ tags:
 - gke
 - kubedb
 - kubernetes
+- restore
 - xpack
 ---
 
 ## Overview
 
-KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are Elasticsearch, MySQL, MongoDB, MariaDB, Redis, PostgreSQL, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/). KubeDB provides support not only for the official [Elasticsearch](https://www.elastic.co/) by Elastic, but also other open source distributions like, [OpenSearch](https://opensearch.org/), [SearchGuard](https://search-guard.com/) and [OpenDistro](https://opendistro.github.io/for-elasticsearch/). **KubeDB provides all of these distribution's support under the Elasticsearch CR of KubeDB**.
+KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are Elasticsearch, MySQL, MongoDB, MariaDB, Redis, PostgreSQL, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases [here](https://kubedb.com/). KubeDB provides support for the [Elasticsearch](https://www.elastic.co/) by Elastic and [OpenSearch](https://opensearch.org/) under the Elasticsearch CR of KubeDB. The latest version of KubeDB has support for up to Elasticsearch version `8.5.2` and OpenSearch `2.5.0`. It also supports other distributions of Elasticsearch like [SearchGuard](https://search-guard.com/) and [OpenDistro](https://opendistro.github.io/for-elasticsearch/).
 In this tutorial we will deploy Elasticsearch in Google Kubernetes Engine (GKE). We will cover the following steps:
 
 1) Install KubeDB
@@ -48,7 +50,7 @@ Go to [Appscode License Server](https://license-issuer.appscode.com/) to get the
 
 ### Install KubeDB
 
-We will use helm to install KubeDB. Please install helm [here](https://helm.sh/docs/intro/install/) if it is not already installed.
+We will use helm to install KubeDB. Please install [helm](https://helm.sh/docs/intro/install/), if it is not already installed.
 Now, let's install `KubeDB`.
 
 ```bash
@@ -215,8 +217,8 @@ $ kubectl create -f es-topology-cluster.yaml
 elasticsearch.kubedb.com/es-topology-cluster created
 ```
 
-* In this yaml we can see in the `spec.version` field specifies the version of Elasticsearch. Here, we are using Elasticsearch version `xpack-8.5.2` which is used to provision `Elasticsearch-8.5.2` with xpack auth plugin. You can list the KubeDB supported versions of Elasticsearch CR by running `kubectl get elasticsearchversions` command.
-* `spec.storage` specifies PVC spec that will be dynamically allocated to store data for this database. This storage spec will be passed to the StatefulSet created by KubeDB operator to run database pods. You can specify any StorageClass available in your cluster with appropriate resource requests.
+* In this yaml we can see in the `spec.version` field specifies the version of Elasticsearch. Here, we are using Elasticsearch version `xpack-8.5.2` which is used to provision `Elasticsearch-8.5.2` with xpack auth plugin. You can list the KubeDB supported versions of Elasticsearch CR with x-pack auth-plugin by running `$ kubectl get elasticsearchversions | grep xpack` command. If you want to get other distributions, use `grep` command accordingly.
+* `spec.storage` specifies PVC spec that will be dynamically allocated to store data for this database. This storage spec will be passed to the StatefulSet created by KubeDB operator to run database pods. You can specify any StorageClass available in your cluster with appropriate resource requests. You can get all the available `storageclass` in your cluster by running `kubectl get storageclass` command.
 * `spec.enableSSL` - specifies whether the HTTP layer is secured with certificates or not.
 * `spec.storageType` - specifies the type of storage that will be used for Elasticsearch database. It can be `Durable` or `Ephemeral`. The default value of this field is `Durable`. If `Ephemeral` is used then KubeDB will create the Elasticsearch database using `EmptyDir` volume. In this case, you don't have to specify `spec.storage` field. This is useful for testing purposes.
 * `spec.topology` - specifies the node-specific properties for the Elasticsearch cluster.
@@ -326,7 +328,7 @@ $ kubectl get secret -n demo es-topology-cluster-elastic-cred -o jsonpath='{.dat
 q)UC;l!!euEnk.ZZ
 ```
 
-Then login and insert some data into Elasticsearch:
+Then login and insert some data into Elasticsearch, you can use `curl` for post some sample data into Elasticsearch. Use the `-k` flag to disable attempts to verify self-signed certificates for testing purposes.:
 
 ```bash
 $ curl -XPOST -k --user 'elastic:q)UC;l!!euEnk.ZZ' "https://localhost:9200/music/_doc?pretty" -H 'Content-Type: application/json' -d'
@@ -669,9 +671,9 @@ $ curl -XGET -k --user 'elastic:q)UC;l!!euEnk.ZZ' "https://localhost:9200/music/
 
 > You can see the database has been restored. The recovery of Elasticsearch has been successful. If you faced any difficulties in the recovery process, you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20GKE).
 
-We have made an in depth tutorial on OpenSearch OpsRequests - Day 2 Lifecycle Management for OpenSearch Cluster Using KubeDB. You can have a look into the video below:
+We have made a tutorial on Provision Elasticsearch Multi-node Combined cluster and Topology Cluster using KubeDB. You can have a look into the video below:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/gSoWaVV4iQo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/O42Pvf2NuCo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Support
 
