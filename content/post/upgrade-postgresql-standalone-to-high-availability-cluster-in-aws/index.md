@@ -360,13 +360,13 @@ NAME                        TYPE                STATUS       AGE
 high-availability-cluster   HorizontalScaling   Successful   5m
 ```
 
-We can see from the above output that the MariaDBOpsRequest has succeeded. Now, we are going to verify the number of replicas,
+We can see from the above output that the `PostgresOpsRequest` has succeeded. Now, we are going to verify the number of replicas,
 
 ```bash
 $ kubectl get postgres -n demo postgres -o json | jq '.spec.replicas'
 3
 ```
-> From all the above outputs we can see that the replicas of the cluster is now increased to 3. That means we have successfully scaled up the replicas of the MariaDB cluster.
+> From all the above outputs we can see that the replicas of the cluster is now increased to 3. That means we have successfully scaled up the replicas of the PostgreSQL standalone.
 
 Again let's check the objects in the `demo` namespace:
 
