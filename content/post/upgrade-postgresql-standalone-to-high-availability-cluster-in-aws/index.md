@@ -155,7 +155,7 @@ redisversions.catalog.kubedb.com                  2023-03-16T05:06:23Z
 subscribers.postgres.kubedb.com                   2023-03-16T05:12:21Z
 ```
 
-## Deploy PostgreSQL Clustered Database
+## Deploy PostgreSQL Standalone
 
 Now, we are going to Deploy PostgreSQL using KubeDB.
 First, let's create a Namespace in which we will deploy the database.
@@ -184,7 +184,7 @@ spec:
     resources:
       requests:
         storage: 512Mi     
-  terminationPolicy: Delete
+  terminationPolicy: WipeOut
 ```
 
 Let's save this yaml configuration into `postgres.yaml` 
@@ -197,7 +197,7 @@ postgres.kubedb.com/postgres created
 In this yaml,
 
 * we can see in the `spec.version` field specifies the version of PostgreSQL. Here, we are using PostgreSQL `version 13.2`. You can list the KubeDB supported versions of PostgreSQL by running `$ kubectl get postgresversions` command.
-* `spec.storage` specifies PVC spec that will be dynamically allocated to store data for this database. This storage spec will be passed to the StatefulSet created by KubeDB operator to run database pods. You can specify any StorageClass available in your cluster with appropriate resource requests.
+* `spec.storage` specifies PVC spec that will be dynamically allocated to store data for this database. This storage spec will be passed to the StatefulSet created by KubeDB operator to run database pods. You can specify any `storageclass` available in your cluster with appropriate resource requests. You can get all the available `storageclass` in your cluster by running `$ kubectl get storageclass` command.
 * And the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/latest/guides/postgres/concepts/postgres/#specterminationpolicy).
 
 Once these are handled correctly and the PostgreSQL object is deployed, you will see that the following objects are created:
@@ -314,7 +314,7 @@ bash-5.1$ exit
 exit
 ```
 
-> We've successfully inserted some sample data to our database. More information about Run & Manage Production-Grade PostgreSQL Database on Kubernetes can be found in [PostgreSQL Kubernetes](https://kubedb.com/kubernetes/databases/run-and-manage-postgres-on-kubernetes/)
+> We've successfully inserted some sample data to our database. More information about Run & Manage Production-Grade PostgreSQL Database on Kubernetes can be found in [PostgreSQL Kubernetes.](https://kubedb.com/kubernetes/databases/run-and-manage-postgres-on-kubernetes/)
 
 
 ## Upgrade Standalone to High Availabilty PostgreSQL
@@ -366,7 +366,7 @@ We can see from the above output that the MariaDBOpsRequest has succeeded. Now, 
 $ kubectl get postgres -n demo postgres -o json | jq '.spec.replicas'
 3
 ```
-> From all the above outputs we can see that the replicas of the cluster is now increased to 5. That means we have successfully scaled up the replicas of the MariaDB cluster.
+> From all the above outputs we can see that the replicas of the cluster is now increased to 3. That means we have successfully scaled up the replicas of the MariaDB cluster.
 
 Again let's check the objects in the `demo` namespace:
 
