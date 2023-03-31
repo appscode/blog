@@ -90,7 +90,7 @@ $ kubectl get pods --all-namespaces -l "app.kubernetes.io/instance=kubedb"
 NAMESPACE   NAME                                            READY   STATUS    RESTARTS   AGE
 kubedb      kubedb-kubedb-autoscaler-5d4d9db7b-7tvjx        1/1     Running   0          94s
 kubedb      kubedb-kubedb-dashboard-7b848bb7c-lk2s5         1/1     Running   0          94s
-kubedb      kubedb-kubedb-ops-manager-86786bfd4f-bcccw      0/1     Running   0          94s
+kubedb      kubedb-kubedb-ops-manager-86786bfd4f-bcccw      1/1     Running   0          94s
 kubedb      kubedb-kubedb-provisioner-7657456794-dmdcs      1/1     Running   0          94s
 kubedb      kubedb-kubedb-schema-manager-bb9f7b758-7pz5m    1/1     Running   0          94s
 kubedb      kubedb-kubedb-webhook-server-7f5cbfb695-jndmv   1/1     Running   0          94s
@@ -193,7 +193,7 @@ $ kubectl apply -f mongodb-rs.yaml
 mongodb.kubedb.com/mongodb-rs created
 ```
 In this yaml,
-* In this yaml we can see in the `spec.version` field specifies the version of MongoDB. Here, we are using MongoDB `version 5.0.3`. You can list the KubeDB supported versions of MongoDB by running `$ kubectl get mongodbversions` command.
+* In this yaml we can see in the `spec.version` field specifies the version of MongoDB. Here, we are using MongoDB `version 5.0.3`. You can list the KubeDB supported versions of MongoDB by running `kubectl get mongodbversions` command.
 * `spec.replicas` denotes the number of members in `rs0` mongodb replicaset.
 * `spec.storage.storageClassName` is the name of the StorageClass used to provision PVCs. 
 * `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be “Halt”, “Delete” and “DoNotTerminate”. Learn More about these checkout [Termination Policy](https://kubedb.com/docs/latest/guides/mongodb/concepts/mongodb/#specterminationpolicy) .
