@@ -4,7 +4,7 @@ date: "2023-04-03"
 weight: 12
 authors:
 - Raihan Khan
-  tags:
+tags:
 - elasticsearch
 - fluentd
 - kibana
