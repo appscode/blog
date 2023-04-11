@@ -1,7 +1,7 @@
 ---
-title: Logging in Kubernetes with Elasticsearch, Fluentd & Kibana (EFK) Stack using KubeDB
-date: "2023-04-03"
-weight: 12
+title: Logging in Kubernetes with Elasticsearch, Fluentd & Kibana (EFK) using KubeDB
+date: "2023-04-11"
+weight: 20
 authors:
 - Raihan Khan
 tags:
