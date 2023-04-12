@@ -28,7 +28,7 @@ tags:
 ---
 
 We are pleased to announce the release of [KubeDB v2023.04.10](https://kubedb.com/docs/v2023.04.10/setup/). This post lists all the major changes done in this release since the last release.
-The release includes new changes like `One chart to Install KubeDB and Stash`, `Migration to GitHub Container Registry`, and `Kafka Monitoring using Prometheus and Grafana`. Also, new version support for `Kafka 3.3.2 , 3.4.0`, `MariaDB 10.11.2`, `MongoDB 6.0.5`, `MongoDB 5.0.15`, `Redis 7.0.10`, `Percona XtraDB 8.0.31` and bug fixes for `MySQL`, `Redis`, `kafka` have been added in this released.
+The release includes new changes like `One chart to Install KubeDB and Stash`, `Migration to GitHub Container Registry`, and `Kafka Monitoring using Prometheus and Grafana`. Also, new version support for `Kafka 3.3.2 , 3.4.0`, `MariaDB 10.11.2`, `MongoDB 6.0.5`, `MongoDB 5.0.15`, `Redis 7.0.10`, `Percona XtraDB 8.0.31`, `PostgreSQL 15.2, 14.7, 13.10, 12.14, and 11.19` and bug fixes for `MySQL`, `Redis`, `kafka` have been added in this released.
 
 Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.04.10/README.md).
 
@@ -199,7 +199,27 @@ spec:
 
 **Bug Fix**: Earlier MySQL instance was used to create a cluster role for reading the `mysqlversion` from the `mysql-coordinator`. When the database is created with the same name in multiple namespaces, multiple MySQL instances try to own a single cluster role, this bug is fixed in this release. Now to grant MySQL coordinator access to `mysqlversions`, only one cluster role `mysql-version-reader` is created without owner reference.
 
+## PostgreSQL
+We have added the latest PostgreSQl version `15.2`, `14.7`, `13.10`, `12.14`, and `11.19`. To deploy a PostgreSQL Standalone instance with version `Postgres 15.2`, you can apply this yaml:
 
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: Postgres
+metadata:
+  name: quick-postgres
+  namespace: demo
+spec:
+  storage:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: standard
+  storageType: Durable
+  terminationPolicy: WipeOut
+  version: "15.2"
+```
 
 
 ## What Next?
