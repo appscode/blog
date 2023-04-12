@@ -174,8 +174,8 @@ Link: https://blog.byte.builders/post/monitor-perconaxtradb-with-grafana-dashboa
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To receive product announcements, follow us on [Twitter](https://twitter.com/AppsCodeHQ/.
+To receive product announcements, follow us on [Twitter](https://twitter.com/AppsCodeHQ/).
 
-Follow our Linkedin for more [AppsCode Inc](https://www.linkedin.com/company/appscode/)
+Follow our Linkedin for more [AppsCode Inc](https://www.linkedin.com/company/appscode/).
 
 To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
