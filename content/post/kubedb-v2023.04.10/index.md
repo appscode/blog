@@ -30,7 +30,7 @@ tags:
 We are pleased to announce the release of [KubeDB v2023.04.10](https://kubedb.com/docs/v2023.04.10/setup/). This post lists all the major changes done in this release since the last release.
 The release includes new changes like `One chart to Install KubeDB and Stash`, `Migration to GitHub Container Registry`, `Kafka Monitoring using Prometheus and Grafana`. Also, new verison support for `Kafka 3.3.2 , 3.4.0`, `MariaDB 10.11.2`, `MongoDB 6.0.5`, `Redis 7.0.10`, `Percona XtraDB 8.0.31` and a few bug fixes of `MySQL`.
 
-You can find the detailed changelogs [here](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.04.10/README.md).
+You can find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.04.10/README.md).
 
 ## One chart to Install KubeDB and Stash
 
@@ -43,8 +43,11 @@ helm upgrade -i kubedb appscode/kubedb-one \
   --set-file global.license=/path/to/the/license.txt
 ```
 
+
 ## Migration to GitHub Container Registry
-In this release we have migrated all docker images published by AppsCode to the GitHub Container Registry (ghcr.io) from the Docker Hub. Going forward, we are going to publish docker images exclusively to ghcr.io . This will resolve any issues related to rate limiting by Docker Hub. You can find the images by visiting the [LINK](https://github.com/orgs/kubedb/packages) 
+In this release we have migrated all docker images published by AppsCode to the GitHub Container Registry (ghcr.io) from the Docker Hub. Going forward, we are going to publish docker images exclusively to ghcr.io . This will resolve any issues related to rate limiting by Docker Hub. You can find the images by visiting the [LINK](https://github.com/orgs/kubedb/packages).
+
+
 
 ## Kafka
 ### Monitoring using Prometheus & Grafana
@@ -88,6 +91,8 @@ spec:
 Here’s the KubeDB built [Grafana Dashboard](https://github.com/appscode/grafana-dashboards/tree/master/kafka)
 Also, We have added support for Kafka version `3.3.2` & `3.4.0`. From this release, Kafka docker images will be using OpenJDK-based Java version 11 instead of Java 8 as it has been deprecated since `3.0.0`. 
 
+
+
 ## MongoDB
 We have added the latest MongoDB version `6.0.5` in this release. To deploy a MongoDB replica-set instance with version `6.0.5`, you can apply this yaml:
 ```yaml
@@ -111,6 +116,8 @@ spec:
         storage: 1Gi
   terminationPolicy: WipeOut
 ```
+
+
 
 ## Mariadb
 
@@ -137,6 +144,8 @@ spec:
 ```
 **Change Default WSREP_SST_METHOD**: From this release, the default value for `spec.wsrepSSTmethod` will be `rsync`. Previously it was set to `mariabackup`. 
 
+
+
 ## Percona XtraDB
 We have added the latest Percona XtraDB version `8.0.31` in this release. To deploy a Percona XtraDB Galera cluster with version `Percona XtraDB 8.0.31`, you can apply this yaml:
 
@@ -160,6 +169,7 @@ spec:
   terminationPolicy: WipeOut
 ```
 
+
 ## Redis
 We have added the latest Redis version `7.0.10` in this release. To deploy a Redis Standalone instance with version `Redis 7.0.10`, you can apply this yaml:
 
@@ -182,6 +192,7 @@ spec:
   terminationPolicy: WipeOut
 ``` 
 
+
 ## MySQL
 
 **Bug Fix**: Earlier MySQL instance was used to create a cluster role for reading the `mysqlversion` from the `mysql-coordinator`. When the database is created with the same name in multiple namespaces, multiple MySQL instances try to own a single cluster role, this bug is fixed in this release. Now to grant MySQL coordinator access to `mysqlversions`, only one cluster role `mysql-version-reader` is created without owner reference.
@@ -191,9 +202,12 @@ spec:
 
 Please try the latest release and give us your valuable feedback.
 
-- If you want to install KubeDB, please follow the installation instruction from [here](https://kubedb.com/docs/v2023.04.10/setup).
+- If you want to install KubeDB, please follow the installation instruction from [KubeDB Setup](https://kubedb.com/docs/v2023.04.10/setup).
 
-- If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](https://kubedb.com/docs/v2023.04.10/setup/upgrade/).
+- If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [KubeDB Upgrade](https://kubedb.com/docs/v2023.04.10/setup/upgrade/).
+
+
+
 
 ## Support
 
