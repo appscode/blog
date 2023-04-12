@@ -28,7 +28,7 @@ tags:
 ---
 
 We are pleased to announce the release of [KubeDB v2023.04.10](https://kubedb.com/docs/v2023.04.10/setup/). This post lists all the major changes done in this release since the last release.
-The release includes new changes like `One chart to Install KubeDB and Stash`, `Migration to GitHub Container Registry`, `Kafka Monitoring using Prometheus and Grafana`. Also, new verison support for `Kafka 3.3.2 , 3.4.0`, `MariaDB 10.11.2`, `MongoDB 6.0.5`, `Redis 7.0.10`, `Percona XtraDB 8.0.31` and a few bug fixes of `MySQL`.
+The release includes new changes like `One chart to Install KubeDB and Stash`, `Migration to GitHub Container Registry`, `Kafka Monitoring using Prometheus and Grafana`. Also, new verison support for `Kafka 3.3.2 , 3.4.0`, `MariaDB 10.11.2`, `MongoDB 6.0.5`, `Redis 7.0.10`, `Percona XtraDB 8.0.31` and bug fixes for `MySQL` and `Redis`.
 
 You can find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.04.10/README.md).
 
@@ -119,7 +119,7 @@ spec:
 
 
 
-## Mariadb
+## MariaDB
 
 We have added the latest MariaDB version `10.11.2` in this release. To deploy a MariaDB Standalone instance with version `MariaDB 10.11.2`, you can apply this yaml:
 
@@ -191,11 +191,14 @@ spec:
         storage: 1Gi
   terminationPolicy: WipeOut
 ``` 
+**Bug Fix**: When the database is created with the same name in multiple namespaces, multiple redis instances was trying to own a single `clusterrole`, this bug is fixed in this release. Now to grant redis instances access to sentinel instances, only one `clusterrole` is created without owner reference.
 
 
 ## MySQL
 
 **Bug Fix**: Earlier MySQL instance was used to create a cluster role for reading the `mysqlversion` from the `mysql-coordinator`. When the database is created with the same name in multiple namespaces, multiple MySQL instances try to own a single cluster role, this bug is fixed in this release. Now to grant MySQL coordinator access to `mysqlversions`, only one cluster role `mysql-version-reader` is created without owner reference.
+
+
 
 
 ## What Next?
