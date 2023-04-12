@@ -32,6 +32,12 @@ The release includes new changes like `One chart to Install KubeDB and Stash`, `
 
 Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.04.10/README.md).
 
+
+## Migration to GitHub Container Registry
+
+In this release we have migrated all docker images published by AppsCode to the GitHub Container Registry (ghcr.io) from the Docker Hub. Going forward, we are going to publish docker images exclusively to ghcr.io . This will resolve any issues related to rate limiting by Docker Hub. You can find the images [HERE](https://github.com/orgs/kubedb/packages).
+
+
 ## One chart to Install KubeDB and Stash
 
 We have created a new `kubedb-one` chart that includes both KubeDB and Stash. You can find the details [HERE](https://github.com/kubedb/installer/blob/master/charts/kubedb-one/Chart.yaml#L14-L49)
@@ -42,11 +48,6 @@ helm upgrade -i kubedb appscode/kubedb-one \
   --namespace kubedb --create-namespace \
   --set-file global.license=/path/to/the/license.txt
 ```
-
-
-## Migration to GitHub Container Registry
-In this release we have migrated all docker images published by AppsCode to the GitHub Container Registry (ghcr.io) from the Docker Hub. Going forward, we are going to publish docker images exclusively to ghcr.io . This will resolve any issues related to rate limiting by Docker Hub. You can find the images [HERE](https://github.com/orgs/kubedb/packages).
-
 
 
 ## Kafka
