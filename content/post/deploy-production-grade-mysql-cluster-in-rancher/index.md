@@ -108,7 +108,7 @@ spec:
       - ReadWriteOnce
     resources:
       requests:
-        storage: 1Gi
+        storage: 64Mi
   terminationPolicy: WipeOut
 ```
 To deploy this configuration, navigate to the left menu bar, select `Workload` > `Pods`, and click the "Import YAML" button.
