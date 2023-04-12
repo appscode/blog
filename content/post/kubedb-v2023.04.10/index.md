@@ -41,7 +41,7 @@ In this release we have migrated all docker images published by AppsCode to the 
 ## One chart to Install KubeDB and Stash
 
 We have created a new `kubedb-one` chart that includes both KubeDB and Stash. You can find the details [HERE](https://github.com/kubedb/installer/blob/master/charts/kubedb-one/Chart.yaml#L14-L49)
-on how to use the chart. Simply can run the following command:
+on what is included in the chart. To use it, simply can run the following command:
 ```bash
 helm upgrade -i kubedb appscode/kubedb-one \
   --version v2023.04.10 \
