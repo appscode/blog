@@ -28,9 +28,12 @@ tags:
 ---
 
 We are pleased to announce the release of [KubeDB v2023.04.10](https://kubedb.com/docs/v2023.04.10/setup/). This post lists all the major changes done in this release since the last release.
-The release includes new changes like `One chart to Install KubeDB and Stash`, `Migration to GitHub Container Registry`, `Kafka Monitoring using Prometheus and Grafana`. Also, new verison support for `Kafka 3.3.2 , 3.4.0`, `MariaDB 10.11.2`, `MongoDB 6.0.5`, `Redis 7.0.10`, `Percona XtraDB 8.0.31` and bug fixes for `MySQL` and `Redis`.
+The release includes new changes like `One chart to Install KubeDB and Stash`, `Migration to GitHub Container Registry`, `Kafka Monitoring using Prometheus and Grafana`. Also, new verison support for `Kafka 3.3.2 , 3.4.0`, `MariaDB 10.11.2`, `MongoDB 6.0.5`, `MongoDB 5.0.15`, `Redis 7.0.10`, `Percona XtraDB 8.0.31` and bug fixes for `MySQL` and `Redis`.
 
 You can find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.04.10/README.md).
+
+## Migration to GitHub Container Registry
+In this release we have migrated all docker images published by AppsCode to the GitHub Container Registry (ghcr.io) from the Docker Hub. Going forward, we are going to publish docker images exclusively to ghcr.io . This will resolve any issues related to rate limiting by Docker Hub. You can find the images by visiting the [LINK](https://github.com/orgs/kubedb/packages).
 
 ## One chart to Install KubeDB and Stash
 
@@ -42,12 +45,6 @@ helm upgrade -i kubedb appscode/kubedb-one \
   --namespace kubedb --create-namespace \
   --set-file global.license=/path/to/the/license.txt
 ```
-
-
-## Migration to GitHub Container Registry
-In this release we have migrated all docker images published by AppsCode to the GitHub Container Registry (ghcr.io) from the Docker Hub. Going forward, we are going to publish docker images exclusively to ghcr.io . This will resolve any issues related to rate limiting by Docker Hub. You can find the images by visiting the [LINK](https://github.com/orgs/kubedb/packages).
-
-
 
 ## Kafka
 ### Monitoring using Prometheus & Grafana
@@ -94,7 +91,7 @@ Also, We have added support for Kafka version `3.3.2` & `3.4.0`. From this relea
 
 
 ## MongoDB
-We have added the latest MongoDB version `6.0.5` in this release. To deploy a MongoDB replica-set instance with version `6.0.5`, you can apply this yaml:
+We have added the MongoDB version `6.0.5` and `5.0.15` in this release. To deploy a MongoDB replica-set instance with version `6.0.5`, you can apply this yaml:
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: MongoDB
