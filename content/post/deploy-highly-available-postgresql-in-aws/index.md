@@ -231,9 +231,6 @@ postgres-cluster   15.1      Ready    4m
 ```
 > We have successfully deployed PostgreSQL cluster in AWS. Now we can exec into the container to use the database.
 
-### Accessing Database Through CLI
-
-To access the database through CLI, we have to get the credentials to access. Let’s export the credentials as environment variable to our current shell :
 
 #### Accessing Database Through CLI
 
