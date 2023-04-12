@@ -28,7 +28,7 @@ tags:
 ---
 
 We are pleased to announce the release of [KubeDB v2023.04.10](https://kubedb.com/docs/v2023.04.10/setup/). This post lists all the major changes done in this release since the last release.
-The release includes new changes like `One chart to Install KubeDB and Stash`, `Migration to GitHub Container Registry`, and `Kafka Monitoring using Prometheus and Grafana`. Also, new version support for `Kafka 3.3.2 , 3.4.0`, `MariaDB 10.11.2`, `MongoDB 6.0.5`, `MongoDB 5.0.15`, `Redis 7.0.10`, `Percona XtraDB 8.0.31`, `PostgreSQL 15.2, 14.7, 13.10, 12.14, and 11.19` and bug fixes for `MySQL`, `Redis`, `kafka` have been added in this released.
+The release includes new changes like `One chart to Install KubeDB and Stash`, `Migration to GitHub Container Registry`, and `Kafka Monitoring using Prometheus and Grafana`. Also, new version support for `Kafka 3.3.2, 3.4.0`, `MariaDB 10.11.2`, `MongoDB 6.0.5, 5.0.15`, `Redis 7.0.10`, `Percona XtraDB 8.0.31`, `PostgreSQL 15.2, 14.7, 13.10, 12.14, and 11.19` and bug fixes for `MySQL`, `Redis`, `kafka` have been added in this released.
 
 Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.04.10/README.md).
 
@@ -89,6 +89,7 @@ spec:
   storageType: Durable
   terminationPolicy: WipeOut
 ```
+
 Here’s the KubeDB built [Grafana Dashboard](https://github.com/appscode/grafana-dashboards/tree/master/kafka).
 Also, We have added support for Kafka version `3.3.2` & `3.4.0`. From this release, Kafka docker images will be using OpenJDK-based Java version 11 instead of Java 8 as it has been deprecated since `3.0.0`. 
 
@@ -96,6 +97,7 @@ Also, We have added support for Kafka version `3.3.2` & `3.4.0`. From this relea
 
 ## MongoDB
 We have added the MongoDB version `6.0.5` and `5.0.15` in this release. To deploy a MongoDB replica-set instance with version `6.0.5`, you can apply this yaml:
+
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: MongoDB
@@ -143,6 +145,7 @@ spec:
         storage: 1Gi
   terminationPolicy: WipeOut
 ```
+
 **Change Default WSREP_SST_METHOD**: From this release, the default value for `spec.wsrepSSTmethod` will be `rsync`. Previously it was set to `mariabackup`. 
 
 
@@ -191,7 +194,8 @@ spec:
       requests:
         storage: 1Gi
   terminationPolicy: WipeOut
-``` 
+```
+
 **Bug Fix**: When the database is created with the same name in multiple namespaces, multiple redis instances was trying to own a single `clusterrole`, this bug is fixed in this release. Now to grant redis instances access to sentinel instances, only one `clusterrole` is created without owner reference.
 
 
