@@ -51,8 +51,8 @@ kubectl create secret docker-registry regcred \
   --set kubedb-autoscaler.enabled=true \
   --set kubedb-dashboard.enabled=true \
   --set kubedb-schema-manager.enabled=true \
-  --set-file global.license=/path/to/the/license.txt\
-  --set global.imagePullSecrets[0].name=regcred
+  --set-file global.license=/path/to/the/license.txt \
+  --set global.imagePullSecrets[0].name=regcred \
   --set global.insecureRegistries[0]=harbor.example.com
 ```
 
