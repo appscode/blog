@@ -1,27 +1,26 @@
 ---
-title: Deploy and Manage ProxySQL in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB
-date: "2022-11-30"
+title: Deploy and Manage ProxySQL in Google Kubernetes Engine (GKE) Using KubeDB
+date: "2023-04-28"
 weight: 14
 authors:
 - Dipta Roy
 tags:
-- amazon
-- aws
 - cloud-native
 - database
-- eks
+- gcp
+- gcs
+- gke
 - horizontal-scaling
 - kubedb
 - kubernetes
 - proxysql
-- s3
 - vertical-scaling
 ---
 
 ## Overview
 
 KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are MySQL, MongoDB, MariaDB, Elasticsearch, Redis, PostgreSQL, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/).
-In this tutorial we will deploy and manage ProxySQL in Amazon Elastic Kubernetes Service (Amazon EKS). We will cover the following steps:
+In this tutorial we will deploy and manage ProxySQL in Google Kubernetes Engine (GKE). We will cover the following steps:
 
 1) Install KubeDB
 2) Deploy MySQL Group Replication
@@ -29,9 +28,6 @@ In this tutorial we will deploy and manage ProxySQL in Amazon Elastic Kubernetes
 4) Read/Write through ProxySQL
 5) Horizontal Scaling of ProxySQL
 
-## Install KubeDB
-
-We will follow the steps to install KubeDB.
 
 ### Get Cluster ID
 
@@ -60,26 +56,27 @@ $ helm repo update
 
 $ helm search repo appscode/kubedb
 NAME                              	CHART VERSION	APP VERSION	DESCRIPTION                                       
-appscode/kubedb                   	v2022.10.18  	v2022.10.18	KubeDB by AppsCode - Production ready databases...
-appscode/kubedb-autoscaler        	v0.14.0      	v0.14.0    	KubeDB Autoscaler by AppsCode - Autoscale KubeD...
-appscode/kubedb-catalog           	v2022.10.18  	v2022.10.18	KubeDB Catalog by AppsCode - Catalog for databa...
+appscode/kubedb                   	v2023.04.10  	v2023.04.10	KubeDB by AppsCode - Production ready databases...
+appscode/kubedb-autoscaler        	v0.18.0      	v0.18.0    	KubeDB Autoscaler by AppsCode - Autoscale KubeD...
+appscode/kubedb-catalog           	v2023.04.10  	v2023.04.10	KubeDB Catalog by AppsCode - Catalog for databa...
 appscode/kubedb-community         	v0.24.2      	v0.24.2    	KubeDB Community by AppsCode - Community featur...
-appscode/kubedb-crds              	v2022.10.18  	v2022.10.18	KubeDB Custom Resource Definitions                
-appscode/kubedb-dashboard         	v0.5.0       	v0.5.0     	KubeDB Dashboard by AppsCode                      
+appscode/kubedb-crds              	v2023.04.10  	v2023.04.10	KubeDB Custom Resource Definitions                
+appscode/kubedb-dashboard         	v0.9.0       	v0.9.0     	KubeDB Dashboard by AppsCode                      
 appscode/kubedb-enterprise        	v0.11.2      	v0.11.2    	KubeDB Enterprise by AppsCode - Enterprise feat...
-appscode/kubedb-grafana-dashboards	v2022.10.18  	v2022.10.18	A Helm chart for kubedb-grafana-dashboards by A...
-appscode/kubedb-metrics           	v2022.10.18  	v2022.10.18	KubeDB State Metrics                              
-appscode/kubedb-ops-manager       	v0.16.0      	v0.16.2    	KubeDB Ops Manager by AppsCode - Enterprise fea...
-appscode/kubedb-opscenter         	v2022.10.18  	v2022.10.18	KubeDB Opscenter by AppsCode                      
-appscode/kubedb-provisioner       	v0.29.0      	v0.29.2    	KubeDB Provisioner by AppsCode - Community feat...
-appscode/kubedb-schema-manager    	v0.5.0       	v0.5.0     	KubeDB Schema Manager by AppsCode                 
-appscode/kubedb-ui                	v2022.06.14  	0.3.22     	A Helm chart for Kubernetes                       
+appscode/kubedb-grafana-dashboards	v2023.04.10  	v2023.04.10	A Helm chart for kubedb-grafana-dashboards by A...
+appscode/kubedb-metrics           	v2023.04.10  	v2023.04.10	KubeDB State Metrics                              
+appscode/kubedb-one               	v2023.04.10  	v2023.04.10	KubeDB and Stash by AppsCode - Production ready...
+appscode/kubedb-ops-manager       	v0.20.0      	v0.20.1    	KubeDB Ops Manager by AppsCode - Enterprise fea...
+appscode/kubedb-opscenter         	v2023.04.10  	v2023.04.10	KubeDB Opscenter by AppsCode                      
+appscode/kubedb-provisioner       	v0.33.0      	v0.33.1    	KubeDB Provisioner by AppsCode - Community feat...
+appscode/kubedb-schema-manager    	v0.9.0       	v0.9.0     	KubeDB Schema Manager by AppsCode                 
+appscode/kubedb-ui                	v2023.03.23  	0.3.28     	A Helm chart for Kubernetes                       
 appscode/kubedb-ui-server         	v2021.12.21  	v2021.12.21	A Helm chart for kubedb-ui-server by AppsCode     
-appscode/kubedb-webhook-server    	v0.5.0       	v0.5.0     	KubeDB Webhook Server by AppsCode 
+appscode/kubedb-webhook-server    	v0.9.0       	v0.9.0     	KubeDB Webhook Server by AppsCode   
 
 # Install KubeDB Enterprise operator chart
 $ helm install kubedb appscode/kubedb \
-  --version v2022.10.18 \
+  --version v2023.04.10 \
   --namespace kubedb --create-namespace \
   --set kubedb-provisioner.enabled=true \
   --set kubedb-ops-manager.enabled=true \
@@ -87,20 +84,19 @@ $ helm install kubedb appscode/kubedb \
   --set kubedb-dashboard.enabled=true \
   --set kubedb-schema-manager.enabled=true \
   --set-file global.license=/path/to/the/license.txt
-
 ```
 
 Let's verify the installation:
 
 ```bash
 $ watch kubectl get pods --all-namespaces -l "app.kubernetes.io/instance=kubedb"
-NAMESPACE   NAME                                            READY   STATUS    RESTARTS   AGE
-kubedb      kubedb-kubedb-autoscaler-76b4dcff6d-mh4c4       1/1     Running   0          83s
-kubedb      kubedb-kubedb-dashboard-7ccbd4c7dc-24rjk        1/1     Running   0          83s
-kubedb      kubedb-kubedb-ops-manager-74ddbd76df-7h4cm      1/1     Running   0          83s
-kubedb      kubedb-kubedb-provisioner-5d5bb476c9-qhhg8      1/1     Running   0          83s
-kubedb      kubedb-kubedb-schema-manager-54485b55fd-lkctm   1/1     Running   0          83s
-kubedb      kubedb-kubedb-webhook-server-6f44466cd5-zngqn   1/1     Running   0          83s
+NAMESPACE   NAME                                            READY   STATUS    RESTARTS    AGE
+kubedb      kubedb-kubedb-autoscaler-8b8544586-l5f58        1/1     Running   0           4m39s
+kubedb      kubedb-kubedb-dashboard-55f7bf58cc-7brgw        1/1     Running   0           4m40s
+kubedb      kubedb-kubedb-ops-manager-6668bb8b54-x2v4s      1/1     Running   0           4m40s
+kubedb      kubedb-kubedb-provisioner-56c97f6d86-dl9mb      1/1     Running   0           4m40s
+kubedb      kubedb-kubedb-schema-manager-584d784bf4-8kcmp   1/1     Running   0           4m40s
+kubedb      kubedb-kubedb-webhook-server-756dbbf799-tx66m   1/1     Running   0           4m40s
 ```
 
 We can list the CRD Groups that have been registered by the operator by running the following command:
@@ -108,53 +104,56 @@ We can list the CRD Groups that have been registered by the operator by running 
 ```bash
 $ kubectl get crd -l app.kubernetes.io/name=kubedb
 NAME                                              CREATED AT
-elasticsearchautoscalers.autoscaling.kubedb.com   2022-11-29T06:53:37Z
-elasticsearchdashboards.dashboard.kubedb.com      2022-11-29T06:53:36Z
-elasticsearches.kubedb.com                        2022-11-29T06:53:36Z
-elasticsearchopsrequests.ops.kubedb.com           2022-11-29T06:53:40Z
-elasticsearchversions.catalog.kubedb.com          2022-11-29T06:40:59Z
-etcds.kubedb.com                                  2022-11-29T06:53:39Z
-etcdversions.catalog.kubedb.com                   2022-11-29T06:41:00Z
-mariadbautoscalers.autoscaling.kubedb.com         2022-11-29T06:53:37Z
-mariadbdatabases.schema.kubedb.com                2022-11-29T06:53:41Z
-mariadbopsrequests.ops.kubedb.com                 2022-11-29T06:54:02Z
-mariadbs.kubedb.com                               2022-11-29T06:53:39Z
-mariadbversions.catalog.kubedb.com                2022-11-29T06:41:01Z
-memcacheds.kubedb.com                             2022-11-29T06:53:40Z
-memcachedversions.catalog.kubedb.com              2022-11-29T06:41:02Z
-mongodbautoscalers.autoscaling.kubedb.com         2022-11-29T06:53:37Z
-mongodbdatabases.schema.kubedb.com                2022-11-29T06:53:38Z
-mongodbopsrequests.ops.kubedb.com                 2022-11-29T06:53:44Z
-mongodbs.kubedb.com                               2022-11-29T06:53:39Z
-mongodbversions.catalog.kubedb.com                2022-11-29T06:41:08Z
-mysqlautoscalers.autoscaling.kubedb.com           2022-11-29T06:53:37Z
-mysqldatabases.schema.kubedb.com                  2022-11-29T06:53:38Z
-mysqlopsrequests.ops.kubedb.com                   2022-11-29T06:53:58Z
-mysqls.kubedb.com                                 2022-11-29T06:53:38Z
-mysqlversions.catalog.kubedb.com                  2022-11-29T06:41:09Z
-perconaxtradbautoscalers.autoscaling.kubedb.com   2022-11-29T06:53:37Z
-perconaxtradbopsrequests.ops.kubedb.com           2022-11-29T06:54:17Z
-perconaxtradbs.kubedb.com                         2022-11-29T06:53:47Z
-perconaxtradbversions.catalog.kubedb.com          2022-11-29T06:41:10Z
-pgbouncers.kubedb.com                             2022-11-29T06:53:47Z
-pgbouncerversions.catalog.kubedb.com              2022-11-29T06:41:11Z
-postgresautoscalers.autoscaling.kubedb.com        2022-11-29T06:53:38Z
-postgresdatabases.schema.kubedb.com               2022-11-29T06:53:40Z
-postgreses.kubedb.com                             2022-11-29T06:53:40Z
-postgresopsrequests.ops.kubedb.com                2022-11-29T06:54:09Z
-postgresversions.catalog.kubedb.com               2022-11-29T06:41:12Z
-proxysqlopsrequests.ops.kubedb.com                2022-11-29T06:54:13Z
-proxysqls.kubedb.com                              2022-11-29T06:53:49Z
-proxysqlversions.catalog.kubedb.com               2022-11-29T06:41:18Z
-publishers.postgres.kubedb.com                    2022-11-29T06:54:24Z
-redisautoscalers.autoscaling.kubedb.com           2022-11-29T06:53:38Z
-redises.kubedb.com                                2022-11-29T06:53:49Z
-redisopsrequests.ops.kubedb.com                   2022-11-29T06:54:05Z
-redissentinelautoscalers.autoscaling.kubedb.com   2022-11-29T06:53:38Z
-redissentinelopsrequests.ops.kubedb.com           2022-11-29T06:54:21Z
-redissentinels.kubedb.com                         2022-11-29T06:53:49Z
-redisversions.catalog.kubedb.com                  2022-11-29T06:41:19Z
-subscribers.postgres.kubedb.com                   2022-11-29T06:54:27Z
+elasticsearchautoscalers.autoscaling.kubedb.com   2023-04-28T05:31:44Z
+elasticsearchdashboards.dashboard.kubedb.com      2023-04-28T05:31:45Z
+elasticsearches.kubedb.com                        2023-04-28T05:31:46Z
+elasticsearchopsrequests.ops.kubedb.com           2023-04-28T05:32:39Z
+elasticsearchversions.catalog.kubedb.com          2023-04-28T05:29:14Z
+etcds.kubedb.com                                  2023-04-28T05:31:48Z
+etcdversions.catalog.kubedb.com                   2023-04-28T05:29:15Z
+kafkas.kubedb.com                                 2023-04-28T05:32:38Z
+kafkaversions.catalog.kubedb.com                  2023-04-28T05:29:15Z
+mariadbautoscalers.autoscaling.kubedb.com         2023-04-28T05:31:45Z
+mariadbdatabases.schema.kubedb.com                2023-04-28T05:31:59Z
+mariadbopsrequests.ops.kubedb.com                 2023-04-28T05:34:50Z
+mariadbs.kubedb.com                               2023-04-28T05:31:58Z
+mariadbversions.catalog.kubedb.com                2023-04-28T05:29:15Z
+memcacheds.kubedb.com                             2023-04-28T05:31:59Z
+memcachedversions.catalog.kubedb.com              2023-04-28T05:29:16Z
+mongodbautoscalers.autoscaling.kubedb.com         2023-04-28T05:31:45Z
+mongodbdatabases.schema.kubedb.com                2023-04-28T05:31:42Z
+mongodbopsrequests.ops.kubedb.com                 2023-04-28T05:32:42Z
+mongodbs.kubedb.com                               2023-04-28T05:31:44Z
+mongodbversions.catalog.kubedb.com                2023-04-28T05:29:16Z
+mysqlautoscalers.autoscaling.kubedb.com           2023-04-28T05:31:46Z
+mysqldatabases.schema.kubedb.com                  2023-04-28T05:31:40Z
+mysqlopsrequests.ops.kubedb.com                   2023-04-28T05:33:00Z
+mysqls.kubedb.com                                 2023-04-28T05:31:41Z
+mysqlversions.catalog.kubedb.com                  2023-04-28T05:29:16Z
+perconaxtradbautoscalers.autoscaling.kubedb.com   2023-04-28T05:31:47Z
+perconaxtradbopsrequests.ops.kubedb.com           2023-04-28T05:35:40Z
+perconaxtradbs.kubedb.com                         2023-04-28T05:32:24Z
+perconaxtradbversions.catalog.kubedb.com          2023-04-28T05:29:17Z
+pgbouncers.kubedb.com                             2023-04-28T05:32:25Z
+pgbouncerversions.catalog.kubedb.com              2023-04-28T05:29:17Z
+postgresautoscalers.autoscaling.kubedb.com        2023-04-28T05:31:48Z
+postgresdatabases.schema.kubedb.com               2023-04-28T05:31:47Z
+postgreses.kubedb.com                             2023-04-28T05:31:48Z
+postgresopsrequests.ops.kubedb.com                2023-04-28T05:35:33Z
+postgresversions.catalog.kubedb.com               2023-04-28T05:29:17Z
+proxysqlautoscalers.autoscaling.kubedb.com        2023-04-28T05:31:58Z
+proxysqlopsrequests.ops.kubedb.com                2023-04-28T05:35:37Z
+proxysqls.kubedb.com                              2023-04-28T05:32:32Z
+proxysqlversions.catalog.kubedb.com               2023-04-28T05:29:18Z
+publishers.postgres.kubedb.com                    2023-04-28T05:35:50Z
+redisautoscalers.autoscaling.kubedb.com           2023-04-28T05:31:58Z
+redises.kubedb.com                                2023-04-28T05:32:33Z
+redisopsrequests.ops.kubedb.com                   2023-04-28T05:34:53Z
+redissentinelautoscalers.autoscaling.kubedb.com   2023-04-28T05:32:00Z
+redissentinelopsrequests.ops.kubedb.com           2023-04-28T05:35:44Z
+redissentinels.kubedb.com                         2023-04-28T05:32:38Z
+redisversions.catalog.kubedb.com                  2023-04-28T05:29:18Z
+subscribers.postgres.kubedb.com                   2023-04-28T05:35:54Z
 ```
 
 ## Deploy MySQL Group Replication
@@ -163,7 +162,7 @@ Now, we are going to Deploy MySQL Group Replication using KubeDB.
 First, let's create a Namespace in which we will deploy the server.
 
 ```bash
-$ kubectl create ns demo
+$ kubectl create namespace demo
 namespace/demo created
 ```
 
@@ -176,18 +175,27 @@ metadata:
   name: mysql-server
   namespace: demo
 spec:
-  version: "5.7.36"
+  version: "8.0.32"
   replicas: 3
   topology:
     mode: GroupReplication
   storageType: Durable
   storage:
-    storageClassName: "gp2"
+    storageClassName: "standard"
     accessModes:
       - ReadWriteOnce
     resources:
       requests:
         storage: 1Gi
+  podTemplate:
+    spec:
+      resources:
+        requests:
+          memory: "512Mi"
+          cpu: "500m"
+        limits:
+          memory: "1Gi"
+          cpu: "700m"
   terminationPolicy: WipeOut
 ```
 
@@ -199,7 +207,7 @@ $ kubectl apply -f mysql-server.yaml
 mysql.kubedb.com/mysql-server created
 ```
 In this yaml,
-* `spec.version` field specifies the version of MySQL. Here, we are using MySQL `version 5.7.36`. You can list the KubeDB supported versions of MySQL by running `$ kubectl get mysqlversions` command.
+* `spec.version` field specifies the version of MySQL. Here, we are using MySQL `version 8.0.32`. You can list the KubeDB supported versions of MySQL by running `$ kubectl get mysqlversions` command.
 * `spec.topology` contains the information of clustering configuration for MySQL.
 * `spec.storage` specifies PVC spec that will be dynamically allocated to store data for this database. This storage spec will be passed to the StatefulSet created by KubeDB operator to run database pods. You can specify any StorageClass available in your cluster with appropriate resource requests.
 * And the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [HERE](https://kubedb.com/docs/latest/guides/mysql/concepts/database/#specterminationpolicy).
@@ -208,8 +216,8 @@ Let’s check if the server is ready to use,
 
 ```bash
 $ kubectl get mysql -n demo mysql-server
-NAME           VERSION        STATUS   AGE
-mysql-server   5.7.36         Ready    2m
+NAME           VERSION   STATUS   AGE
+mysql-server   8.0.32    Ready    2m46s
 ```
 
 ## Deploy ProxySQL Cluster
@@ -224,11 +232,20 @@ metadata:
   name: proxy-server
   namespace: demo
 spec:
-  version: "2.3.2-debian"
+  version: "2.4.4-debian"
   replicas: 3
   mode: GroupReplication
   backend:
       name: mysql-server
+  podTemplate:
+    spec:
+      resources:
+        requests:
+          memory: "512Mi"
+          cpu: "500m"
+        limits:
+          memory: "1Gi"
+          cpu: "700m"
   syncUsers: true
   terminationPolicy: WipeOut
 ```
@@ -241,7 +258,7 @@ $ kubectl apply -f proxy-server.yaml
 proxysql.kubedb.com/proxy-server created
 ```
 In this yaml,
-* `spec.version` field specifies the version of ProxySQL. Here, we are using ProxySQL `2.3.2-debian`. You can list the KubeDB supported versions of ProxySQL by running `$ kubectl get proxysqlversions` command.
+* `spec.version` field specifies the version of ProxySQL. Here, we are using ProxySQL `2.4.4-debian`. You can list the KubeDB supported versions of ProxySQL by running `$ kubectl get proxysqlversions` command.
 * `spec.backend.name` contains the name of MySQL server backend which is `mysql-server` in this case.
 * `spec.syncUsers` confirms that the ProxySQL will sync it's user list with MySQL server or not. 
 * And the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate".
@@ -251,7 +268,7 @@ Let’s check if the server is ready to use,
 ```bash
 $ kubectl get proxysql -n demo proxy-server
 NAME           VERSION        STATUS   AGE
-proxy-server   2.3.2-debian   Ready    5m
+proxy-server   2.4.4-debian   Ready    3m34s
 ```
 
 Once all of the above things are handled correctly then you will see that the following objects are created:
@@ -259,35 +276,34 @@ Once all of the above things are handled correctly then you will see that the fo
 ```bash
 $ kubectl get all -n demo
 NAME                 READY   STATUS    RESTARTS   AGE
-pod/mysql-server-0   2/2     Running   0          5m5s
-pod/mysql-server-1   2/2     Running   0          3m45s
-pod/mysql-server-2   2/2     Running   0          3m41s
-pod/proxy-server-0   1/1     Running   0          3m2s
-pod/proxy-server-1   1/1     Running   0          2m29s
-pod/proxy-server-2   1/1     Running   0          2m28s
+pod/mysql-server-0   2/2     Running   0          7m46s
+pod/mysql-server-1   2/2     Running   0          7m31s
+pod/mysql-server-2   2/2     Running   0          7m11s
+pod/proxy-server-0   1/1     Running   0          4m1s
+pod/proxy-server-1   1/1     Running   0          3m2s
+pod/proxy-server-2   1/1     Running   0          2m11s
 
-NAME                           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)             AGE
-service/mysql-server           ClusterIP   10.96.165.95    <none>        3306/TCP            5m17s
-service/mysql-server-pods      ClusterIP   None            <none>        3306/TCP            5m17s
-service/mysql-server-standby   ClusterIP   10.96.222.115   <none>        3306/TCP            5m17s
-service/proxy-server           ClusterIP   10.96.153.94    <none>        6033/TCP            3m39s
-service/proxy-server-pods      ClusterIP   None            <none>        6032/TCP,6033/TCP   3m39s
+NAME                           TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)             AGE
+service/mysql-server           ClusterIP   10.8.11.177   <none>        3306/TCP            7m49s
+service/mysql-server-pods      ClusterIP   None          <none>        3306/TCP            7m49s
+service/mysql-server-standby   ClusterIP   10.8.9.165    <none>        3306/TCP            7m49s
+service/proxy-server           ClusterIP   10.8.13.150   <none>        6033/TCP            4m3s
+service/proxy-server-pods      ClusterIP   None          <none>        6032/TCP,6033/TCP   4m4s
 
 NAME                            READY   AGE
-statefulset.apps/mysql-server   3/3     5m5s
-statefulset.apps/proxy-server   3/3     3m2s
+statefulset.apps/mysql-server   3/3     7m52s
+statefulset.apps/proxy-server   3/3     4m7s
 
 NAME                                              TYPE               VERSION   AGE
-appbinding.appcatalog.appscode.com/mysql-server   kubedb.com/mysql   5.7.36    5m5s
-
-NAME                               VERSION        STATUS   AGE
-proxysql.kubedb.com/proxy-server   2.3.2-debian   Ready    3m39s
+appbinding.appcatalog.appscode.com/mysql-server   kubedb.com/mysql   8.0.32    7m56s
 
 NAME                            VERSION   STATUS   AGE
-mysql.kubedb.com/mysql-server   5.7.36    Ready    5m17s
+mysql.kubedb.com/mysql-server   8.0.32    Ready    8m11s
 
+NAME                               VERSION        STATUS   AGE
+proxysql.kubedb.com/proxy-server   2.4.4-debian   Ready    4m29s
 ```
-> We have successfully deployed ProxySQL in Amazon EKS. Now, we can exec into the container to use the database.
+> We have successfully deployed ProxySQL in GKE. Now, we can exec into the container to use the database.
 
 ### Accessing Database Through CLI
 
@@ -297,14 +313,14 @@ KubeDB will create `Secret` and `Service` for `mysql-server` that we have deploy
 ```bash
 $ kubectl get secret -n demo -l=app.kubernetes.io/instance=mysql-server
 NAME                TYPE                       DATA   AGE
-mysql-server-auth   kubernetes.io/basic-auth   2      9m32s
+mysql-server-auth   kubernetes.io/basic-auth   2      8m46s
 
 
 $ kubectl get service -n demo -l=app.kubernetes.io/instance=mysql-server
-NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-mysql-server           ClusterIP   10.96.165.95    <none>        3306/TCP   9m55s
-mysql-server-pods      ClusterIP   None            <none>        3306/TCP   9m55s
-mysql-server-standby   ClusterIP   10.96.222.115   <none>        3306/TCP   9m55s
+NAME                   TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
+mysql-server           ClusterIP   10.8.11.177   <none>        3306/TCP   9m
+mysql-server-pods      ClusterIP   None          <none>        3306/TCP   9m
+mysql-server-standby   ClusterIP   10.8.9.165    <none>        3306/TCP   9m
 ```
 Now, we are going to use `mysql-server-auth` to get the credentials.
 
@@ -313,7 +329,7 @@ $ kubectl get secrets -n demo mysql-server-auth -o jsonpath='{.data.username}' |
 root
 
 $ kubectl get secrets -n demo mysql-server-auth -o jsonpath='{.data.password}' | base64 -d
-1H*AbfIKMpo1pV_s
+FtJEoYURsZJhQx*G
 ```
 
 #### Insert Sample Data
@@ -322,17 +338,12 @@ Now, let’s exec to the ProxySQL Pod to enter into MySQL server using MySQL use
 
 ```bash
 $ kubectl exec -it proxy-server-0 -n demo -- bash
-root@proxy-server-0:/# mysql --user=root --password='1H*AbfIKMpo1pV_s' --host 127.0.0.1 --port=6033
-Welcome to the MariaDB monitor.  Commands end with ; or \g.
-Your MySQL connection id is 1398
-Server version: 8.0.27 (ProxySQL)
-
-Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+root@proxy-server-0:/# mysql --user=root --password='FtJEoYURsZJhQx*G' --host 127.0.0.1 --port=6033
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 MySQL [(none)]> CREATE DATABASE Music;
-Query OK, 1 row affected (0.005 sec)
+Query OK, 1 row affected (0.035 sec)
 
 MySQL [(none)]> SHOW DATABASES;
 +--------------------+
@@ -345,20 +356,20 @@ MySQL [(none)]> SHOW DATABASES;
 | performance_schema |
 | sys                |
 +--------------------+
-6 rows in set (0.00 sec)
+6 rows in set (0.004 sec)
 
 MySQL [(none)]> CREATE TABLE Music.Artist (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(50), Song VARCHAR(50));
-Query OK, 0 rows affected (0.021 sec)
+Query OK, 0 rows affected, 1 warning (0.049 sec)
 
-MySQL [(none)]> INSERT INTO Music.Artist (Name, Song) VALUES ("John Denver", "Country Roads");
-Query OK, 1 row affected (0.009 sec)
+MySQL [(none)]> INSERT INTO Music.Artist (Name, Song) VALUES ("Bobby Bare", "Five Hundred Miles");
+Query OK, 1 row affected (0.010 sec)
 
 MySQL [(none)]> SELECT * FROM Music.Artist;
-+----+-------------+---------------+
-| id | Name        | Song          |
-+----+-------------+---------------+
-|  1 | John Denver | Country Roads |
-+----+-------------+---------------+
++----+------------+--------------------+
+| id | Name       | Song               |
++----+------------+--------------------+
+|  1 | Bobby Bare | Five Hundred Miles |
++----+------------+--------------------+
 1 row in set (0.009 sec)
 
 MySQL [(none)]> exit
@@ -387,11 +398,6 @@ Let’s connect to a ProxySQL instance and run this command to check the number 
 ```bash
 $ kubectl exec -it proxy-server-0 -n demo -- bash
 root@proxy-server-0:/# mysql -uadmin -padmin --host 127.0.0.1 --port=6032
-Welcome to the MariaDB monitor.  Commands end with ; or \g.
-Your MySQL connection id is 1545
-Server version: 8.0.27 (ProxySQL Admin Module)
-
-Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
@@ -429,8 +435,8 @@ spec:
 ```
 Here,
 
-- `spec.proxyRef.name` specifies that we are performing horizontal scaling operation on `proxy-server`.
-- `spec.type` specifies that we are performing `HorizontalScaling` on our database.
+- `spec.proxyref.name` specifies that we are performing horizontal scaling operation on `proxy-server` .
+- `spec.type` specifies that we are performing `HorizontalScaling` on our ProxySQL.
 - `spec.horizontalScaling.member` specifies the desired replicas after scaling.
 
 Let’s save this yaml configuration into `horizontal-scale-up.yaml` and apply it,
@@ -460,11 +466,6 @@ Let’s connect to a ProxySQL instance and run this command to check the number 
 ```bash
 $ kubectl exec -it proxy-server-0 -n demo -- bash
 root@proxy-server-0:/# mysql -uadmin -padmin --host 127.0.0.1 --port=6032
-Welcome to the MariaDB monitor.  Commands end with ; or \g.
-Your MySQL connection id is 1688
-Server version: 8.0.27 (ProxySQL Admin Module)
-
-Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
@@ -507,13 +508,13 @@ spec:
   proxyRef:
     name: proxy-server
   horizontalScaling:
-    member: 4
+    member: 3
 ```
 
 Here,
 
-- `spec.proxyRef.name` specifies that we are performing horizontal scaling operation on `proxy-server`.
-- `spec.type` specifies that we are performing `HorizontalScaling` on our database.
+- `spec.databaseRef.name` specifies that we are performing horizontal scaling operation on `proxy-server`.
+- `spec.type` specifies that we are performing `HorizontalScaling` on our ProxySQL.
 - `spec.horizontalScaling.member` specifies the desired replicas after scaling.
 
 Let’s save this yaml configuration into `horizontal-scale-down.yaml` and apply it,
@@ -535,7 +536,7 @@ We can see from the above output that the `ProxySQLOpsRequest` has succeeded. No
 
 ```bash
 $ kubectl get proxysql -n demo proxy-server -o json | jq '.spec.replicas'
-4
+3
 ```
 
 Let’s connect to a ProxySQL instance and run this command to check the number of replicas,
@@ -543,11 +544,6 @@ Let’s connect to a ProxySQL instance and run this command to check the number 
 ```bash
 $ kubectl exec -it proxy-server-0 -n demo -- bash
 root@proxy-server-0:/# mysql -uadmin -padmin --host 127.0.0.1 --port=6032
-Welcome to the MariaDB monitor.  Commands end with ; or \g.
-Your MySQL connection id is 1759
-Server version: 8.0.27 (ProxySQL Admin Module)
-
-Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
@@ -558,17 +554,15 @@ MySQL [(none)]> SELECT * FROM proxysql_servers;
 | proxy-server-0.proxy-server-pods.demo | 6032 | 1      |         |
 | proxy-server-1.proxy-server-pods.demo | 6032 | 1      |         |
 | proxy-server-2.proxy-server-pods.demo | 6032 | 1      |         |
-| proxy-server-3.proxy-server-pods.demo | 6032 | 1      |         |
 +---------------------------------------+------+--------+---------+
-4 rows in set (0.002 sec)
+3 rows in set (0.002 sec)
 
 MySQL [(none)]> exit
 Bye
 root@proxy-server-0:/# exit
 exit
 ```
-> From all the above outputs we can see that the replicas of the cluster is decreased to 4. That means we have successfully scaled down the replicas of the ProxySQL cluster.
-
+> From all the above outputs we can see that the replicas of the cluster is decreased to 3. That means we have successfully scaled down the replicas of the ProxySQL cluster.
 
 
 We have made an in depth tutorial on ProxySQL Declarative Provisioning, Reconfiguration and Horizontal Scaling using KubeDB. You can have a look into the video below:
