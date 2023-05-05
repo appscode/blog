@@ -21,6 +21,13 @@ We have added support for backup and restore for Redis Cluster Mode. [#164](http
 
 Our latest release of Stash now supports backup and restore for all Redis modes and versions. Users can now take backups from any Redis mode and restore them to any other mode.
 
+## Using Numeric UID for Docker Images
+
+Previously, we were using user `nobody` in all Stash docker images. This will sometimes result is the following error message if PSP is enabled.
+
+`Error: container has runAsNonRoot and image has non-numeric user (nobody), cannot verify user is non-root`
+
+In this release, we have started using `user 65534` as the default uid in all Stash docker images to address this issue.
 
 ## What Next?
 
