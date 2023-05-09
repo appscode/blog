@@ -174,7 +174,7 @@ metadata:
   name: redis-cluster
   namespace: demo
 spec:
-  version: 6.2.5
+  version: 7.0.10
   mode: Cluster
   cluster:
     master: 3
