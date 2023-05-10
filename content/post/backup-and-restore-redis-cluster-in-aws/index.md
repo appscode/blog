@@ -529,7 +529,7 @@ $ kubectl exec -it -n demo redis-cluster-shard0-0 -- redis-cli -c -a $PASSWORD
 
 > You can see the data has been restored. The recovery of Redis cluster has been successful. If you faced any difficulties in the recovery process, you can reach out to us through [EMAIL](mailto:support@appscode.com?subject=Stash%20Recovery%20Failed%20in%20AWS).
 
-We have made an in depth video on deploy Sharded Redis Cluster in Kubernetes Using KubeDB. You can have a look into the video below:
+We have made an in depth video on how to Deploy Sharded Redis Cluster in Kubernetes Using KubeDB. You can have a look into the video below:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/J7QI4EzuOVY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
