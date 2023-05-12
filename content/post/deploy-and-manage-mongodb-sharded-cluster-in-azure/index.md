@@ -22,7 +22,7 @@ tags:
 
 ## Overview
 
-KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are MongoDB, Elasticsearch, MySQL, MariaDB, Redis, PostgreSQL, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/).
+KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are MongoDB, Elasticsearch, Kafka, MySQL, MariaDB, Redis, PostgreSQL, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/).
 In this tutorial we will deploy and manage MongoDB Sharded Cluster in Azure Kubernetes Service (AKS). We will cover the following steps:
 
 1) Install KubeDB
@@ -179,14 +179,6 @@ spec:
   shardTopology:
     configServer:
       replicas: 3
-      podTemplate: 
-        spec:
-          resources:
-            limits:
-              memory: 384Mi
-            requests:
-              cpu: 300m
-              memory: 384Mi
       storage:
         resources:
           requests:
@@ -194,24 +186,8 @@ spec:
         storageClassName: default
     mongos:
       replicas: 2
-      podTemplate: 
-        spec:
-          resources:
-            limits:
-              memory: 384Mi
-            requests:
-              cpu: 300m
-              memory: 384Mi
     shard:
       replicas: 3
-      podTemplate: 
-        spec:
-          resources:
-            limits:
-              memory: 384Mi
-            requests:
-              cpu: 300m
-              memory: 384Mi
       shards: 2
       storage:
         resources:
