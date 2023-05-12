@@ -208,9 +208,9 @@ In this yaml,
 * `spec.shardTopology` represents the topology configuration for sharding.
 * `spec.shardTopology.configServer` defines configuration for ConfigServer component of mongodb.
 * `spec.shardTopology.configServer.replicas` represents number of replicas for configServer replicaset.
-* `spec.shardTopology.mongos` defines configuration for Mongos component of mongodb. Mongos instances run as stateless components (deployment).
+* `spec.shardTopology.mongos` defines configuration for Mongos component of mongodb.
 * `spec.shardTopology.mongos.replicas` specifies number of replicas of Mongos instance. Here, Mongos is not deployed as replicaset.
-* `spec.storage.storageClassName` is the name of the StorageClass used to provision PVCs. 
+* `spec.shardTopology.<shard/mongos/configServer>.storage.storageClassName` is the name of the StorageClass used to provision PVCs. 
 * `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be “Halt”, “Delete” and “DoNotTerminate”. Learn More about these checkout [Termination Policy](https://kubedb.com/docs/latest/guides/mongodb/concepts/mongodb/#specterminationpolicy) .
 
 Once these are handled correctly and the MongoDB object is deployed, you will see that the following objects are created:
