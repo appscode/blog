@@ -3,20 +3,20 @@ title: Understanding Different UI Rendering Methods CSR, SSR, SSG and UR
 date: "2023-05-19"
 weight: 14
 authors:
-  - Al Asad Nur Riayd
+- Al Asad Nur Riayd
 tags:
-  - frontend
-  - appscode
-  - bytebuilders
-  - javascript
-  - typescript
-  - vue
-  - nuxt
-  - byte.builders
-  - console.byte.builders
-  - kubedb.byte.builders
-  - learn.byte.builders
-  - selfhost.byte.builders
+- appscode
+- bytebuilders
+- csr
+- frontend
+- javascript
+- nuxt
+- spa
+- ssg
+- ssr
+- typescript
+- ur
+- vue
 ---
 
 ## Introduction
@@ -80,15 +80,13 @@ Static Site Generation involves pre-building the entire website during the build
 
 ### 4. Universal Rendering (CSR + SSR):
 
-In universal rendering when the browser requests a URL with universal (server-side + client-side) rendering enabled, the server returns a fully rendered HTML page to the browser. Whether the page has been generated in advance and cached or is rendered on the fly, at some point, the browser runs the JavaScript code in a server environment, producing an HTML document. Users immediately get the content of our application, contrary to client-side rendering. This step is similar to traditional server-side rendering performed by PHP or Ruby applications.
+In universal rendering when the browser requests a URL with universal (server-side + client-side) rendering enabled, the server returns a fully rendered HTML page to the browser. Whether the page has been generated in advance and cached or is rendered on the fly, at initial request, the JavaScript code run in a server environment, producing an HTML document. Users immediately get the content of our application, contrary to client-side rendering. This step is similar to traditional server-side rendering performed by PHP or Ruby applications.
 
 To not lose the benefits of the client-side rendering method, such as dynamic interfaces and page transitions, the Client (browser) loads the JavaScript code that runs on the Server in the background once the HTML document has been downloaded. The browser interprets it again (hence Universal rendering) and CSR takes control of the document and enables interactivity.
 
-Universal rendering allows a Nuxt application to provide quick page load times while preserving the benefits of client-side rendering. Furthermore, as the content is already present in the HTML document, crawlers can index it without the overhead.
-
 ### Out Projects
 
-We have several web project to render. Some of them require high interactivity, some of then need SEO and others are content heavy. Depends on the project requirement to use different rendering method in our project. Here is a table that shows in which project we use which UI rending methods.
+Here at Appscode, we have developed several web applications that utilize the different rendering techniques mentioned here. Some of them require high interactivity, some of then need SEO and others are content heavy. Depends on the project requirement to use different rendering method in our project. Here is a table that shows in which project we use which UI rending methods.
 
 ![table](table.png)
 
