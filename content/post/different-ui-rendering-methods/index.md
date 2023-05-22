@@ -3,7 +3,7 @@ title: Understanding Different UI Rendering Methods CSR, SSR, SSG and UR
 date: "2023-05-19"
 weight: 14
 authors:
-- Al Asad Nur Riayd
+- Al Asad Nur Riyad
 tags:
 - appscode
 - bytebuilders
