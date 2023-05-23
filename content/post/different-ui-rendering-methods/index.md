@@ -84,7 +84,7 @@ In universal rendering when the browser requests a URL with universal (server-si
 
 To not lose the benefits of the client-side rendering method, such as dynamic interfaces and page transitions, the Client (browser) loads the JavaScript code that runs on the Server in the background once the HTML document has been downloaded. The browser interprets it again (hence Universal rendering) and CSR takes control of the document and enables interactivity.
 
-### Out Projects
+### Our Projects
 
 Here at Appscode, we have developed several web applications that utilize the different rendering techniques mentioned here. Some of them require high interactivity, some of then need SEO and others are content heavy. Depends on the project requirement to use different rendering method in our project. Here is a table that shows in which project we use which UI rending methods.
 
