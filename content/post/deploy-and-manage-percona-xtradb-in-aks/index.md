@@ -1,6 +1,6 @@
 ---
 title: Deploy and Manage Percona XtraDB in Azure Kubernetes Service (AKS) Using KubeDB
-date: "2022-05-26"
+date: "2023-05-26"
 weight: 14
 authors:
 - Dipta Roy
