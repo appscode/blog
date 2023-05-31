@@ -39,7 +39,7 @@ interimVolumeTemplate:
       accessModes: [ "ReadWriteOnce" ]
       # resources:
       # requests:
-      # storage: 1Gii
+      # storage: 1Gi
 ```
 With this improvement, you no longer need to manually specify the storage size, as Stash will dynamically determine it for you.
 
