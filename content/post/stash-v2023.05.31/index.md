@@ -14,12 +14,12 @@ tags:
 - stash
 ---
 
-We are announcing Stash v2023.05.31 which includes a few bug fixes and enhancements. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2023.05.31/README.md). In this post, we are going to highlight the changes.
+We are announcing Stash v2023.05.31 which includes various bug fixes and enhancements. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2023.05.31/README.md). In this post, we are going to highlight the key changes.
 
 ### Bug Fixes
 
 - Fixed a bug that was causing the BackupSession to remain in the `Running` phase, even after a MongoDB shard backup failure. [#1806](https://github.com/stashed/mongodb/pull/1806)
-- Fixed a bug that was causing the failure of shard backup for `MongoDB 5.0.3`  due to an authorization error.
+- Fixed a bug that was causing the failure of shard backup for `MongoDB 5.0.3` due to an authorization error.
 - Fixed a bug that resulted in backup failures for MongoDB when TLS is enabled. [#1805](https://github.com/stashed/mongodb/pull/1805)
 - Fixed a bug that was causing failures in the creation of backup and restore jobs.
 - Fixed a bug that was causing the `get snapshots` command to fail for the local backend of NFS.
@@ -29,7 +29,7 @@ We are announcing Stash v2023.05.31 which includes a few bug fixes and enhanceme
 ### Enhancements
 
 #### Automatic Storage Size Calculation for Elasticsearch Backup and Restore
-We have introduced a new feature to enhance the convenience of Elasticsearch backup and restore by enabling automatic calculation of the storage limit for the interim volume template. Now, you have the option to leave the resources field empty, and Stash will handle the calculation process for you. Here's an example of how to utilize this functionality:
+We have introduced a new feature to simplify the Elasticsearch backup and restore process by automatically calculating the storage limit for the interim PVC. Now, you have the option to leave the resources field empty, and Stash will handle the calculation for you. This is support for Elasticsearch 7.15+ and Opensearch v1.x and 2.x. Stash wil calculate the PVC size by summing up the size of the ES indices and adding a 20% buffer for safety. The minimum interim PVC size will be 1 GiB. The PVC size will be stored as part of the snapshot and will be used by the restore process automatically if no storage limit is set in a RestoreSession object. Below is an example of how to take advantage of this feature:
 
 ```yaml
 interimVolumeTemplate:
@@ -41,10 +41,11 @@ interimVolumeTemplate:
       # requests:
       # storage: 1Gi
 ```
+
 With this improvement, you no longer need to manually specify the storage size, as Stash will dynamically determine it for you.
 
 #### Backup and Restore TLS-enabled Redis clusters
-In this latest release, we have introduced support for the backup and restoration of Redis clusters with TLS encryption enabled. [#172](https://github.com/stashed/redis/pull/172)
+In this latest release, we have introduced support for the backup and restoration of TLS enabled Redis clusters. [#172](https://github.com/stashed/redis/pull/172)
 
 ## What Next?
 
