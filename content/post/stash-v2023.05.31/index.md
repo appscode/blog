@@ -26,9 +26,10 @@ We are announcing Stash v2023.05.31 which includes various bug fixes and enhance
 - Fixed a bug that was causing the `Skipped` BackupSessions to not be cleaned up. [#1525](https://github.com/stashed/stash/pull/1525)
 - Fixed a bug that was that was causing an incorrect name format for the Cronjob created for scheduled backup.[#1525](https://github.com/stashed/stash/pull/1525)
 
-### Enhancements
+## Enhancements
 
-#### Automatic Storage Size Calculation for Elasticsearch Backup and Restore
+### Automatic Storage Size Calculation for Elasticsearch Backup and Restore
+
 We have introduced a new feature to simplify the Elasticsearch backup and restore process by automatically calculating the storage limit for the interim PVC. Now, you have the option to leave the resources field empty, and Stash will handle the calculation for you. This is support for Elasticsearch 7.15+ and Opensearch v1.x and 2.x. Stash wil calculate the PVC size by summing up the size of the ES indices and adding a 20% buffer for safety. The minimum interim PVC size will be 1 GiB. The PVC size will be stored as part of the snapshot and will be used by the restore process automatically if no storage limit is set in a RestoreSession object. Below is an example of how to take advantage of this feature:
 
 ```yaml
@@ -44,7 +45,8 @@ interimVolumeTemplate:
 
 With this improvement, you no longer need to manually specify the storage size, as Stash will dynamically determine it for you.
 
-#### Backup and Restore TLS-enabled Redis clusters
+### Backup and Restore TLS-enabled Redis clusters
+
 In this latest release, we have introduced support for the backup and restoration of TLS enabled Redis clusters. [#172](https://github.com/stashed/redis/pull/172)
 
 ## What Next?
