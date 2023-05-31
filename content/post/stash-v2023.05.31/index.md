@@ -16,7 +16,7 @@ tags:
 
 We are announcing Stash v2023.05.31 which includes various bug fixes and enhancements. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2023.05.31/README.md). In this post, we are going to highlight the key changes.
 
-### Bug Fixes
+## Bug Fixes
 
 - Fixed a bug that was causing the BackupSession to remain in the `Running` phase, even after a MongoDB shard backup failure. [#1806](https://github.com/stashed/mongodb/pull/1806)
 - Fixed a bug that was causing the failure of shard backup for `MongoDB 5.0.3` due to an authorization error.
