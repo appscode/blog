@@ -6,11 +6,11 @@ authors:
 - Hossain Mahmud
 tags:
 - backup
-- restore
+- elasticsearch
 - kubernetes
 - mongodb
 - redis
-- elasticsearch
+- restore
 - stash
 ---
 
