@@ -20,12 +20,6 @@ tags:
 
 # Releases
 
-#### Introducing KubeVault v2023.05.05
-
-We are very excited to announce the release of KubeVault **v2023.05.05** Edition. In this release, we have fixed a bug and did some code improvements.
-
-Link: https://blog.byte.builders/post/kubevault-v2023.05.05/
-
 
 #### Introducing Stash v2023.04.30
 
