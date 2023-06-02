@@ -5,14 +5,14 @@ weight: 14
 authors:
 - Dipta Roy
 tags:
+- aks
+- azure
 - cloud-native
 - database
-- azure
-- aks
-- microsoft-azure
 - horizontal-scaling
 - kubedb
 - kubernetes
+- microsoft-azure
 - proxysql
 - vertical-scaling
 ---
