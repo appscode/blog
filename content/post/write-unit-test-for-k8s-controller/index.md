@@ -118,7 +118,7 @@ In the `TestReconcile` function, we create a fake client with the necessary sche
 
 Next, we create an instance of the `reconciler` struct, passing the fake client and the mock implementation as dependencies. Finally, we call the `reconcile` method and assert that it returns a non-nil error.
 
-### Conclusion:
+### Conclusion
 
 In this blog post, we explored how to write unit tests for a custom Kubernetes controller using the Go programming language. We focused on testing the reconciler logic and showcased how to use mock implementations to isolate and control dependencies.
 
