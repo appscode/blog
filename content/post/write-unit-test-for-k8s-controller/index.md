@@ -1,6 +1,6 @@
 ---
 title: Writing Unit Tests for Custom Kubernetes Controllers in Go
-date: "2023-06-05"
+date: "2023-06-09"
 weight: 26
 authors:
 - Hossain Mahmud
