@@ -51,7 +51,7 @@ release: gen-prod
 HUGO_TOOLS = $(shell pwd)/bin/hugo-tools
 .PHONY: hugo-tools
 hugo-tools: ## Download hugo-tools locally if necessary.
-	$(call go-get-tool,$(HUGO_TOOLS),appscodelabs/hugo-tools,v0.2.24)
+	$(call go-get-tool,$(HUGO_TOOLS),appscodelabs/hugo-tools)
 
 # go-get-tool will 'curl' binary from GH repo $2 with version $3 and install it to $1.
 PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
@@ -73,7 +73,7 @@ esac; \
 bin=hugo-tools-$${OS}-$${ARCH}; \
 echo "Downloading $${bin}" ;\
 mkdir -p $(PROJECT_DIR)/bin; \
-curl -fsSL -o $(1) https://github.com/$(2)/releases/download/$(3)/$${bin}; \
+curl -fsSL -o $(1) https://github.com/$(2)/releases/latest/download/$${bin}; \
 chmod +x $(1); \
 }
 endef
