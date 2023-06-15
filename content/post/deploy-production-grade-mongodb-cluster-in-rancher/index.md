@@ -123,7 +123,7 @@ In this yaml,
 
 After deploying the MongoDB Cluster configuration, you should see the following pods created in the `Workload` > `Pods` section:
 ![mongodb pods](d3.png)
-To verify that the MongoDB deployment was successful, connect to the cluster `kubectl` shell and run the following commands to see the objects that were created. Also, we will check the database `STATUS` is ready to or not,
+To verify that the MongoDB deployment was successful, connect to the cluster `kubectl` and run the following commands to see the objects that were created. Also, we will check the database `STATUS` is ready to or not,
 ```bash
 $ kubectl get all -n demo
 ```
