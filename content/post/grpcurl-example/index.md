@@ -5,9 +5,9 @@ weight: 11
 authors:
 - Abdul Matin
 tags:
-- gRPC
+- grpc
 - grpcurl
-- RPC
+- rpc
 ---
 
 ## How to use grpcurl tool to test gRPC server
