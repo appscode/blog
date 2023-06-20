@@ -61,7 +61,7 @@ Previously KubeDB operator will only auto acquire license via license-proxyserve
 
 ## KubeDB Gateway
 
-We have released KubeDB Gatway v0.0.1 based on [Kubernetes Gateway API](https://gateway-api.sigs.k8s.io/). This offers a Envoy based Gateway that can be to expose databases running on one cluster to anoterh Kubernetes cluster. The helm chart can be found [here](https://github.com/voyagermesh/installer/tree/master/charts/gateway-helm). You can see a demo [here](https://youtu.be/l0UB7IZTZ44). Please reach out, if you are interested in trying it.
+We have released KubeDB Gatway v0.0.1 based on [Kubernetes Gateway API](https://gateway-api.sigs.k8s.io/). This offers a Envoy based Gateway that can be to expose databases running on one cluster to another Kubernetes cluster. The helm chart can be found [here](https://github.com/voyagermesh/installer/tree/master/charts/gateway-helm). You can see a demo [here](https://youtu.be/l0UB7IZTZ44). Please reach out, if you are interested in trying it.
 
 ## What Next?
 
