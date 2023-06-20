@@ -1,5 +1,6 @@
-{{ define "main" }} {{ $author := (index $.Site.Data.authors (.Title | urlize) )
-}}
+{{ define "main" }}
+
+{{ $author := (index $.Site.Data.authors (.Title | urlize)) }}
 
 <!-- author hero area start  -->
 <section class="author-hero-area">
@@ -233,15 +234,19 @@
             {{ range $idx, $p := .RegularPages.ByDate.Reverse }}
             <div class="column is-4 each-blog">
                <a href="{{ $p.RelPermalink }}" class="single-blog-card">
-                <div class="is-flex"> {{ range $author := $p.Params.authors }}
+                <div class="is-flex">
+                  {{ range $authorName := $p.Params.authors }}
                   <div class="user-info">
 
-                    <img src="/assets/images/authors/profile-photos-28x28/{{ $author | urlize}}.jpg" alt="author"
+                    <img
+                      src="{{ index $.Site.Data.authors ($authorName | urlize) "profile" }}"
+                      alt="author"
                       width="20" height="20" loading="lazy" decoding="async">
-                    <p class="mr-12 author"> {{ $author }}</p>
+                    <p class="mr-12 author"> {{ $authorName }}</p>
 
                   </div>
-                  {{end}}</div>
+                  {{end}}
+                </div>
                  <h2 class="is-ellipsis-2" title="">{{ $p.Title }}</h2>
 
                  <div class="tags is-hidden">

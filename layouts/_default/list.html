@@ -92,11 +92,13 @@
 
         <a href="{{ $p.RelPermalink }}" class="single-blog-card">
           <div class="user-info">
-            {{ range $author := $p.Params.authors }}
-            <img src="/assets/images/authors/profile-photos-28x28/{{ $author | urlize}}.jpg" alt="author" width="20"
-              height="20"
+            {{ range $authorName := $p.Params.authors }}
+            <img
+              src="{{ index $.Site.Data.authors ($authorName | urlize) "profile" }}"
+              alt="author"
+              width="20" height="20"
               loading="lazy" decoding="async">
-            <p class="mr-12 author"> {{ $author }}</p>
+            <p class="mr-12 author"> {{ $authorName }}</p>
             {{ end }}
           </div>
           <h2 class="is-ellipsis-3" title="{{ $p.Title }}">{{ $p.Title }}</h2>
@@ -308,11 +310,13 @@
 
               <a href="{{ $p.RelPermalink }}" class="single-blog-card list-view">
                 <div class="user-info">
-                  {{ range $author := $p.Params.authors }}
-                  <img src="/assets/images/authors/profile-photos-28x28/{{ $author | urlize}}.jpg" alt="author"
+                  {{ range $authorName := $p.Params.authors }}
+                  <img
+                    src="{{ index $.Site.Data.authors ($authorName | urlize) "profile" }}"
+                    alt="author"
                     width="20" height="20"
                     loading="lazy" decoding="async">
-                  <p class="author mr-12"> {{ $author }}</p>
+                  <p class="author mr-12"> {{ $authorName }}</p>
                   {{ end }}
                 </div>
                 <h2 class="is-ellipsis-3" title="{{ $p.Title }}">{{ $p.Title }}</h2>
