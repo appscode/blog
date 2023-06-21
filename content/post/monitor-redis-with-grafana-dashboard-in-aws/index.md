@@ -161,7 +161,13 @@ subscribers.postgres.kubedb.com                   2023-06-20T05:28:04Z
 ```
 
 ### Install Prometheus Stack
-Install Prometheus stack if you haven't done it already. You can use [kube-prometheus-stack](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack) which installs the necessary components required for the Redis Grafana dashboards.
+Install Prometheus stack which installs the necessary components required for the Redis Grafana dashboards. You can use following commands,
+
+```bash
+$ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+$ helm install prometheus prometheus-community/kube-prometheus-stack
+```
+or visit [kube-prometheus-stack](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack) for more detailed information.
 
 ### Install Panopticon
 KubeDB Enterprise License works for Panopticon too. So, we will use the same license that we have already obtained.
@@ -321,7 +327,7 @@ Select Import button from left bar of the Grafana UI
 
 ![Import Dashboard](import-dashboard.png)
 
-Upload the json file or copy-paste the json codes to the panel json and hit the load button:
+Upload the json file or copy and paste the desired Redis dashboard json file from [HERE](https://github.com/appscode/grafana-dashboards/tree/master/redis) and paste it to the panel json and hit the load button:
 
 ![Upload Json](upload-json.png)
 
