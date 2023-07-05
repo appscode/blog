@@ -236,7 +236,7 @@ In this yaml,
 * `spec.monitor.agent: prometheus.io/operator` indicates that we are going to monitor this server using Prometheus operator.
 * `spec.monitor.prometheus.serviceMonitor.labels` specifies the release name that KubeDB should use in `ServiceMonitor`.
 * `spec.monitor.prometheus.interval` defines that the Prometheus server should scrape metrics from this database with 10 seconds interval.
-* And the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these checkout [Termination Policy].(https://kubedb.com/docs/latest/guides/postgres/concepts/postgres/#specterminationpolicy).
+* And the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these checkout [Termination Policy](https://kubedb.com/docs/latest/guides/postgres/concepts/postgres/#specterminationpolicy).
 
 Once these are handled correctly and the PostgreSQL object is deployed, you will see that the following objects are created:
 
