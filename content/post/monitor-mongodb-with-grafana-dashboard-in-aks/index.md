@@ -210,7 +210,7 @@ spec:
   replicaSet:
     name: rs
   storage:
-    storageClassName: "standard"
+    storageClassName: "default"
     accessModes:
     - ReadWriteOnce
     resources:
