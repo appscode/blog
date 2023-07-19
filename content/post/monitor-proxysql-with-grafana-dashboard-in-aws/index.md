@@ -1,6 +1,6 @@
 ---
 title: Monitor ProxySQL with Grafana Dashboard in Amazon Elastic Kubernetes Service (Amazon EKS)
-date: "2023-03-27"
+date: "2023-07-19"
 weight: 14
 authors:
 - Dipta Roy
@@ -234,8 +234,7 @@ mysql.kubedb.com/mysql-server created
 * `spec.monitor.agent: prometheus.io/operator` indicates that we are going to monitor this server using Prometheus operator.
 * `spec.monitor.prometheus.serviceMonitor.labels` specifies the release name that KubeDB should use in `ServiceMonitor`.
 * `spec.monitor.prometheus.interval` defines that the Prometheus server should scrape metrics from this database with 10 seconds interval.
-* And the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [Termination Policy](https://kubedb.com/docs/latest/guides/mysql/concepts/database/#specterminationpolicy).
-
+* And the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these [Termination Policy](https://kubedb.com/docs/latest/guides/mysql/concepts/database/#specterminationpolicy)
 
 Let’s check if the server is ready to use,
 ```bash
@@ -259,15 +258,6 @@ spec:
   mode: GroupReplication
   backend:
       name: mysql-server
-  podTemplate:
-    spec:
-      resources:
-        requests:
-          memory: "512Mi"
-          cpu: "500m"
-        limits:
-          memory: "1Gi"
-          cpu: "700m"
   syncUsers: true
   monitor:
     agent: prometheus.io/operator
