@@ -6,16 +6,15 @@ authors:
 - Dipta Roy
 tags:
 - aks
+- azure
 - cloud-native
 - database
-- azure
 - high-availability
 - kubedb
 - kubernetes
+- microsoft-azure
 - postgres
 - postgresql
-- postgresql-database
-- microsoft-azure
 ---
 
 ## Overview
