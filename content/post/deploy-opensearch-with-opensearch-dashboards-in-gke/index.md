@@ -1,5 +1,5 @@
 ---
-title: Deploy OpenSearch with OpenSearch-Dashboards on Google Kubernetes Engine (GKE) using KubeDB
+title: Deploy OpenSearch with OpenSearch-Dashboards in Google Kubernetes Engine (GKE) using KubeDB
 date: "2023-07-28"
 weight: 12
 authors:
@@ -21,7 +21,7 @@ tags:
 ## Overview
 
 KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are Elasticsearch, Kafka, MySQL, MongoDB, MariaDB, Redis, PostgreSQL, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/). KubeDB provides support not only for the official [Elasticsearch](https://www.elastic.co/) by Elastic and [OpenSearch](https://opensearch.org/) by AWS, but also other open source distributions like [SearchGuard](https://search-guard.com/) and [OpenDistro](https://opendistro.github.io/for-elasticsearch/). **KubeDB provides all of these distribution's support under the Elasticsearch CR of KubeDB**.
-In this tutorial we will Deploy OpenSearch with OpenSearch-Dashboards on Google Kubernetes Engine (GKE). We will cover the following steps:
+In this tutorial we will Deploy OpenSearch with OpenSearch-Dashboards in Google Kubernetes Engine (GKE). We will cover the following steps:
 
 1) Install KubeDB
 2) Deploy OpenSearch Topology Cluster
