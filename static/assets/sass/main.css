@@ -9770,7 +9770,7 @@ Responsive Classes
 .hero-area-blog {
   padding: 170px 0 100px;
   margin-top: -74px;
-  background-image: url(/assets/images/bg-image/hero-bg.png);
+  background-image: url(/blog/assets/images/bg-image/hero-bg.png);
   background-repeat: no-repeat;
   min-height: 62vh;
   display: flex;
@@ -10687,7 +10687,7 @@ ul.social-share-button li a i.fa {
 }
 @media (min-width: 2000px) {
   .hero-area-blog {
-    background-image: url(/assets/images/bg-image/hero-bg-2x.png);
+    background-image: url(/blog/assets/images/bg-image/hero-bg-2x.png);
   }
 }
 /*=================================================================================================
@@ -10858,7 +10858,7 @@ ul.social-share-button li a i.fa {
   margin-bottom: 20px;
 }
 .blog-content .bb-quote-msg .name-descriptor::before {
-  content: url(/assets/images/icons/line.svg);
+  content: url(/blog/assets/images/icons/line.svg);
   position: absolute;
   left: -60px;
 }
@@ -10977,7 +10977,7 @@ ul.social-share-button li a i.fa {
                                     Responsive code end
 =================================================================================================*/
 .author-hero-area {
-  background-image: url(/assets/images/bg-image/hero-bg.png);
+  background-image: url(/blog/assets/images/bg-image/hero-bg.png);
   margin-top: -74px;
   padding: 140px 0 70px;
 }

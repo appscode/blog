@@ -29,23 +29,23 @@
   <meta name="theme-color" content="#0071BD" />
   <title>{{ .Title }}</title>
   <!-- favicon -->
-  <link rel="apple-touch-icon" sizes="57x57" href="/assets/images/products/bytebuilders/icons/apple-icon-57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60" href="/assets/images/products/bytebuilders/icons/apple-icon-60x60.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="/assets/images/products/bytebuilders/icons/apple-icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="/assets/images/products/bytebuilders/icons/apple-icon-76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="/assets/images/products/bytebuilders/icons/apple-icon-114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="/assets/images/products/bytebuilders/icons/apple-icon-120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="/assets/images/products/bytebuilders/icons/apple-icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="/assets/images/products/bytebuilders/icons/apple-icon-152x152.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/products/bytebuilders/icons/apple-icon-180x180.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-180x180.png">
   <link rel="icon" type="image/png" sizes="192x192"
-    href="/assets/images/products/bytebuilders/icons/android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/products/bytebuilders/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/products/bytebuilders/icons/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/products/bytebuilders/icons/favicon-16x16.png">
-  <link rel="manifest" href="/assets/images/products/bytebuilders/icons/manifest.json">
+    href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/favicon-16x16.png">
+  <link rel="manifest" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/manifest.json">
   <meta name="msapplication-TileColor" content="#ffffff">
-  <meta name="msapplication-TileImage" content="/assets/images/products/bytebuilders/icons/ms-icon-144x144.png">
+  <meta name="msapplication-TileImage" content="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/ms-icon-144x144.png">
   <!-- twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@{{ strings.TrimPrefix `https://twitter.com/` $p.socialLinks.twitter }}">
@@ -71,16 +71,16 @@
   <!-- animate css  -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <!-- font-awesome css  -->
-  <link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="{{.Site.Params.basePath}}assets/css/font-awesome.min.css" />
   <!-- AOS css  -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <!-- bulma css  -->
-  <link rel="stylesheet" href="/assets/css/bulma.min.css" />
+  <link rel="stylesheet" href="{{.Site.Params.basePath}}assets/css/bulma.min.css" />
   <!-- Custom CSS -->
   {{ with $style := resources.Get "/assets/sass/main.scss" | resources.ToCSS | resources.PostCSS | resources.Minify }}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}" />
   {{ end }}
-  <!-- <link rel="stylesheet" href="/assets/sass/main.css" /> -->
+  <!-- <link rel="stylesheet" href="{{.Site.Params.basePath}}assets/sass/main.css" /> -->
   <script src="https://tag.clearbitscripts.com/v1/pk_81079761ad5191fbdb09e9f13ff41927/tags.js"></script>
   <script>
     (function () {
@@ -119,7 +119,7 @@
           <div class="navbar-left">
             <div class="navbar-brand">
               <a href="{{.Site.Params.domain_bytebuilders}}">
-                <img src="{{ .Site.Data.products.bytebuilders.logoByAppsCode.white.src }}" alt="img" height="50" width="auto"
+                <img src="{{$.Site.Params.basePath}}{{ .Site.Data.products.bytebuilders.logoByAppsCode.white.src }}" alt="img" height="50" width="auto"
                   loading="lazy"
                   decoding="async" loading="lazy" decoding="async" />
               </a>
@@ -400,11 +400,11 @@
   <!-- AOS js  -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-  <script src="/assets/js/headroom.min.js"></script>
+  <script src="{{.Site.Params.basePath}}assets/js/headroom.min.js"></script>
   <!--Search  -->
-  <script src="/assets/js/search.js"></script>
+  <script src="{{.Site.Params.basePath}}assets/js/search.js"></script>
   <!-- Main JS -->
-  <script src="/assets/js/main.js"></script>
+  <script src="{{.Site.Params.basePath}}assets/js/main.js"></script>
 
   <!--Start of Tawk.to Script-->
   <script type="text/javascript">

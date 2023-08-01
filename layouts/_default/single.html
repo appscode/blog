@@ -31,11 +31,11 @@
                 {{ range site.Data.authors }}
                   {{ if eq .name $authorName}}
                       <div class="author">
-                        <a href="/authors/{{ .name | urlize }}" class="author-image"><img
-                            src="{{.profile}}"
+                        <a href="{{$.Site.Params.basePath}}authors/{{ .name | urlize }}" class="author-image"><img
+                            src="{{$.Site.Params.basePath}}{{.profile}}"
                             alt="author-image" height="76" width="76"></a>
                         <div class="information">
-                          <a href="/authors/{{ .name | urlize }}" class="author-name">{{ .name }}</a>
+                          <a href="{{$.Site.Params.basePath}}authors/{{ .name | urlize }}" class="author-name">{{ .name }}</a>
                           <p class="designation has-text-light">{{.designation}}</p>
                           <a href="https://appscode.com" target="_blank" class="company has-text-light">AppsCode Inc</a>
                       </div>
@@ -104,7 +104,7 @@
           <h4>TAGS </h4>
           <div class="tags mb-30">
             {{ range $tag := .Params.tags }}
-            <a href="/tags/{{ . }}" class="tag">{{ . }}</a>
+            <a href="{{$.Site.Params.basePath}}tags/{{ . }}" class="tag">{{ . }}</a>
             {{ end }}
           </div>
         </div>
