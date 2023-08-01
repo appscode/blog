@@ -25,14 +25,14 @@ tags:
 
 We are announcing Stash **v2023.04.30** which includes redis cluster mode backup and restore. In this post, we are going to highlight the changes.
 
-Link: https://blog.byte.builders/post/stash-v2023.04.30/
+Link: https://byte.builders/blog/post/stash-v2023.04.30/
 
 
 #### Announcing KubeDB v2023.04.10
 
 We are pleased to announce the release of KubeDB **v2023.04.10** . This post lists all the major changes done in this release since the last release. 
 
-Link: https://blog.byte.builders/post/kubedb-v2023.04.10/
+Link: https://byte.builders/blog/post/kubedb-v2023.04.10/
 
 
 
@@ -76,55 +76,55 @@ Link: https://youtu.be/KF2x4E2sCQE
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to deploy and manage ProxySQL in Google Kubernetes Engine (GKE) using KubeDB.
 
-Link: https://blog.byte.builders/post/deploy-and-manage-proxysql-in-gke/
+Link: https://byte.builders/blog/post/deploy-and-manage-proxysql-in-gke/
 
 
 #### Monitor MariaDB with Grafana Dashboard in Amazon Elastic Kubernetes Service (Amazon EKS)
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to Monitor MariaDB with Grafana Dashboard in Amazon Elastic Kubernetes Service (Amazon EKS).
 
-Link: https://blog.byte.builders/post/monitor-mariadb-with-grafana-dashboard-in-aws/
+Link: https://byte.builders/blog/post/monitor-mariadb-with-grafana-dashboard-in-aws/
 
 #### Deploy and Manage PgBouncer in Google Kubernetes Engine (GKE) Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to deploy and manage PgBouncer in Google Kubernetes Engine (GKE) using KubeDB.
 
-Link: https://blog.byte.builders/post/deploy-and-manage-pgbouncer-in-gke/
+Link: https://byte.builders/blog/post/deploy-and-manage-pgbouncer-in-gke/
 
 
 #### Deploy Highly Available PostgreSQL Cluster in Amazon Elastic Kubernetes Service (Amazon EKS) using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to deploy Highly Available PostgreSQL Cluster in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB.
 
-Link: https://blog.byte.builders/post/deploy-highly-available-postgresql-in-aws/
+Link: https://byte.builders/blog/post/deploy-highly-available-postgresql-in-aws/
 
 
 #### Provisioning Redis Cluster in Kubernetes with KubeDB: An In-Depth Look
 
 KubeDB is a Kubernetes Native Database Management Solution that makes it easier and more automated to manage various popular databases on both private and public clouds. we will discuss the difficulties we encountered when setting up Redis Cluster with Kubernetes.
 
-Link: https://blog.byte.builders/post/provisioning-redis-cluster-in-k8s/
+Link: https://byte.builders/blog/post/provisioning-redis-cluster-in-k8s/
 
 
 #### Logging in Kubernetes with Elasticsearch, Fluentd & Kibana (EFK) using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. In this blog, we will show the entire process of Logging.
 
-Link: https://blog.byte.builders/post/logging-in-kubernetes-with-elasticsearch-fluentd-kibana/
+Link: https://byte.builders/blog/post/logging-in-kubernetes-with-elasticsearch-fluentd-kibana/
 
 
 #### Simplify OpenSearch and OpenSearch-Dashboards Provisioning on Amazon EKS using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. In this post we will Simplify OpenSearch and OpenSearch-Dashboards Provisioning on Amazon Elastic Kubernetes Service (Amazon EKS).
 
-Link: https://blog.byte.builders/post/simplify-opensearch-and-opensearch-dashboard-provisioning-in-aws/
+Link: https://byte.builders/blog/post/simplify-opensearch-and-opensearch-dashboard-provisioning-in-aws/
 
 
 #### Deploy Production-Grade MySQL Cluster in Rancher Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. In this blog we will Deploy Production-Grade MySQL Cluster in Rancher Using KubeDB.
 
-Link: https://blog.byte.builders/post/deploy-production-grade-mysql-cluster-in-rancher/
+Link: https://byte.builders/blog/post/deploy-production-grade-mysql-cluster-in-rancher/
 
 
 

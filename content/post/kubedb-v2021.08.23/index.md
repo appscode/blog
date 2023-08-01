@@ -64,7 +64,7 @@ KubeDB managed Redis now provides `Password Authentication` for Default user.
 
 ## Introducing Panopticon
 
-We wanted to collect state metrics from our various products (eg, KubeDB, Stash and other). But we didn't find any existing tool that would accomplish our needs. Kubernetes has a project called [kube-state-metrics](https://github.com/kubeops/panopticon) but it does not support collecting metrics from Kubernetes custom resources. Moreover, the metrics for Kubernetes native resources were predefined and there was hardly any customization options. So, we decided to build our own generic resource metrics exporter, named `Panopticon`, which can collect metrics from any kind of Kubernetes resources. `Panopticon` is a Kubernetes controller that watches Kubernetes resources passively and exports Prometheus metrics. You can find more details [here](https://blog.byte.builders/post/introducing-panopticon/). The `MetricsConfiguration` for KubeDB resources are published via [kubedb-metrics](https://github.com/kubedb/installer/tree/master/charts/kubedb-metrics) chart.
+We wanted to collect state metrics from our various products (eg, KubeDB, Stash and other). But we didn't find any existing tool that would accomplish our needs. Kubernetes has a project called [kube-state-metrics](https://github.com/kubeops/panopticon) but it does not support collecting metrics from Kubernetes custom resources. Moreover, the metrics for Kubernetes native resources were predefined and there was hardly any customization options. So, we decided to build our own generic resource metrics exporter, named `Panopticon`, which can collect metrics from any kind of Kubernetes resources. `Panopticon` is a Kubernetes controller that watches Kubernetes resources passively and exports Prometheus metrics. You can find more details [here](https://byte.builders/blog/post/introducing-panopticon/). The `MetricsConfiguration` for KubeDB resources are published via [kubedb-metrics](https://github.com/kubedb/installer/tree/master/charts/kubedb-metrics) chart.
 
 ## KubeDB Operator uses `kubedb` namespace
 
@@ -76,7 +76,7 @@ Kubernetes v2021.08.23 Community Edition will manage database custom resources i
 
 ## Deprecating Previous KubeDB Releases
 
-KubeDB as a product has evolved quite a bit since [our decision to adopt an open/core model](https://blog.byte.builders/post/relicensing/) for the project last year and provide a sustainable future for the project. With this release, we are announcing the deprecation of all prior KubeDB releases. The previous versions of KubeDB operator will become unavailable by Dec 31, 2021. So, we encourage users to upgrade to the latest version of KubeDB.
+KubeDB as a product has evolved quite a bit since [our decision to adopt an open/core model](https://byte.builders/blog/post/relicensing/) for the project last year and provide a sustainable future for the project. With this release, we are announcing the deprecation of all prior KubeDB releases. The previous versions of KubeDB operator will become unavailable by Dec 31, 2021. So, we encourage users to upgrade to the latest version of KubeDB.
 
 ## What Next?
 

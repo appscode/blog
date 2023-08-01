@@ -25,7 +25,7 @@ tags:
 
 We are pleased to announce the release of KubeDB v2022.10.18. This post lists all the major changes done in this release since the last release. Kubernetes version 1.25 is supported in KubeDB from this release. This release offers some major features like Externally Managed AuthSecret, Percona XtraDB OpRequests, ProxySQL OpsRequests, Redis Sentinel OpsRequests, PostgreSQL Logical Replication, MongoDB Hidden Member Support, Autoscaler Support for MySQL, Postgres, Redis, Redis Sentinel & PerconaXtraDB etc. It also contains various improvements and bug fixes.
 
-Link: https://blog.byte.builders/post/kubedb-v2022.10.18/
+Link: https://byte.builders/blog/post/kubedb-v2022.10.18/
 
 
 # Webinars
@@ -46,7 +46,7 @@ AppsCode held a webinar on “OpenSearch OpsRequests - Day 2 Lifecycle Managemen
 - Q&A Session
 
 
-Link: https://blog.byte.builders/post/opensearch-webinar-2022.10.12/
+Link: https://byte.builders/blog/post/opensearch-webinar-2022.10.12/
 
 
 #### Manage Percona XtraDB Cluster Day-2 Operations using KubeDB
@@ -63,7 +63,7 @@ AppsCode held a webinar on “Manage Percona XtraDB Cluster Day-2 Operations usi
 - Q&A Session
 
 
-Link: https://blog.byte.builders/post/perconaxtradb-webinar-v2022.10.06/
+Link: https://byte.builders/blog/post/perconaxtradb-webinar-v2022.10.06/
 
 
 # Blogs Published
@@ -73,21 +73,21 @@ Link: https://blog.byte.builders/post/perconaxtradb-webinar-v2022.10.06/
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. Here is how to Run Redis in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB.
 
-Link: https://blog.byte.builders/post/run-redis-in-aws/
+Link: https://byte.builders/blog/post/run-redis-in-aws/
 
 
 #### Run PostgreSQL in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. Here is how to Run PostgreSQL in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB.
 
-Link: https://blog.byte.builders/post/run-postgresql-in-aws/
+Link: https://byte.builders/blog/post/run-postgresql-in-aws/
 
 
 #### KubeVault v1alpha1 to v1alpha2 Migration
 
 KubeVault is a Git-Ops ready, production-grade solution for deploying and configuring HashiCorp Vault on Kubernetes. This blog is based on our experience upgrading one of our KubeVault Enterprise users from KubeVault v1alpha1 to KubeVault v1alpha2. 
 
-Link: https://blog.byte.builders/post/kubevault-v1alpha1-to-v1alpha2-migration/
+Link: https://byte.builders/blog/post/kubevault-v1alpha1-to-v1alpha2-migration/
 
 
 

@@ -25,14 +25,14 @@ tags:
 
 We are pleased to announce the release of Voyager v2022.08.17. In this release, we have released operator and HAProxy images to fix a number of CVEs. The detailed commit by commit changelog can be found here.
 
-Link: https://blog.byte.builders/post/voyager-v2022.08.17/
+Link: https://byte.builders/blog/post/voyager-v2022.08.17/
 
 
 #### Announcing KubeDB v2022.08.08
 
 We are pleased to announce the release of KubeDB v2022.08.08. This post lists all the major changes done in this release since the last release. This release offers some major features like Recommendation Engine, Configurable Health-Checker, Custom Volumes & VolumeMounts, Redesigned PerconaXtraDB Operator, MongoDB In-Memory AutoScaler, ProxySQL Declarative Configuration, ProxySQL User Sync, Elasticsearch V8 Ops-Request Support, etc. It also contains various improvements and bug fixes.
 
-Link: https://blog.byte.builders/post/kubedb-v2022.08.08/
+Link: https://byte.builders/blog/post/kubedb-v2022.08.08/
 
 
 # Webinars
@@ -48,7 +48,7 @@ On August 24, 2022, AppsCode held a webinar on PostgreSQL Logical Replication us
 - Q&A Session
 
 
-Link: https://blog.byte.builders/post/logical-replication-webinar-2022.08.24/
+Link: https://byte.builders/blog/post/logical-replication-webinar-2022.08.24/
 
 #### ProxySQL Declarative Provisioning, Reconfiguration and Horizontal Scaling using KubeDB
 
@@ -61,7 +61,7 @@ On AUG 10, 2022, AppsCode held a webinar on “ProxySQL Decalarative Provisionin
 - Q&A session
 
 
-Link: https://blog.byte.builders/post/proxysql-webinar-2022.08.10/
+Link: https://byte.builders/blog/post/proxysql-webinar-2022.08.10/
 
 #### Deploy, Manage & Autoscaler inMemory MongoDB on Kubernetes using KubeDB
 
@@ -75,7 +75,7 @@ On 3rd August 2022, Appscode held a webinar on Deploy, Manage & Autoscaler inMem
 - Q&A Session
 
 
-Link: https://blog.byte.builders/post/inmemory-mongo-webinar-2022.08.03/
+Link: https://byte.builders/blog/post/inmemory-mongo-webinar-2022.08.03/
 
 
 
@@ -86,28 +86,28 @@ Link: https://blog.byte.builders/post/inmemory-mongo-webinar-2022.08.03/
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. Here is how to Run Elasticsearch in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB.
 
-Link: https://blog.byte.builders/post/run-elasticsearch-in-aws/
+Link: https://byte.builders/blog/post/run-elasticsearch-in-aws/
 
 
 #### KubeDB Health Checker
 
 In KubeDB v2022.08.08, we’ve improved KubeDB database health checks and users can now control the behavior of the health checks performed by KubeDB. We’ve added a new field called healthChecker under spec. It controls the behavior of health checks.
 
-Link: https://blog.byte.builders/post/kubedb-health-checker/
+Link: https://byte.builders/blog/post/kubedb-health-checker/
 
 
 #### Run MySQL in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. Here is how to Run MySQL in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB.
 
-Link: https://blog.byte.builders/post/run-mysql-in-aws/
+Link: https://byte.builders/blog/post/run-mysql-in-aws/
 
 
 #### Run Redis in Azure Kubernetes Service (AKS) Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. Here is how to Run Redis in Azure Kubernetes Service (AKS) Using KubeDB.
 
-Link: https://blog.byte.builders/post/run-redis-in-aks/
+Link: https://byte.builders/blog/post/run-redis-in-aks/
 
 
 

@@ -24,14 +24,14 @@ tags:
 
 We are announcing Stash **v2023.03.20** which includes a few bug fixes. In this post, we are going to highlight the changes.
 
-Link: https://blog.byte.builders/post/stash-v2023.03.20/
+Link: https://byte.builders/blog/post/stash-v2023.03.20/
 
 
 #### Introducing KubeVault v2023.03.03
 
 We are very excited to announce the release of KubeVault **v2023.03.03** Edition. In this release, we have added grafana dashboard and alerting for Vault servers. In this post, we are going to highlight the changes.
 
-Link: https://blog.byte.builders/post/kubevault-v2023.03.03/
+Link: https://byte.builders/blog/post/kubevault-v2023.03.03/
 
 
 
@@ -110,62 +110,62 @@ Link: https://youtu.be/s1Me2za10x8
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to Deploy Highly Available MongoDB Cluster in Google Kubernetes Engine (GKE) using KubeDB
 
-Link: https://blog.byte.builders/post/deploy-highly-available-mongodb-in-gke/
+Link: https://byte.builders/blog/post/deploy-highly-available-mongodb-in-gke/
 
 
 #### Monitor MySQL with Grafana Dashboard in Amazon Elastic Kubernetes Service (Amazon EKS)
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to Monitor MySQL with Grafana Dashboard in Amazon Elastic Kubernetes Service (Amazon EKS).
 
-Link: https://blog.byte.builders/post/monitor-mysql-with-grafana-dashboard-in-aws/
+Link: https://byte.builders/blog/post/monitor-mysql-with-grafana-dashboard-in-aws/
 
 #### A Step-by-Step Guide to Mounting Redis Credentials for Securing Microservices using KubeVault
 
 As a database cache server, Redis, an open-source in-memory data structure store, has gained popularity. This blog shows how to Manage Redis Secret Engine using KubeVault in Amazon Elastic Kubernetes Service (Amazon EKS).
 
-Link: https://blog.byte.builders/post/redis-a-powerful-database-cache-server/
+Link: https://byte.builders/blog/post/redis-a-powerful-database-cache-server/
 
 
 #### Upgrading PostgreSQL Standalone to a High Availability Cluster in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to Upgrading PostgreSQL Standalone to a High Availability Cluster in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB.
 
-Link: https://blog.byte.builders/post/upgrade-postgresql-standalone-to-high-availability-cluster-in-aws/
+Link: https://byte.builders/blog/post/upgrade-postgresql-standalone-to-high-availability-cluster-in-aws/
 
 
 #### Deploy Elasticsearch in Google Kubernetes Engine (GKE) Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to Deploy Elasticsearch in Google Kubernetes Engine (GKE) Using KubeDB.
 
-Link: https://blog.byte.builders/post/deploy-elasticsearch-in-gke/
+Link: https://byte.builders/blog/post/deploy-elasticsearch-in-gke/
 
 
 #### Manage Highly Available and High-Performance MariaDB in Google Kubernetes Engine (GKE) Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to Manage Highly Available and High-Performance MariaDB in Google Kubernetes Engine (GKE) Using KubeDB.
 
-Link: https://blog.byte.builders/post/manage-highly-available-and-high-performance-mariadb-in-gke/
+Link: https://byte.builders/blog/post/manage-highly-available-and-high-performance-mariadb-in-gke/
 
 
 #### Secure PostgreSQL using ACME Protocol issued TLS Certificates
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to secure PostgreSQL using ACME Protocol issued TLS Certificates. 
 
-Link: https://blog.byte.builders/post/secure-postgresql-using-acme-protocol-issued-tls-certificates/
+Link: https://byte.builders/blog/post/secure-postgresql-using-acme-protocol-issued-tls-certificates/
 
 
 #### Secure MySQL using Acme Protocol issued TLS certificates
 
 As we cannot use ACME Protocol issued TLS certificates directly to MysQL, we are going to use KubeDB provisioned ProxySQL server to secure the client connections with ACME protocol issued TLS certificates. In this tutorial we will show how to secure MySQL server using ACME Protocol issued TLS certificates with KubeDB. 
 
-Link: https://blog.byte.builders/post/expose-mysql-using-proxysql-nginx-ingress/
+Link: https://byte.builders/blog/post/expose-mysql-using-proxysql-nginx-ingress/
 
 
 #### Monitor Percona XtraDB with Grafana Dashboard in Google Kubernetes Engine (GKE)
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to Monitor Percona XtraDB with Grafana Dashboard in Google Kubernetes Engine (GKE).
 
-Link: https://blog.byte.builders/post/monitor-perconaxtradb-with-grafana-dashboard-in-gke/
+Link: https://byte.builders/blog/post/monitor-perconaxtradb-with-grafana-dashboard-in-gke/
 
 
 
