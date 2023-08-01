@@ -49,7 +49,7 @@ Take a deep dive into the full webinar below:
 
 Please try the latest release and give us your valuable feedback.
 
-* If you want to install **Panopticon**, please follow the installation instruction from [here](https://blog.byte.builders/post/introducing-panopticon/).
+* If you want to install **Panopticon**, please follow the installation instruction from [here](https://byte.builders/blog/post/introducing-panopticon/).
 
 ## Support
 
