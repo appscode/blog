@@ -9,7 +9,7 @@
       <div class="column is-8">
         <div class="author-content has-text-centered" data-aos="fade-up" data-aos-duration="500">
           <figure class="image width-80">
-            <img src="{{ $author.profile }}" loading="lazy" decoding="async" />
+            <img src="{{$.Site.Params.basePath}}{{ $author.profile }}" loading="lazy" decoding="async" />
           </figure>
           <h4 class="has-text-light mb-8" data-aos="fade-up" data-aos-duration="600">{{ $author.name }}</h4>
           <p class="has-text-light mb-16" data-aos="fade-up" data-aos-duration="800">
@@ -239,7 +239,7 @@
                   <div class="user-info">
 
                     <img
-                      src="{{ index $.Site.Data.authors ($authorName | urlize) "profile" }}"
+                      src="{{$.Site.Params.basePath}}{{ index $.Site.Data.authors ($authorName | urlize) "profile" }}"
                       alt="author"
                       width="20" height="20" loading="lazy" decoding="async">
                     <p class="mr-12 author"> {{ $authorName }}</p>
@@ -303,11 +303,11 @@
                     </div>
                     <div class="author">By
                       {{ range $author := first 1 $p.Params.authors }}
-                      <a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
+                      <a href="{{$.Site.Params.basePath}}authors/{{ $author | urlize }}">{{ $author }}</a>
                       {{end}}
 
                       {{ range $author := after 1 $p.Params.authors }}
-                      <span>&amp;</span><a href="/authors/{{ $author | urlize }}">{{ $author }}</a>
+                      <span>&amp;</span><a href="{{$.Site.Params.basePath}}authors/{{ $author | urlize }}">{{ $author }}</a>
                       {{ end }}
                     </div>
 
