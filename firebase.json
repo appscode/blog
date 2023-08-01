@@ -7,7 +7,25 @@
         "firebase.json",
         "**/.*",
         "**/node_modules/**"
-      ]
+      ],
+      "trailingSlash": true,
+      "redirects": [ {
+        "source": "/",
+        "destination": "/blog/",
+        "type": 301
+      },{
+        "source": "/post/:post*",
+        "destination": "/blog/post/:post",
+        "type": 301
+      }, {
+        "source": "/authors/:post*",
+        "destination": "/blog/authors/:post",
+        "type": 301
+      }, {
+        "source": "/tags/:post*",
+        "destination": "/blog/tags/:post",
+        "type": 301
+      } ]
     }
   ]
 }
