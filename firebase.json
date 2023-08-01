@@ -11,19 +11,19 @@
       "trailingSlash": true,
       "redirects": [ {
         "source": "/",
-        "destination": "/blog/",
+        "destination": "https://byte.builders/blog/",
         "type": 301
       },{
         "source": "/post/:post*",
-        "destination": "/blog/post/:post",
+        "destination": "https://byte.builders/blog/post/:post",
         "type": 301
       }, {
         "source": "/authors/:post*",
-        "destination": "/blog/authors/:post",
+        "destination": "https://byte.builders/blog/authors/:post",
         "type": 301
       }, {
         "source": "/tags/:post*",
-        "destination": "/blog/tags/:post",
+        "destination": "https://byte.builders/blog/tags/:post",
         "type": 301
       } ]
     }
