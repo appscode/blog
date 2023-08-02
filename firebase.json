@@ -13,7 +13,7 @@
         "source": "/",
         "destination": "https://byte.builders/blog/",
         "type": 301
-      },{
+      }, {
         "source": "/post/:post*",
         "destination": "https://byte.builders/blog/post/:post",
         "type": 301
