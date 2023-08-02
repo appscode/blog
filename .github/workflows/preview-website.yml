@@ -55,6 +55,7 @@ jobs:
           npm install
           make assets
           make gen-draft
+          mv .github/firebase.json firebase.json
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

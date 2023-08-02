@@ -1,0 +1,19 @@
+{
+  "hosting": [
+    {
+      "target": "hugo",
+      "public": "public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "trailingSlash": true,
+      "redirects": [ {
+        "source": "/",
+        "destination": "/blog/",
+        "type": 301
+      } ]
+    }
+  ]
+}
