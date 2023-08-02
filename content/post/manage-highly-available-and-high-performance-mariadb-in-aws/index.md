@@ -156,7 +156,7 @@ redisversions.catalog.kubedb.com                  2023-08-02T06:03:32Z
 subscribers.postgres.kubedb.com                   2023-08-02T06:07:01Z
 ```
 
-## Deploy MariaDB Clustered Database
+## Deploy MariaDB Cluster
 
 Now, we are going to Deploy MariaDB using KubeDB.
 First, let's create a Namespace in which we will deploy the database.
@@ -257,7 +257,7 @@ $ kubectl get secrets -n demo mariadb-cluster-auth -o jsonpath='{.data.password}
 l5nr!DZL!RLBbiSG
 ```
 
-#### Insert Sample Data
+### Insert Sample Data
 
 In this section, we are going to login into our MariaDB database pod and insert some sample data. 
 
@@ -330,7 +330,7 @@ Bye
 ```
 
 
-### Create MariaDBOpsRequest
+#### Create MariaDBOpsRequest
 
 In order to scale up the replicas of the cluster of the database, we have to create a `MariaDBOpsRequest` CR with our desired replicas. Let’s create it using this following yaml,
 
@@ -492,6 +492,7 @@ $ kubectl get pod -n demo mariadb-cluster-0 -o json | jq '.spec.containers[].res
   }
 }
 ```
+### Vertical Scale Up
 
 #### Create MariaDBOpsRequest
 
