@@ -55,6 +55,7 @@ jobs:
           npm install
           make assets
           make gen-draft
+          mv .github/firebase.json firebase.json
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -62,6 +63,6 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_QA }}'
           projectId: kubedb-new-e7965
           # target: kubedb-new-e7965
-          entryPoint: '.github'
+          # entryPoint: '.'
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
