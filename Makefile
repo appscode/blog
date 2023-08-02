@@ -28,6 +28,7 @@ gen-draft:
 	rm -rf public
 	@yqq w -i config.yaml params.search_api_key --tag '!!str' $(GOOGLE_CUSTOM_SEARCH_API_KEY)
 	hugo --config=config.dev.yaml --buildDrafts --buildFuture -d public/blog
+	mv public/blog/404.html public/404.html
 	@yqq w -i config.yaml params.search_api_key --tag '!!str' '_replace_'
 
 .PHONY: qa
@@ -40,6 +41,7 @@ gen-prod:
 	rm -rf public
 	@yqq w -i config.yaml params.search_api_key --tag '!!str' $(GOOGLE_CUSTOM_SEARCH_API_KEY)
 	hugo --minify --config=config.yaml -d public/blog
+	mv public/blog/404.html public/404.html
 	@yqq w -i config.yaml params.search_api_key --tag '!!str' '_replace_'
 
 .PHONY: release
