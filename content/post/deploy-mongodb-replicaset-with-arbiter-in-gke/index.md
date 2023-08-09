@@ -24,8 +24,8 @@ In this tutorial we will deploy MongoDB ReplicaSet with Arbiter in Google Kubern
 
 1) Install KubeDB
 2) Deploy MongoDB ReplicaSet with Arbiter
-3) Connect MongoDB through Arbiter
-4) Read/Write through Arbiter
+3) Connect MongoDB with Arbiter
+4) Read/Write with Arbiter
 
 ### Get Cluster ID
 
@@ -237,11 +237,7 @@ mongodb   6.0.5     Ready    5m35s
 
 ### Accessing Database Through CLI
 
-To access the database through CLI, we have to get the credentials to access. Let’s export the credentials as environment variable to our current shell :
-
-#### Export the Credentials
-
-KubeDB will create Secret and Service for the database `mongodb` that we have deployed. Let’s check them using the following commands,
+To access the database through CLI, we have to get the credentials to access. KubeDB will create Secret and Service for the database `mongodb` that we have deployed. Let’s check them using the following commands,
 
 ```bash
 $ kubectl get secret -n demo -l=app.kubernetes.io/instance=mongodb
