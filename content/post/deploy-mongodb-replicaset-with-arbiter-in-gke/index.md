@@ -266,7 +266,7 @@ In this section, we are going to login into our MongoDB and insert some sample d
 
 ```bash
 $ kubectl exec -it mongodb-0 -n demo bash
-root@mongodb-0:/# mongo admin -u root -p 'iyyur*0O4U~.wd*q'
+root@mongodb-0:/# mongosh admin -u root -p 'iyyur*0O4U~.wd*q'
 Using MongoDB:		6.0.5
 Using Mongosh:		1.8.2
 
