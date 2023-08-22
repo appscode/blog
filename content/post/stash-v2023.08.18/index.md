@@ -13,7 +13,7 @@ tags:
 - stash
 ---
 
-We are pleased to announce the relase of Stash `v2023.08.18` which includes a few bug fixes and improvments. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2023.08.18/README.md). In this post, we are going to highlight the changes.
+We are pleased to announce the relase of [Stash v2023.08.18](https://stash.run/docs/v2023.08.18/setup/) which includes a few bug fixes and improvments. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2023.08.18/README.md). In this post, we are going to highlight the changes.
 
 ### Bug Fixes
 - Resolved a bug causing MySQL `5.x.x` restoration failure in group replication mode. The issue occurred while restoring databases with *MyISAM* storage engine tables. To address this, we now exclude system databases from the backup process.
