@@ -198,17 +198,17 @@ We have added a new set of commands in KubeDB cli to help you insert, verify and
 We have added **insert**, **verify** and **drop** sub commands for each database which can be run with data command.
 
 ```bash
-kubectl dba data <sub-command> <kind>  -n <ns> <db-name> –rows <data-count>
+kubectl dba data <sub-command> <db-kind>  -n <ns> <db-name> --rows <data-count>
 
 # Examples : 
 # To insert 1000 rows in a Postgres table
-kubectl dba data insert postgres -n demo pg-sample - -rows 1000
+kubectl dba data insert postgres -n demo pg-sample --rows 1000
 # To insert 1000 documents in an Elasticsearch/OpenSearch index
 kubectl dba data insert elasticsearch -n demo es-sample -r 1000
-#To verify if a MongoDB database contains 500 rows
-kubectl dba data verify mongodb -n demo mg-shard  - -rows 500
-#To drop all the CLI inserted data from Redis database
-kubectl dba data delete redis -n demo rd-sample
+# To verify if a MongoDB database contains 500 rows
+kubectl dba data verify mongodb -n demo mg-shard  --rows 500
+# To drop all the CLI inserted data from Redis database
+kubectl dba data drop redis -n demo rd-sample
 ```
 
 
