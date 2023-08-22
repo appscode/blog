@@ -13,13 +13,13 @@ tags:
 - stash
 ---
 
-We are announcing Stash `v2023.08.18` which includes a few bug fixes and Improvments. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2023.08.18/README.md). In this post, we are going to highlight the changes.
+We are pleased to announce the relase of Stash `v2023.08.18` which includes a few bug fixes and improvments. You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2023.08.18/README.md). In this post, we are going to highlight the changes.
 
 ### Bug Fixes
 - Resolved a bug causing MySQL `5.x.x` restoration failure in group replication mode. The issue occurred while restoring databases with *MyISAM* storage engine tables. To address this, we now exclude system databases from the backup process.
   ([#198](https://github.com/stashed/mysql/pull/716))
 - Resolved a bug that was causing issues with shard backups in MongoDB versions `3.x.x`, `4.x.x`, and `6.x.x`. In the last release, some accidental changes were made. This new release fixes everything and makes sure things work correctly.
-- Resolved the issue of *`_mergeAuthzCollections.tempRolesCollection` missing as a required field* during restoration, specifically for early versions like `5.0.2` and `5.0.3`. We've now split the addon into two versions: one for early versions (`5.0.2`, `5.0.3`) and another for later versions (`5.0.15`). ([#1880](https://github.com/stashed/mongodb/pull/1880))
+- Resolved the issue of *`_mergeAuthzCollections.tempRolesCollection` missing as a required field* during restoration, specifically for MongoDB versions like `5.0.2` and `5.0.3`. We've now split the addon into two versions: one for early versions (`5.0.2`, `5.0.3`) and another for later versions (`5.0.15`). ([#1880](https://github.com/stashed/mongodb/pull/1880))
 
 ### Improvements
 
