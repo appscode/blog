@@ -6,18 +6,18 @@ authors:
 - Raihan Khan
 tags:
 - cloud-native
+- cruise-control
 - dashboard
 - database
+- day-2-operations
 - elasticsearch
-- opensearch
 - kafka
-- cruise-control
 - kubedb
 - kubernetes
-- security
 - mariadb
 - mongodb
 - mysql
+- opensearch
 - percona
 - percona-xtradb
 - pgbouncer
@@ -25,7 +25,7 @@ tags:
 - prometheus
 - proxysql
 - redis
-- day-2-operations
+- security
 ---
 
 We are pleased to announce the release of KubeDB v2023.08.18. This post lists all the major changes done in this release since the last release. The release includes -
