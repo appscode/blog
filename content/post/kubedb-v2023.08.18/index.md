@@ -28,7 +28,7 @@ tags:
 - security
 ---
 
-We are pleased to announce the release of KubeDB v2023.08.18. This post lists all the major changes done in this release since the last release. The release includes -
+We are pleased to announce the release of [KubeDB v2023.08.18](https://kubedb.com/docs/v2023.08.18/setup/). This post lists all the major changes done in this release since the last release. The release includes -
 
 - **Use of the restricted pod security label** ⇒  Pod security policies has been removed in k8s 1.25. In place, It brings `Pod Security Standards` into the picture. We are using the restricted mode (https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted) to all of the namespaces where our operators will be installed.   Thus, we achieve some good security standards, like running as non-root-user, privilege escalation will not happen, some destructive kernel capabilities will be dropped etc.
 
