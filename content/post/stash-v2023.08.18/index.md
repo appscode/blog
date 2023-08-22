@@ -31,7 +31,6 @@ Please try the latest release and give us your valuable feedback.
 
 - If you want to install Stash in a clean cluster, please follow the installation instruction from [here](https://stash.run/docs/v2023.03.20/setup/).
 - If you want to upgrade Stash from a previous version, please follow the upgrade instruction from [here](https://stash.run/docs/v2023.03.20/setup/upgrade/).
-- If you want to upgrade the Stash kubectl Plugin, please follow the instruction from [here](https://stash.run/docs/v2023.03.20/setup/install/kubectl-plugin/).
 
 ### Support
 
