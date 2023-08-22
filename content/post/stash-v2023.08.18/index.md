@@ -23,7 +23,7 @@ We are pleased to announce the relase of Stash `v2023.08.18` which includes a fe
 
 ### Improvements
 
-We've enhanced the way you manage licenses in Stash Helm Charts. Instead of providing the license directly as a value, you can now reference it by its secret name. The license itself should be placed under the key `key.txt` withing the secret. ([#651](https://github.com/kubedb/installer/pull/651))
+We've enhanced the way you manage licenses in Stash Helm Charts. Instead of providing the license directly as a value, you can now reference it by its secret name. The license itself should be placed under the key `key.txt` within the secret. ([#651](https://github.com/kubedb/installer/pull/651))
 
 ## What Next?
 
