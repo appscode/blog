@@ -1,6 +1,6 @@
 ---
 title: Announcing KubeDB v2023.08.18
-date: "2023-08-19"
+date: "2023-08-18"
 weight: 14
 authors:
 - Raihan Khan
