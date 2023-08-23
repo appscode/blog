@@ -213,6 +213,9 @@ kubectl dba data drop redis -n demo rd-sample
 
 Install the kubedb cli plugin using the following [steps](https://kubedb.com/docs/v2023.08.18/setup/install/kubectl_plugin/).
 
+## Postgres:
+**Fixes:** We have addressed issues related to `failover` and `standby server sync issue`. We have increased the `wal_keep_size=1GB` which was defaulted to `16M`.Basically it specifies the minimum size of past log file kept in the `pg_wal` directory. It's recommended to set `wal_keep_size` as large as possible to meet your needs.
+
 ## What Next?
 
 Please try the latest release and give us your valuable feedback.
