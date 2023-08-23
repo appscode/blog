@@ -34,7 +34,8 @@ We are pleased to announce the release of [KubeDB v2023.08.18](https://kubedb.co
 
 - **Uniform conditions across database opsRequests** ⇒ We utilize the status.Conditions section of the opsRequest CR for correctly maintaining the steps of an opsRequest like VersionUpdate, HorizontalScaling etc. These conditions have been made uniform in all of our supported databases now.
 
-- **Reduce get/patch api calls** ⇒ #TODO
+- **Reduce get/patch api calls** ⇒
+In this release we have done a lots of improvement to reduce get/list/patch api calls of k8s objects like (pods,secrets,kubeDB obj).We use kubeBuilder's cache client to reduce these sort of api calls.
 
 - **Fix generating VersionUpdate recommendation** ⇒ Previously, our recommender used to generate the same recommendation for updating db version, multiple times. In this release, we encountered this issue. Now, the same recommendation will not be generated multiple times.
 
@@ -141,6 +142,8 @@ Previously, Pod Disruption Budget (PDB) was created only when Elasticsearch cust
 
 **Fixes:** `Internal User credential synchronization for Elasticsearch failure when security is disabled` issue got fixed with this release. `Vertical Scaling not scaling the pod resources` and `Horizontal Scaling Failure in ES v8` issue also have been resolved.
 
+**New Version:** Support for Elasticsearch `xpack-7.17.10` have been introduced in this release
+
 ## MongoDB:
 
 **New Version:** Support for MongoDB `4.2.24` have been introduced in this release. Apply the following YAML to try out this new version with KubeDB.
@@ -163,12 +166,6 @@ spec:
 
 **Fixes:** Use --bind_ip to fix version `3.4.*` CrashLoopbackOff issue.
 Fix for MongoDB HorizontalScale down for shared cluster also have been addressed in this release.
-
-## MySQL:
-
-
-#TODO
-
 
 ## Redis:
 
