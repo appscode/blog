@@ -140,7 +140,9 @@ spec:
 
 Previously, Pod Disruption Budget (PDB) was created only when Elasticsearch custom resource spec was provided with `.spec.maxUnavailable` (for combined cluster) or `.spec.topology.<node-type>.maxUnavailable` (for dedicated cluster). This release ensures that Elasticsearch/Opensearch clusters can have at most a single pod from that set that can be unavailable after the eviction. PDB with such configuration is created by default unless it’s a standalone cluster.
 
-**Fixes:** `Internal User credential synchronization for Elasticsearch failure when security is disabled` issue got fixed with this release. `Vertical Scaling not scaling the pod resources` and `Horizontal Scaling Failure in ES v8` issue also have been resolved.
+**Fixes:** 
+- `Internal User credential synchronization for Elasticsearch failure when security is disabled` issue got fixed with this release. 
+- `Vertical Scaling not scaling the pod resources` and `Horizontal Scaling Failure in ES v8` issue also have been resolved.
 
 **New Version:** Support for Elasticsearch `xpack-7.17.10` have been introduced in this release
 
@@ -164,8 +166,9 @@ spec:
         storage: 1Gi
 ```
 
-**Fixes:** Use --bind_ip to fix version `3.4.*` CrashLoopbackOff issue.
-Fix for MongoDB HorizontalScale down for shared cluster also have been addressed in this release.
+**Fixes:** 
+- Use --bind_ip to fix version `3.4.*` CrashLoopbackOff issue.
+- MongoDB HorizontalScale down for shared cluster also have been addressed in this release.
 
 ## Redis:
 
@@ -189,7 +192,7 @@ spec:
   terminationPolicy: WipeOut
 ```
 
-## KubeDB Cli:
+## KubeDB ClI:
 We have added a new set of commands in KubeDB cli to help you insert, verify and drop random data in the KubeDB managed databases. Please install or update the `krew` plugin to use the new commands.
 
 We have added **insert**, **verify** and **drop** sub commands for each database which can be run with data command.
@@ -208,6 +211,7 @@ kubectl dba data verify mongodb -n demo mg-shard  --rows 500
 kubectl dba data drop redis -n demo rd-sample
 ```
 
+Install the kubedb cli plugin using the following [steps](https://kubedb.com/docs/v2023.08.18/setup/install/kubectl_plugin/).
 
 ## What Next?
 
