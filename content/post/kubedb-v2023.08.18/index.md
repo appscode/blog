@@ -35,7 +35,7 @@ We are pleased to announce the release of [KubeDB v2023.08.18](https://kubedb.co
 - **Uniform conditions across database opsRequests** ⇒ We utilize the status.Conditions section of the opsRequest CR for correctly maintaining the steps of an opsRequest like VersionUpdate, HorizontalScaling etc. These conditions have been made uniform in all of our supported databases now.
 
 - **Reduce get/patch api calls** ⇒
-In this release we have done a lots of improvement to reduce get/list/patch api calls of k8s objects like (pods,secrets,kubeDB obj).We use kubeBuilder's cache client to reduce these sort of api calls.
+In this release we have done a lots of improvement to reduce get/list/patch api calls of k8s objects like (pods,secrets,KubeDB obj).We use kubeBuilder's cache client to reduce these sort of api calls.
 
 - **Fix generating VersionUpdate recommendation** ⇒ Previously, our recommender used to generate the same recommendation for updating db version, multiple times. In this release, we encountered this issue. Now, the same recommendation will not be generated multiple times.
 
@@ -197,7 +197,7 @@ spec:
 
 ## MySQL:
 We have added a new feature now you can initialize mysql from the public/private git repository.
-Here’s a quick example of how? I will create a group replicated mysql with some initial data from  [mysql-init-script](https://github.com/kubedb/mysql-init-scripts) repo
+Here’s a quick example of how to configure it. Here we are going to create a group replicated mysql with some initial data from  [mysql-init-script](https://github.com/kubedb/mysql-init-scripts) repo.
 
 **From Public Registry:**
 
@@ -218,6 +218,7 @@ spec:
        - --period=60s
        - --link=current
        - --root=/git
+       # terminate after successful sync
        - --one-time 
  version: "8.0.31"
  replicas: 3
@@ -247,18 +248,18 @@ spec:
      scriptPath: "current"
      git:
        args:
-       ## use --ssh for private repository
+       # use --ssh for private repository
        - --ssh
        - --repo=git@github.com:heheh13/mysql-init-scripts
        - --depth=1
        - --period=60s
        - --link=current
        - --root=/git
-       ## terminate after successful sync
+       # terminate after successful sync
        - --one-time
        authSecret:
          name: git-creds
-       #run as git sync user 
+       # run as git sync user 
        securityContext:
          runAsUser: 65533  
  podTemplate:
@@ -284,15 +285,14 @@ spec:
 This example refers to initialization from a private git repository
 `.spec.init.git.args` represents the arguments required to represent the git repository and its actions. You can find details at [git_syc_docs](https://github.com/kubernetes/git-sync/blob/master/README.md)
 
-
 `.spec.init.git.authSecret` holds  the necessary information to pull from the private repository
 You have to provide a secret with the `id_rsa` and `githubkwonhosts`
-You can find detailed information at [git_sync_docs](https://github.com/kubernetes/git-sync/blob/master/docs/ssh.md)
+You can find detailed information at [git_sync_docs](https://github.com/kubernetes/git-sync/blob/master/docs/ssh.md).
+If you are using different authentication mechanism for your git repository, please consult the documentation for [git-sync](https://github.com/kubernetes/git-sync/tree/master/docs) project.
 
-`.spec.init.git.securityContext.runAsUser`  the init container git_sync run with user `65533`
+`.spec.init.git.securityContext.runAsUser`  the init container git_sync run with user `65533`.
 
-`.spec.podTemplate.Spec.securityContext.fsGroup` In order to read the ssh key the fsGroup also should be `65533`
-
+`.spec.podTemplate.Spec.securityContext.fsGroup` In order to read the ssh key the fsGroup also should be `65533`.
 
 ```bash
 ssh-keyscan $YOUR_GIT_HOST > /tmp/known_hosts
@@ -300,7 +300,8 @@ kubectl create secret generic -n demo git-creds \
    --from-file=ssh=$HOME/.ssh/id_rsa \
    --from-file=known_hosts=/tmp/known_hosts
 ```
-For more, you can follow the [kubedb_docs](https://kubedb.com/docs/v2023.08.18/guides/mysql/) or  contact Appscode
+
+For more, you can follow the [kubedb_docs](https://kubedb.com/docs/v2023.08.18/guides/mysql/) or  contact AppsCode.
 
 ## KubeDB ClI:
 We have added a new set of commands in KubeDB cli to help you insert, verify and drop random data in the KubeDB managed databases. Please install or update the `krew` plugin to use the new commands.
