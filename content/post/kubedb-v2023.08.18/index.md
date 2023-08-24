@@ -192,6 +192,116 @@ spec:
   terminationPolicy: WipeOut
 ```
 
+## Postgres:
+**Fixes:** We have addressed issues related to `failover` and `standby server sync issue`. We have increased the `wal_keep_size=1GB` which was defaulted to `16M`.Basically it specifies the minimum size of past log file kept in the `pg_wal` directory. It's recommended to set `wal_keep_size` as large as possible to meet your needs.
+
+## MySQL:
+We have added a new feature now you can initialize mysql from the public/private git repository.
+Here’s a quick example of how? I will create a group replicated mysql with some initial data from  [mysql-init-script](https://github.com/kubedb/mysql-init-scripts) repo
+
+**From Public Registry:**
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: MySQL
+metadata:
+ name: mysql
+ namespace: demo
+spec:
+ init:
+   script:
+     scriptPath: "current"
+     git:
+       args:
+       - --repo=https://github.com/kubedb/mysql-init-scripts
+       - --depth=1
+       - --period=60s
+       - --link=current
+       - --root=/git
+       - --one-time 
+ version: "8.0.31"
+ replicas: 3
+ topology:
+   mode: GroupReplication
+ storageType: Durable
+ storage:
+   storageClassName: "standard"
+   accessModes:
+     - ReadWriteOnce
+   resources:
+     requests:
+       storage: 10Gi
+ terminationPolicy: WipeOut
+```
+*From Private Registry:***
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: MySQL
+metadata:
+ name: mysql
+ namespace: demo
+spec:
+ init:
+   script:
+     scriptPath: "current"
+     git:
+       args:
+       ## use --ssh for private repository
+       - --ssh
+       - --repo=git@github.com:heheh13/mysql-init-scripts
+       - --depth=1
+       - --period=60s
+       - --link=current
+       - --root=/git
+       ## terminate after successful sync
+       - --one-time
+       authSecret:
+         name: git-creds
+       #run as git sync user 
+       securityContext:
+         runAsUser: 65533  
+ podTemplate:
+   spec:
+     # permission for reading ssh key
+     securityContext:
+      fsGroup: 65533
+ version: "8.0.31"
+ replicas: 3
+ topology:
+   mode: GroupReplication
+ storageType: Durable
+ storage:
+   storageClassName: "standard"
+   accessModes:
+     - ReadWriteOnce
+   resources:
+     requests:
+       storage: 10Gi
+ terminationPolicy: WipeOut
+```
+
+This example refers to initialization from a private git repository
+`.spec.init.git.args` represents the arguments required to represent the git repository and its actions. You can find details at [git_syc_docs](https://github.com/kubernetes/git-sync/blob/master/README.md)
+
+
+`.spec.init.git.authSecret` holds  the necessary information to pull from the private repository
+You have to provide a secret with the `id_rsa` and `githubkwonhosts`
+You can find detailed information at [git_sync_docs](https://github.com/kubernetes/git-sync/blob/master/docs/ssh.md)
+
+`.spec.init.git.securityContext.runAsUser`  the init container git_sync run with user `65533`
+
+`.spec.podTemplate.Spec.securityContext.fsGroup` In order to read the ssh key the fsGroup also should be `65533`
+
+
+```bash
+ssh-keyscan $YOUR_GIT_HOST > /tmp/known_hosts
+kubectl create secret generic -n demo git-creds \
+   --from-file=ssh=$HOME/.ssh/id_rsa \
+   --from-file=known_hosts=/tmp/known_hosts
+```
+For more, you can follow the [kubedb_docs](https://kubedb.com/docs/v2023.08.18/guides/mysql/) or  contact Appscode
+
 ## KubeDB ClI:
 We have added a new set of commands in KubeDB cli to help you insert, verify and drop random data in the KubeDB managed databases. Please install or update the `krew` plugin to use the new commands.
 
@@ -212,9 +322,6 @@ kubectl dba data drop redis -n demo rd-sample
 ```
 
 Install the kubedb cli plugin using the following [steps](https://kubedb.com/docs/v2023.08.18/setup/install/kubectl_plugin/).
-
-## Postgres:
-**Fixes:** We have addressed issues related to `failover` and `standby server sync issue`. We have increased the `wal_keep_size=1GB` which was defaulted to `16M`.Basically it specifies the minimum size of past log file kept in the `pg_wal` directory. It's recommended to set `wal_keep_size` as large as possible to meet your needs.
 
 ## What Next?
 
