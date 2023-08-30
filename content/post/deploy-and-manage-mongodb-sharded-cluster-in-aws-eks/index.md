@@ -181,7 +181,7 @@ spec:
         resources:
           requests:
             storage: 512Mi
-        storageClassName: standard
+        storageClassName: "gp2"
     mongos:
       replicas: 2
     shard:
@@ -191,7 +191,7 @@ spec:
         resources:
           requests:
             storage: 512Mi
-        storageClassName: standard
+        storageClassName: "gp2"
   terminationPolicy: WipeOut
 ```
 Let's save this yaml configuration into `mongodb-shard.yaml` 
