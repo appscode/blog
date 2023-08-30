@@ -286,7 +286,7 @@ $ kubectl get redis -n demo
 NAME    VERSION   STATUS   AGE
 redis   7.0.5     Ready    5m49s
 ```
-> We have successfully deployed Redis sentinel in AWS.
+> We have successfully deployed Redis sentinel in GKE.
 
 ### Accessing Sentinel Through CLI
 
