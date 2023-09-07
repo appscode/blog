@@ -1,5 +1,5 @@
 ---
-title: Introducing KubeVault v2023.09.07
+title: Introducing KubeVault v2023.9.7
 date: 2023.09.07
 weight: 25
 authors:
@@ -17,14 +17,15 @@ tags:
 encryption as a service, and privileged access management. The KubeVault operator makes it easy to deploy, maintain and manage Vault servers in Kubernetes.
 It also supports various secret engines' management, policy management in the Kubernetes native way.
 
-We are very excited to announce the release of [KubeVault v2023.09.07](https://kubevault.com/docs/v2023.09.07/setup/) Edition.
+We are very excited to announce the release of [KubeVault v2023.9.7](https://kubevault.com/docs/v2023.9.7/setup/) Edition.
 
-You can find the complete commit by commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2023.09.07/README.md).
+You can find the complete commit by commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2023.9.7/README.md).
 
 
 ## New Version Support
 
-KubeVault now supports the latest vault version 1.13.3. To deploy a VaultServer with the latest release
+KubeVault now supports the latest vault version 1.13.3. To deploy a VaultServer with the latest release, apply the following manifest.
+
 ````yaml
 apiVersion: kubevault.com/v1alpha2
 kind: VaultServer
