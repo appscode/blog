@@ -52,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const allHeaders = document.querySelectorAll(
     ".blog-content > h2,.blog-content > h3,.blog-content > h4"
   );
-  const blogThumb = document.querySelector(".blog-content .fig-style");
 
   // docs page header link create
   Array.from(allHeaders).forEach((el) => {
@@ -78,25 +77,29 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const targetEl = document.querySelector(e.currentTarget.hash);
       window.history.pushState(id, "title", "#" + id);
-      const pos1 = targetEl.offsetTop + (blogThumb.clientHeight - 40);
-
-      window.scrollTo({
-        top: pos1,
-        behavior: "smooth",
-      });
+      scrollToHeading(targetEl.id);
     });
   });
-
-  //docs page heading content on reload
-  setTimeout(function () {
-    let getHash = location.hash;
-    if (getHash) {
-      const targetE2 = document.querySelector(getHash);
-      const pos2 = targetE2.offsetTop + (blogThumb.clientHeight - 40);
-      scrollTo({
-        top: pos2,
-        behavior: "smooth",
-      });
-    }
-  }, 0);
 });
+
+// smooth scroll for blog content id 
+function scrollToHeading(headingID) {
+  const h_ID = document.getElementById(headingID);
+  if (h_ID) {
+    h_ID.scrollIntoView({
+      behavior: "smooth",
+    });
+  }
+}
+
+// Function to handle hash change and scroll accordingly
+function handleHashChange() {
+  const hash = window.location.hash.slice(1); // Get the hash without the "#" symbol
+  if (hash) {
+    scrollToHeading(hash);
+  }
+}
+
+setTimeout(() => {
+  handleHashChange();
+}, 0);
