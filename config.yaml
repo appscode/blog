@@ -19,7 +19,7 @@ params:
   domain_bytebuilders: https://byte.builders
   domain_accounts: https://accounts.byte.builders
   domain_marketplace: https://marketplace.byte.builders
-  blog_url: https://byte.builders/blog/
+  blog_url: https://blog.byte.builders
   slack_url: https://slack.appscode.com
   twitter_url: https://twitter.com/AppsCodeHQ
   facebook_url: https://www.facebook.com/appscode
