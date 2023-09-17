@@ -7,6 +7,10 @@ run:
 assets: hugo-tools
 	$(HUGO_TOOLS) docs-aggregator --only-assets
 	find ./data -name "*.json" -exec sed -i 's/https:\/\/cdn.appscode.com\/images/\/assets\/images/g' {} \;
+	rm -rf static/files/cluster-api
+	rm -rf static/files/cluster-api-provider-aws
+	rm -rf static/files/cluster-api-provider-azure
+	rm -rf static/files/cluster-api-provider-gcp
 
 .PHONY: fmt
 fmt: hugo-tools
