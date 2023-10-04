@@ -28,8 +28,7 @@ In this tutorial we will update version of MySQL Database in Amazon Elastic Kube
 
 ### Get Cluster ID
 
-We need the cluster ID to get the KubeDB License.
-To get cluster ID we can run the following command:
+We need the cluster ID to get the KubeDB License. To get cluster ID we can run the following command:
 
 ```bash
 $ kubectl get ns kube-system -o jsonpath='{.metadata.uid}'
