@@ -75,7 +75,14 @@ In this post, we'll highlight the key updates.
     ```
 5. We've introduced a new hook execution policy called `OnFinalRetryFailure`. This policy triggers a backup hook only when the backup process has failed with no more retry attempts available ([#179](https://github.com/stashed/apimachinery/pull/210)).
 
-### Bug Fixes:
+
+### Improvements & bug fixes
+#### MongoDB Addon
+- We now resync the already lagged secondaries of a replicaSet before locking it up. That's how we ensure that the secondary has up-to-date oplogs while running `mongodump` command.
+- Increasing stopBalancer timeout : We need to stop the sharded cluster's balancer, before taking backup. We now wait for 10 minutes to stop it gracefully. We also try the setBalancerState command multiple times while re-enabling balancer. This should avoid the timing-related issues.
+- A huge amount of improvement was done in logging. 
+
+
 
 ## What Next?
 Please try the latest release and give us your valuable feedback.
