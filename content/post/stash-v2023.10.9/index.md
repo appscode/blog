@@ -1,6 +1,6 @@
 ---
 title: Introducing Stash v2023.10.9
-date: "2023-10-9"
+date: "2023-10-09"
 weight: 10
 authors:
 - Hossain Mahmud
