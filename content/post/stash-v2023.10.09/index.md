@@ -25,7 +25,7 @@ In this post, we'll highlight the key updates.
        kubectl stash key list -n <namespace> <repo-name>
        ```
 
-   - Add a new restic key to a specifix repository:
+   - Add a new restic key to a specific repository:
         ```bash
         kubectl stash key add -n <namespace> <repo-name> --new-password-file <password-filepath>
         ```     
