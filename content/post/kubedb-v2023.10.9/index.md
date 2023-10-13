@@ -41,7 +41,7 @@ Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/mas
 - can be used as workaround for your  BI and analytical workloads
 - can be geo-replicated across cluster
 
-**Follow the [Remote replica](https://kubedb.com/docs/v2023.10.9/guides/postgres/remote-replica/) documentation for details.**
+**Follow the [Remote replica](https://kubedb.com/docs/v2023.10.9/guides/postgres/remote-replica/remotereplica/) documentation for details.**
 
 ## MySQL:
 **Supports for Remote Replica** We have also added support for Remote Replica for Mysql as well. Now you can replicate your MySQL databases `in and across` cluster. Remote Replica
@@ -49,7 +49,7 @@ Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/mas
 - can be used as workaround for your  BI and analytical workloads
 - can be geo-replicated across cluster
 
-**Follow the [Remote replica](https://kubedb.com/docs/v2023.10.9/guides/postgres/remote-replica/) documentation for details.**
+**Follow the [Remote replica](https://kubedb.com/docs/v2023.10.9/guides/mysql/clustering/remote-replica/) documentation for details.**
 
 ## Kafka:
 From this release, Kafka will be using a separate advertised listener for listening to clients to establish connections with the correct network interfaces and addresses that are accessible from their environment. We are calling this **External** listener. This release also brings support for `spec.serviceTemplates` in Kafka API which is an optional field that can be used to provide template for the primary service created by KubeDB operator for Kafka.
