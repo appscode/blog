@@ -1,5 +1,5 @@
 ---
-title: Announcing KubeDB v2023.10.09
+title: Announcing KubeDB v2023.10.9
 date: "2023-10-13"
 weight: 14
 authors:
@@ -28,12 +28,12 @@ tags:
 - security
 ---
 
-We are pleased to announce the release of [KubeDB v2023.10.09](https://kubedb.com/docs/v2023.10.09/setup/). This post lists all the major changes done in this release since the last release. The release includes -
+We are pleased to announce the release of [KubeDB v2023.10.9](https://kubedb.com/docs/v2023.10.9/setup/). This post lists all the major changes done in this release since the last release. The release includes -
 - **Remote Replica for PostgreSQL & MySQL** ⇒ One of the major feature of this release , Now you can replicate PostgreSQL and MySQL across cluster using remote replica. 
 - **OpenSearch hot-warm-cold cluster** ⇒ resource optimization using different hardware profiles
 - **Kafka OpsRequest** ⇒ Day2 operations for KubeDB managed Kafka
 - **CLI** ⇒ Generate Remote Replica Config
-Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.10.09/README.md). Let’s see what are the database specific changes coming with this release.
+Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.10.9/README.md). Let’s see what are the database specific changes coming with this release.
 
 ## Postgres:
 **Support for Remote Replica**: In this release, we have added support for Remote Replica. Now you can replicate your PostgreSQL databases `in and across` cluster. Remote Replica
@@ -41,7 +41,7 @@ Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/mas
 - can be used as workaround for your  BI and analytical workloads
 - can be geo-replicated across cluster
 
-**Follow the [Remote replica](https://kubedb.com/docs/v2023.10.09/guides/postgres/remote-replica/) documentation for details.**
+**Follow the [Remote replica](https://kubedb.com/docs/v2023.10.9/guides/postgres/remote-replica/) documentation for details.**
 
 ## MySQL:
 **Supports for Remote Replica** We have also added support for Remote Replica for Mysql as well. Now you can replicate your MySQL databases `in and across` cluster. Remote Replica
@@ -49,7 +49,7 @@ Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/mas
 - can be used as workaround for your  BI and analytical workloads
 - can be geo-replicated across cluster
 
-**Follow the [Remote replica](https://kubedb.com/docs/v2023.10.09/guides/postgres/remote-replica/) documentation for details.**
+**Follow the [Remote replica](https://kubedb.com/docs/v2023.10.9/guides/postgres/remote-replica/) documentation for details.**
 
 ## Kafka:
 From this release, Kafka will be using a separate advertised listener for listening to clients to establish connections with the correct network interfaces and addresses that are accessible from their environment. We are calling this **External** listener. This release also brings support for `spec.serviceTemplates` in Kafka API which is an optional field that can be used to provide template for the primary service created by KubeDB operator for Kafka.
@@ -176,9 +176,9 @@ kubectl dba remote-config mysql -n demo demo-mysql -uremote -ppass -d 172.104.37
 
 Please try the latest release and give us your valuable feedback.
 
-- If you want to install KubeDB, please follow the installation instruction from [KubeDB Setup](https://kubedb.com/docs/v2023.10.09/setup).
+- If you want to install KubeDB, please follow the installation instruction from [KubeDB Setup](https://kubedb.com/docs/v2023.10.9/setup).
 
-- If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [KubeDB Upgrade](https://kubedb.com/docs/v2023.10.09/setup/upgrade/).
+- If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [KubeDB Upgrade](https://kubedb.com/docs/v2023.10.9/setup/upgrade/).
 
 
 ## Support
