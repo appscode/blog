@@ -1,5 +1,5 @@
 ---
-title: Monitor MySQL With Datadog in Google Kubernetes Engine (GKE) Using KubeDB
+title: Monitor KubeDB managed MySQL With Datadog in Google Kubernetes Engine (GKE)
 date: "2023-10-06"
 weight: 14
 authors:
