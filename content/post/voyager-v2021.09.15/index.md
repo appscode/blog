@@ -41,7 +41,7 @@ Kubernetes v2021.09.15 Community Edition will manage ingress resources in Kubern
 
 ## Deprecating Previous Voyager Releases
 
-Our plans for Voyager has evolved quite a bit since [our decision to adopt an open/core model](https://byte.builders/blog/post/relicensing/) last year and provide a sustainable future for the project. With this release, we are announcing the deprecation of all prior Voyager releases. Currently Voyager v12.0.x and v11.0.x are available to users. The previous versions of Voyager operator has been retired and v12.0.x and v11.0.x will become unavailable by Dec 31, 2021. So, we encourage users to upgrade to the latest version of Voyager.
+Our plans for Voyager has evolved quite a bit since [our decision to adopt an open/core model](https://appscode.com/blog/post/relicensing/) last year and provide a sustainable future for the project. With this release, we are announcing the deprecation of all prior Voyager releases. Currently Voyager v12.0.x and v11.0.x are available to users. The previous versions of Voyager operator has been retired and v12.0.x and v11.0.x will become unavailable by Dec 31, 2021. So, we encourage users to upgrade to the latest version of Voyager.
 
 ## What Next?
 

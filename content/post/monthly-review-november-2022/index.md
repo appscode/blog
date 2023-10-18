@@ -25,7 +25,7 @@ tags:
 
 We are excited to announce the release of KubeVault v2022.11.30. This release takes us one step closer to the Vault Backup & Restore process. With this release, KubeVault is integrated with Stash! You can now take Backup & Restore your Vault cluster using Stash.
 
-Link: https://byte.builders/blog/post/kubevault-v2022.11.30/
+Link: https://appscode.com/blog/post/kubevault-v2022.11.30/
 
 
 
@@ -36,14 +36,14 @@ Link: https://byte.builders/blog/post/kubevault-v2022.11.30/
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. Here is how to Deploy and Manage ProxySQL in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB
 
-Link: https://byte.builders/blog/post/deploy-and-manage-proxysql-in-aws/
+Link: https://appscode.com/blog/post/deploy-and-manage-proxysql-in-aws/
 
 
 #### Deploy and Manage Percona XtraDB in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. Here is how to Deploy and Manage Percona XtraDB in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB
 
-Link: https://byte.builders/blog/post/deploy-and-manage-percona-in-aws/
+Link: https://appscode.com/blog/post/deploy-and-manage-percona-in-aws/
 
 
 

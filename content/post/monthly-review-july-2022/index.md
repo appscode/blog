@@ -29,7 +29,7 @@ Add Hook ExecutionPolicy: We have added executionPolicy to our PostBackupHook an
 
 We have also made some improvements. Here are the notable changes, Ensured that the backupsession will be marked as completed after executing all the steps #176, Added RBAC permissions for finalizer #1458, Custom labels will be passed to Volume Snapshotter Job properly #1461.
 
-Link: https://byte.builders/blog/post/stash-v2022.07.09/
+Link: https://appscode.com/blog/post/stash-v2022.07.09/
 
 
 
@@ -47,7 +47,7 @@ AppsCode held a webinar on “Managing Production Grade Percona XtraDB Cluster i
 - Live Demonstration
 - Q&A Session
 
-Link: https://byte.builders/blog/post/perconaxtradb-webinar-v2022.07.27/
+Link: https://appscode.com/blog/post/perconaxtradb-webinar-v2022.07.27/
 
 #### JWT/OIDC Auth method & Automation with KubeVault CLI
 
@@ -57,7 +57,7 @@ AppsCode held a webinar on “JWT/OIDC Auth method & Automation with KubeVault C
 - Discussion on JWT/OIDC authentication method
 - Automation using KubeVault CLI
 
-Link: https://byte.builders/blog/post/kubevault-webinar-2022.07.20/
+Link: https://appscode.com/blog/post/kubevault-webinar-2022.07.20/
 
 #### Using EKS IRSA and Kube2iam with Stash
 
@@ -69,7 +69,7 @@ On July 6, 2022, Appscode held a webinar on Using EKS IRSA and Kube2iam with Sta
 - Backup and Restore a database using Kub2iam
 - Q&A Session
 
-Link: https://byte.builders/blog/post/stash-webinar-2022-07-06/
+Link: https://appscode.com/blog/post/stash-webinar-2022-07-06/
 
 
 
@@ -80,7 +80,7 @@ Link: https://byte.builders/blog/post/stash-webinar-2022-07-06/
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. Here is how to Run & Manage PostgreSQL in Azure Kubernetes Service (AKS) Using KubeDB.
 
-Link: https://byte.builders/blog/post/run-postgresql-in-aks/
+Link: https://appscode.com/blog/post/run-postgresql-in-aks/
 
 
 

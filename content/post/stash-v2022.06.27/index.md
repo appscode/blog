@@ -11,7 +11,7 @@ tags:
 - stash
 ---
 
-We are announcing Stash `v2022.06.27` which include a critical bug fix for PostgreSQL and MongoDB addon. This release fixes a bug that was causing the license checker to fail in the backup and restore jobs for PostgreSQL ([#1077](https://github.com/stashed/postgres/pull/1077)) and MongoDB ([#1593](https://github.com/stashed/mongodb/pull/1593)) databases. This bug was introduced in [Stash v2022.06.21](https://byte.builders/blog/post/stash-v2022.06.21/) release. So, if you deployed Stash v2022.06.21 previously, you are recommended to upgrade to today's release.
+We are announcing Stash `v2022.06.27` which include a critical bug fix for PostgreSQL and MongoDB addon. This release fixes a bug that was causing the license checker to fail in the backup and restore jobs for PostgreSQL ([#1077](https://github.com/stashed/postgres/pull/1077)) and MongoDB ([#1593](https://github.com/stashed/mongodb/pull/1593)) databases. This bug was introduced in [Stash v2022.06.21](https://appscode.com/blog/post/stash-v2022.06.21/) release. So, if you deployed Stash v2022.06.21 previously, you are recommended to upgrade to today's release.
 
 You can find the complete changelog [here](https://github.com/stashed/CHANGELOG/blob/master/releases/v2022.06.27/README.md).
 

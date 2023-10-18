@@ -44,7 +44,7 @@ Now, the important question is why should you use kubeDB instead of doing thing 
 
 ## Workflow
 
-In this tutorial we will deploy Elasticsearch database in Linode Kubernetes Engine (LKE). You can also learn and try out running Elasticsearch in [Google Kubernetes Engine (GKE)](https://byte.builders/blog/post/deploy-elasticsearch-in-gke/), [Azure Kubernetes Service (AKS)](https://byte.builders/blog/post/run-elasticsearch-in-aks/) or [Amazon Elastic Kubernetes Service(EKS)](https://byte.builders/blog/post/run-elasticsearch-in-aws/). We will cover the following steps:
+In this tutorial we will deploy Elasticsearch database in Linode Kubernetes Engine (LKE). You can also learn and try out running Elasticsearch in [Google Kubernetes Engine (GKE)](https://appscode.com/blog/post/deploy-elasticsearch-in-gke/), [Azure Kubernetes Service (AKS)](https://appscode.com/blog/post/run-elasticsearch-in-aks/) or [Amazon Elastic Kubernetes Service(EKS)](https://appscode.com/blog/post/run-elasticsearch-in-aws/). We will cover the following steps:
 
 1) Install KubeDB
 2) Deploy Elasticsearch Topology Cluster

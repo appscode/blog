@@ -25,7 +25,7 @@ tags:
 
 We are very excited to announce Stash v2022.09.29. It comes with a few new features, bug fixes, and major improvements to the codebase. We have also removed support for a few unused features. In this post, we are going to highlight the most significant changes.
 
-Link: https://byte.builders/blog/post/stash-v2022.09.29/
+Link: https://appscode.com/blog/post/stash-v2022.09.29/
 
 
 #### Introducing KubeVault v2022.09.22
@@ -33,14 +33,14 @@ Link: https://byte.builders/blog/post/stash-v2022.09.29/
 KubeVault is a Git-Ops ready, production-grade solution for deploying and configuring HashiCorp Vault on Kubernetes.
 We are pleased to announce the release of KubeVault v2022.09.22. This release contains a few bug fixes in KubeVault API Conversion & VaultServer Phase calculation.
 
-Link: https://byte.builders/blog/post/kubevault-v2022.09.22/
+Link: https://appscode.com/blog/post/kubevault-v2022.09.22/
 
 
 #### Introducing KubeVault v2022.09.09
 
 We are very excited to announce the release of KubeVault v2022.09.09 Edition. The KubeVault v2022.09.09 contains numerous improvements from KubeVault Operator & CLI end. It includes features for managing Day-2 lifecycle of Vault including Vault Ops-request, Recommendation generation for managing Vault TLS, updated Health Checker, KubeVault CLI, support for Pod Disruption Budget, etc. for Vault Cluster.
 
-Link: https://byte.builders/blog/post/kubevault-v2022.09.09/
+Link: https://appscode.com/blog/post/kubevault-v2022.09.09/
 
 
 # Webinars
@@ -55,7 +55,7 @@ On 28th September 2022, Appscode held a webinar on "Redis Sentinel Ops Requests 
 - Live Demonstration
 - Q&A Session
 
-Link: https://byte.builders/blog/post/kubedb-redis-sentinel-webinar-2022.09.28/
+Link: https://appscode.com/blog/post/kubedb-redis-sentinel-webinar-2022.09.28/
 
 
 #### Configure MongoDB Hidden-Node on Kubernetes using KubeDB
@@ -68,7 +68,7 @@ On 21st September 2022, AppsCode held a webinar on "Configure MongoDB Hidden-Nod
 - Live Demo
 - Q&A Session
 
-Link: https://byte.builders/blog/post/mongo-hidden-2022.09.21/
+Link: https://appscode.com/blog/post/mongo-hidden-2022.09.21/
 
 
 #### PostgreSQL Backup with Wal-G and point in time Recover with KubeDB managed Postgres Database
@@ -80,7 +80,7 @@ On Septempber 07, 2022, AppsCode held a webinar on "PostgreSQL Backup with Wal-G
 - Live Demo
 - Q&A session
 
-Link: https://byte.builders/blog/post/wal-g-webinar-2022.09.07/
+Link: https://appscode.com/blog/post/wal-g-webinar-2022.09.07/
 
 
 #### KubeVault OpsRequest - Day 2 Life-cycle Management for Vault on Kubernetes
@@ -93,7 +93,7 @@ AppsCode held a webinar on "KubeVault OpsRequest - Day 2 Life-cycle Management f
 - KubeVault Ops-requests
 - Generate & Rotate Vault root-token with KubeVault CLI
 
-Link: https://byte.builders/blog/post/kubevault-webinar-2022-09-01/
+Link: https://appscode.com/blog/post/kubevault-webinar-2022-09-01/
 
 
 # Blogs Published
@@ -103,14 +103,14 @@ Link: https://byte.builders/blog/post/kubevault-webinar-2022-09-01/
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. Here is how to Run MongoDB in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB.
 
-Link: https://byte.builders/blog/post/run-mongodb-in-aws/
+Link: https://appscode.com/blog/post/run-mongodb-in-aws/
 
 
 #### Run MariaDB in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. Here is how to Run MariaDB in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB.
 
-Link: https://byte.builders/blog/post/run-mariadb-in-aws/
+Link: https://appscode.com/blog/post/run-mariadb-in-aws/
 
 
 

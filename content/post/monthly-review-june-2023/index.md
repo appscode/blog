@@ -22,7 +22,7 @@ tags:
 
 We are pleased to announce the release of KubeDB **v2023.06.19** . In this release, we have primarly focused on bug fixes.
 
-Link: https://byte.builders/blog/post/kubedb-v2023.06.19/
+Link: https://appscode.com/blog/post/kubedb-v2023.06.19/
 
 
 
@@ -73,49 +73,49 @@ Link: https://youtu.be/l0UB7IZTZ44
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to monitor Redis with Grafana Dashboard in Amazon Elastic Kubernetes Service (Amazon EKS).
 
-Link: https://byte.builders/blog/post/monitor-redis-with-grafana-dashboard-in-aws/
+Link: https://appscode.com/blog/post/monitor-redis-with-grafana-dashboard-in-aws/
 
 
 #### How to use grpcurl to test gRPC servers
 
 gRPC is a high performance, open source universal RPC framework from Google. gRPC servers use a binary encoding on the wire (protocol buffers, or “protobufs” for short). This blog shows how to use grpcurl tool to test gRPC server.
 
-Link: https://byte.builders/blog/post/grpcurl/
+Link: https://appscode.com/blog/post/grpcurl/
 
 
 #### Deploy Production-Grade MongoDB Cluster in Rancher Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to deploy Production-Grade MongoDB Cluster in Rancher Using KubeDB.
 
-Link: https://byte.builders/blog/post/deploy-production-grade-mongodb-cluster-in-rancher/
+Link: https://appscode.com/blog/post/deploy-production-grade-mongodb-cluster-in-rancher/
 
 
 #### Writing Unit Tests for Custom Kubernetes Controllers in Go
 
 In the world of Kubernetes, custom controllers play a crucial role in extending the functionality of the platform to meet specific application requirements. However, developing reliable and testable controllers can be challenging. In this blog post, we will explore how to write effective unit tests for custom Kubernetes controllers using Golang. 
 
-Link: https://byte.builders/blog/post/write-unit-test-for-k8s-controller/
+Link: https://appscode.com/blog/post/write-unit-test-for-k8s-controller/
 
 
 #### Deploy and Manage Percona XtraDB in Google Kubernetes Engine (GKE) Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to deploy and manage Percona XtraDB in Google Kubernetes Engine (GKE) Using KubeDB.
 
-Link: https://byte.builders/blog/post/deploy-and-manage-percona-xtradb-in-gke/
+Link: https://appscode.com/blog/post/deploy-and-manage-percona-xtradb-in-gke/
 
 
 #### Deploy and Manage MongoDB Sharded Cluster in Google Kubernetes Engine (GKE) using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to deploy and manage MongoDB Sharded Cluster in Google Kubernetes Engine (GKE) using KubeDB.
 
-Link: https://byte.builders/blog/post/deploy-and-manage-mongodb-sharded-cluster-in-gke/
+Link: https://appscode.com/blog/post/deploy-and-manage-mongodb-sharded-cluster-in-gke/
 
 
 #### Deploy and Manage ProxySQL in Azure Kubernetes Service (AKS) Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. In this blog we will deploy and manage ProxySQL in Azure Kubernetes Service (AKS) Using KubeDB.
 
-Link: https://byte.builders/blog/post/deploy-and-manage-proxysql-in-aks/
+Link: https://appscode.com/blog/post/deploy-and-manage-proxysql-in-aks/
 
 
 
