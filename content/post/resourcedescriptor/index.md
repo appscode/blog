@@ -159,7 +159,7 @@ spec:
       level: Owner
 ```
 
-This type of connections can be defined as shown in the example above. Here we see that Postgres crd creates a StatefulSet and an [AppBinding](https://byte.builders/blog/post/appbinding/) with the same name. So, `nameTemplate` is set to `{.metadata.name}` . It is important to set the `namespacePath` field so that the target resources in the same namespace are only Listed as connections. If the child resources use some suffix or prefix, you can define `nameTemplate` like `kubedb-{.metadata.name}` or `{.metadata.name}-pods`. You can also optionally specify the connection level. We are able to find the target resource via a GET api call. So, the cost for both forward and backward edges are assigned 1.
+This type of connections can be defined as shown in the example above. Here we see that Postgres crd creates a StatefulSet and an [AppBinding](https://appscode.com/blog/post/appbinding/) with the same name. So, `nameTemplate` is set to `{.metadata.name}` . It is important to set the `namespacePath` field so that the target resources in the same namespace are only Listed as connections. If the child resources use some suffix or prefix, you can define `nameTemplate` like `kubedb-{.metadata.name}` or `{.metadata.name}-pods`. You can also optionally specify the connection level. We are able to find the target resource via a GET api call. So, the cost for both forward and backward edges are assigned 1.
 
 ### Connection: OwnedBy
 

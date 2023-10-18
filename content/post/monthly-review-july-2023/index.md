@@ -22,42 +22,42 @@ tags:
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to deploy OpenSearch with OpenSearch-Dashboards in Google Kubernetes Engine (GKE).
 
-Link: https://byte.builders/blog/post/deploy-opensearch-with-opensearch-dashboards-in-gke/
+Link: https://appscode.com/blog/post/deploy-opensearch-with-opensearch-dashboards-in-gke/
 
 
 #### Deploy Highly Available PostgreSQL Cluster in Azure Kubernetes Service (AKS) using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to deploy Highly Available PostgreSQL Cluster in Azure Kubernetes Service (AKS).
 
-Link: https://byte.builders/blog/post/deploy-highly-available-postgresql-in-aks/
+Link: https://appscode.com/blog/post/deploy-highly-available-postgresql-in-aks/
 
 
 #### Monitor ProxySQL with Grafana Dashboard in Amazon Elastic Kubernetes Service (Amazon EKS)
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to monitor ProxySQL with Grafana Dashboard in Amazon Elastic Kubernetes Service (Amazon EKS).
 
-Link: https://byte.builders/blog/post/monitor-proxysql-with-grafana-dashboard-in-aws/
+Link: https://appscode.com/blog/post/monitor-proxysql-with-grafana-dashboard-in-aws/
 
 
 #### Deploy Production-Grade Elasticsearch Cluster in Rancher Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to deploy Production-Grade Elasticsearch Cluster in Rancher Using KubeDB.
 
-Link: https://byte.builders/blog/post/deploy-production-grade-elasticsearch-cluster-in-rancher/
+Link: https://appscode.com/blog/post/deploy-production-grade-elasticsearch-cluster-in-rancher/
 
 
 #### Monitor MongoDB with Grafana Dashboard in Azure Kubernetes Service (AKS)
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to monitor MongoDB with Grafana Dashboard in Azure Kubernetes Service (AKS).
 
-Link: https://byte.builders/blog/post/monitor-mongodb-with-grafana-dashboard-in-aks/
+Link: https://appscode.com/blog/post/monitor-mongodb-with-grafana-dashboard-in-aks/
 
 
 #### Deploy and Manage PgBouncer in Azure Kubernetes Service (AKS) Using KubeDB
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. In this blog we will deploy and manage PgBouncer in Azure Kubernetes Service (AKS) Using KubeDB.
 
-Link: https://byte.builders/blog/post/deploy-and-manage-pgbouncer-in-aks/
+Link: https://appscode.com/blog/post/deploy-and-manage-pgbouncer-in-aks/
 
 
 

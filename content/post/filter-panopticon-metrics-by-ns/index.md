@@ -26,7 +26,7 @@ Here is the outline of this post:
 
 ## Panopticon
 
-Panopticon is a generic state metrics exporter for Kubernetes resources. It can generate Prometheus metrics from both Kubernetes native and custom resources. Generated metrics are exposed in /metrics path for the Prometheus server to scrape. If you want to know more about Panopticon, you can check out [this blog post](https://byte.builders/blog/post/introducing-panopticon/).
+Panopticon is a generic state metrics exporter for Kubernetes resources. It can generate Prometheus metrics from both Kubernetes native and custom resources. Generated metrics are exposed in /metrics path for the Prometheus server to scrape. If you want to know more about Panopticon, you can check out [this blog post](https://appscode.com/blog/post/introducing-panopticon/).
 
 ## Install Panopticon in Kubernetes
 

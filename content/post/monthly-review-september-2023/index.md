@@ -22,14 +22,14 @@ tags:
 
 We are pleased to announce the release of Voyager **v2023.9.18**. In this release, we have updated HAProxy image to `2.6.15` and fixed various CVEs.
 
-Link: https://byte.builders/blog/post/voyager-v2023.9.18/
+Link: https://appscode.com/blog/post/voyager-v2023.9.18/
 
 
 #### Introducing KubeVault v2023.9.7
 
 We are very excited to announce the release of KubeVault **v2023.9.7** edition. Which includes a few bug fixes and improvments.
 
-Link: https://byte.builders/blog/post/kubevault-v2023.9.7/
+Link: https://appscode.com/blog/post/kubevault-v2023.9.7/
 
 
 
@@ -75,7 +75,7 @@ Link: https://youtu.be/mq8DqU5C-vI?feature=shared
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to Update Version of MySQL Database in Amazon Elastic Kubernetes Service (Amazon EKS).
 
-Link: https://byte.builders/blog/post/update-version-of-mysql-database-in-aws/
+Link: https://appscode.com/blog/post/update-version-of-mysql-database-in-aws/
 
 
 
@@ -83,7 +83,7 @@ Link: https://byte.builders/blog/post/update-version-of-mysql-database-in-aws/
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows Horizontal and Vertical Scaling of MariaDB Cluster in Azure Kubernetes Service (AKS).
 
-Link: https://byte.builders/blog/post/horizontal-and-vertical-scaling-of-mariadb-cluster-in-aks/
+Link: https://appscode.com/blog/post/horizontal-and-vertical-scaling-of-mariadb-cluster-in-aks/
 
 
 
@@ -91,7 +91,7 @@ Link: https://byte.builders/blog/post/horizontal-and-vertical-scaling-of-mariadb
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to Update Version of Redis Database in Google Kubernetes Engine (GKE). 
 
-Link: https://byte.builders/blog/post/update-version-of-redis-database-in-gke/
+Link: https://appscode.com/blog/post/update-version-of-redis-database-in-gke/
 
 
 
@@ -99,7 +99,7 @@ Link: https://byte.builders/blog/post/update-version-of-redis-database-in-gke/
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to deploy MongoDB ReplicaSet with Arbiter in Amazon Elastic Kubernetes Service (Amazon EKS).
 
-Link: https://byte.builders/blog/post/deploy-mongodb-replicaset-with-arbiter-in-aws/
+Link: https://appscode.com/blog/post/deploy-mongodb-replicaset-with-arbiter-in-aws/
 
 
 
@@ -107,7 +107,7 @@ Link: https://byte.builders/blog/post/deploy-mongodb-replicaset-with-arbiter-in-
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to deploy OpenSearch with OpenSearch-Dashboards in Azure Kubernetes Service (AKS).
 
-Link: https://byte.builders/blog/post/deploy-opensearch-with-opensearch-dashboards-in-aks/
+Link: https://appscode.com/blog/post/deploy-opensearch-with-opensearch-dashboards-in-aks/
 
 
 
@@ -115,7 +115,7 @@ Link: https://byte.builders/blog/post/deploy-opensearch-with-opensearch-dashboar
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to Deploy and Manage Redis in Sentinel Mode in Azure Kubernetes Service (AKS).
 
-Link: https://byte.builders/blog/post/deploy-and-manage-redis-sentinel-in-aks/
+Link: https://appscode.com/blog/post/deploy-and-manage-redis-sentinel-in-aks/
 
 
 

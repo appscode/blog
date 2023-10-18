@@ -35,7 +35,7 @@ Recommendation-engine runs inside the `kubedb-ops-manager` pod. Currently, it wi
 
 To know more about Recommendation-engine and Supervisor, please watch the following videos where we discussed briefly and showed a demo on how to execute recommendations.
 
-- [KubeDB AutoOps: Automate Day 2 Life-cycle Management for Databases on Kubernetes](https://byte.builders/blog/post/kubedb-autoops-webinar-2022.04.13/)
+- [KubeDB AutoOps: Automate Day 2 Life-cycle Management for Databases on Kubernetes](https://appscode.com/blog/post/kubedb-autoops-webinar-2022.04.13/)
 - [KubeDB AutoOps Playlist](https://www.youtube.com/playlist?list=PLoiT1Gv2KR1gszfJIwCcC4Kj-JcE4uyR_)
 
 To see the generated recommendations:

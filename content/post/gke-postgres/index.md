@@ -482,7 +482,7 @@ exit
 
 ## Webinar
 
-A webinar was held by AppsCode on **"Managing Production Grade PostgreSQL in Kubernetes Using KubeDB"**. You can find details of the webinar [HERE](https://byte.builders/blog/post/postgres-webinar/).
+A webinar was held by AppsCode on **"Managing Production Grade PostgreSQL in Kubernetes Using KubeDB"**. You can find details of the webinar [HERE](https://appscode.com/blog/post/postgres-webinar/).
 
 ## Support
 
