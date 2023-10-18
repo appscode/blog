@@ -1,6 +1,6 @@
 baseURL: https://byte.builders/blog/
 languageCode: en-us
-title: Blog | ByteBuilders
+title: Blog | AppsCode
 assetDir: static
 googleAnalytics: UA-62096468-4
 taxonomies:
@@ -19,7 +19,7 @@ params:
   domain_bytebuilders: https://byte.builders
   domain_accounts: https://accounts.byte.builders
   domain_marketplace: https://marketplace.byte.builders
-  blog_url: https://blog.byte.builders
+  blog_url: https://blog.appscode.com
   slack_url: https://slack.appscode.com
   twitter_url: https://twitter.com/AppsCodeHQ
   facebook_url: https://www.facebook.com/appscode
