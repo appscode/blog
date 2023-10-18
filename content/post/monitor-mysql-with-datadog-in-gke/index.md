@@ -22,7 +22,7 @@ tags:
 ## Introduction
 
 KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are Redis, PostgreSQL, Kafka, MySQL, MongoDB, MariaDB, Elasticsearch, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/).
-In this tutorial we will Monitor Mysql With Datadog in Google Kubernetes Engine (GKE) Using KubeDB. We will cover the following steps:
+In this tutorial we will Monitor MySQL With Datadog in Google Kubernetes Engine (GKE) Using KubeDB. We will cover the following steps:
 
 1) Install KubeDB
 2) Install Datadog
@@ -189,7 +189,7 @@ To view events from your Kubernetes cluster, go to [Datadog's Event Explorer](ht
 
 ![Datadog Events](DatadogEvents.png)
 
-### Accessing MySQL Dashboard
+### Install MySQL Dashboard
 
 To access the MySQL dashboard, go to `Integrations` and then install the MySQL integration from there. This will allow you to monitor your MySQL databases through Datadog's dashboard.
 
