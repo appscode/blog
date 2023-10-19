@@ -25,7 +25,7 @@ Read more about `Stash` [here](https://stash.run/). `Stash` add-on for [Vault](h
 Upon deploying `Vault` managed by `KubeVault`, an `AppBinding` will be created, which contains the necessary information needed for `Backup` & `Restore` process.
 So, if you're deploying `Vault` using `Helm Charts`, you'll need to create the `AppBinding` yourself accordingly. 
 
-An `AppBinding` is a Kubernetes `CustomResourceDefinition(CRD)` which points to an application using either its URL (usually for a non-Kubernetes resident service instance) or a Kubernetes service object (if self-hosted in a Kubernetes cluster), some optional parameters and a credential secret. To learn more about AppBinding and the problems it solves, please read this blog post: [The case for AppBinding](https://byte.builders/blog/post/appbinding/).
+An `AppBinding` is a Kubernetes `CustomResourceDefinition(CRD)` which points to an application using either its URL (usually for a non-Kubernetes resident service instance) or a Kubernetes service object (if self-hosted in a Kubernetes cluster), some optional parameters and a credential secret. To learn more about AppBinding and the problems it solves, please read this blog post: [The case for AppBinding](https://appscode.com/blog/post/appbinding/).
 
 Here's a sample `AppBinding` yaml created by the `KubeVault` operator on `VaultServer` deployment:
 

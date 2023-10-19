@@ -25,13 +25,13 @@ tags:
 
 We are pleased to announce the release of KubeDB **v2023.01.31**. This post lists all the major changes done in this release since the last release. The release was mainly focus on some hot fix regarding Private Registry `ImagePull`, Postgres `pg-coordinator leader switch` issue and running Kibana and OpenSearch dashboard as `non root` user.
 
-Link: https://byte.builders/blog/post/kubedb-v2023.01.31/
+Link: https://appscode.com/blog/post/kubedb-v2023.01.31/
 
 #### Introducing Stash v2023.01.05
 
 We are announcing Stash **v2023.01.05** which includes a bug fix and few improvements. It comes with a couple of exciting new features, a few bug fixes, and improvements to the codebase. In this post, we are going to highlight the most significant changes.
 
-Link: https://byte.builders/blog/post/stash-v2023.01.05/
+Link: https://appscode.com/blog/post/stash-v2023.01.05/
 
 
 
@@ -50,7 +50,7 @@ AppsCode held a webinar on 11th January 2023, on Manage ExternalDNS with CRD and
 - Q&A Session
 
 
-Link: https://byte.builders/blog/post/externaldns-webinar-2023-1-11/
+Link: https://appscode.com/blog/post/externaldns-webinar-2023-1-11/
 
 
 #### Manage Redis Secrets using KubeVault
@@ -66,7 +66,7 @@ AppsCode held a webinar on “Manage Redis Secrets using KubeVault”. This took
 - Q&A Session
 
 
-Link: https://byte.builders/blog/post/kubevault-webinar-2023.01.17/
+Link: https://appscode.com/blog/post/kubevault-webinar-2023.01.17/
 
 
 #### Managing TLS secure Kafka on Kubernetes using KubeDB
@@ -80,7 +80,7 @@ AppsCode held a webinar on “Managing TLS secure Kafka on Kubernetes using Kube
 - Create, publish, and consume event from kafka
 
 
-Link: https://byte.builders/blog/post/kafka-webinar-2023.01.25/
+Link: https://appscode.com/blog/post/kafka-webinar-2023.01.25/
 
 
 # Blogs Published
@@ -90,28 +90,28 @@ Link: https://byte.builders/blog/post/kafka-webinar-2023.01.25/
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to Deploy and Manage PgBouncer in Amazon Elastic Kubernetes Service (Amazon EKS) Using KubeDB.
 
-Link: https://byte.builders/blog/post/deploy-and-manage-pgbouncer-in-aws/
+Link: https://appscode.com/blog/post/deploy-and-manage-pgbouncer-in-aws/
 
 
 #### MySQL and Its Use Cases
 
 MySQL is a relational database management system (RDBMS) that is renowned for its dependability, robustness, and performance. Here we give an overview of the MySQL database.
 
-Link: https://byte.builders/blog/post/mysql-and-its-use-cases/
+Link: https://appscode.com/blog/post/mysql-and-its-use-cases/
 
 
 #### Leveraging KubeVault to Manage the Redis Secret Engine in Amazon EKS - A Step-by-Step Guide
 
 KubeVault is a Git-Ops ready, production-grade solution for deploying and configuring Hashicorp’s Vault on Kubernetes. KubeVault provides various ways to configure your Vault deployment. This blog shows how to Manage Redis Secret Engine using KubeVault in Amazon Elastic Kubernetes Service (Amazon EKS).
 
-Link: https://byte.builders/blog/post/manage-redis-secret-engine-using-kubevault-in-aws/
+Link: https://appscode.com/blog/post/manage-redis-secret-engine-using-kubevault-in-aws/
 
 
 #### Why Choose PostgreSQL Database
 
 PostgreSQL is a robust open-source relational database management system (RDBMS) which is frequently used for maintaining and analyzing massive datasets. Here we give an overview of the PostgreSQL database.
 
-Link: https://byte.builders/blog/post/why-choose-postgresql-database/
+Link: https://appscode.com/blog/post/why-choose-postgresql-database/
 
 
 
