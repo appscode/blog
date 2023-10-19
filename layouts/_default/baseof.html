@@ -29,23 +29,23 @@
   <meta name="theme-color" content="#0071BD" />
   <title>{{ .Title }}</title>
   <!-- favicon -->
-  <link rel="apple-touch-icon" sizes="57x57" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-60x60.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-152x152.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/apple-icon-180x180.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/apple-icon-180x180.png">
   <link rel="icon" type="image/png" sizes="192x192"
-    href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/favicon-16x16.png">
-  <link rel="manifest" href="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/manifest.json">
+    href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/favicon-16x16.png">
+  <link rel="manifest" href="{{.Site.Params.basePath}}assets/images/products/appscode/icons/manifest.json">
   <meta name="msapplication-TileColor" content="#ffffff">
-  <meta name="msapplication-TileImage" content="{{.Site.Params.basePath}}assets/images/products/bytebuilders/icons/ms-icon-144x144.png">
+  <meta name="msapplication-TileImage" content="{{.Site.Params.basePath}}assets/images/products/appscode/icons/ms-icon-144x144.png">
   <!-- twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@{{ strings.TrimPrefix `https://twitter.com/` $p.socialLinks.twitter }}">
@@ -119,7 +119,7 @@
           <div class="navbar-left">
             <div class="navbar-brand">
               <a href="{{.Site.Params.domain_bytebuilders}}">
-                <img src="{{$.Site.Params.basePath}}{{ .Site.Data.products.bytebuilders.logoByAppsCode.white.src }}" alt="img" height="50" width="auto"
+                <img src="https://cdn.appscode.com/images/products/appscode/appscode-logo-white.png" alt="img"
                   loading="lazy"
                   decoding="async" loading="lazy" decoding="async" />
               </a>
@@ -151,7 +151,7 @@
                       class="whats-new">New</span></a>
                 </li>
               </ul>
-              <div class="navbar-item pr-0">
+              <div class="navbar-item p-0">
                 <div class="buttons">
                   <a href="{{.Site.Params.domain_accounts}}/user/login"
                     class="button ac-button is-primary is-uppercase">
