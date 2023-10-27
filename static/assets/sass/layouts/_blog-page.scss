@@ -2,7 +2,7 @@
 .hero-area-blog {
   padding: 170px 0 100px;
   margin-top: -74px;
-  background-image: url(/blog/assets/images/bg-image/hero-bg.png);
+  background-image: url(/blog/assets/images/bg-image/hero-bg.jpg);
   background-repeat: no-repeat;
   min-height: 62vh;
   display: flex;
@@ -111,7 +111,7 @@
 
 // section title small end
 .recent-blog-posts {
-  background-color: #f2f5f7;
+  background-color: hsl(149, 20%, 97%);
   padding: 60px 0 70px;
 
   .button.is-mini {

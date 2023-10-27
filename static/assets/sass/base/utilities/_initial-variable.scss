@@ -1,21 +1,22 @@
 //  color variable
-$ac-primary: #1971bd;
+$ac-primary: hsl(149, 100%, 33%);
+// $ac-secondary: hsl(209%, 100%, 20%);
 
 // $ac-color-text: #3b3030;
-$ac-color-text: #506070;
-$ac-color-label: #a6abbd;
-$ac-color-link: #4a4a4a;
-$ac-color-value: #393939;
-$ac-color-heading: #1c1c1c;
+$ac-color-label: hsl(149, 20%, 50%);
+$ac-color-link: hsl(149, 40%, 20%);
+$ac-color-value: hsl(149, 20%, 20%);
+$ac-color-text: hsl(149, 10%, 35%);
+$ac-color-heading: hsl(149, 10%, 10%);
 
-$ac-black: #000000;
-$ac-bg: #ffffff;
-$ac-white: #ffffff;
-$ac-white-light: #dbdbde;
-$ac-white-lighter: #f1f1f1;
-$ac-gray-dark: #5f5f5f;
-$ac-gray-light: #8d8d8d;
-$ac-gray-lightest: #d1d1d1;
+$ac-black: hsl(0, 0%, 0%);
+$ac-bg: hsl(0, 0%, 100%);
+$ac-white: hsl(0, 0%, 100%);
+$ac-white-light: hsl(149, 5%, 90%);
+$ac-white-lighter: hsl(149, 3%, 97%);
+$ac-gray-dark: hsl(149, 0%, 40%);
+$ac-gray-light: hsl(149, 0%, 55%);
+$ac-gray-lightest: hsl(149, 0%, 85%);
 
 // size
 $ac-size-1: 48px;

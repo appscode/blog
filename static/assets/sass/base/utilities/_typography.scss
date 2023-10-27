@@ -112,6 +112,11 @@ h6 {
 a {
   font-family: $ac-font-paragraph;
   color: $ac-primary;
+  &:not(button){
+    &:hover{
+      color: $ac-primary;
+    }
+  }
 }
 
 hr {
