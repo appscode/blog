@@ -11,11 +11,11 @@ $ac-font-inter: "Inter", sans-serif;
 
 html,
 body {
-  background-color: $ac-bg;
+  background-color: $color-bg;
   font-family: $ac-font-paragraph;
   font-weight: 400;
   font-size: 1rem;
-  color: $ac-color-text;
+  color: $color-text;;
   scroll-behavior: smooth;
 }
 
@@ -32,10 +32,10 @@ h6 {
   font-family: $ac-font-heading;
   font-style: normal;
   font-weight: 500;
-  color: $ac-color-heading;
+  color: $color-heading;
 
   &.is-gradient {
-    background: linear-gradient(-45deg, $ac-primary, #940148, #4c346f, #3334f5);
+    background: linear-gradient(-45deg, $primary, #940148, #4c346f, #3334f5);
     background-size: 300% 300%;
     animation: gradient 5s ease infinite;
     -webkit-background-clip: text;
@@ -111,16 +111,16 @@ h6 {
 
 a {
   font-family: $ac-font-paragraph;
-  color: $ac-primary;
+  color: $primary;
   &:not(button){
     &:hover{
-      color: $ac-primary;
+      color: $primary;
     }
   }
 }
 
 hr {
-  background-color: $ac-white-light;
+  background-color: $color-border;
   border: none;
   display: block;
   height: 1px;
@@ -128,7 +128,7 @@ hr {
 }
 
 strong {
-  color: $ac-color-text;
+  color: $color-text;;
   font-weight: 500;
 }
 

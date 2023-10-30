@@ -26,7 +26,7 @@ li.nav-item:before {
   border-bottom-color: #dbdbdb;
   border-bottom-style: solid;
   border-bottom-width: 1px;
-  color: $ac-color-link;
+  color: $color-text;
   display: flex;
   justify-content: center;
   margin-bottom: -1px;
@@ -40,7 +40,7 @@ li.nav-item a {
 }
 
 a.nav-link.active {
-  background-color: $ac-white;
+  background-color: $white-100;
   border-left: 1px solid #dbdbdb;
   border-right: 1px solid #dbdbdb;
   border-top: 1px solid #dbdbdb;
@@ -53,7 +53,7 @@ a.nav-link.active {
 a.nav-link.active:after {
   position: absolute;
   content: "";
-  background: $ac-primary;
+  background: $primary;
   top: 0;
   left: 0;
   width: 100%;

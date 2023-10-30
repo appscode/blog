@@ -1,22 +1,29 @@
-//  color variable
-$ac-primary: hsl(149, 100%, 33%);
-// $ac-secondary: hsl(209%, 100%, 20%);
+$primary-hue: 149;
+$primary-saturation: 100%;
+$primary-5: hsl($primary-hue, $primary-saturation, 5%);
+$primary-10: hsl($primary-hue, $primary-saturation, 10%);
+$primary-20: hsl($primary-hue, $primary-saturation, 20%);
+$primary: hsl($primary-hue, $primary-saturation, 33%);
+$primary-30: hsl($primary-hue, $primary-saturation, 30%);
+$primary-40: hsl($primary-hue, $primary-saturation, 40%);
+$primary-50: hsl($primary-hue, $primary-saturation, 50%);
+$primary-60: hsl($primary-hue, $primary-saturation, 60%);
+$primary-70: hsl($primary-hue, $primary-saturation, 70%);
+$primary-80: hsl($primary-hue, $primary-saturation, 80%);
+$primary-90: hsl($primary-hue, $primary-saturation, 90%);
+$primary-93: hsl($primary-hue, $primary-saturation, 93%);
+$primary-95: hsl($primary-hue, $primary-saturation, 95%);
+$primary-97: hsl($primary-hue, $primary-saturation, 97%);
 
-// $ac-color-text: #3b3030;
-$ac-color-label: hsl(149, 20%, 50%);
-$ac-color-link: hsl(149, 40%, 20%);
-$ac-color-value: hsl(149, 20%, 20%);
-$ac-color-text: hsl(149, 10%, 35%);
-$ac-color-heading: hsl(149, 10%, 10%);
-
-$ac-black: hsl(0, 0%, 0%);
-$ac-bg: hsl(0, 0%, 100%);
-$ac-white: hsl(0, 0%, 100%);
-$ac-white-light: hsl(149, 5%, 90%);
-$ac-white-lighter: hsl(149, 3%, 97%);
-$ac-gray-dark: hsl(149, 0%, 40%);
-$ac-gray-light: hsl(149, 0%, 55%);
-$ac-gray-lightest: hsl(149, 0%, 85%);
+$color-text: hsl($primary-hue, 10%, 35%);
+$color-heading: hsl($primary-hue, 10%, 10%);
+$color-label: hsl($primary-hue, 20%, 50%);
+$color-link: hsl($primary-hue, 40%, 20%);
+$color-border: hsl($primary-hue, 50%, 90%);
+$color-border-dark: hsl($primary-hue, 10%, 80%);
+$color-bg: hsl(0, 0%, 100%);
+$white-100: hsl(0, 0%, 100%);
+$color-black: hsl(0, 0%, 0%);
 
 // size
 $ac-size-1: 48px;

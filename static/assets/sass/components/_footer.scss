@@ -9,7 +9,7 @@
   label {
     font-size: 18px;
     font-weight: 600;
-    color: $ac-color-heading;
+    color: $color-heading;
     display: block;
     font-family: $ac-font-heading;
   }
@@ -27,8 +27,8 @@
   }
 
   .button {
-    font-family: $ac-color-link;
-    color: $ac-primary;
+    font-family: $color-text;
+    color: $primary;
     font-size: 16px;
     height: 40px;
     box-shadow: none;
@@ -42,8 +42,8 @@
     background: transparent;
 
     &:hover {
-      background-color: $ac-primary;
-      color: $ac-white !important;
+      background-color: $primary;
+      color: $white-100 !important;
       outline: none;
       box-shadow: none;
     }
@@ -55,13 +55,13 @@
 
   h4 {
     font-size: 18px;
-    color: $ac-color-heading;
+    color: $color-heading;
   }
 }
 
 .all-contact-info li a,
 p.spam-message {
-  color: $ac-color-text;
+  color: $color-text;;
   display: inline-block;
   font-size: 14px;
   font-family: $ac-font-paragraph;
@@ -81,7 +81,7 @@ p.spam-message {
 .footer-menu {
   h4 {
     font-size: 18px;
-    color: $ac-color-heading;
+    color: $color-heading;
     margin-bottom: 4px;
   }
 }
@@ -89,7 +89,7 @@ p.spam-message {
 .footer-link {
   li {
     a {
-      color: $ac-color-text;
+      color: $color-text;;
       font-size: 14px;
       display: block;
       padding: 8px 0;
@@ -100,7 +100,7 @@ p.spam-message {
       }
 
       &:hover {
-        color: $ac-primary;
+        color: $primary;
         padding-left: 5px;
       }
     }
@@ -109,7 +109,7 @@ p.spam-message {
 
 .footer-top {
   padding: 50px 0 30px 0;
-  border-bottom: 1px solid $ac-white-light;
+  border-bottom: 1px solid $color-border;
 }
 
 .footer-bottom {
@@ -118,20 +118,20 @@ p.spam-message {
 
   p {
     font-size: 14px;
-    color: $ac-color-text;
+    color: $color-text;;
     margin-bottom: 0;
   }
 }
 
 .footer-inline-link {
   a {
-    color: $ac-color-link;
+    color: $color-text;
     font-size: 14px;
     margin-right: 30px;
     transition: 0.3s ease-in-out;
 
     &:hover {
-      color: $ac-primary;
+      color: $primary;
     }
 
     &:last-child {
@@ -158,8 +158,8 @@ p.spam-message {
       transition: 0.3s ease-in-out;
 
       &:hover {
-        background: $ac-primary;
-        color: $ac-white;
+        background: $primary;
+        color: $white-100;
         border: 1px solid transparent;
       }
     }
