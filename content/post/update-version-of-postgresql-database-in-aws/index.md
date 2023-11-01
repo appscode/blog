@@ -1,6 +1,6 @@
 ---
 title: Update Version of PostgreSQL Database in Amazon Elastic Kubernetes Service (Amazon EKS)
-date: "2023-09-29"
+date: "2023-10-27"
 weight: 14
 authors:
 - Dipta Roy
@@ -54,27 +54,27 @@ $ helm repo update
 
 $ helm search repo appscode/kubedb
 NAME                              	CHART VERSION	APP VERSION	DESCRIPTION                                       
-appscode/kubedb                   	v2023.08.18  	v2023.08.18	KubeDB by AppsCode - Production ready databases...
-appscode/kubedb-autoscaler        	v0.20.0      	v0.20.1    	KubeDB Autoscaler by AppsCode - Autoscale KubeD...
-appscode/kubedb-catalog           	v2023.08.18  	v2023.08.18	KubeDB Catalog by AppsCode - Catalog for databa...
+appscode/kubedb                   	v2023.10.9   	v2023.10.9 	KubeDB by AppsCode - Production ready databases...
+appscode/kubedb-autoscaler        	v0.21.0      	v0.21.0    	KubeDB Autoscaler by AppsCode - Autoscale KubeD...
+appscode/kubedb-catalog           	v2023.10.9   	v2023.10.9 	KubeDB Catalog by AppsCode - Catalog for databa...
 appscode/kubedb-community         	v0.24.2      	v0.24.2    	KubeDB Community by AppsCode - Community featur...
-appscode/kubedb-crds              	v2023.08.18  	v2023.08.18	KubeDB Custom Resource Definitions                
-appscode/kubedb-dashboard         	v0.11.0      	v0.11.0    	KubeDB Dashboard by AppsCode                      
+appscode/kubedb-crds              	v2023.10.9   	v2023.10.9 	KubeDB Custom Resource Definitions                
+appscode/kubedb-dashboard         	v0.12.0      	v0.12.0    	KubeDB Dashboard by AppsCode                      
 appscode/kubedb-enterprise        	v0.11.2      	v0.11.2    	KubeDB Enterprise by AppsCode - Enterprise feat...
-appscode/kubedb-grafana-dashboards	v2023.08.18  	v2023.08.18	A Helm chart for kubedb-grafana-dashboards by A...
-appscode/kubedb-metrics           	v2023.08.18  	v2023.08.18	KubeDB State Metrics                              
-appscode/kubedb-one               	v2023.08.18  	v2023.08.18	KubeDB and Stash by AppsCode - Production ready...
-appscode/kubedb-ops-manager       	v0.22.0      	v0.22.8    	KubeDB Ops Manager by AppsCode - Enterprise fea...
-appscode/kubedb-opscenter         	v2023.08.18  	v2023.08.18	KubeDB Opscenter by AppsCode                      
-appscode/kubedb-provisioner       	v0.35.0      	v0.35.6    	KubeDB Provisioner by AppsCode - Community feat...
-appscode/kubedb-schema-manager    	v0.11.0      	v0.11.0    	KubeDB Schema Manager by AppsCode                 
-appscode/kubedb-ui                	v2023.03.23  	0.4.3      	A Helm chart for Kubernetes                       
+appscode/kubedb-grafana-dashboards	v2023.10.9   	v2023.10.9 	A Helm chart for kubedb-grafana-dashboards by A...
+appscode/kubedb-metrics           	v2023.10.9   	v2023.10.9 	KubeDB State Metrics                              
+appscode/kubedb-one               	v2023.10.9   	v2023.10.9 	KubeDB and Stash by AppsCode - Production ready...
+appscode/kubedb-ops-manager       	v0.23.0      	v0.23.2    	KubeDB Ops Manager by AppsCode - Enterprise fea...
+appscode/kubedb-opscenter         	v2023.10.9   	v2023.10.9 	KubeDB Opscenter by AppsCode                      
+appscode/kubedb-provisioner       	v0.36.0      	v0.36.2    	KubeDB Provisioner by AppsCode - Community feat...
+appscode/kubedb-schema-manager    	v0.12.0      	v0.12.0    	KubeDB Schema Manager by AppsCode                 
+appscode/kubedb-ui                	v2023.10.18  	0.4.6      	A Helm chart for Kubernetes                       
 appscode/kubedb-ui-server         	v2021.12.21  	v2021.12.21	A Helm chart for kubedb-ui-server by AppsCode     
-appscode/kubedb-webhook-server    	v0.11.0      	v0.11.1    	KubeDB Webhook Server by AppsCode   
+appscode/kubedb-webhook-server    	v0.12.0      	v0.12.0    	KubeDB Webhook Server by AppsCode 
 
 # Install KubeDB Enterprise operator chart
 $ helm install kubedb appscode/kubedb \
-  --version v2023.08.18 \
+  --version v2023.10.9 \
   --namespace kubedb --create-namespace \
   --set kubedb-provisioner.enabled=true \
   --set kubedb-ops-manager.enabled=true \
@@ -89,13 +89,13 @@ Let's verify the installation:
 ```bash
 $ watch kubectl get pods --all-namespaces -l "app.kubernetes.io/instance=kubedb"
 
-NAMESPACE   NAME                                            READY   STATUS    RESTARTS     AGE
-kubedb      kubedb-kubedb-autoscaler-6d45d7d4df-cchnj       1/1     Running   0            84s
-kubedb      kubedb-kubedb-dashboard-74879c5f86-rbrln        1/1     Running   0            84s
-kubedb      kubedb-kubedb-ops-manager-c7cc578c5-l9jds       1/1     Running   0            84s
-kubedb      kubedb-kubedb-provisioner-5ffc8fdb9f-7cglg      1/1     Running   0            84s
-kubedb      kubedb-kubedb-schema-manager-68f845bbb6-4jwnf   1/1     Running   0            84s
-kubedb      kubedb-kubedb-webhook-server-6fdd5b4857-v8tn5   1/1     Running   0            83s
+NAMESPACE   NAME                                            READY   STATUS    RESTARTS   AGE
+kubedb      kubedb-kubedb-autoscaler-6974fb8dc4-wgsh8       1/1     Running   0          2m52s
+kubedb      kubedb-kubedb-dashboard-658f7ddb67-bvkxf        1/1     Running   0          2m52s
+kubedb      kubedb-kubedb-ops-manager-7b4d9cdcc9-sphxj      1/1     Running   0          2m52s
+kubedb      kubedb-kubedb-provisioner-594fbf5dd-ls6hq       1/1     Running   0          2m52s
+kubedb      kubedb-kubedb-schema-manager-654bf5dbb5-sbgdb   1/1     Running   0          2m52s
+kubedb      kubedb-kubedb-webhook-server-845949b9-k9nlx     1/1     Running   0          2m52s
 ```
 
 We can list the CRD Groups that have been registered by the operator by running the following command:
@@ -103,56 +103,57 @@ We can list the CRD Groups that have been registered by the operator by running 
 ```bash
 $ kubectl get crd -l app.kubernetes.io/name=kubedb
 NAME                                              CREATED AT
-elasticsearchautoscalers.autoscaling.kubedb.com   2023-09-29T04:44:17Z
-elasticsearchdashboards.dashboard.kubedb.com      2023-09-29T04:44:18Z
-elasticsearches.kubedb.com                        2023-09-29T04:44:19Z
-elasticsearchopsrequests.ops.kubedb.com           2023-09-29T04:44:25Z
-elasticsearchversions.catalog.kubedb.com          2023-09-29T04:41:41Z
-etcds.kubedb.com                                  2023-09-29T04:44:25Z
-etcdversions.catalog.kubedb.com                   2023-09-29T04:41:41Z
-kafkas.kubedb.com                                 2023-09-29T04:44:52Z
-kafkaversions.catalog.kubedb.com                  2023-09-29T04:41:42Z
-mariadbautoscalers.autoscaling.kubedb.com         2023-09-29T04:44:18Z
-mariadbdatabases.schema.kubedb.com                2023-09-29T04:44:26Z
-mariadbopsrequests.ops.kubedb.com                 2023-09-29T04:45:01Z
-mariadbs.kubedb.com                               2023-09-29T04:44:26Z
-mariadbversions.catalog.kubedb.com                2023-09-29T04:41:42Z
-memcacheds.kubedb.com                             2023-09-29T04:44:26Z
-memcachedversions.catalog.kubedb.com              2023-09-29T04:41:42Z
-mongodbautoscalers.autoscaling.kubedb.com         2023-09-29T04:44:18Z
-mongodbdatabases.schema.kubedb.com                2023-09-29T04:44:20Z
-mongodbopsrequests.ops.kubedb.com                 2023-09-29T04:44:29Z
-mongodbs.kubedb.com                               2023-09-29T04:44:21Z
-mongodbversions.catalog.kubedb.com                2023-09-29T04:41:42Z
-mysqlautoscalers.autoscaling.kubedb.com           2023-09-29T04:44:19Z
-mysqldatabases.schema.kubedb.com                  2023-09-29T04:44:17Z
-mysqlopsrequests.ops.kubedb.com                   2023-09-29T04:44:58Z
-mysqls.kubedb.com                                 2023-09-29T04:44:18Z
-mysqlversions.catalog.kubedb.com                  2023-09-29T04:41:43Z
-perconaxtradbautoscalers.autoscaling.kubedb.com   2023-09-29T04:44:19Z
-perconaxtradbopsrequests.ops.kubedb.com           2023-09-29T04:45:15Z
-perconaxtradbs.kubedb.com                         2023-09-29T04:44:46Z
-perconaxtradbversions.catalog.kubedb.com          2023-09-29T04:41:43Z
-pgbouncers.kubedb.com                             2023-09-29T04:44:47Z
-pgbouncerversions.catalog.kubedb.com              2023-09-29T04:41:44Z
-postgresautoscalers.autoscaling.kubedb.com        2023-09-29T04:44:19Z
-postgresdatabases.schema.kubedb.com               2023-09-29T04:44:24Z
-postgreses.kubedb.com                             2023-09-29T04:44:25Z
-postgresopsrequests.ops.kubedb.com                2023-09-29T04:45:09Z
-postgresversions.catalog.kubedb.com               2023-09-29T04:41:44Z
-proxysqlautoscalers.autoscaling.kubedb.com        2023-09-29T04:44:20Z
-proxysqlopsrequests.ops.kubedb.com                2023-09-29T04:45:12Z
-proxysqls.kubedb.com                              2023-09-29T04:44:50Z
-proxysqlversions.catalog.kubedb.com               2023-09-29T04:41:44Z
-publishers.postgres.kubedb.com                    2023-09-29T04:45:26Z
-redisautoscalers.autoscaling.kubedb.com           2023-09-29T04:44:21Z
-redises.kubedb.com                                2023-09-29T04:44:50Z
-redisopsrequests.ops.kubedb.com                   2023-09-29T04:45:05Z
-redissentinelautoscalers.autoscaling.kubedb.com   2023-09-29T04:44:21Z
-redissentinelopsrequests.ops.kubedb.com           2023-09-29T04:45:19Z
-redissentinels.kubedb.com                         2023-09-29T04:44:51Z
-redisversions.catalog.kubedb.com                  2023-09-29T04:41:45Z
-subscribers.postgres.kubedb.com                   2023-09-29T04:45:29Z
+elasticsearchautoscalers.autoscaling.kubedb.com   2023-10-27T09:29:25Z
+elasticsearchdashboards.dashboard.kubedb.com      2023-10-27T09:27:23Z
+elasticsearches.kubedb.com                        2023-10-27T09:27:23Z
+elasticsearchopsrequests.ops.kubedb.com           2023-10-27T09:28:30Z
+elasticsearchversions.catalog.kubedb.com          2023-10-27T09:26:54Z
+etcds.kubedb.com                                  2023-10-27T09:29:08Z
+etcdversions.catalog.kubedb.com                   2023-10-27T09:26:54Z
+kafkaopsrequests.ops.kubedb.com                   2023-10-27T09:29:03Z
+kafkas.kubedb.com                                 2023-10-27T09:29:03Z
+kafkaversions.catalog.kubedb.com                  2023-10-27T09:26:54Z
+mariadbautoscalers.autoscaling.kubedb.com         2023-10-27T09:29:25Z
+mariadbdatabases.schema.kubedb.com                2023-10-27T09:27:38Z
+mariadbopsrequests.ops.kubedb.com                 2023-10-27T09:28:44Z
+mariadbs.kubedb.com                               2023-10-27T09:27:38Z
+mariadbversions.catalog.kubedb.com                2023-10-27T09:26:54Z
+memcacheds.kubedb.com                             2023-10-27T09:29:08Z
+memcachedversions.catalog.kubedb.com              2023-10-27T09:26:54Z
+mongodbautoscalers.autoscaling.kubedb.com         2023-10-27T09:29:25Z
+mongodbdatabases.schema.kubedb.com                2023-10-27T09:27:38Z
+mongodbopsrequests.ops.kubedb.com                 2023-10-27T09:28:34Z
+mongodbs.kubedb.com                               2023-10-27T09:27:38Z
+mongodbversions.catalog.kubedb.com                2023-10-27T09:26:54Z
+mysqlautoscalers.autoscaling.kubedb.com           2023-10-27T09:29:25Z
+mysqldatabases.schema.kubedb.com                  2023-10-27T09:27:37Z
+mysqlopsrequests.ops.kubedb.com                   2023-10-27T09:28:40Z
+mysqls.kubedb.com                                 2023-10-27T09:27:37Z
+mysqlversions.catalog.kubedb.com                  2023-10-27T09:26:55Z
+perconaxtradbautoscalers.autoscaling.kubedb.com   2023-10-27T09:29:25Z
+perconaxtradbopsrequests.ops.kubedb.com           2023-10-27T09:28:56Z
+perconaxtradbs.kubedb.com                         2023-10-27T09:28:56Z
+perconaxtradbversions.catalog.kubedb.com          2023-10-27T09:26:55Z
+pgbouncers.kubedb.com                             2023-10-27T09:28:37Z
+pgbouncerversions.catalog.kubedb.com              2023-10-27T09:26:55Z
+postgresautoscalers.autoscaling.kubedb.com        2023-10-27T09:29:25Z
+postgresdatabases.schema.kubedb.com               2023-10-27T09:27:38Z
+postgreses.kubedb.com                             2023-10-27T09:27:38Z
+postgresopsrequests.ops.kubedb.com                2023-10-27T09:28:50Z
+postgresversions.catalog.kubedb.com               2023-10-27T09:26:55Z
+proxysqlautoscalers.autoscaling.kubedb.com        2023-10-27T09:29:25Z
+proxysqlopsrequests.ops.kubedb.com                2023-10-27T09:28:53Z
+proxysqls.kubedb.com                              2023-10-27T09:28:53Z
+proxysqlversions.catalog.kubedb.com               2023-10-27T09:26:55Z
+publishers.postgres.kubedb.com                    2023-10-27T09:29:06Z
+redisautoscalers.autoscaling.kubedb.com           2023-10-27T09:29:25Z
+redises.kubedb.com                                2023-10-27T09:28:47Z
+redisopsrequests.ops.kubedb.com                   2023-10-27T09:28:47Z
+redissentinelautoscalers.autoscaling.kubedb.com   2023-10-27T09:29:25Z
+redissentinelopsrequests.ops.kubedb.com           2023-10-27T09:28:59Z
+redissentinels.kubedb.com                         2023-10-27T09:28:59Z
+redisversions.catalog.kubedb.com                  2023-10-27T09:26:55Z
+subscribers.postgres.kubedb.com                   2023-10-27T09:29:09Z
 ```
 
 ## Deploy PostgreSQL Cluster
@@ -173,7 +174,7 @@ metadata:
   name: postgres-cluster
   namespace: demo
 spec:
-  version: "11.11"
+  version: "14.1"
   replicas: 3
   standbyMode: Hot
   storageType: Durable
@@ -196,7 +197,7 @@ postgres.kubedb.com/postgres-cluster created
 ```
 
 In this yaml,
-* `spec.version` field specifies the version of PostgreSQL. Here, we are using PostgreSQL `version 11.11`. You can list the KubeDB supported versions of PostgreSQL by running `$ kubectl get postgresversions` command.
+* `spec.version` field specifies the version of PostgreSQL. Here, we are using PostgreSQL `version 14.1`. You can list the KubeDB supported versions of PostgreSQL by running `$ kubectl get postgresversions` command.
 * `spec.standby` is an optional field that specifies the standby mode `hot` or `warm` to use for standby replicas. In `hot` standby mode, standby replicas can accept connection and run read-only queries. In `warm` standby mode, standby replicas can’t accept connection and only used for replication purpose.
 * Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
 * `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about [Termination Policy](https://kubedb.com/docs/latest/guides/postgres/concepts/postgres/#specterminationpolicy).
@@ -219,17 +220,17 @@ NAME                                READY   AGE
 statefulset.apps/postgres-cluster   3/3     3m32s
 
 NAME                                                  TYPE                  VERSION   AGE
-appbinding.appcatalog.appscode.com/postgres-cluster   kubedb.com/postgres   11.11      2m36s
+appbinding.appcatalog.appscode.com/postgres-cluster   kubedb.com/postgres   14.1      2m36s
 
 NAME                                   VERSION   STATUS   AGE
-postgres.kubedb.com/postgres-cluster   11.11      Ready    2m59s
+postgres.kubedb.com/postgres-cluster   14.1      Ready    2m59s
 ```
 Let’s check if the database is ready to use,
 
 ```bash
 $ kubectl get pg -n demo postgres-cluster
 NAME               VERSION   STATUS   AGE
-postgres-cluster   11.11      Ready    4m
+postgres-cluster   14.1      Ready    4m
 ```
 > We have successfully deployed PostgreSQL in AWS. Now we can exec into the container to use the database.
 
@@ -265,7 +266,7 @@ In this section, we are going to login into our PostgreSQL pod and insert some s
 ```bash
 $ kubectl exec -it postgres-cluster-0 -n demo -c postgres -- bash
 postgres-cluster-0:/$ psql -d "user=postgres password=zeLSv;mqqlgr1jOD"
-psql (11.11)
+psql (14.1)
 Type "help" for help.
 
 postgres=# \l
@@ -321,11 +322,11 @@ exit
 
 ## Update PostgreSQL Database Version
 
-In this section, we will update our PostgreSQL version from `11.11` to the latest version `15.1`. Let's check the current version,
+In this section, we will update our PostgreSQL version from `14.1` to the latest version `14.8`. Let's check the current version,
 
 ```bash
 $ kubectl get postgres -n demo postgres-cluster -o=jsonpath='{.spec.version}{"\n"}'
-11.11
+14.1
 ```
 
 ### Create PostgresOpsRequest
@@ -341,7 +342,7 @@ metadata:
 spec:
   type: UpdateVersion
   updateVersion:
-    targetVersion: "15.1"
+    targetVersion: "14.8"
   databaseRef:
     name: postgres-cluster
 ```
@@ -356,7 +357,7 @@ postgresopsrequest.ops.kubedb.com/update-version created
 In this yaml,
 * `spec.databaseRef.name` specifies that we are performing operation on `postgres-cluster` PostgreSQL database.
 * `spec.type` specifies that we are going to perform `UpdateVersion` on our database.
-* `spec.updateVersion.targetVersion` specifies the expected version of the database `15.1`.
+* `spec.updateVersion.targetVersion` specifies the expected version of the database `14.8`.
 
 ### Verify the Updated PostgreSQL Version
 
@@ -374,10 +375,10 @@ Now, we are going to verify whether the PostgreSQL and the related `StatefulSets
 
 ```bash
 $ kubectl get postgres -n demo postgres-cluster -o=jsonpath='{.spec.version}{"\n"}'
-15.1
+14.8
 ```
 
-> You can see from above, our PostgreSQL database has been updated with the new version `15.1`. So, the database update process is successfully completed.
+> You can see from above, our PostgreSQL database has been updated with the new version `14.8`. So, the database update process is successfully completed.
 
 
 If you want to learn more about Production-Grade PostgreSQL you can have a look into that playlist below:
