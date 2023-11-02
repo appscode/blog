@@ -1,5 +1,5 @@
 .author-hero-area {
-  background-image: url(/blog/assets/images/bg-image/hero-bg.png);
+  background-image: url(/blog/assets/images/bg-image/hero-bg.jpg);
   margin-top: -74px;
   padding: 140px 0 70px;
 }
@@ -10,7 +10,7 @@
 
     &.image {
       img {
-        border: 2px solid $ac-white-light;
+        border: 2px solid $color-border;
       }
     }
   }
@@ -22,7 +22,7 @@
   }
 
   .single-blog-card {
-    border: 1px solid $ac-white-light;
+    border: 1px solid $color-border;
   }
 }
 

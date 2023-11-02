@@ -57,12 +57,12 @@
 
       &.is-secondary {
         &:hover {
-          border: 1px solid $ac-white-light;
+          border: 1px solid $color-border;
         }
       }
 
       &.is-primary {
-        border: 1px solid $ac-white-light;
+        border: 1px solid $color-border;
       }
     }
   }
@@ -73,7 +73,7 @@
 
       &.is-active {
         .link {
-          color: $ac-primary;
+          color: $primary;
 
           i.fa {
             transform: rotate(-180deg);
@@ -88,7 +88,7 @@
       .link {
         font-size: 0.875rem;
         line-height: 1;
-        color: $ac-white;
+        color: $white-100;
         font-weight: 500;
         border: none;
         background-color: transparent;
@@ -100,11 +100,11 @@
         z-index: 1;
 
         &.is-active {
-          color: $ac-white-light;
+          color: $color-border;
         }
 
         &:hover {
-          color: $ac-white-light;
+          color: $color-border;
         }
 
         .fa {
@@ -118,7 +118,7 @@
           top: -0.5rem;
           right: -2.5rem;
           font-size: 0.8rem;
-          color: $ac-white;
+          color: $white-100;
           padding: 0.2rem 0.3rem;
           line-height: 1.2;
           display: none;
@@ -133,7 +133,7 @@
             display: block;
             width: 2rem;
             height: 1rem;
-            background: $ac-primary;
+            background: $primary;
             border-radius: 2px;
             animation: pulse-border 1500ms ease-out infinite;
           }
@@ -148,7 +148,7 @@
             display: block;
             width: 2rem;
             height: 1rem;
-            background: $ac-primary;
+            background: $primary;
             transition: all 200ms;
           }
 
@@ -181,7 +181,7 @@
 
 .back-button {
   display: none !important;
-  color: $ac-color-text;
+  color: $color-text;
   margin-bottom: 10px !important;
   background-color: transparent;
 }
@@ -202,7 +202,7 @@
       &:hover {
         background-color: transparent;
         border: none;
-        color: $ac-primary;
+        color: $primary;
 
         .material-icons {
           margin-left: 1rem;
@@ -236,13 +236,13 @@
         align-items: center;
         font-size: 0.875rem;
         letter-spacing: 0.009rem;
-        color: $ac-color-heading;
+        color: $color-heading;
         font-weight: 500;
         transition: 0.3s;
         padding-left: 0;
 
         &:hover {
-          color: $ac-primary;
+          color: $primary;
 
           span {
             &:last-child {
@@ -295,14 +295,14 @@
         a {
           font-size: 0.875rem;
           padding: 0.6rem 0;
-          color: $ac-color-heading;
+          color: $color-heading;
           display: inline-block;
           line-height: 1;
           transition: 0.3s ease-in-out;
           font-weight: 500;
 
           &:hover {
-            color: $ac-primary;
+            color: $primary;
             text-decoration: underline;
           }
         }
@@ -313,7 +313,7 @@
 
 // responsive menu start
 .responsive-menu {
-  background-color: $ac-primary;
+  background-color: $primary;
 
   .button {
     border: none;
@@ -322,7 +322,7 @@
     font-size: 14px;
     font-weight: 500;
     background-color: transparent;
-    color: $ac-white;
+    color: $white-100;
 
     &.is-active {
       color: #d2d2d2;
@@ -372,7 +372,7 @@ Responsive Classes
 @media (max-width: 1023.98px) {
   .navbar-burger {
     span {
-      background-color: $ac-white;
+      background-color: $white-100;
     }
   }
 
@@ -420,7 +420,7 @@ Responsive Classes
       justify-content: flex-start;
       flex-direction: column;
       align-items: flex-start;
-      background-color: $ac-primary;
+      background-color: $primary;
 
       .is-flex.is-justify-content-space-between {
         flex-direction: column;

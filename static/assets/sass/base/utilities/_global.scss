@@ -64,11 +64,11 @@
     line-height: 130%;
 
     &.is-outlined-text {
-      color: $ac-white-light;
+      color: $color-border;
       -webkit-text-fill-color: white;
       /* Will override color (regardless of order) */
       -webkit-text-stroke-width: 1px;
-      -webkit-text-stroke-color: $ac-white-light;
+      -webkit-text-stroke-color: $color-border;
       position: absolute;
       font-size: 107px;
       top: 0;
@@ -247,34 +247,34 @@
 }
 
 .br-1 {
-  border-right: 1px solid $ac-white-light;
+  border-right: 1px solid $color-border;
 }
 
 .bl-1 {
-  border-left: 1px solid $ac-white-light;
+  border-left: 1px solid $color-border;
 }
 
 .bt-1 {
-  border-top: 1px solid $ac-white-light;
+  border-top: 1px solid $color-border;
 }
 
 .bb-1 {
-  border-bottom: 1px solid $ac-white-light;
+  border-bottom: 1px solid $color-border;
 }
 
 .has-text-primary {
-  color: $ac-primary !important;
+  color: $primary !important;
 }
 
 ::-moz-selection {
   /* Code for Firefox */
-  color: $ac-white;
-  background: $ac-primary;
+  color: $white-100;
+  background: $primary;
 }
 
 ::selection {
-  color: $ac-white;
-  background: $ac-primary;
+  color: $white-100;
+  background: $primary;
 }
 .d-table {
   display: table;
@@ -308,7 +308,7 @@
   .ss-multi-selected {
     min-height: 45px !important;
     border: 1px solid #a6abbd;
-    color: $ac-color-text;
+    color: $color-text;
     padding: 0 15px;
 
     .ss-arrow {
@@ -316,7 +316,7 @@
     }
     .placeholder {
       font-size: 15px;
-      color: $ac-color-text;
+      color: $color-text;
       font-weight: 500;
     }
     .ss-values {
@@ -353,12 +353,12 @@
     .ss-list {
       .ss-option {
         font-size: 14px;
-        color: $ac-color-text;
+        color: $color-text;
         transition: 0.3s ease-in-out;
 
         &:hover {
           opacity: 0.8;
-          color: $ac-primary;
+          color: $primary;
         }
 
         &.ss-disabled {
@@ -410,7 +410,7 @@
         }
 
         &:hover {
-          color: $ac-white;
+          color: $white-100;
           background: #1c2c41;
 
           &.linkedin {
