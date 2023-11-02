@@ -111,7 +111,7 @@
 
 // section title small end
 .recent-blog-posts {
-  background-color: hsl(149, 20%, 97%);
+  background-color: $primary-97;
   padding: 60px 0 70px;
 
   .button.is-mini {
@@ -242,7 +242,7 @@ a.inline-button {
 
     p {
       margin-bottom: 16px;
-      color: $color-text;;
+      color: $color-text;
     }
   }
 
@@ -312,7 +312,7 @@ a.inline-button {
     line-height: 17px;
     margin-bottom: 0;
 
-    color: $color-text;;
+    color: $color-text;
   }
 }
 
@@ -347,7 +347,7 @@ a.inline-button {
       font-size: 16px;
       line-height: 160%;
 
-      color: $color-text;;
+      color: $color-text;
     }
   }
 }

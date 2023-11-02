@@ -3,7 +3,7 @@ $primary-saturation: 100%;
 $primary-5: hsl($primary-hue, $primary-saturation, 5%);
 $primary-10: hsl($primary-hue, $primary-saturation, 10%);
 $primary-20: hsl($primary-hue, $primary-saturation, 20%);
-$primary: hsl($primary-hue, $primary-saturation, 33%);
+$primary: hsl($primary-hue, $primary-saturation, 30%);
 $primary-30: hsl($primary-hue, $primary-saturation, 30%);
 $primary-40: hsl($primary-hue, $primary-saturation, 40%);
 $primary-50: hsl($primary-hue, $primary-saturation, 50%);
@@ -15,10 +15,34 @@ $primary-93: hsl($primary-hue, $primary-saturation, 93%);
 $primary-95: hsl($primary-hue, $primary-saturation, 95%);
 $primary-97: hsl($primary-hue, $primary-saturation, 97%);
 
-$color-text: hsl($primary-hue, 10%, 35%);
-$color-heading: hsl($primary-hue, 10%, 10%);
-$color-label: hsl($primary-hue, 20%, 50%);
-$color-link: hsl($primary-hue, 40%, 20%);
+$primary-light-grey: hsl($primary-hue, 30%, 96%);
+$primary-dark-grey: hsl($primary-hue, 30%, 10%);
+
+$secondary-hue: 197;
+$secondary-saturation: 50%;
+$secondary-5: hsl($secondary-hue, $secondary-saturation, 5%);
+$secondary-10: hsl($secondary-hue, $secondary-saturation, 10%);
+$secondary-20: hsl($secondary-hue, $secondary-saturation, 20%);
+$secondary: hsl($secondary-hue, $secondary-saturation, 20%);
+$secondary-30: hsl($secondary-hue, $secondary-saturation, 30%);
+$secondary-40: hsl($secondary-hue, $secondary-saturation, 40%);
+$secondary-50: hsl($secondary-hue, $secondary-saturation, 50%);
+$secondary-60: hsl($secondary-hue, $secondary-saturation, 60%);
+$secondary-70: hsl($secondary-hue, $secondary-saturation, 70%);
+$secondary-80: hsl($secondary-hue, $secondary-saturation, 80%);
+$secondary-90: hsl($secondary-hue, $secondary-saturation, 90%);
+$secondary-93: hsl($secondary-hue, $secondary-saturation, 93%);
+$secondary-95: hsl($secondary-hue, $secondary-saturation, 95%);
+$secondary-97: hsl($secondary-hue, $secondary-saturation, 97%);
+
+$secondary-light-grey: hsl($secondary-hue, 30%, 96%);
+$secondary-dark-grey: hsl($secondary-hue, 30%, 10%);
+
+$color-text: hsl($secondary-hue, 10%, 35%);
+$color-heading: hsl($secondary-hue, 10%, 10%);
+$color-label: hsl($secondary-hue, 20%, 50%);
+$color-link: hsl($secondary-hue, 40%, 20%);
+$color-border-light: hsl($primary-hue, 40%, 95%);
 $color-border: hsl($primary-hue, 50%, 90%);
 $color-border-dark: hsl($primary-hue, 10%, 80%);
 $color-bg: hsl(0, 0%, 100%);
