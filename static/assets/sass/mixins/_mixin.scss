@@ -1,7 +1,7 @@
 // ac-buttons
 @mixin ac-button($colorName) {
   background-color: $colorName;
-  color: $ac-white;
+  color: $white-100;
   border: none;
 
   &:hover {
@@ -47,7 +47,7 @@
 
     &:hover {
       background-color: $colorName;
-      color: $ac-white;
+      color: $white-100;
     }
   }
 
