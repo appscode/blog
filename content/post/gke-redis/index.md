@@ -7,7 +7,6 @@ authors:
 tags:
 - cloud-native
 - database
-- elasticsearch
 - gcs
 - gke
 - google-cloud
