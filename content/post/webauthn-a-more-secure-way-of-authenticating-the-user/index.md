@@ -8,7 +8,6 @@ tags:
 - appscode
 - authentication
 - cloud-native
-- database
 - javascript
 - webauthn
 ---
