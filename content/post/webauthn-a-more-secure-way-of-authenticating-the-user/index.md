@@ -1,4 +1,17 @@
-# Web authn : A more secure way of authenticating the user
+---
+title: WebAuthn - A more secure way of authenticating the user
+date: "2023-11-07"
+weight: 14
+authors:
+- Zubair Ahmed Rafi
+tags:
+- appscode
+- authentication
+- cloud-native
+- database
+- javascript
+- webauthn
+---
 
 ## What is WebAuthn ?
 
@@ -6,39 +19,39 @@ WebAuthn, short for Web Authentication, is a technology that makes logging into 
 
 ## How it Works?
 
-To understand the how webautn works lets get clear on some points
+To understand the how WebAuthn works lets get clear on some points
 
-### Registration:
+### Registration
 
 - During registration on a website, the user’s browser generates a new [public-private key pair](https://en.wikipedia.org/wiki/Public-key_cryptography).
 - The public key is sent to the website’s server, which associates it with the user’s account.
 - The private key is securely stored on the user’s authenticator device.
 
-### Authentication (Logging In):
+### Authentication (Logging In)
 
 - When the user wants to log in, the website requests authentication.
 - The user’s authenticator device signs a challenge with the private key and returns the response to the website.
 - The website verifies the response using the public key it previously stored for that user.
 
-### Credential Management:
+### Credential Management
 
 - The website may store multiple credentials for a user, allowing the user to choose which authenticator to use during login.
 - Users can manage and delete their credentials as needed.
 
-### Cryptographic Protection:
+### Cryptographic Protection
 
 - WebAuthn relies on strong public-key cryptography for security.
 - The private key is protected within the authenticator, ensuring it’s difficult to compromise.
 
-### Options:
+### Options
 
 - WebAuthn supports various types of authenticators, including platform authenticators (e.g., biometric sensors on devices) and roaming authenticators (e.g., USB security keys).
 
-### No Passwords:
+### No Passwords
 
 - Users are not required to create or remember passwords, enhancing security against password-related attacks.
 
-### Multi-Factor Authentication (MFA):
+### Multi-Factor Authentication (MFA)
 
 - WebAuthn can be used as part of a multi-factor authentication system, combining something the user knows (e.g., a PIN) with something the user has (the authenticator).
 
@@ -132,7 +145,7 @@ app.listen(3000, () => {
 
 Now that you have successfully registered the key in the browser , Its time to login . Now go to the web app that you implemented the code instead of login page it would pop-down a browser alert box saying you should verify yourself using the authenticator. Insert the USB or click it or give your fingerprint what ever you used for registration then it will help you to login
 
-### Client-Side (JavaScript):
+### Client-Side (JavaScript)
 
 Request WebAuthn Authentication:
 
@@ -168,7 +181,7 @@ async function authenticateWebAuthn() {
 authenticateWebAuthn();
 ```
 
-### Server-Side (Node.js):
+### Server-Side (Node.js)
 
 Handle Authentication Request:
 
