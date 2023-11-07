@@ -64,7 +64,7 @@ When ever someone tries to login into the server, It will generate new challenge
 
 ## Lets do some code
 
-Okay Hopefully you understand what webauthn . Now lets implement some of it.
+Okay Hopefully you understand what WebAuthn is, now let's implement some of it.
 
 ### Registration
 
@@ -210,7 +210,7 @@ app.listen(3000, () => {
 });
 ```
 
-Thats it you have successfully used the webauthn for authentication. You can check the compatibility of a browser for integrating webauthn [here](https://developers.yubico.com/WebAuthn/WebAuthn_Browser_Support/) . Of course what i have described is the basic version of it , It can vary depending on your needs. The sources I have learned this can be also helpful to you. Do check out these [Official Doc](https://webauthn.io/) , [Hackernoon](https://hackernoon.com/web-auth-standard-guide-to-web-authentication-api-chy3yh0) , [Octa](https://developer.okta.com/blog/2022/04/26/webauthn-java) , [Wiki](https://en.wikipedia.org/wiki/WebAuthn)
+Thats it you have successfully used the webauthn for authentication. You can check the compatibility of a browser for integrating webauthn [here](https://developers.yubico.com/WebAuthn/WebAuthn_Browser_Support/) . Of course what I have described is the basic version of it , It can vary depending on your needs. The sources I have learned this can be also helpful to you. Do check out these [Official Doc](https://webauthn.io/) , [Hackernoon](https://hackernoon.com/web-auth-standard-guide-to-web-authentication-api-chy3yh0) , [Octa](https://developer.okta.com/blog/2022/04/26/webauthn-java) , [Wiki](https://en.wikipedia.org/wiki/WebAuthn)
 
 ## Support
 
