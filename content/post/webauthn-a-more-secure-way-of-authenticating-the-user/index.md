@@ -1,5 +1,5 @@
 ---
-title: WebAuthn - A more secure way of authenticating the user
+title: WebAuthn - A More Secure Way Of Authenticating The User
 date: "2023-11-07"
 weight: 14
 authors:
