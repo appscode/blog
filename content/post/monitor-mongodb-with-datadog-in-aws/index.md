@@ -234,7 +234,7 @@ spec:
         resources:
           requests:
             storage: 512Mi
-        storageClassName: "standard"
+        storageClassName: "gp2"
     mongos:
       replicas: 2
       podTemplate:
@@ -278,7 +278,7 @@ spec:
         resources:
           requests:
             storage: 512Mi
-        storageClassName: "standard"
+        storageClassName: "gp2"
   terminationPolicy: WipeOut
 ```
 
