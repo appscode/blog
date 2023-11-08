@@ -257,7 +257,7 @@ spec:
     resources:
       requests:
         storage: "1Gi"
-    storageClassName: "standard"
+    storageClassName: "gp2"
     accessModes:
       - ReadWriteOnce
   terminationPolicy: WipeOut
