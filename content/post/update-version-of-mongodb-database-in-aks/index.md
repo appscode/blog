@@ -3,17 +3,17 @@ title: Update Version of MongoDB Database in Azure Kubernetes Service (AKS)
 date: "2023-11-10"
 weight: 14
 authors:
-  - Dipta Roy
+- Dipta Roy
 tags:
-  - aks
-  - azure
-  - cloud-native
-  - database
-  - dbaas
-  - kubedb
-  - kubernetes
-  - microsoft-azure
-  - mongodb
+- aks
+- azure
+- cloud-native
+- database
+- dbaas
+- kubedb
+- kubernetes
+- microsoft-azure
+- mongodb
 ---
 
 ## Overview
