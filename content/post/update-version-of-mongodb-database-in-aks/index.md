@@ -3,22 +3,22 @@ title: Update Version of MongoDB Database in Azure Kubernetes Service (AKS)
 date: "2023-11-10"
 weight: 14
 authors:
-- Dipta Roy
+  - Dipta Roy
 tags:
-- aks
-- azure
-- cloud-native
-- database
-- dbaas
-- kubedb
-- kubernetes
-- microsoft-azure
-- mongodb
+  - aks
+  - azure
+  - cloud-native
+  - database
+  - dbaas
+  - kubedb
+  - kubernetes
+  - microsoft-azure
+  - mongodb
 ---
 
 ## Overview
 
-KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are Redis, PostgreSQL, MySQL, MongoDB, MariaDB, Elasticsearch, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/).
+KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Scaling, Volume Expansion, Backup, Recovery, and Failure detection for various popular databases on private and public clouds. The databases that KubeDB supports are Redis, PostgreSQL, MySQL, MongoDB, MariaDB, Elasticsearch, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/).
 In this tutorial we will update version of MongoDB Database in Azure Kubernetes Service (AKS) using KubeDB. We will cover the following steps:
 
 1. Install KubeDB
@@ -199,7 +199,7 @@ In this yaml,
 
 - `spec.version` field specifies the version of MongoDB. Here, we are using MongoDB `version 5.0.2`. You can list the KubeDB supported versions of MongoDB by running `$ kubectl get mongodbversions` command.
 - Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
-- `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about [Termination Policy](https://kubedb.com/docs/latest/guides/mongodb/concepts/mongodb/#specterminationpolicy).
+- `spec.terminationPolicy` field is _Wipeout_ means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about [Termination Policy](https://kubedb.com/docs/latest/guides/mongodb/concepts/mongodb/#specterminationpolicy).
 
 Once these are handled correctly and the MongoDB object is deployed, you will see that the following are created:
 
@@ -249,6 +249,7 @@ NAME                   TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)     AGE
 mongodb-cluster        ClusterIP   10.96.38.225   <none>        27017/TCP   3m36s
 mongodb-cluster-pods   ClusterIP   None           <none>        27017/TCP   3m36s
 ```
+
 Now, we are going to use `mongodb-cluster-auth` to get the credentials.
 
 ```bash
@@ -258,7 +259,6 @@ root
 $ kubectl get secrets -n demo mongodb-cluster-auth -o jsonpath='{.data.\password}' | base64 -d
 oA15BU0Ym4IxCCZA
 ```
-
 
 #### Insert Sample Data
 
