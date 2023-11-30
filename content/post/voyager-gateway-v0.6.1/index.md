@@ -3,7 +3,7 @@ title: Announcing Voyager Gateway v0.6.1
 date: "2023-11-30"
 weight: 14
 authors:
-- Dipta Roy
+- Tasdidur Rahman
 tags:
 - cloud-native
 - gateway
