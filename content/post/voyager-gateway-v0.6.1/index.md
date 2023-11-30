@@ -15,8 +15,8 @@ We are pleased to announce the release of **Voyager Gateway v0.6.1**. This post 
 
 ### Custom Database Routes
 
-Voyager Gateway is built on the Envoyproxy gateway project which uses Envoyproxy under the hood. Envoyproxy supports protocol specific filters for databases like MySQL, PostgreSQL, MongoDB, Kafka and Redis. But k8s gateway api does not have a way to specify the database filters. We can expose databases via TCP connections but this restricts full potential of the database filters in Envoyproxy.
-In Voyager Gateway we introduced custom routes for database backends. When a database server is exposed through custom database routes, it patches the filters, specifically developed for that particular protocol. With this we can generate stats, establish TLS secure connections and use the full potential of Envoyproxy.
+Voyager Gateway is built on the Envoy Gateway project which uses Envoy under the hood. Envoy supports protocol specific filters for databases like MySQL, PostgreSQL, MongoDB, Kafka and Redis. But k8s gateway api does not have a way to specify the database filters. We can expose databases via TCP connections but this restricts full potential of the database filters in Envoy.
+In Voyager Gateway we introduced custom routes for database backends. When a database server is exposed through custom database routes, it patches the filters, specifically developed for that particular protocol. With this we can generate stats, establish TLS secure connections and use the full potential of Envoy.
 
 ```yaml
 apiVersion: gateway.voyagermesh.com/v1alpha1
