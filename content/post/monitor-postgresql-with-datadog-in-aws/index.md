@@ -215,7 +215,7 @@ spec:
   standbyMode: Hot
   storageType: Durable
   storage:
-    storageClassName: "standard"
+    storageClassName: "gp2"
     accessModes:
       - ReadWriteOnce
     resources:
