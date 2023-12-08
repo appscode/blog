@@ -4,7 +4,19 @@
 .is-fullwidth {
   width: 100% !important;
 }
-
+.brand-tag {
+  color: $color-text;
+  font-weight: 600;
+  font-size: 14px;
+  background-color: $white-100;
+  border: 1px solid $color-border;
+  border-radius: 2px;
+  margin-left: 4px;
+  padding: 4px;
+  display: flex;
+  line-height: 1;
+  white-space: nowrap;
+}
 .yt-thumbnail {
   position: relative;
   z-index: 1;
