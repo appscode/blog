@@ -6,9 +6,10 @@ authors:
 - Tasdidur Rahman
 tags:
 - cloud-native
-- gateway
+- gateway-api
 - kubernetes
-- voyager-gateway
+- gateway
+- voyager
 ---
 
 We are pleased to announce the release of **Voyager Gateway v0.6.1**. This post lists all the major changes done in this release since the last release.
