@@ -6,9 +6,9 @@ authors:
 - Tasdidur Rahman
 tags:
 - cloud-native
+- gateway
 - gateway-api
 - kubernetes
-- gateway
 - voyager
 ---
 
