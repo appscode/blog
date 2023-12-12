@@ -525,6 +525,17 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 
 > So, we've successfully accessed the sample data from different region via Remote Replica.
 
+### Failover Remote Replica
+In case you need to rsync with the primary cluster or any other secondary if available with mysql `clone plugin`
+
+```bash
+$ kubectl exec -it -ndemo  mysql-london-0 -- bash
+    $ mysql -uroot $MYSQL_ROOT_PASSWORD
+      
+      mysql> SET GLOBAL clone_valid_donor_list='172.104.37.147:3306'
+      mysql> CLONE INSTANCE FROM 'root'@'172.104.37.147':3306 IDENTIFIED BY 'pass';
+```
+
 If you want to learn more about Production-Grade MySQL you can have a look into that playlist below:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=dmtaSpYlKplDUA_G&amp;list=PLoiT1Gv2KR1gNPaHZtfdBZb6G4wLx6Iks" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
