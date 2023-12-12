@@ -498,6 +498,13 @@ $ kubectl exec -it -n demo pg-london-0 -c postgres -- psql -c "select * from tab
 
 > So, we've successfully accessed the sample data from different region via Remote Replica.
 
+### Failover Remote Replica
+In case you need to rsync with the primary cluster or any other secondary if available with `pg_rewind`, if rewinds failed you will need to take a base-backup from primary
+```bash
+$ kubectl exec -it -ndemo  pg-london-0 -- bash
+    $ pg_rewind  --source-server "user=postgres password=pass host= 172.104.37.147 port=5432" --target-pgdata /var/pv/data
+```
+
 If you want to learn more about Production-Grade PostgreSQL you can have a look into that playlist below:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=3wS9SyH_fjG0BQKC&amp;list=PLoiT1Gv2KR1imqnrYFhUNTLHdBNFXPKr_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
