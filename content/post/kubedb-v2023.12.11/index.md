@@ -3,25 +3,24 @@ title: Announcing KubeDB v2023.12.11
 date: "2023-12-11"
 weight: 14
 authors:
-- Arnob kumar Saha
+- Arnob kumar saha
 tags:
 - archiver
-- git-sync
-- kubestash
-- non-root
-- walg
 - cloud-native
 - dashboard
 - database
 - day-2-operations
 - elasticsearch
+- git-sync
 - kafka
 - kubedb
 - kubedb-cli
 - kubernetes
+- kubestash
 - mariadb
 - mongodb
 - mysql
+- non-root
 - opensearch
 - percona
 - percona-xtradb
@@ -31,6 +30,7 @@ tags:
 - proxysql
 - redis
 - security
+- walg
 ---
 
 We are pleased to announce the release of [KubeDB v2023.12.11](https://kubedb.com/docs/v2023.12.11/setup/). This release contains some major features like archiver, using non-root users, git-sync etc. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.12.11/README.md). Let’s see the changes done in this release.
