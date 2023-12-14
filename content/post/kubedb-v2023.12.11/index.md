@@ -145,7 +145,7 @@ KubeDB Operator will create a PVC with the VolumeSnapshot reference of the last 
 
 ### Git Sync
 We have added a new feature now you can initialize mongodb from the public/private git repository.
-Here’s a quick example of how to configure it. Here we are going to create a group replicated mysql with some initial data from  [mongodb-init-script](https://github.com/kubedb/mongodb-init-scripts) repo.
+Here’s a quick example of how to configure it. Here we are going to create a mongodb replicaset with some initial data from  [git-sync](https://github.com/kubedb/git-sync.git) repo.
 
 **From Public Registry:**
 
@@ -161,7 +161,7 @@ spec:
      scriptPath: "current"
      git:
        args:
-       - --repo=https://github.com/kubedb/mongodb-init-scripts
+       - --repo=https://github.com/kubedb/git-sync.git
        - --depth=1
        - --period=60s
        - --link=current
@@ -198,7 +198,7 @@ spec:
        args:
        # use --ssh for private repository
        - --ssh
-       - --repo=git@github.com:ArnobKumarSaha/sync-test.git
+       - --repo=git@github.com:kubedb/git-sync.git
        - --depth=1
        - --period=60s
        - --link=current
