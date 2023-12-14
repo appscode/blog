@@ -512,8 +512,9 @@ In this release two new version supports have been added namely 7.2.3 & 6.2.14 .
 
 ## Crossplane
 
-KubeDB is now a Crossplane distribution for Hyper Clouds. We have introduced providers for AWS, Azure and GCP.
-You need [crossplane](https://docs.crossplane.io/v1.13/) already installed in your cluster. This will allow KubeDB users to provision and manage Cloud provider managed databases in a Kubernetes native way.
+KubeDB is now a [Crossplane](https://www.crossplane.io/) distribution for Hyper Clouds. Crossplane connects your Kubernetes cluster to external, non-Kubernetes resources, and allows platform teams to build custom Kubernetes APIs to consume those resources. We have introduced providers for AWS, Azure and GCP.
+
+You need [crossplane](https://docs.crossplane.io/v1.14/) already installed in your cluster. This will allow KubeDB users to provision and manage Cloud provider managed databases in a Kubernetes native way.
 
 ## Provider-AWS
 ### Installation
