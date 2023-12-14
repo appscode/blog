@@ -407,7 +407,7 @@ Elasticsearch uses a `mmapfs` directory by default to store its indices. The def
 ```
 sysctl -w vm.max_map_count=262144
 ```
-From this release KubeDB ensures that all database pods will be running as non-root user. But, a single init container runs as root in privileged mode to increase `vm.max_map_count` in kernelsettings. We are continuing with that as default. However, If it is not possible to run a container as root and in privileged mode it is advisable to set `.spec.kernelSettings.disableDefaults` to `true` prior to apply Elasticsearch custom resource. In this case you pre-setup `vm.max_map_count` value for your kubernetes nodes. You can also use kubedb `prepare-cluster` helm chart to do this easily.
+From this release KubeDB ensures that all database pods will be running as non-root user. But, a single init container runs as root in privileged mode to increase `vm.max_map_count` in kernel settings. We call this `sysctl-init` container. We are continuing with that as default. However, If it is not possible to run a container as root and in privileged mode it is advisable to set `.spec.kernelSettings.disableDefaults` to `true` prior to apply Elasticsearch custom resource. In this case you pre-setup `vm.max_map_count` value for your kubernetes nodes. You can also use kubedb `prepare-cluster` helm chart to do this easily.
 
 ```
 helm upgrade -i prepare-cluster appscode/prepare-cluster -n kube-system --create-namespace \
@@ -415,20 +415,79 @@ helm upgrade -i prepare-cluster appscode/prepare-cluster -n kube-system --create
         --set node.sysctls[0].value=262144
 ```
 
-We have worked on providing CVE free images for Elasticsearch. Most of the high and critical vulnerabilities have been removed.
+Here's a sample yaml for deploying elasticsearch cluster that you can deploy ensuring the privileged init container does't run before the elasticsearch containers. 
 
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: Elasticsearch
+metadata:
+  name: es-quickstart
+  namespace: demo
+spec:
+  version: xpack-8.11.1
+  enableSSL: true
+  replicas: 3
+  storageType: Durable
+  kernelSettings:
+    disableDefaults: true
+  storage:
+    storageClassName: "standard"
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+  terminationPolicy: DoNotTerminate
+```
 
+We have worked on providing CVE free images for Elasticsearch. Most of the high and critical vulnerabilities have been removed. 
 
-New Version: In this release, support for Elasticsearch version `xpack-8.11.1` and Opensearch version `opensearch-2.11.1` have been added. We have upgraded all of our supported versions to latest patches as they are more stable and CVE free. Our currently supported Elasticsearch versions are: "xpack-8.11.1", "xpack-8.8.2", "xpack-8.6.2", "xpack-8.5.3", "xpack-8.2.3", "xpack-7.17.15", "xpack-7.16.3", "xpack-7.14.2", "xpack-7.13.4", "xpack-6.8.23".  And These are the currently supported OpenSearch versions. "opensearch-2.11.1", "opensearch-2.8.0", "opensearch-2.5.0", "opensearch-2.0.1", "opensearch-1.3.13", "opensearch-1.2.4", "opensearch-1.1.0".
+### Version support
 
+In this release, support for Elasticsearch version `xpack-8.11.1` and Opensearch version `opensearch-2.11.1` have been added.
+All the KubeDB supported ElasticSearch and OpenSearch versions have been upgraded to latest patches as they are more stable and CVE free. Earlier supported versions with older patches have been marked deprecated. Versions that used either SearchGuard or OpenDistro as security plugins, have also been marked deprecated.
+
+Currently supported Elasticsearch versions are: `xpack-8.11.1`, `xpack-8.8.2`, `xpack-8.6.2`, `xpack-8.5.3`, `xpack-8.2.3`, `xpack-7.17.15`, `xpack-7.16.3`, `xpack-7.14.2`, `xpack-7.13.4`, `xpack-6.8.23`.
+
+And These are the currently supported OpenSearch versions. `opensearch-2.11.1`, `opensearch-2.8.0`, `opensearch-2.5.0`, `opensearch-2.0.1`, `opensearch-1.3.13`, `opensearch-1.2.4`, `opensearch-1.1.0`.
 
 # Kafka
 
-KubeDB managed Apache Kafka went through some major updates and vulnerability fixes in this release. Kafka now runs on Java 17 instead of Java 11. A single headless service is now provisioned by the operator for each kafka cluster. Kafka now Bootstraps with listeners and advertised listeners for brokers, controllers and localhost. User provided listeners/advertised listeners will be simply appended to the default lists.
+KubeDB managed Apache Kafka went through some major updates and vulnerability fixes in this release. Kafka now runs on `Java 17` instead of `Java 11`. A single headless service is now provisioned by the operator for each kafka cluster. Kafka now Bootstraps with listeners and advertised listeners for brokers, controllers and localhost. User provided listeners/advertised listeners will be simply appended to the default lists.
 
 ### Version support
-In this release, support for Kafka version `3.6.0` have been added.
+In this release, support for Kafka version `3.6.0` have been added. Here's a sample yaml to deploy a simple 3 broker, 3 controller Apache kafka cluster.
 
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: Kafka
+metadata:
+  name: kafka-prod
+  namespace: demo
+spec:
+  version: 3.6.0
+  topology:
+    broker:
+      replicas: 3
+      storage:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
+    controller:
+      replicas: 3
+      storage:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
+  storageType: Durable
+  terminationPolicy: DoNotTerminate
+```
 
 # MariaDB
 
