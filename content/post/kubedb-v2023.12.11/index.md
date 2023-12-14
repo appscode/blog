@@ -53,7 +53,7 @@ To achieve this feature, You need [KubeStash](https://kubedb.com/docs) installed
 
 Here is all the details of using [MongoDB Archiver](https://kubedb.com/docs/v2023.12.11/guides/mongodb/pitr/pitr/).
 In short, You need to create a
-- `BackupStorage` which refers a cloud storage backend (like s3, gcs etc) you prefer.
+- `BackupStorage` which refers a cloud storage backend (like s3, gcs etc.) you prefer.
 - `RetentionPolicy` allows you to set how long you'd like to retain the backed up data.
 - `encryption-secret` which will be used for encryption before uploading the backed-up data into cloud.
 - `VolumeSnapshotClass` which holds the csi-driver information which is responsible for taking VolumeSnapshots. This is vendor specific.
@@ -298,7 +298,7 @@ To achieve this feature, You need [KubeStash](https://kubedb.com/docs) installed
 
 Here is all the details of using [PostgresArchiver](https://kubedb.com/docs/v2023.12.11/guides/postgres/pitr/archiver/).
 In short, You need to create an
-- `BackupStorage` which refers a cloud storage backend (like s3, gcs etc) you prefer.
+- `BackupStorage` which refers a cloud storage backend (like s3, gcs etc.) you prefer.
 - `RentionPolicy` allows you to set how long you'd like to retain the backup data.
 - encryption-secret which will be used for encryption before uploading the backed-up data into cloud.
 - `VolumeSnapshotClass` which holds the csi-driver information which is responsible for taking VolumeSnapshots. This is vendor specific.
@@ -398,9 +398,6 @@ spec:
 
 We have added support for postgres 16.1 in this release
 
-### Bug fixes
-Few bugs fixed for ReconfigureTLS, Horizontal Scaling and Vertical Scaling
-
 # Elasticsearch
 
 Elasticsearch uses a `mmapfs` directory by default to store its indices. The default operating system limits on mmap counts is likely to be too low, which may result in out of memory exceptions. In order to bootstrap Elasticsearch successfully, it is necessary to increase the limits by running the following command as `root`:
@@ -415,7 +412,7 @@ helm upgrade -i prepare-cluster appscode/prepare-cluster -n kube-system --create
         --set node.sysctls[0].value=262144
 ```
 
-Here's a sample yaml for deploying elasticsearch cluster that you can deploy ensuring the privileged init container does't run before the elasticsearch containers. 
+Here's a sample yaml for deploying elasticsearch cluster that you can deploy ensuring the privileged init container doesn't run before the elasticsearch containers. 
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
