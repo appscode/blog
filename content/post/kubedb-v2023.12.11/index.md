@@ -31,9 +31,10 @@ tags:
 - redis
 - security
 - walg
+- crossplane
 ---
 
-We are pleased to announce the release of [KubeDB v2023.12.11](https://kubedb.com/docs/v2023.12.11/setup/). This release contains some major features like archiver, using non-root users, git-sync etc. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.12.11/README.md). Let’s see the changes done in this release.
+We are pleased to announce the release of [KubeDB v2023.12.11](https://kubedb.com/docs/v2023.12.11/setup/). This release contains some major features like archiver, using non-root users, git-sync, crossplane support etc. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.12.11/README.md). Let’s see the changes done in this release.
 
 
 # Non-root user
@@ -506,7 +507,203 @@ In this release new version supports have been added. Currently available versio
 
 In this release two new version supports have been added namely 7.2.3 & 6.2.14 . 
 
+# Crossplane
+KubeDB is now a Crossplane distribution for Hypersclaers. We have introduced providers for AWS, Azure and GCP.
+You need [crossplane](https://docs.crossplane.io/v1.13/) already installed in your cluster.
+## Provider-AWS
+### Installation
+Install the aws provider into Kubernetes cluster with helm chart.
+```bash
+ helm upgrade -i kubedb-provider-aws appscode/kubedb-provider-aws -n crossplane-system --create-namespace --version=v2023.12.11
+```
+The command deploys a KubeDB AWS provider on the Kubernetes cluster in the default configuration. This will install CRDs representing AWS database services. These CRDs allow you to create AWS database resources inside Kubernetes.
+### Setup Provider Config
+Create a text file containing the AWS account aws_access_key_id and aws_secret_access_key with the following command.
+```bash
+echo '
+[default]
+aws_access_key_id = <your_access_key>
+aws_secret_access_key = <your_secret_access_key>
+' > aws-credentials.txt
+```
+Create a Kubernetes secret with the AWS credentials.
+```bash
+kubectl create secret  generic aws-secret -n crossplane-system --from-file=creds=./aws-credentials.txt
+```
+Create the ProviderConfig with the following yaml file
+```yaml
+apiVersion: aws.kubedb.com/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default
+spec:
+  credentials:
+    source: Secret
+    secretRef:
+      name: aws-secret
+      key: creds
+      namespace: crossplane-system
+```
+### Create DynamoDB
 
+```yaml
+apiVersion: dynamodb.aws.kubedb.com/v1alpha1
+kind: Table
+metadata:
+  annotations:
+    meta.kubedb.com/example-id: dynamodb/v1alpha1/table
+  labels:
+    testing.kubedb.com/example-name: mytable
+  name: mytable
+spec:
+  forProvider:
+    attribute:
+    - name: exampleHashKey
+      type: S
+    hashKey: exampleHashKey
+    region: us-east-2
+    streamEnabled: true
+    streamViewType: NEW_AND_OLD_IMAGES
+    billingMode: PAY_PER_REQUEST
+```
+### Provider AWS also supports
+- DocumentDB
+- Elasticache
+- RDS
+  - Mariadb
+  - Mysql
+  - Postgres
+## Provider-Azure
+### Installation
+Install the Azure provider into Kubernetes cluster with helm chart.
+```bash
+ helm upgrade -i kubedb-provider-azure appscode/kubedb-provider-azure -n crossplane-system --create-namespace --version=v2023.12.11
+```
+The command deploys a KubeDB Azure provider on the Kubernetes cluster in the default configuration. This will install CRDs representing Azure database services. These CRDs allow you to create Azure database resources inside Kubernetes.
+### Setup Provider Config
+Create an Azure service principal and save it as azure-credentials.json
+
+```bash
+az ad sp create-for-rbac --sdk-auth --role Owner --scopes <your-subscription-id>
+```
+Create a Kubernetes secret with the Azure credentials.
+```bash
+kubectl create secret generic azure-secret -n crossplane-system --from-file=creds=./azure-credentials.json
+```
+Create the ProviderConfig with the following yaml file
+```yaml
+apiVersion: azure.kubedb.com/v1beta1
+metadata:
+  name: default
+kind: ProviderConfig
+spec:
+  credentials:
+    source: Secret
+    secretRef:
+      name: azure-secret
+      key: creds
+      namespace: crossplane-system
+```
+### Create CosmosDB Cassandra Account
+
+```yaml
+apiVersion: cosmosdb.azure.kubedb.com/v1alpha1
+kind: Account
+metadata:
+  annotations:
+    meta.kubedb.com/example-id: cosmosdb/v1alpha1/cassandratable
+  labels:
+    testing.kubedb.com/example-name: cassandra
+  name: example-cosmosdb-cassandra
+spec:
+  forProvider:
+    capabilities:
+      - name: EnableCassandra
+    consistencyPolicy:
+      - consistencyLevel: Strong
+    geoLocation:
+      - failoverPriority: 0
+        location: West Europe
+    location: West Europe
+    offerType: Standard
+    resourceGroupNameRef:
+      name: db
+---
+apiVersion: azure.kubedb.com/v1alpha1
+kind: ResourceGroup
+metadata:
+  annotations:
+    meta.kubedb.com/example-id: cosmosdb/v1alpha1/cosmosdb
+  labels:
+    testing.kubedb.com/example-name: db
+  name: db
+spec:
+  forProvider:
+    location: West Europe
+```
+### Provider Azure also supports
+- MySQL
+- MSSQL
+- CosmosDB
+  - GremlinGraph
+  - Mongo
+  - SQL
+  - Table
+## Provider-GCP
+### Installation
+Install the GCP provider into Kubernetes cluster with helm chart.
+```bash
+ helm upgrade -i kubedb-provider-gcp appscode/kubedb-provider-gcp -n crossplane-system --create-namespace --version=v2023.12.11
+```
+The command deploys a KubeDB GCP provider on the Kubernetes cluster in the default configuration. This will install CRDs representing GCP database services. These CRDs allow you to create GCP database resources inside Kubernetes.
+### Setup Provider Config
+Generate a GCP service account JSON file and save it as appscode-testing.json.
+
+Create a Kubernetes secret with the GCP credentials.
+```bash
+kubectl create secret generic gcp-secret -n crossplane-system --from-file=creds=./appscode-testing.json
+```
+Create the ProviderConfig with the following yaml file
+```yaml
+apiVersion: gcp.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default
+spec:
+  projectID: <PROJECT_ID>
+  credentials:
+    source: Secret
+    secretRef:
+      namespace: crossplane-system
+      name: gcp-secret
+      key: creds
+```
+### Create SQL Database Instance
+
+```yaml
+apiVersion: sql.gcp.kubedb.com/v1alpha1
+kind: DatabaseInstance
+metadata:
+  annotations:
+    meta.kubedb.com/example-id: sql/v1alpha1/databaseinstance
+  labels:
+    testing.kubedb.com/example-name: example_instance
+  name: example-instance
+spec:
+  forProvider:
+    region: "us-central1"
+    databaseVersion: "MYSQL_5_7"
+    settings:
+      - tier: "db-f1-micro"
+        diskSize: 20
+    deletionProtection: false
+  writeConnectionSecretToRef:
+    name: example-sql-db-instance-secret
+    namespace: crossplane-system
+```
+### Provider GCP also supports
+- Redis
+- Spanner
 ## What Next?
 
 Please try the latest release and give us your valuable feedback.
