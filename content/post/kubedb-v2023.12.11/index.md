@@ -409,7 +409,8 @@ sysctl -w vm.max_map_count=262144
 From this release KubeDB ensures that all database pods will be running as non-root user. But, a single init container runs as root in privileged mode to increase `vm.max_map_count` in kernel settings. We call this `sysctl-init` container. We are continuing with that as default. However, If it is not possible to run a container as root and in privileged mode it is advisable to set `spec.kernelSettings.disableDefaults` to `true` prior to apply Elasticsearch custom resource. In this case you pre-setup `vm.max_map_count` value for your kubernetes nodes. You can also use kubedb `prepare-cluster` helm chart to do this easily.
 
 ```
-helm upgrade -i prepare-cluster oci://ghcr.io/appscode-charts/prepare-cluster \
+helm upgrade -i prepare-cluster \
+  oci://ghcr.io/appscode-charts/prepare-cluster \
   --version v2023.12.11 \
   -n kube-system \
   --set node.sysctls[0].name=vm.max_map_count \
@@ -519,7 +520,8 @@ You need [crossplane](https://docs.crossplane.io/v1.13/) already installed in yo
 Install the aws provider into Kubernetes cluster with helm chart.
 
 ```bash
-helm upgrade -i kubedb-provider-aws oci://ghcr.io/appscode-charts/kubedb-provider-aws \
+helm upgrade -i kubedb-provider-aws \
+  oci://ghcr.io/appscode-charts/kubedb-provider-aws \
   --version=v2023.12.11 \
   -n crossplane-system --create-namespace
 ```
@@ -597,7 +599,8 @@ spec:
 Install the Azure provider into Kubernetes cluster with helm chart.
 
 ```bash
-helm upgrade -i kubedb-provider-azure oci://ghcr.io/appscode-charts/kubedb-provider-azure \
+helm upgrade -i kubedb-provider-azure \
+  oci://ghcr.io/appscode-charts/kubedb-provider-azure \
   --version=v2023.12.11 \
   -n crossplane-system --create-namespace
 ```
@@ -685,7 +688,8 @@ spec:
 Install the GCP provider into Kubernetes cluster with helm chart.
 
 ```bash
-helm upgrade -i kubedb-provider-gcp oci://ghcr.io/appscode-charts/kubedb-provider-gcp \
+helm upgrade -i kubedb-provider-gcp \
+  oci://ghcr.io/appscode-charts/kubedb-provider-gcp \
   --version=v2023.12.11 \
   -n crossplane-system --create-namespace
 ```
