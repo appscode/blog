@@ -7,6 +7,7 @@ authors:
 tags:
 - archiver
 - cloud-native
+- crossplane
 - dashboard
 - database
 - day-2-operations
@@ -31,14 +32,13 @@ tags:
 - redis
 - security
 - walg
-- crossplane
 ---
 
 We are pleased to announce the release of [KubeDB v2023.12.11](https://kubedb.com/docs/v2023.12.11/setup/). This release contains some major features like archiver, using non-root users, git-sync, crossplane support etc. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.12.11/README.md). Let’s see the changes done in this release.
 
 
 # Non-root user
-In our prior releases, all the containers (db container, init-docker, exported, sidecars etc) were run with root user. This was a big security concern for some of our users. It is also very important in cases like preventing Privilege escalations, restrict the behaviour of pods, restrict certain kernel-level operations etc.
+In our prior releases, all the containers (db container, init-docker, metrics-exporter, other sidecars) were run with root user. This was a big security concern for some of our users. It is also very important in cases like preventing Privilege escalations, restrict the behaviour of pods, restrict certain kernel-level operations etc.
 We have focused on this issue in this release, & made all of our docker images root-free.
 
 We also enforce it from the kubernetes perspective & set the `securityContext` by default. So that the containers abide by the rules of `restriced` [PodSecurityStandards](https://kubernetes.io/docs/concepts/security/pod-security-standards/). This change is common for all of our supported databases.
@@ -665,7 +665,7 @@ kubectl create secret generic gcp-secret -n crossplane-system --from-file=creds=
 ```
 Create the ProviderConfig with the following yaml file
 ```yaml
-apiVersion: gcp.upbound.io/v1beta1
+apiVersion: gcp.kubedb.com/v1beta1
 kind: ProviderConfig
 metadata:
   name: default
