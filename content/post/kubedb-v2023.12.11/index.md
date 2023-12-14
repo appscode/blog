@@ -38,25 +38,24 @@ We are pleased to announce the release of [KubeDB v2023.12.11](https://kubedb.co
 
 
 # Non-root user
-In our prior releases, all the containers (db container, init-docker, metrics-exporter, other sidecars) were run with root user. This was a big security concern for some of our users. It is also very important in cases like preventing Privilege escalations, restrict the behaviour of pods, restrict certain kernel-level operations etc.
-We have focused on this issue in this release, & made all of our docker images root-free.
+In our prior releases, all the containers (db container, init-docker, metrics-exporter, other sidecars) were run with the root user. This was a big security concern for some of our users. It is also very important in cases like preventing Privilege escalations, restrict the behavior of pods, restrict certain kernel-level operations etc. We have focused on this issue in this release, & made all of our docker images run as non-root user.
 
-We also enforce it from the kubernetes perspective & set the `securityContext` by default. So that the containers abide by the rules of `restriced` [PodSecurityStandards](https://kubernetes.io/docs/concepts/security/pod-security-standards/). This change is common for all of our supported databases.
+We also enforce it from the kubernetes perspective & set the `securityContext` by default. So that the containers abide by the rules of `restricted` [PodSecurityStandards](https://kubernetes.io/docs/concepts/security/pod-security-standards/). This change is common for all of our supported databases. One exception is PostgreSQL. PostgresQL uses non-root `postgres` user but still uses additional capabilities. This will be further investigates in future releases.
 
 
 # MongoDB
 
 ### MongoDB Archiver
 
-This feature supports continuous archiving of a MongoDB database. You can also do point-in-time recovery (PITR) restoration of the database at any point. 
-To achieve this feature, You need [KubeStash](https://kubedb.com/docs) installed in your cluster. We have introduces this one by increasing  the capability of our another product [stash](https://stash.run/docs/v2023.10.9/welcome/). To use continuous archiving feature, We have introduced a CRD also in KubeDB side, named `MongoDBArchiver`.
+This feature supports continuous archiving of a MongoDB database by syncing oplog to an object storage. You can also do point-in-time recovery (PITR) restoration of the database at any point. 
+To achieve this feature, You need [KubeStash](https://kubedb.com/docs) installed in your cluster. KubeStash (aka Stash 2.0) is a ground up rewrite of [Stash](https://stash.run/docs/v2023.10.9/welcome/) with various improvements planned. KubeStash works with any existing KubeDB or Stash license key. To use continuous archiving feature, We have introduced a CRD also in KubeDB side, named `MongoDBArchiver`.
 
 
 Here is all the details of using [MongoDB Archiver](https://kubedb.com/docs/v2023.12.11/guides/mongodb/pitr/pitr/).
-In short, You need to create an 
+In short, You need to create a
 - `BackupStorage` which refers a cloud storage backend (like s3, gcs etc) you prefer.
-- `RentionPolicy` allows you to set how long you'd like to retain the backup data.
-- encryption-secret which will be used for encryption before uploading the backed-up data into cloud.
+- `RetentionPolicy` allows you to set how long you'd like to retain the backed up data.
+- `encryption-secret` which will be used for encryption before uploading the backed-up data into cloud.
 - `VolumeSnapshotClass` which holds the csi-driver information which is responsible for taking VolumeSnapshots. This is vendor specific.
 - `MongoDBArchiver` which holds all of these metadata information. 
 
@@ -110,6 +109,7 @@ Now after creating this archiver CR, if we create a MongoDB with `archiver: "tru
 
 
 For point-in-time-recovery, all you need is to set the repository names & set a recoveryTimestamp in `mongodb.spec.init.archiver` section.
+
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: MongoDB
@@ -146,7 +146,7 @@ KubeDB Operator will create a PVC with the VolumeSnapshot reference of the last 
 
 ### Git Sync
 We have added a new feature now you can initialize mongodb from the public/private git repository.
-Here’s a quick example of how to configure it. Here we are going to create a mongodb replicaset with some initial data from  [git-sync](https://github.com/kubedb/git-sync.git) repo.
+Here’s a quick example of how to configure it. Here we are going to create a mongodb replicaset with some initial data from  [git-sync-demo](https://github.com/kubedb/git-sync-demo.git) repo.
 
 **From Public Registry:**
 
@@ -162,7 +162,7 @@ spec:
      scriptPath: "current"
      git:
        args:
-       - --repo=https://github.com/kubedb/git-sync.git
+       - --repo=https://github.com/kubedb/git-sync-demo.git
        - --depth=1
        - --period=60s
        - --link=current
@@ -199,7 +199,7 @@ spec:
        args:
        # use --ssh for private repository
        - --ssh
-       - --repo=git@github.com:kubedb/git-sync.git
+       - --repo=git@github.com:kubedb/git-sync-demo.git
        - --depth=1
        - --period=60s
        - --link=current
@@ -253,7 +253,7 @@ kubectl create secret generic -n demo git-creds \
 
 ### Version support
 
-We have added some new version support: `4.2.24`, `4.4.26`, `5.0.23`, `6.0.12`. We also made all the older patch versions of these added images deprecated in this release.
+We have added some new version support: `4.2.24`, `4.4.26`, `5.0.23`, `6.0.12`. We also made all the older patch versions of these added images deprecated in this release. The docker images for the new versions are built to minimize CVEs if not remove completely.
 
 So, Please apply a MongoDBOpsRequest to update your database in latest patch versions supported.  For example, if the current db version is `4.4.6`, the latest patch version is `4.4.26`,
 
@@ -274,15 +274,14 @@ spec:
 
 
 # Postgres
-Now you can continuously archive and recover point-in-time  using Kubedb Managed PostgreSQL.
-Please follow the docoumentation to try it out
+Now you can continuously archive and recover point-in-time  using KubeDB Managed PostgreSQL. Please follow the documentation to try out the new features.
 
 ### Arbiter
-We use raft consensus algorithm for choosing primary node. Raft uses Quorum based voting system. So if we have an even number of replicas(nodes), there is a high chance of split vote. So it is recommended by raft  to use an odd number of nodes. But many users only wants 2 replicas., a primary node for write/read operation and an extra node for backup/read query purposes. They do not want to have more nodes because of cost/storage issues. So we are introducing  an extra node in the cluster which will solve this issue. This node is named as Arbiter node.
+We use raft consensus algorithm for choosing primary node. Raft uses Quorum based voting system. So if we have an even number of replicas(nodes), there is a high chance of split vote. So it is recommended by raft  to use an odd number of nodes. But many users only wants 2 replicas, a primary node for write/read operation and an extra node for standby/read query purposes. They do not want to have more nodes to keep the cost down. So we are introducing an extra node in the cluster which will solve this issue. This node is called an Arbiter node.
 
-An arbiter node will have a separate statefulset and a pvc with bare minimum storage(2GB but configurable, however 2GB is enough if your cluster does not have many replicas). It will have a single pod which runs a single container inside, that only votes for the leader election but does not store any database related data.
+An arbiter node will have a separate Statefulset and a pvc with bare minimum storage(2GB but configurable, however 2GB is enough if your cluster does not have many replicas). It will have a single pod which runs a single container inside, that only votes for the leader election but does not store any database related data.
 
-So if you deploy a postgres database with an even number of nodes, Arbiter node will be deployed with it automatically.
+So if you deploy a Postgres database with an even number of nodes, Arbiter node will be deployed with it automatically.
 
 Postgres Arbiter Ops Request Support
 Added support for volume expansion and vertical scaling of Arbiter node.
