@@ -159,7 +159,7 @@ $ kubectl create namespace demo
 namespace/demo created
 ```
 
-Here is the yaml of the Kafka CRO we are going to use:
+Here is the yaml of the Kafka CR we are going to use:
 
 ```yaml                                                                      
 apiVersion: kubedb.com/v1alpha2
@@ -181,7 +181,7 @@ spec:
   terminationPolicy: WipeOut
 ```
 Let's save this yaml configuration into `kafka-cluster.yaml` 
-Then create the above Kafka CRO
+Then create the above Kafka CR
 
 ```bash
 $ kubectl apply -f kafka-cluster.yaml
@@ -263,7 +263,7 @@ Topic: music	TopicId: 4QTWweCFSxaQmd1L-HERKA	PartitionCount: 3	ReplicationFactor
 	Topic: music	Partition: 2	Leader: 1	Replicas: 1,2,0	Isr: 1,2,0
 
 ```
-Now, we are going to start a producer and a consumer for topic `music`. Let’s use this current terminal for producing messages and open a new terminal for consuming messages. Let’s set the environment variables for bootstrap server and the configuration file in consumer terminal too. From the topic description we can see that the leader partition for partition 1 is 0 (the broker that we are on). If we produce messages to `kafka-cluster-0` broker(brokerID=0) it will store those messages in partition 1. Let’s produce messages in the producer terminal and consume them from the consumer terminal.
+Now, we are going to start a producer and a consumer for topic `music`. Let’s use this current terminal for producing messages and open a new terminal for consuming messages. From the topic description we can see that the leader partition for partition 1 is 0 (the broker that we are on). If we produce messages to `kafka-cluster-0` broker(brokerID=0) it will store those messages in partition 1. Let’s produce messages in the producer terminal and consume them from the consumer terminal.
 
 ```bash
 $ kubectl exec -it -n demo  kafka-cluster-0 -- bash
