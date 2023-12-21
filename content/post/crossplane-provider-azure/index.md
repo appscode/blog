@@ -47,9 +47,9 @@ Install the Azure provider into Kubernetes cluster with helm chart.
 
 ```bash
 helm upgrade -i kubedb-provider-azure \
-appscode/kubedb-provider-azure \
--n crossplane-system --create-namespace \
---version=v2023.12.11
+  oci://ghcr.io/appscode-charts/kubedb-provider-azure \
+  --version=v2023.12.11 \
+  -n crossplane-system --create-namespace
 ```
 
 The command deploys a KubeDB Azure provider on the Kubernetes cluster in the default configuration. This will install CRDs representing Azure database services. These CRDs allow you to create Azure database resources inside Kubernetes.

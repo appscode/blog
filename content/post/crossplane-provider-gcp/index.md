@@ -45,7 +45,10 @@ kubectl get pod -n crossplane-system
 Install the GCP provider into Kubernetes cluster with helm chart.
 
 ```bash
-helm upgrade -i kubedb-provider-gcp appscode/kubedb-provider-gcp -n crossplane-system --create-namespace --version=v2023.12.11
+helm upgrade -i kubedb-provider-gcp \
+  oci://ghcr.io/appscode-charts/kubedb-provider-gcp \
+  --version=v2023.12.11 \
+  -n crossplane-system --create-namespace
 ```
 
 The command deploys a KubeDB GCP provider on the Kubernetes cluster in the default configuration. This will install CRDs representing GCP database services. These CRDs allow you to create GCP database resources inside Kubernetes.
@@ -62,7 +65,8 @@ kubectl create secret generic gcp-secret -n crossplane-system --from-file=creds=
 
 Create the ProviderConfig with the following yaml file
 
-```yaml
+```bash
+cat <<EOF | kubectl apply -f -
 apiVersion: gcp.kubedb.com/v1beta1
 kind: ProviderConfig
 metadata:
@@ -75,6 +79,7 @@ spec:
       namespace: crossplane-system
       name: gcp-secret
       key: creds
+EOF
 ```
 
 ### Create SQL Database

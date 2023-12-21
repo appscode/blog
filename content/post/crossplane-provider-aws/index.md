@@ -41,12 +41,15 @@ kubectl get pod -n crossplane-system
 
  ## Install KubeDB AWS Provider
 
+Install the AWS provider into Kubernetes cluster with helm chart.
+
 ```bash
-helm repo add appscode https://charts.appscode.com/stable/
-helm repo update
-helm search repo appscode/kubedb-provider-aws --version=v2023.12.11
-helm upgrade -i kubedb-provider-aws appscode/kubedb-provider-aws -n crossplane-system --create-namespace --version=v2023.12.11
+helm upgrade -i kubedb-provider-aws \
+  oci://ghcr.io/appscode-charts/kubedb-provider-aws \
+  --version=v2023.12.11 \
+  -n crossplane-system --create-namespace
 ```
+
 
  ### Setup Provider Config
 
@@ -244,8 +247,8 @@ EOF
 - Elasticache
 - Dynamodb
 - RDS
-    - Mariadb
-    - Mysql
+    - MariaDB
+    - MySQL
 
  ## Support
 
