@@ -72,27 +72,31 @@ Here is an example NodeTopology CR :
 apiVersion: node.k8s.appscode.com/v1alpha1
 kind: NodeTopology
 metadata:
-  name: db-pools
+  name: gke-pools
 spec:
-  nodeSelectionPolicy: Taint # or LabelSelector
-  topologyKey: "nodepool"
+  nodeSelectionPolicy: Taint
+  topologyKey: "nodepool_type"
   nodeGroups:
-  - topologyValue: micro
-    capacity:
-      cpu: 300m
-      memory: 600Mi
-  - topologyValue: small
-    capacity:
-      cpu: 500m
-      memory: 700Mi
-  - topologyValue: medium
-    capacity:
-      cpu: 800m
-      memory: 1Gi
-  - topologyValue: large
-    capacity:
-      cpu: 1
-      memory: 2Gi
+    - topologyValue: tiny
+      capacity:
+        cpu: 4
+        memory: 15Gi
+    - topologyValue: small
+      capacity:
+        cpu: 8
+        memory: 30Gi
+    - topologyValue: medium
+      capacity:
+        cpu: 16
+        memory: 60Gi
+    - topologyValue: mid-large
+      capacity:
+        cpu: 32
+        memory: 120Gi
+    - topologyValue: large
+      capacity:
+        cpu: 64
+        memory: 240Gi
 ```
 
 It is a cluster-scoped resource. It supports two types of nodeSelectionPolicy : `LabelSelector`, `Taint`. Here is the general rule to choose between these two.
@@ -106,41 +110,46 @@ It is also possible to schedule different types of db pods into different nodepo
 apiVersion: kubedb.com/v1alpha2
 kind: MongoDB
 metadata:
-  name: simple
+  name: mg-database
   namespace: demo
 spec:
   version: "4.4.26"
   terminationPolicy: WipeOut
-  replicas: 2
+  replicas: 3
   replicaSet:
     name: "rs"
   podTemplate:
     spec:
+      nodeSelector:
+        app: kubedb
+        instance: mongodb
+        component: mg-database
       tolerations:
-      - key: nodepool
-        value: large
-        effect: NoSchedule
+        - effect: NoSchedule
+          key: app
+          operator: Equal
+          value: kubedb
+        - effect: NoSchedule
+          key: instance
+          operator: Equal
+          value: mongodb
+        - effect: NoSchedule
+          key: component
+          operator: Equal
+          value: mg-database
+        - key: nodepool_type
+          value: tiny
+          effect: NoSchedule
       resources:
         requests:
-          "cpu": 1
-          "memory": 1500Mi
+          "cpu": 2100m
+          "memory": 8Gi
   storage:
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     resources:
       requests:
-        storage: 1Gi
-  arbiter:
-    podTemplate:
-      spec:
-        tolerations:
-        - key: nodepool
-          value: medium
-          effect: NoSchedule
-        resources:
-          requests:
-            "cpu": 0.4
-            "memory": 400Mi
+        storage: 20Gi
 ```
 
 
@@ -167,33 +176,41 @@ spec:
 
 
 Lastly, for autoscaling, all we need is to specify the name of the nodeTopology in the autoscaler yaml.
+
+
+IMPORTANT : The node pool sizes, the starting resource requests, and the auto scaler configuration must be carefully choreographed for optimal behavior.
+
+- The node pool sizes should be 4x bigger than the previous size.
+- The database's initial requested resources should be slightly larger than 1/2 the intended node's capacity.
+- The minimum allowed size by the Autoscaler resource should be 1/2 of the smallest node's capacity.
+- 
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: MongoDBAutoscaler
 metadata:
-  name: compute
+  name: compute-as
   namespace: demo
 spec:
   databaseRef:
-    name: simple
+    name: mg-database
   opsRequestOptions:
-    timeout: 10m
+    timeout: 20m
     apply: IfReady
   compute:
     replicaSet:
       trigger: "On"
-      podLifeTimeThreshold: 5m
-      resourceDiffPercentage: 20
+      podLifeTimeThreshold: 30m
+      resourceDiffPercentage: 200
       minAllowed:
-        cpu: 400m
-        memory: 400Mi
+        cpu: 2
+        memory: 7.5Gi
       maxAllowed:
-        cpu: 1
-        memory: 2Gi
+        cpu: 64
+        memory: 240Gi
       controlledResources: ["cpu", "memory"]
       containerControlledValues: "RequestsAndLimits"
     nodeTopologyRef:
-      name: db-pools
+      name: gke-pools
 ```
 
 
@@ -210,20 +227,19 @@ metadata:
 spec:
   type: VerticalScaling
   databaseRef:
-    name: simple
+    name: mg-database
   verticalScaling:
     replicaSet:
       resources:
         requests:
-          memory: "900Mi"
-          cpu: "0.7"
+          memory: "16Gi"
+          cpu: "4200m"
         limits:
-          memory: "1Gi"
-          cpu: "0.8"
+          memory: "16Gi"
       nodeSelectionPolicy: Taint
       topology:
-        key: nodepool
-        value: medium
+        key: nodepool_type
+        value: small
 ```
 
 
