@@ -152,38 +152,17 @@ spec:
         storage: 20Gi
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Lastly, for autoscaling, all we need is to specify the name of the nodeTopology in the autoscaler yaml.
-
 
 IMPORTANT : The node pool sizes, the starting resource requests, and the auto scaler configuration must be carefully choreographed for optimal behavior.
 
-- The node pool sizes should be 4x bigger than the previous size.
+- The node pool sizes should be 2x bigger than the previous size.
 - The database's initial requested resources should be slightly larger than 1/2 the intended node's capacity.
 - The minimum allowed size by the Autoscaler resource should be 1/2 of the smallest node's capacity.
-- 
+- The autoscaler is configured with `resourceDiffPercentage: 200`
+
+This will ensure that with every automatic scale up or down, the requested resources will be in the middle of the desired node pool's capacity.
+
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: MongoDBAutoscaler
