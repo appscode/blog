@@ -26,7 +26,7 @@ tags:
 - vertical-scaling
 ---
 
-We are pleased to announce the release of [KubeDB v2023.12.21](https://kubedb.com/docs/v2023.12.21/setup/). This release was mainly focused on improving the kubedb-autoscaler feature. We also made changes to our grafana dashboards. This post lists all the changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.12.21/README.md). Let’s see the changes done in this release.
+We are pleased to announce the release of [KubeDB v2023.12.21](https://kubedb.com/docs/v2023.12.21/setup/). This release was mainly focused on improving the kubedb-autoscaler feature. We also made changes to our Grafana dashboards. This post lists all the changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2023.12.21/README.md). Let’s see the changes done in this release.
 
 ## Improving KubeDB Autoscaler
 
@@ -38,32 +38,6 @@ Here is an overall workflow of the kubedb-autoscaler to better understand the pr
 
 This procedure works fine while up-scaling the compute resources. Some nodes from bigger nodepools will be automatically created by the cluster autoscaler whenever some scheduling issues occur.
 But this procedure becomes very resource-intensive while down-scaling the compute resources. As the k8s scheduler sees some big nodes are already available for scheduling, & we are not forcing to choose a smaller node where these down-scaled pods could have been easily running.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 So to solve this issue, we need a way so that we can forcefully schedule those smaller pods into smaller nodepools.  We have introduced a new CRD to achieve it, called `NodeTopology`.
 Here is an example NodeTopology CR :
@@ -102,8 +76,6 @@ spec:
 It is a cluster-scoped resource. It supports two types of nodeSelectionPolicy : `LabelSelector`, `Taint`. Here is the general rule to choose between these two.
 
 If you want to run the database pods in some dedicated nodes, and don't want to allow any other pods to be scheduled there, the `Taint` policy is appropriate for you. For other general cases, use `LabelSelector`.
-
-
 
 It is also possible to schedule different types of db pods into different nodepools. Here is an example `MongoDB` CR yaml :
 ```yaml
@@ -221,14 +193,6 @@ spec:
         value: small
 ```
 
-
-
-
-
-
-
-
-
 ## Alerts in Grafana Dashboards
 In older releases, users had to manually import the grafana-dashboard panels in the grafana UI for visualization. In this release, we make this whole procedure automatic with helm charts. We have also added option to integrate alert panels on those dashboards.  The older approach is also available [here](https://github.com/appscode/grafana-dashboards/).
 
@@ -267,7 +231,7 @@ The `dashboard.replacements` section is only useful when you are using the built
 
 ## Deprecating older DB versions
 
-We have deprecated all the older patch versions for `MySQL`, `MariaDB` & `Postgres` in this release.
+We have deprecated all the older patch versions for `MySQL`, `MariaDB`, `Postgres` & `Redis` in this release.
 
 Here is the list of available versions now :
 
@@ -277,7 +241,7 @@ Here is the list of available versions now :
 
 `Postgres`: "16.1-bookworm", "16.1", "15.5-bookworm", "15.5", "14.10-bookworm", "14.10", "timescaledb-2.5.0-pg14.1", "14.1-bullseye-postgis", "13.13-bookworm", "13.13", "13.5-bullseye-postgis", "timescaledb-2.1.0-pg13", "12.17-bookworm", "12.17", "12.9-bullseye-postgis", "timescaledb-2.1.0-pg12", "11.22-bookworm", "11.22", "11.14-bullseye-postgis", "timescaledb-2.1.0-pg11", "10.23-bullseye", "10.23"
 
-
+`Redis`: "7.2.3", "7.0.14", "6.2.14", "6.0.20", "5.0.14", "4.0.11"
 
 ## What Next?
 
