@@ -5,13 +5,13 @@ weight: 26
 authors:
 - SK Ali Arman
 tags:
-- crossplane
 - aws
+- crossplane
 - kubedb
 - kubernetes
 ---
 
- # Crossplane
+# Crossplane
 
 KubeDB is now a [Crossplane](https://www.crossplane.io/) distribution for Hyper Clouds. Crossplane connects your Kubernetes cluster to external, non-Kubernetes resources, and allows platform teams to build custom Kubernetes APIs to consume those resources. We have introduced providers for AWS.
 
