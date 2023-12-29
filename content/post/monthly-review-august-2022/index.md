@@ -121,5 +121,3 @@ To receive product announcements, follow us on [Twitter](https://twitter.com/Kub
 Follow our Linkedin for more [AppsCode Inc](https://www.linkedin.com/company/appscode/)
 
 To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
-
-To join public discussions with the KubeDB community, join us in the [Kubernetes Slack team](https://kubernetes.slack.com/messages/C8149MREV/) channel `#kubedb`. To sign up, use our [Slack inviter](http://slack.kubernetes.io/).
