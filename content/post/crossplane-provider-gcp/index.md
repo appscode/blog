@@ -1,6 +1,6 @@
 ---
-title: Deploy GCP Databases with KubeDB Provider-GCP
-date: "2023-12-20"
+title: Deploy GCP Databases with KubeDB Crossplane Provider
+date: "2023-12-28"
 weight: 26
 authors:
 - SK Ali Arman
@@ -11,28 +11,19 @@ tags:
 - kubernetes
 ---
 
-# Crossplane
-
-
 KubeDB is now a [Crossplane](https://www.crossplane.io/) distribution for Hyper Clouds. Crossplane connects your Kubernetes cluster to external, non-Kubernetes resources, and allows platform teams to build custom Kubernetes APIs to consume those resources. We have introduced providers for GCP.
 
 You need [crossplane](https://docs.crossplane.io/v1.14/) already installed in your cluster. This will allow KubeDB users to provision and manage Cloud provider managed databases in a Kubernetes native way.
 
-
 ## Install Crossplane
 
-Add crossplane helm repository
-
 ```bash
-helm repo add crossplane https://charts.crossplane.io/stable
-helm repo update
+helm upgrade -i crossplane \
+  oci://ghcr.io/appscode-charts/crossplane \
+  -n crossplane-system --create-namespace
 ```
-Install crossplane
 
-```bash
-helm upgrade -i crossplane crossplane/crossplane -n crossplane-system --create-namespace
-```
-Check the installation with the following command. You will see two pod with prefix name crossplane in case of succesfull installation.
+Check the installation with the following command. You will see two pod with prefix name crossplane in case of successful installation.
 
 ```bash
 kubectl get pod -n crossplane-system
@@ -47,7 +38,7 @@ Install the GCP provider into Kubernetes cluster with helm chart.
 ```bash
 helm upgrade -i kubedb-provider-gcp \
   oci://ghcr.io/appscode-charts/kubedb-provider-gcp \
-  --version=v2023.12.11 \
+  --version=v2023.12.28 \
   -n crossplane-system --create-namespace
 ```
 

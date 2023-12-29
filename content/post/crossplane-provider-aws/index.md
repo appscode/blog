@@ -1,6 +1,6 @@
 ---
-title: Deploy AWS Databases with KubeDB Provider-AWS
-date: "2023-12-20"
+title: Deploy AWS Databases with KubeDB Crossplane Provider
+date: "2023-12-28"
 weight: 26
 authors:
 - SK Ali Arman
@@ -11,47 +11,37 @@ tags:
 - kubernetes
 ---
 
-# Crossplane
-
-KubeDB is now a [Crossplane](https://www.crossplane.io/) distribution for Hyper Clouds. Crossplane connects your Kubernetes cluster to external, non-Kubernetes resources, and allows platform teams to build custom Kubernetes APIs to consume those resources. We have introduced providers for AWS.
+[KubeDB](https://kubedb.com) is now a [Crossplane](https://www.crossplane.io/) distribution for Hyper Clouds. Crossplane connects your Kubernetes cluster to external, non-Kubernetes resources, and allows platform teams to build custom Kubernetes APIs to consume those resources. We have introduced providers for AWS.
 
 You need [crossplane](https://docs.crossplane.io/v1.14/) already installed in your cluster. This will allow KubeDB users to provision and manage Cloud provider managed databases in a Kubernetes native way.
 
 
- ## Install Crossplane 
-
-Add crossplane helm repository
+## Install Crossplane
 
 ```bash
-helm repo add crossplane https://charts.crossplane.io/stable
-helm repo update
+helm upgrade -i crossplane \
+  oci://ghcr.io/appscode-charts/crossplane \
+  -n crossplane-system --create-namespace
 ```
 
-Install crossplane
-
-```bash
-helm upgrade -i crossplane crossplane/crossplane -n crossplane-system --create-namespace
-```
-
-Check the installation with the following command. You will see two pod with prefix name crossplane in case of successfull installation. 
+Check the installation with the following command. You will see two pod with prefix name crossplane in case of successful installation. 
 
 ```bash
 kubectl get pod -n crossplane-system
 ```
 
- ## Install KubeDB AWS Provider
+## Install KubeDB AWS Provider
 
 Install the AWS provider into Kubernetes cluster with helm chart.
 
 ```bash
 helm upgrade -i kubedb-provider-aws \
   oci://ghcr.io/appscode-charts/kubedb-provider-aws \
-  --version=v2023.12.11 \
+  --version=v2023.12.28 \
   -n crossplane-system --create-namespace
 ```
 
-
- ### Setup Provider Config
+### Setup Provider Config
 
 Create AWS access key and secret key from AWS IAM. You can see [AWS documentaion](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
 
@@ -97,7 +87,7 @@ Check provider-config with the following command.
 kubectl get providerconfig.aws.kubedb.com
 ```
 
- ### Create Postgres Instance
+### Create Postgres Instance
 
 Create VPC
 
@@ -241,7 +231,7 @@ spec:
 EOF
 ```
 
- ### Provider AWS also supports
+### Provider AWS also supports
 
 - DocumentDB
 - Elasticache
@@ -250,7 +240,7 @@ EOF
     - MariaDB
     - MySQL
 
- ## Support
+## Support
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
