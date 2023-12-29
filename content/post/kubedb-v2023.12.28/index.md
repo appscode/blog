@@ -31,16 +31,17 @@ We are pleased to announce the release of [KubeDB v2023.12.28](https://kubedb.co
 ## Improving KubeDB Autoscaler
 
 Here is an overall workflow of the kubedb-autoscaler to better understand the problem, we solved in this release.
-- The autoscaler operator watches the usages of compute resources (cpu, memory) & storage resources, And generates OpsRequest CR to automatically change the resources.
-- The ops-manager operator then watches the created VerticalOpsRequest for compute resources, update db's statefulsets & evict the db pods.
-- k8s scheduler see the updated resource requests in those pods, & find an appropriate node for scheduling.
-- If k8s scheduler doesn't find appropriate node, cloud provider's cluster autoscaler (if enabled) scales one of the nodepool to make spaces for that pod.
+
+- The autoscaler operator watches the usages of compute resources (cpu, memory) & storage resources, and generates OpsRequest CR to automatically change the resources.
+- The ops-manager operator watches the created VerticalOpsRequest for compute resources, update db's statefulsets & evict the db pods following pod disruption budget.
+- k8s scheduler sees the updated resource requests in those pods, & finds an appropriate node for scheduling.
+- If k8s scheduler can't find an appropriate node, cloud provider's cluster autoscaler (if enabled) scales one of the nodepools to make room for that pod.
 
 This procedure works fine while up-scaling the compute resources. Some nodes from bigger nodepools will be automatically created by the cluster autoscaler whenever some scheduling issues occur.
-But this procedure becomes very resource-intensive while down-scaling the compute resources. As the k8s scheduler sees some big nodes are already available for scheduling, & we are not forcing to choose a smaller node where these down-scaled pods could have been easily running.
+But this procedure becomes very resource-intensive while down-scaling the compute resources. As the k8s scheduler sees some big nodes are already available for scheduling, it does not choose a smaller node where these down-scaled pods could be easily running.
 
-So to solve this issue, we need a way so that we can forcefully schedule those smaller pods into smaller nodepools.  We have introduced a new CRD to achieve it, called `NodeTopology`.
-Here is an example NodeTopology CR :
+So to solve this issue, we need a way so that we can forcefully schedule those smaller pods into smaller nodepools.  We have introduced a new CRD, called `NodeTopology` to achieve it.
+Here is an example NodeTopology CR:
 
 ```yaml
 apiVersion: node.k8s.appscode.com/v1alpha1
@@ -81,7 +82,7 @@ spec:
     topologyValue: n1-standard-64
 ```
 
-It is a cluster-scoped resource. It supports two types of nodeSelectionPolicy : `LabelSelector`, `Taint`. Here is the general rule to choose between these two.
+It is a cluster-scoped resource. It supports two types of nodeSelectionPolicy : `LabelSelector` and `Taint`. Here is the general rule to choose between these two.
 
 If you want to run the database pods in some dedicated nodes, and don't want to allow any other pods to be scheduled there, the `Taint` policy is appropriate for you. For other general cases, use `LabelSelector`.
 
@@ -135,18 +136,19 @@ spec:
 IMPORTANT : The node pool sizes, the starting resource requests, and the auto scaler configuration must be carefully choreographed for optimal behavior.
 
 - Database's initial resource request will be in the mid-point of the extra resource this nodepool provides.  More specifically , It will be, (current nodepool's allocatable - immediate lower nodepool's allocatable)/2 + immediate lower nodepool's allocatable.
-- Database's initial resource limit will be the current nodepool's allocatable.
-- Autoscaler CR's minAllowed will be database's initial request * 0.9 if this current nodePool is the smallest nodePool. Otherwise, You have to calculate, what could be the initial resource request if this db was provisioned in the smallest nodepool , and then multiply 0.9 with it.
-- Autoscaler CR's maxAllowed will be biggest nodePool's allocatable.
+- Database's initial resource limit should match the initial nodepool's allocatable resources.
+- Autoscaler CR's minAllowed will be database's initial request * 0.9 if this current nodePool is the smallest nodePool. Otherwise, You have to calculate, what could be the initial resource request if this db was provisioned in the smallest nodepool , and then multiply it with 0.9.
+- Autoscaler CR's maxAllowed will be biggest nodePool's allocatable resources.
 
 For example, in the above db yaml, requested cpu = (1930m - 940m)/2 + 940m = 1435m. And it's cpu limit is the allocatable cpu of `n1-standard-2` pool, which is 1930m.
 
 In the below autoscaler yaml, minAllowed cpu = (940m / 2) * 0.9 = 423m, memory = (2.56Gi / 2) * 0.9 = 1.15Gi. It's maxAllowed cpu & memory will be biggest nodepool's allocatable. So, 63770m & 224.45Gi respectively.
 
+You can find a list of pre-calculated values in [this spreadsheet](https://docs.google.com/spreadsheets/d/1U7H9rocT03UqLSof9a_YaFObX34WTYIaqU3wKbhzP_0/edit#gid=1036880772). 
 
 Lastly, for autoscaling, all we need is to specify the name of the nodeTopology in the autoscaler yaml.
-```yaml
 
+```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: MongoDBAutoscaler
 metadata:
@@ -178,10 +180,7 @@ spec:
       name: gke-n1-standard
 ```
 
-
-Now, kubedb-autoscaler operator will decide what is the minimum node-configuration for the scaled (up or down) pods to be scheduled. And create the `VerticalScale` opsRequest specifying the tolerations so that other nodepools don't tolerate these newly created pods.
-
-
+Now, kubedb-autoscaler operator will decide what is the minimum node-configuration for the scaled (up or down) pods to be scheduled. And it will create the `VerticalScale` opsRequest specifying the tolerations so that the pods are scheduled on the desired nodepool.
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -207,26 +206,6 @@ spec:
         key: nodepool_type
         value: n1-standard-4
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ## MySQL Archiver
 
@@ -289,7 +268,6 @@ spec:
       namespace: "demo"
 ```
 
-
 Now after creating this archiver CR, if we create a MySQL with `archiver: "true"` label, in the same namespace (as per the double-optin configured in `.spec.databases` field), The KubeDB operator will start doing 3 separate things:
 - Create 2 `Repository` with convention `<db-name>-full` & `<db-name>-manifest`.
 - Take full back-up in every day at 3:30 (`.spec.fullBackup.scheduler`) to `<db-name>-full` repository.
@@ -331,33 +309,13 @@ spec:
 ```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Postgres Archiver
 
 We supports point in time recovery feature for postgres from KubeDB v2023.12.11 for s3 backends. In this release, we have added some other backends support, namely gcs, azure & local nfs.
 
 To use these backends, you have to configure two things `BackupStorage` & `VolumeSnapshotClass`. 
 
-Here are the examples for azure :
+**Example YAMLs for azure:**
 
 ```yaml 
 apiVersion: storage.kubestash.com/v1alpha1
@@ -386,8 +344,11 @@ metadata:
 driver: disk.csi.azure.com
 deletionPolicy: Delete
 ```
+
 NB: All the archiver related yamls are available in this [git repository](https://github.com/kubedb/archiver-demo/tree/master/postgres).
-Example for GCS : 
+
+**Example YAMLs for GCS:**
+
 ```yaml
 apiVersion: storage.kubestash.com/v1alpha1
 kind: BackupStorage
@@ -415,7 +376,8 @@ driver: pd.csi.storage.gke.io
 deletionPolicy: Delete
 ```
 
-Example for NFS :
+**Example YAMLs for NFS:**
+
 ```yaml
 apiVersion: storage.kubestash.com/v1alpha1
 kind: BackupStorage
@@ -479,6 +441,7 @@ spec:
       name: "s3-storage"
       namespace: "demo"
 ```
+
 We are setting them in the `spec.fullBackup.task.params.volumeSnapshotClassName` & `spec.backupStorage.ref` fields.
 
 
