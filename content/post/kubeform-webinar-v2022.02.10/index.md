@@ -54,8 +54,6 @@ Please try the latest release and give us your valuable feedback.
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To join public discussions with the Kubeform community, join us in the [AppsCode Slack team](https://appscode.slack.com/messages/C8NCX6N23/details/) channel `#Kubeform`. To sign up, use our [Slack inviter](https://slack.appscode.com/).
-
 To receive product announcements, follow us on [Twitter](https://twitter.com/Kubeform).
 
 If you have found a bug with Kubeform or want to request for new features, please [file an issue](https://github.com/Kubeform/Kubeform/issues/new).

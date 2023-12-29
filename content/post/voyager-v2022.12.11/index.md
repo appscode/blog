@@ -41,8 +41,6 @@ Please try the latest release and give us your valuable feedback.
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To join public discussions with the Voyager community, join us in the AppsCode Slack team channel `#general`. To sign up, use our [Slack inviter](https://slack.appscode.com/).
-
 To receive product announcements, follow us on [Twitter](https://twitter.com/Voyagermesh).
 
 If you have found a bug with Voyager or want to request for new features, please [file an issue](https://github.com/voyagermesh/project/issues/new).

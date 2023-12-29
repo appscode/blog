@@ -567,8 +567,6 @@ We have made an in depth video on how to Auto-Scale and Reconfigure MariaDB in K
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To join public discussions with the KubeDB community, join us in the [Kubernetes Slack team](https://kubernetes.slack.com/messages/C8149MREV/) channel `#kubedb`. To sign up, use our [Slack inviter](http://slack.kubernetes.io/).
-
 To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
 
 To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.

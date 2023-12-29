@@ -43,8 +43,6 @@ To speak with us, please leave a message on [our website](https://appscode.com/c
 
 To receive product announcements, follow us on [Twitter](https://twitter.com/KubeStash).
 
-To join public discussions with the Stash community, join us in the [AppsCode Slack team](https://kubernetes.slack.com/messages/C8NCX6N23/) channel `#stash`.
-
 To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
 
 More about [Managing Databases in Kubernetes](https://kubedb.com/) & also [Backup and Restore in Kubernetes](https://stash.run/)
