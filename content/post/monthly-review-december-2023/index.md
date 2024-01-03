@@ -52,7 +52,7 @@ Link: https://youtu.be/X65yJ9Kfjx4?feature=shared
 
 #### Automating Continuous Archiving and Point-in-Time Recovery for PostgreSQL with KubeDB
 
-AppsCode held a webinar on “Automating Continuous Archiving and Point-in-Time Recovery for PostgreSQL with KubeDB” on 13th September 2023. The contents discussed in the webinar:
+AppsCode held a webinar on “Automating Continuous Archiving and Point-in-Time Recovery for PostgreSQL with KubeDB” on 13th December 2023. The contents discussed in the webinar:
 
 - Installing KubeDB and KubeStash
 - Deploy PostgreSQL Cluster
