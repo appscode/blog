@@ -86,7 +86,7 @@ In this post, we'll highlight the key updates.
    kubectl kubestash trigger -n <namespace> <backupconfiguration-name> --sessions=<sessions-name>
     ```
    
-4. You can now apply the Pod Security Policy profile to `Restricted`. This profile is a highly restrictive policy aligned with best practices for hardening Pods. Learn more about pod security [here](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted). You can restrict a namespace by the following command:
+4. You can now apply the Pod Security Policy profile to `Restricted`. This profile is a highly restrictive policy aligned with best practices for hardening Pods. Learn more about pod security [HERE](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted). You can restrict a namespace by the following command:
 
    `kubectl label namespace <namespace_name> pod-security.kubernetes.io/enforce=restricted`
 
@@ -130,13 +130,12 @@ In this post, we'll highlight the key updates.
 ## What Next?
 Please try the latest release and give us your valuable feedback.
 
-- If you want to install KubeStash in a clean cluster, please follow the installation instruction from [here](https://github.com/kubestash/installer/blob/master/charts/kubestash-operator/README.md).
-- If you want to upgrade KubeStash from a previous version, please follow the upgrade instruction from [here](https://github.com/kubestash/installer/blob/master/charts/kubestash-operator/README.md).
+- If you want to install KubeStash in a clean cluster, please follow the installation instruction from [HERE](https://github.com/kubestash/installer/blob/master/charts/kubestash-operator/README.md).
+- If you want to upgrade KubeStash from a previous version, please follow the upgrade instruction from [HERE](https://github.com/kubestash/installer/blob/master/charts/kubestash-operator/README.md).
 
 ### Support
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To receive product announcements, follow us on [Twitter](https://twitter.com/KubeStash).
+To receive product announcements, follow us on [Twitter/X](https://twitter.com/KubeStash).
 
-If you have found a bug with KubeStash or want to request new features, please [file an issue](https://github.com/kubestash/project/issues/new).
