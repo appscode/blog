@@ -59,6 +59,12 @@
         "url": "https://kubevault.com",
         "logo": "/assets/images/products/kubevault/kubevault.png",
         "description": "KubeVault provides various ways to configure your Vault deployment. You can pick your preferred Storage Backend, Unsealer Mode, TLS Mode, Secret Engines that you want to allow to attach with this VaultServer, Termination Policy to prevent accidental deletion or clean-up Vault deployment in a systematic way, Monitoring,  etc."
+      },
+      {
+        "name": "Voyager",
+        "url": "https://voyagermesh.com/",
+        "logo": "/assets/images/products/voyager/voyager.png",
+        "description": "Voyager is a HAProxy backed secure L7 and L4 ingress controller for Kubernetes. This can be used with any Kubernetes cloud providers including AWS, GCE, GKE, AZURE, ACS etc. This can also be used with baremetal Kubernetes clusters."
       }
     ],
     "highlight_products": {
@@ -67,16 +73,16 @@
       "url": "https://appscode.com/contact/",
       "products": [
         {
-          "name": "Voyager",
-          "logo": "/assets/images/products/voyager/voyager-icon.svg",
-          "summary": "Voyager is a HAProxy backed secure L7 and L4 ingress controller for Kubernetes. This can be used with any Kubernetes cloud providers including AWS, GCE, GKE, AZURE, ACS etc. This can also be used with baremetal Kubernetes clusters.",
-          "url": "https://voyagermesh.com/"
+          "name": "Guard",
+          "logo": "/assets/images/products/guard/guard-512x512.svg",
+          "summary": "Guard by AppsCode is a Kubernetes Webhook Authentication server. Using guard, you can log into your Kubernetes cluster using a Github or Google authentication token. Guard also sets authenticated user’s groups to their Github teams or Google groups. This allows cluster administrators to setup RBAC rules based on membership in Github teams or Google groups.",
+          "url": "https://kubeguard.dev/"
         },
         {
-          "name": "Kubeform",
-          "logo": "/assets/images/products/kubeform/kubeform-icon.svg",
-          "summary": "Kubeform is a Kubernetes controller for provisioning and managing cloud or on-prem resources using terraform providers. It provides Kubernetes CRDs for Terraform resources so that you can manage any cloud infrastructure in a Kubernetes native way.",
-          "url": "https://kubeform.com/"
+          "name": "Config Syncer",
+          "logo": "/assets/images/products/configsyncer/configsyncer-512x512.svg",
+          "summary": "Config Syncer (fka Kubed) by AppsCode is a Kubernetes Cluster Operator Daemon. From here you can learn all about Config Syncer’s architecture and how to deploy and use Config Syncer.",
+          "url": "https://config-syncer.com/"
         }
       ]
     },
@@ -120,23 +126,6 @@
         "illustration": "/assets/images/products/stash/stash-hero.png"
       },
       {
-        "id": "manage-infrastructure",
-        "product": "Kubeform",
-        "use_case": "MANAGE INFRASTRUCTURE",
-        "logo": "assets/images/products/kubeform/kubeform.png",
-        "title": "Provision cloud resources using Kubernetes CRDs & Terraform",
-        "summary": "Kubeform is a Kubernetes controller for provisioning and managing cloud or on-prem resources using terraform providers. Kubeform provides Kubernetes CRDs for Terraform resources so that you can manage any cloud infrastructure in a Kubernetes native way.",
-        "url": "http://kubeform.com",
-        "features": [
-          "Infrastructure as Code",
-          "Built on Terrafrom",
-          "Native Kubernetes Support",
-          "Supports Multiple Cloud Platform",
-          "Unleash Developer Velocity"
-        ],
-        "illustration": "/assets/images/products/kubeform/kubeform-hero.png"
-      },
-      {
         "id": "networking",
         "product": "voyager",
         "use_case": "NETWORKING",
@@ -170,6 +159,28 @@
           "Database Secret Engine"
         ],
         "illustration": "/assets/images/products/kubevault/kubevault-hero.png"
+      }
+    ],
+    "resources": [
+      {
+        "label": "Blog",
+        "URL": "https://appscode.com/blog/" 
+      },
+      {
+        "label": "Docs",
+        "URL": "https://appscode.com/docs/" 
+      },
+      {
+        "label": "Webinars",
+        "URL": "https://www.youtube.com/watch?v=4lkBt5UUEAQ&list=PLoiT1Gv2KR1hAtDDW7fHEi-s2y2H3DOgx" 
+      },
+      {
+        "label": "Learn",
+        "URL": "https://learn.appscode.com/learn/" 
+      },
+      {
+        "label": "Demos",
+        "URL": "https://www.youtube.com/c/AppsCodeInc" 
       }
     ],
     "subscription": {
