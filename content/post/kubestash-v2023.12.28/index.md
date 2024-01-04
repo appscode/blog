@@ -7,10 +7,10 @@ authors:
 tags:
 - backup
 - cli
-- kubernetes
-- restore
-- kubestash
 - disaster-recovery
+- kubernetes
+- kubestash
+- restore
 ---
 
 We are pleased to announce the release of `KubeStash v2023.12.28`, packed with new features and important bug fixes. You can check out the full changelog [here](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2023.12.28/README.md). 
@@ -83,7 +83,7 @@ In this post, we'll highlight the key updates.
    
     Lets, the applied BackupConfiguration is configured with multiple sessions. Now you want to trigger backup for specific sessions. To do so, you have to provide comma seperated sessions name using `sessions` flag.
     ```bash
-   kubectl kubestash trigger -n <namespace> <backupconfiguration-name> --sessions=<sessions-name>
+   $ kubectl kubestash trigger -n <namespace> <backupconfiguration-name> --sessions=<sessions-name>
     ```
    
 4. You can now apply the Pod Security Policy profile to `Restricted`. This profile is a highly restrictive policy aligned with best practices for hardening Pods. Learn more about pod security [HERE](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted). You can restrict a namespace by the following command:
