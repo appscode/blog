@@ -271,8 +271,8 @@ spec:
 Now after creating this archiver CR, if we create a MySQL with `archiver: "true"` label, in the same namespace (as per the double-optin configured in `.spec.databases` field), The KubeDB operator will start doing 3 separate things:
 - Create 2 `Repository` with convention `<db-name>-full` & `<db-name>-manifest`.
 - Take full backup in every day at 3:30 (`.spec.fullBackup.scheduler`) to `<db-name>-full` repository.
-- Take manifest backup in every day at 3:30 (`.spec.manifestBackup.scheduler`) to `<db-name>-manifest`.
-- Start syncing mysql wal files to the directory `<db-name>/<db-namespace>/binlog`.
+- Take manifest backup in every day at 3:30 (`.spec.manifestBackup.scheduler`) to `<db-name>-manifest` repository.
+- Start syncing mysql wal files to the directory `.spec.backupStorage.subDir/<db-namespace>/<db-name>/binlog`.
 
 
 For point-in-time-recovery, all you need is to set the repository names & set a `recoveryTimestamp` in `mysql.spec.init.archiver` section.
