@@ -13,12 +13,52 @@ tags:
 - restore
 ---
 
-We are pleased to announce the release of `KubeStash v2023.12.28`, packed with new features and important bug fixes. You can check out the full changelog [here](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2023.12.28/README.md). 
+We are pleased to announce the release of `KubeStash v2023.12.28`, packed with new features and important bug fixes. You can check out the full changelog [HERE](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2023.12.28/README.md). 
 In this post, we'll highlight the key updates.
 
 ### New Features
 
-1. You can now restore manifest of `MySQL` components ([#89](https://github.com/kubestash/apimachinery/pull/89)). Here is an example how to configure `RestoreSession` to restore manifest of `MySQL` components:
+1. You can now backup and restore the manifests of KubeDB managed `MySQL` database ([#89](https://github.com/kubestash/apimachinery/pull/89)). 
+   
+   Here is an example how to configure `BackupConfiguration` to backup manifests of KubeDB managed `MySQL` database:
+   ```yaml
+   apiVersion: core.kubestash.com/v1alpha1
+   kind: BackupConfiguration
+   metadata:
+     name: mysql-manifest-backup
+     namespace: demo
+   spec:
+     target:
+       apiGroup: kubedb.com
+       kind: MySQL
+       namespace: demo
+       name: sample-mysql
+     sessions:
+     - name: manifest-backup
+       sessionHistoryLimit: 3
+       scheduler:
+         schedule: "*/10 * * * *"
+         successfulJobsHistoryLimit: 1
+         failedJobsHistoryLimit: 1
+         jobTemplate:
+           backoffLimit: 1
+       repositories:
+       - name: mysql-repo
+         directory: /manifest/sample-mysql
+         encryptionSecret:
+           name: mysql-encry-secret
+           namespace: demo
+       addon:
+         name: mysql-addon
+         tasks:
+         - name: ManifestBackup
+       failurePolicy: Retry
+       retryConfig:
+         maxRetry: 2
+         delay: 1m
+   ```
+
+   Here is an example how to configure `RestoreSession` to restore manifests of KubeDB managed `MySQL` database:
 
     ```yaml
     apiVersion: core.kubestash.com/v1alpha1
@@ -81,50 +121,15 @@ In this post, we'll highlight the key updates.
 
 3. You can now trigger backup for specific sessions using KubeStash CLI ([#10](https://github.com/kubestash/cli/pull/10)). Here is an example:
    
-    Lets, the applied BackupConfiguration is configured with multiple sessions. Now you want to trigger backup for specific sessions. To do so, you have to provide comma seperated sessions name using `sessions` flag.
+    Assume that the applied `BackupConfiguration` is configured with multiple sessions. Now you want to trigger backup for specific sessions. To do so, you have to provide comma (,) separated sessions name using `sessions` flag.
     ```bash
    $ kubectl kubestash trigger -n <namespace> <backupconfiguration-name> --sessions=<sessions-name>
     ```
-   
-4. You can now apply the Pod Security Policy profile to `Restricted`. This profile is a highly restrictive policy aligned with best practices for hardening Pods. Learn more about pod security [HERE](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted). You can restrict a namespace by the following command:
 
-   `kubectl label namespace <namespace_name> pod-security.kubernetes.io/enforce=restricted`
-
-    Use below command to install KubeStash enforcing Pod Security Policy profile to `Restricted`:
-    ```bash 
-    helm install kubestash oci://ghcr.io/appscode-charts/kubestash \
-          --version v2023.12.28 \
-          --namespace kubestash --create-namespace \
-          --set-file global.license=<LICENCE_FILE> \
-          --wait --burst-limit=10000 --debug \
-          --set kubestash-operator.operator.securityContext.seccompProfile.type=RuntimeDefault \
-          --set kubestash-operator.rbacproxy.securityContext.seccompProfile.type=RuntimeDefault \
-          --set kubestash-operator.cleaner.securityContext.seccompProfile.type=RuntimeDefault
-    ```
-   
-    To enforce Pod Security Policy profile to `Restricted` in storage initialize/cleanup jobs or in backup/restore jobs, add Pod Security and Container Security to BackupStorage, BackupConfiguration and RestoreSession as below:
-
-    Pod Security:
-    ```yaml
-    securityContext:
-      runAsUser: 65535
-      runAsNonRoot: true
-      seccompProfile:
-        type: RuntimeDefault
-    ```
-    Container Security:
-    ```yaml
-    securityContext:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-        - ALL
-    ```
-
-### Improvements & bug fixes
-- Now you can create multiple `RetentionPolicy` along with one default `RetentionPolicy` in a namespace. There can be maximum one default `RetentionPolicy` in each namespace.
+### Improvements & Bug Fixes
+- Fixed a bug that was preventing the creation of multiple Retention Policies when a default one exists in a namespace.
 - Fixed a bug in validation for selector type usage policy.
-- Resolved addon version for MySQL `8.1.0` and `8.2.0`.
+- Fixed a bug that was causing an "addon not found" error for MySQL versions `8.1.0` and `8.2.0`.
 
 
 ## What Next?
