@@ -1,3 +1,18 @@
+---
+title: Postgres WAL archiving using NFS
+date: "2024-01-05"
+weight: 25
+authors:
+- Sourav Biswas
+tags:
+- cloud-native
+- database
+- elasticsearch
+- kubedb
+- kubernetes
+- postgresql
+---
+
 ## PITR using NFS server as a backend
 
 ### Overview
