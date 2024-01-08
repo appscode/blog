@@ -18,7 +18,7 @@ tags:
 ### Overview
 
 KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases that KubeDB supports are MongoDB, Elasticsearch, MySQL, Kafka, MariaDB, Redis, PostgreSQL, ProxySQL, Percona XtraDB, Memcached and PgBouncer. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/).
-In this tutorial we will use NFS server as a backend to perform Point In Time Recovery for Postgresql database.
+In this tutorial we will use NFS server as a storage backend to perform Point In Time Recovery for Postgresql database.
 
 Before begin, we need to get a license for Kubedb products.
 ### Get Cluster ID
@@ -99,28 +99,9 @@ helm upgrade -i kubedb kubedb-v2023.12.28.tgz \
 
 ![kubedb image](kubedb.png)
 
-### Install VolumeSnapshotter
-If your cluster already have a volume-snapshotter available, You don't need to follow this step.
-Otherwise, You need to install an external-snapshotter to take volume snapshot.
 
-clone https://github.com/kubernetes-csi/external-snapshotter/tree/release-5.0
-
-or 
-
-wget https://github.com/kubernetes-csi/external-snapshotter/archive/refs/tags/v5.0.1.zip
-
-```bash
-unzip v5.0.1.zip
-cd external-snapshotter-5.0.1
-
-kubectl kustomize client/config/crd | kubectl create -f -
-kubectl -n kube-system kustomize deploy/kubernetes/snapshot-controller | kubectl create -f -
-kubectl kustomize deploy/kubernetes/csi-snapshotter | kubectl create -f -
-```
-
-
-### Install Longhorn
-You will need to install longhorn for provisioning volume snapshot. If you already have a volume snapshot provisioner available in your cluster, ignore this step.
+### Install [Longhorn](https://longhorn.io/)
+Longhorn is a distributed block storage system for Kubernetes that manages persistent storage.
 
 Add Longhorn chart repository.
 
@@ -142,6 +123,26 @@ kubectl create namespace longhorn-system
 helm install longhorn longhorn/longhorn --namespace longhorn-system
 ```
 
+
+### Install External Snapshotter
+CSI (Container Storage Interface) external snapshotter is a component used in Kubernetes for managing volume snapshots. It allows external storage systems (such as Longhorn) to integrate with Kubernetes Volume Snapshot feature.
+
+clone https://github.com/kubernetes-csi/external-snapshotter/tree/release-5.0
+
+or
+
+wget https://github.com/kubernetes-csi/external-snapshotter/archive/refs/tags/v5.0.1.zip
+
+```bash
+unzip v5.0.1.zip
+cd external-snapshotter-5.0.1
+
+kubectl kustomize client/config/crd | kubectl create -f -
+kubectl -n kube-system kustomize deploy/kubernetes/snapshot-controller | kubectl create -f -
+kubectl kustomize deploy/kubernetes/csi-snapshotter | kubectl create -f -
+```
+
+
 ### Create volumeSnapshotClass
 
 Apply this yaml to create a volumeSnapShotClass. This will be used to create volume snapshot.
@@ -155,6 +156,7 @@ deletionPolicy: Delete
 parameters:
   type: snap
 ```
+
 ### Install CSI driver for NFS
 Install CSI driver for creating nfs volume from [here](https://github.com/kubernetes-csi/csi-driver-nfs/tree/master/charts).
 
