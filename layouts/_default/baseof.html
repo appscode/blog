@@ -127,6 +127,8 @@
             <div class="navbar-brand">
               <a href="{{.Site.Params.domain_appscode}}">
                 <img src="/blog/{{$.Site.Data.products.appscode.logoWhite.src}}"
+                  alt="{{$.Site.Data.products.appscode.logo.alt}}" class="white-logo"/>
+                  <img src="/blog/{{$.Site.Data.products.appscode.logo.src}}" class="color-logo"
                   alt="{{$.Site.Data.products.appscode.logo.alt}}" />
               </a>
               <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
@@ -432,9 +434,9 @@
               <!-- navbar items end -->
               <div class="buttons">
                 <a id="ac-sign-in-button" href="https://accounts.appscode.com/user/login"
-                class="button ac-button is-loading"><span>SIGN IN</span></a>
+                class="button is-primary ac-button is-loading"><span>SIGN IN</span></a>
                 <a href="{{ $.Site.Params.domain_appscode }}/contact/"
-                class="button ac-button is-white">CONTACT
+                class="button ac-button is-primary is-outlined">CONTACT
                 SALES</a>
               </div>
              </div>

@@ -1,9 +1,15 @@
 // navbar area JS v.2022 start
 const navItems = document.querySelectorAll(".navbar-appscode .nav-item");
 
+const navbarArea = document.querySelector(".navbar-area");
+
+
+
 navItems.forEach(navItem => {
   const item = navItem.querySelector('.link');
   item.addEventListener('click', function (el) {
+
+    
 
     // to remove active class from previously selected navItem
     const selectedNav = document.querySelector(".nav-item.is-active");
@@ -20,15 +26,19 @@ navItems.forEach(navItem => {
 
     function handleDarkBodyClickEvent(el) {
       el.target.classList.remove('is-show')
+      navbarArea.classList.remove("has-background-white");
       const selectedNavItem = document.querySelector(".nav-item.is-active");
       selectedNavItem ? selectedNavItem.classList.toggle('is-active') : null;
     }
 
     if (hasActiveClass && darkBodyEl.classList.contains("is-show")) {
       darkBodyEl.classList.toggle("is-show");
+      navbarArea.classList.toggle("has-background-white");
+
       darkBodyEl.removeEventListener('click', handleDarkBodyClickEvent);
     } else if (!hasActiveClass && !darkBodyEl.classList.contains("is-show") && !!navItem.querySelector('.mega-menu-wrapper')) {
       darkBodyEl.classList.toggle("is-show");
+      navbarArea.classList.toggle("has-background-white");
       darkBodyEl.addEventListener('click', handleDarkBodyClickEvent);
     }
   })

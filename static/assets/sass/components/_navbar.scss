@@ -2,6 +2,57 @@
 .navbar-area {
   position: relative;
   z-index: 99;
+  .color-logo{
+    display: none;
+  }
+  .white-logo {
+    display: flex;
+  }
+
+  .button.is-primary.ac-button{
+    background-color: #fff;
+    color: $primary;
+    &.is-outlined {
+      color: $white-100;
+      border-color: $white-100;
+    }
+  }
+  &.has-background-white {
+    .button.is-primary.ac-button{
+      background-color: $primary;
+      color: $white-100;
+      &:hover{
+        box-shadow: 2px 4px 13px rgba(20,14,48,.336)!important;
+      }
+      .tag{
+        background-color: #fff !important;
+        color: $primary !important;
+      }
+      &.is-outlined {
+        color: $primary;
+        border-color: $primary;
+        background-color: transparent !important;
+      }
+    }
+    .navbar-burger{
+      color: $color-heading !important;
+    }
+    .white-logo {
+      display: none;
+    }
+    .color-logo{
+      display: flex;
+    }
+    .navbar-appscode{
+      ul{
+        .nav-item{
+          .link {
+            color: $color-heading !important;
+          }
+        }
+      }
+    }
+  }
 }
 .navbar-appscode-wrapper {
   border-bottom: 1px solid rgba(255,255,255, 0.2);
@@ -122,7 +173,7 @@
         cursor: pointer;
         margin: 0;
         padding: 0.5rem 0;
-        transition: 0.3s ease-in-out;
+        // transition: 0.3s ease-in-out;
         position: relative;
         z-index: 1;
 
@@ -133,9 +184,12 @@
         &:hover {
           color: $primary-90;
         }
+        @media (max-width: 1023.98px){
+          color: $color-heading;
+        }
 
         .fa {
-          transition: 0.3s ease-in-out;
+          // transition: 0.3s ease-in-out;
           margin-left: 0.625rem;
         }
 
@@ -752,7 +806,7 @@
     font-size: 0.875rem;
     width: 270px;
     padding: 0.2rem 0.875rem;
-
+2
     &:focus {
       border: none;
       outline: none;
@@ -828,6 +882,13 @@
   height: 30px;
   width: 30px;
   border-radius: 4px;
+  color: $white-100 !important;
+  &:hover{
+    color: $white-100;
+  }
+  &:focus {
+    color: $white-100;
+  }
   &.is-active {
     i.fa {
       transform: rotate(-180deg);
