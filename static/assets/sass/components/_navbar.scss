@@ -28,6 +28,15 @@
   }
 
   &.has-background-white {
+    .whats-new{
+      color: $white-100 !important;
+      &::before{
+        background: $primary !important;
+      }
+      &::after{
+        background: $primary !important;
+      }
+    }
     .button.is-primary.ac-button {
       background-color: $primary;
       color: $white-100;
@@ -127,6 +136,15 @@
       @media (min-width: 0px) and (max-width: 1023px) {
         align-items: flex-start;
         gap: 0;
+        .whats-new{
+          color: $white-100 !important;
+          &::before{
+            background: $primary !important;
+          }
+          &::after{
+            background: $primary !important;
+          }
+        }
       }
     }
 
@@ -225,7 +243,8 @@
           top: -10px;
           right: -30px;
           font-size: 0.8rem;
-          color: $white-100;
+          background-color: $white-100;
+          color: $primary;
           padding: 0.2rem 0.3rem;
           line-height: 1.2;
           display: none;
@@ -240,7 +259,7 @@
             display: block;
             width: 2rem;
             height: 1rem;
-            background: $primary;
+            background: $white-100;
             border-radius: 2px;
             animation: pulse-border 1500ms ease-out infinite;
           }
@@ -255,7 +274,7 @@
             display: block;
             width: 2rem;
             height: 1rem;
-            background: $primary;
+            background: $white-100;
             transition: all 200ms;
           }
 
