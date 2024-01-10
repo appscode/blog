@@ -17,7 +17,7 @@
 
     &.is-loading {
       &:after {
-        border-color: transparent transparent $primary $primary !important;
+        border-color: transparent transparent $white-100 $white-100 !important;
       }
     }
 
@@ -28,12 +28,24 @@
   }
 
   &.has-background-white {
-    .whats-new{
+    .navbar-right {
+      .navbar-right-group {
+        .buttons {
+          .button {
+            .tag {
+              color: $white-100 !important;
+              background-color: $primary !important;
+            }
+          }
+        }
+      }
+    }
+    .whats-new {
       color: $white-100 !important;
-      &::before{
+      &::before {
         background: $primary !important;
       }
-      &::after{
+      &::after {
         background: $primary !important;
       }
     }
@@ -42,12 +54,7 @@
       color: $white-100;
 
       &:hover {
-        box-shadow: 2px 4px 13px rgba(20, 14, 48, .336) !important;
-      }
-
-      .tag {
-        background-color: #fff !important;
-        color: $primary !important;
+        box-shadow: 2px 4px 13px rgba(20, 14, 48, 0.336) !important;
       }
 
       &.is-outlined {
@@ -100,8 +107,6 @@
     }
   }
 
-
-
   .navbar-left {
     display: flex;
     align-items: center;
@@ -136,12 +141,13 @@
       @media (min-width: 0px) and (max-width: 1023px) {
         align-items: flex-start;
         gap: 0;
-        .whats-new{
+
+        .whats-new {
           color: $white-100 !important;
-          &::before{
+          &::before {
             background: $primary !important;
           }
-          &::after{
+          &::after {
             background: $primary !important;
           }
         }
@@ -160,8 +166,8 @@
           }
 
           .tag {
-            background-color: $primary;
-            color: $white-100;
+            background-color: $white-100;
+            color: $primary;
           }
         }
       }
@@ -178,6 +184,11 @@
           .button {
             width: 100%;
             margin-right: 0;
+
+            .tag {
+              background-color: $primary;
+              color: $white-100;
+            }
           }
         }
       }
@@ -280,12 +291,14 @@
 
           @keyframes pulse-border {
             0% {
-              transform: translateX(-50%) translateY(-50%) translateZ(0) scale(1);
+              transform: translateX(-50%) translateY(-50%) translateZ(0)
+                scale(1);
               opacity: 1;
             }
 
             100% {
-              transform: translateX(-50%) translateY(-50%) translateZ(0) scale(1.5);
+              transform: translateX(-50%) translateY(-50%) translateZ(0)
+                scale(1.5);
               opacity: 0;
             }
           }
@@ -784,7 +797,6 @@
     }
 
     .dropdown-menu {
-
       /* ===== Scrollbar CSS ===== */
       /* Firefox */
       * {
@@ -1038,12 +1050,7 @@ Responsive Classes
         color: $white-100;
 
         &:hover {
-          box-shadow: 2px 4px 13px rgba(20, 14, 48, .336) !important;
-        }
-
-        .tag {
-          background-color: #fff !important;
-          color: $primary !important;
+          box-shadow: 2px 4px 13px rgba(20, 14, 48, 0.336) !important;
         }
 
         &.is-outlined {
@@ -1196,7 +1203,8 @@ Responsive Classes
 // }
 
 // Medium devices (tablets, 769px and up)
-@media (min-width: 769px) and (max-width: 1023.98px) {}
+@media (min-width: 769px) and (max-width: 1023.98px) {
+}
 
 // Large devices (desktops, 1024px and up)
 @media (min-width: 1024px) and (max-width: 1215px) {
@@ -1224,7 +1232,7 @@ Responsive Classes
       }
 
       .button.ac-button {
-        padding: .5rem 1rem;
+        padding: 0.5rem 1rem;
       }
     }
 
