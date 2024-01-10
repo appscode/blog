@@ -89,6 +89,13 @@ KubeDB is now a Crossplane distribution for Hyper Clouds. Crossplane connects yo
 Link: https://appscode.com/blog/post/crossplane-provider-aws/
 
 
+#### Update Version of MariaDB Database in Azure Kubernetes Service (AKS)
+
+KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to Update Version of MariaDB Database in Azure Kubernetes Service (AKS).
+
+Link: https://appscode.com/blog/post/update-version-of-mariadb-database-in-aks/
+
+
 #### Monitor MongoDB with Grafana Dashboard in Amazon Elastic Kubernetes Service (Amazon EKS)
 
 KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud. This blog shows how to monitor MongoDB With Grafana dashboard in Amazon Elastic Kubernetes Service (Amazon EKS).
