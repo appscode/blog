@@ -1,3 +1,139 @@
+// navbar area JS v.2022 start
+const navItems = document.querySelectorAll(".navbar-appscode .nav-item");
+
+const navbarArea = document.querySelector(".navbar-area");
+
+
+
+navItems.forEach(navItem => {
+  const item = navItem.querySelector('.link');
+  item.addEventListener('click', function (el) {
+
+    
+
+    // to remove active class from previously selected navItem
+    const selectedNav = document.querySelector(".nav-item.is-active");
+    if (selectedNav && selectedNav !== item.parentElement) {
+      selectedNav.classList.toggle('is-active')
+    }
+
+    // handle selected navItem class
+    const hasActiveClass = navItem.classList.contains("is-active");
+    navItem.classList.toggle('is-active')
+
+    // handle background dark-shadow of navItem
+    const darkBodyEl = document.querySelector(".modal-backdrop");
+
+    function handleDarkBodyClickEvent(el) {
+      el.target.classList.remove('is-show')
+      navbarArea.classList.remove("has-background-white");
+      const selectedNavItem = document.querySelector(".nav-item.is-active");
+      selectedNavItem ? selectedNavItem.classList.toggle('is-active') : null;
+    }
+
+    if (hasActiveClass && darkBodyEl.classList.contains("is-show")) {
+      darkBodyEl.classList.toggle("is-show");
+      navbarArea.classList.toggle("has-background-white");
+
+      darkBodyEl.removeEventListener('click', handleDarkBodyClickEvent);
+    } else if (!hasActiveClass && !darkBodyEl.classList.contains("is-show") && !!navItem.querySelector('.mega-menu-wrapper')) {
+      darkBodyEl.classList.toggle("is-show");
+      navbarArea.classList.toggle("has-background-white");
+      darkBodyEl.addEventListener('click', handleDarkBodyClickEvent);
+    }
+  })
+})
+
+// mega menu active class
+var navbarItems = document.querySelectorAll(".navbar-item");
+navbarItems.forEach((navbarItem) => {
+  navbarItem.addEventListener("click", function () {
+    var megamenues = document.querySelectorAll(
+      ".navbar-item > .ac-megamenu , .navbar-item > .ac-dropdown"
+    );
+    // remove is-active class from all the megamenus except the navbar item that was clicked
+    megamenues.forEach((megamenu) => {
+      // toggle classes
+      if (megamenu.parentElement === navbarItem)
+        megamenu.classList.toggle("is-active");
+      else megamenu.classList.remove("is-active");
+    });
+  });
+});
+
+// Responsive menu back button
+const backButtonAll = document.querySelectorAll(".back-button");
+// create click event for all back button	
+Array.from(backButtonAll).forEach((el) => {
+  el.addEventListener("click", () => {
+    // closeset nav item ancestor	
+    const activeNavElement = el.closest(".nav-item.is-active");
+    if (activeNavElement) activeNavElement.classList.remove("is-active");
+  })
+});
+// navbar area JS v.2022 end
+
+// responsive navbar area
+// elements selector where toggle class will be added
+const selctorsForResponsiveMenu = [
+  ".left-sidebar-wrapper",
+  ".navbar-appscode.documentation-menu > .navbar-right",
+  ".right-sidebar",
+  ".sidebar-search-area"
+];
+
+// toggle classes for responsive buttons
+const toggleClassesForResponsiveMenu = ["is-block", "is-visible", "is-block", "right-0"];
+// All responsive menu buttons
+const responsiveMenus = document.querySelectorAll(".responsive-menu > .is-flex.is-justify-content-space-between > .button");
+// iterate thorugh the menus to handle click event
+Array.from(responsiveMenus).forEach((menu, idx) => {
+  menu.addEventListener("click", function () {
+    const toggleElement = document.querySelector(selctorsForResponsiveMenu[idx]);
+    if (toggleElement) {
+      // toggle active menu class
+      toggleElement.classList.toggle(toggleClassesForResponsiveMenu[idx]);
+      if (toggleElement.classList.contains(toggleClassesForResponsiveMenu[idx])) {
+        const backButtonElement = toggleElement.querySelector(".back-button");
+
+        function handleClick() {
+          toggleElement.classList.remove(toggleClassesForResponsiveMenu[idx]);
+          // remove event listener on back button click
+          backButtonElement.removeEventListener("click", handleClick);
+        }
+
+        backButtonElement.addEventListener("click", handleClick);
+
+      }
+    }
+
+    const modalBackdropElement = document.querySelector(".modal-backdrop.is-show");
+    // if modal backdrop element is visible then hide it
+    if (modalBackdropElement) {
+      modalBackdropElement.classList.remove("is-show")
+      document.querySelector(header).style.backgroundColor = "#ffffff";
+    }
+
+    const navItem = document.querySelector(".nav-item.is-active");
+    // if modal backdrop element is visible then hide it
+    if (navItem) {
+      navItem.classList.remove("is-active")
+    }
+
+    // remove previous active menu
+    selctorsForResponsiveMenu.forEach((el, selectorIdx) => {
+      if (selectorIdx !== idx) {
+        const selectorElement = document.querySelector(selctorsForResponsiveMenu[selectorIdx]);
+        if (selectorElement.classList.contains(toggleClassesForResponsiveMenu[selectorIdx])) {
+          selectorElement.classList.remove(toggleClassesForResponsiveMenu[selectorIdx])
+        }
+      }
+    });
+  });
+});
+// =====================================
+
+
 document.addEventListener("DOMContentLoaded", () => {
   // AOS initialization
   AOS.init({
