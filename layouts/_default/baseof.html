@@ -1,5 +1,5 @@
 
-{{ $p := (index .Site.Data.products "bytebuilders") }}
+{{ $p := (index .Site.Data.products "appscode") }}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -69,11 +69,15 @@
   <meta property="og:site_name" content="{{ $p.fullname }}">
   <meta property="og:type" content="article">
   <!-- animate css  -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" async />
   <!-- font-awesome css  -->
-  <link rel="stylesheet" href="{{.Site.Params.basePath}}assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="{{.Site.Params.basePath}}assets/css/font-awesome.min.css" defer/>
+   <!-- google fonts icon  -->
+   <link
+   href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+   rel="stylesheet">
   <!-- AOS css  -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" async>
   <!-- bulma css  -->
   <link rel="stylesheet" href="{{.Site.Params.basePath}}assets/css/bulma.min.css" />
   <!-- Custom CSS -->
@@ -110,19 +114,22 @@
   <!-- header-area start -->
   {{ block "header" . }}
   <header>
-
-    <!-- header--fixed -->
+    {{ block "header-top" . }}
+    <!-- new navbar area start  -->
     <div class="navbar-area">
-      <div class="navbar-appscode-wrapper">
-        <div class="navbar-appscode container">
+      <div class="navbar-appscode-wrapper ">
+        <!-- appscode navbar start  -->
+        {{ $currentPageType := cond (le (len (split (trim .Page.RelPermalink "/") "/")) 2) "products" "docs" }}
+        <div class="navbar-appscode container height-60">
 
           <div class="navbar-left">
+            <!-- brand logo  -->
             <div class="navbar-brand">
-              <a href="{{.Site.Params.domain_bytebuilders}}" class="is-flex gap-8">
-                <img src="https://cdn.appscode.com/images/products/appscode/appscode-logo-white.png" alt="img"
-                  loading="lazy"
-                  decoding="async" loading="lazy" decoding="async" />
-                  <span class="brand-tag">Blog</span>
+              <a href="{{.Site.Params.domain_appscode}}">
+                <img src="/blog/{{$.Site.Data.products.appscode.logoWhite.src}}"
+                  alt="{{$.Site.Data.products.appscode.logo.alt}}" class="white-logo"/>
+                  <img src="/blog/{{$.Site.Data.products.appscode.logo.src}}" class="color-logo"
+                  alt="{{$.Site.Data.products.appscode.logo.alt}}" />
               </a>
               <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
                 <span aria-hidden="true"></span>
@@ -130,40 +137,269 @@
                 <span aria-hidden="true"></span>
               </a>
             </div>
+            <!-- brand logo  -->
           </div>
 
+
           <div class="navbar-right">
-            <div class="is-flex is-align-items-center is-justify-content-space-between is-fullwidth">
-              <ul>
-                <!-- <li class="nav-item">
-                  <a href="{{.Site.Params.domain_marketplace}}" target="_blank" class="link">Marketplace</a>
-                </li> -->
+            <div class="is-flex is-justify-content-space-between is-fullwidth">
+              <!-- navbar items start -->
+              <ul class="navbar-left-group">
                 <li class="nav-item">
-                  <a href="{{.Site.Params.blog_url}}" target="_blank" class="link">Blog</a>
+                  <button class="link">Products <i class="fa fa-angle-down" aria-hidden="true"></i></button>
+                  <div class="mega-menu-wrapper">
+
+                    <!-- ac-grid-container -->
+                    <div class="mega-menu-inner container">
+                      <button class="button ac-button inline-button back-button"><span
+                          class="material-icons-outlined">arrow_back</span>Back</button>
+                      <!-- product start  -->
+                      <div class="product-menu">
+                        {{ range $item := $.Site.Data.config.productMenu.c0 }}
+                        {{ $p := (index $.Site.Data.products $item) }}
+                        <!-- single product start  -->
+                        <a class="single-product"
+                          href="{{ index $.Site.Params $p.website.domainKey}}{{ $p.website.path }}">
+                          <div class="product-logo">
+                            <img src="/blog/{{ $p.icon.src }}" alt="{{ $p.icon.alt }}">
+                          </div>
+                          <div class="product-info">
+                            <h6>{{ $p.name }}</h6>
+                            <p>{{ $p.tagline | plainify }}</p>
+                          </div>
+                          <div class="navigate-icon">
+                            <span class="material-icons">
+                              arrow_forward
+                            </span>
+                          </div>
+                        </a>
+                        <!-- single product end -->
+                        {{ end }}
+
+                        {{ range $item := $.Site.Data.config.productMenu.c1 }}
+                        {{ $p := (index $.Site.Data.products $item) }}
+                        <!-- single product start  -->
+                        <a class="single-product"
+                          href="{{ index $.Site.Params $p.website.domainKey}}{{ $p.website.path }}">
+                          <div class="product-logo">
+                            <img src="/blog/{{ $p.icon.src }}" alt="{{ $p.icon.alt }}">
+                          </div>
+                          <div class="product-info">
+                            <h6>{{ $p.name }}</h6>
+                            <p>{{ $p.tagline | plainify }}</p>
+                          </div>
+                          <div class="navigate-icon">
+                            <span class="material-icons">
+                              arrow_forward
+                            </span>
+                          </div>
+                        </a>
+                        <!-- single product end -->
+                        {{ end }}
+
+                        {{ range $item := $.Site.Data.config.productMenu.c2 }}
+                        {{ $p := (index $.Site.Data.products $item) }}
+                        <!-- single product start  -->
+                        <a class="single-product"
+                          href="{{ index $.Site.Params $p.website.domainKey}}{{ $p.website.path }}">
+                          <div class="product-logo">
+                            <img src="/blog/{{ $p.icon.src }}" alt="{{ $p.icon.alt }}">
+                          </div>
+                          <div class="product-info">
+                            <h6>{{ $p.name }}</h6>
+                            <p>{{ $p.tagline | plainify }}</p>
+                          </div>
+                          <div class="navigate-icon">
+                            <span class="material-icons">
+                              arrow_forward
+                            </span>
+                          </div>
+                        </a>
+                        <!-- single product end -->
+                        {{ end }}
+                      </div>
+                      <!-- product end -->
+
+                      <!-- product description start  -->
+                      {{ range $item := $.Site.Data.config.productMenu.c0 }}
+                      {{ $p := (index $.Site.Data.products $item) }}
+                      <!-- single product description start  -->
+                      <div class="product-description">
+                        <div class="brand">
+                          <img src="/blog/{{ $p.logo.src }}" alt="{{ $p.logo.alt }}">
+                        </div>
+
+                        <p>{{ $p.summary | safeHTML }}</p>
+
+                        {{ $showAllFeatures := "false" }}
+                        <ul class="features">
+                          {{ range $index, $item := $p.features }}
+                          {{ if lt $index 8 }}
+                          <li><span class="material-icons">task_alt</span>{{ $item.title }}</li>
+                          {{ end }}
+                          {{ end }}
+                        </ul>
+                        <!-- <a href="{{ index $.Site.Params $p.website.domainKey}}{{ $p.website.path }}"
+                     class="button ac-button inline-button">Learn More <span
+                       class="material-icons">arrow_forward</span></a> -->
+                      </div>
+                      <!-- single product description end  -->
+                      {{ end }}
+
+                      {{ range $item := $.Site.Data.config.productMenu.c1 }}
+                      {{ $p := (index $.Site.Data.products $item) }}
+                      <!-- single product description start  -->
+                      <div class="product-description">
+                        <div class="brand">
+                          <img src="/blog/{{ $p.logo.src }}" alt="{{ $p.logo.alt }}">
+                        </div>
+
+
+                        <p>{{ $p.summary | safeHTML }}</p>
+
+                        <ul class="features">
+                          {{ range $index, $item := $p.features }}
+                          {{ if lt $index 8 }}
+                          <li><span class="material-icons">task_alt</span>{{ $item.title }}</li>
+                          {{ end }}
+                          {{ end }}
+                        </ul>
+                        <!-- <a href="{{ index $.Site.Params $p.website.domainKey}}{{ $p.website.path }}"
+                     class="button ac-button inline-button">Learn More <span
+                       class="material-icons">arrow_forward</span></a> -->
+                      </div>
+                      <!-- single product description end  -->
+                      {{ end }}
+                      <!-- product description end -->
+
+                      {{ range $item := $.Site.Data.config.productMenu.c2 }}
+                      {{ $p := (index $.Site.Data.products $item) }}
+                      <!-- single product description start  -->
+                      <div class="product-description">
+                        <div class="brand">
+                          <img src="/blog/{{ $p.logo.src }}" alt="{{ $p.logo.alt }}">
+                        </div>
+
+
+                        <p>{{ $p.summary | safeHTML }}</p>
+
+                        <ul class="features">
+                          {{ range $index, $item := $p.features }}
+                          {{ if lt $index 8 }}
+                          <li><span class="material-icons">task_alt</span>{{ $item.title }}</li>
+                          {{ end }}
+                          {{ end }}
+                        </ul>
+                        <!-- <a href="{{ index $.Site.Params $p.website.domainKey}}{{ $p.website.path }}"
+                     class="button ac-button inline-button">Learn More <span
+                       class="material-icons">arrow_forward</span></a> -->
+                      </div>
+                      <!-- single product description end  -->
+                      {{ end }}
+                      <!-- product description end -->
+                    </div>
+                  </div>
+                  <script type="text/javascript">
+                    const productDescriptions = document.querySelectorAll(".product-description");
+                    const products = document.querySelectorAll(".single-product");
+
+                    productDescriptions[0].classList.add("is-block");
+                    products[0].classList.add('is-active');
+
+                    products.forEach((product, index) => {
+                      product.addEventListener("mouseover", function () {
+                        const currentActiveProduct = document.querySelector(".product-description.is-block");
+                        const currentActiveItem = document.querySelector(".single-product.is-active");
+
+                        currentActiveProduct.classList.remove("is-block");
+                        currentActiveItem.classList.remove('is-active');
+
+                        productDescriptions[index].classList.add("is-block");
+                        products[index].classList.add("is-active");
+                      });
+                    });
+                  </script>
+                </li>
+
+                <li class="nav-item">
+                  <button class="link">Resources <i class="fa fa-angle-down" aria-hidden="true"></i></button>
+                  <div class="mega-menu-wrapper">
+                    <!-- ac-grid-container -->
+                    <div class="mega-menu-inner container">
+                      <button class="button ac-button inline-button back-button"><span
+                          class="material-icons-outlined">arrow_back</span>Back to Resources</button>
+                      <!-- list menu items start  -->
+                      <div class="resources-list">
+                        <!-- single resources list  -->
+                        <div class="list-items">
+                          <h6>RESOURCES</h6>
+                          <ul>
+                            <!-- <li><a href="#" target="_blank">Forum</a></li> -->
+                            <li><a href="{{.Site.Params.blog_url}}">Blog</a></li>
+                            <li><a href="{{.Site.Params.docs_url}}">Docs</a></li>
+                            <li><a
+                                href="https://www.youtube.com/watch?v=4lkBt5UUEAQ&list=PLoiT1Gv2KR1hAtDDW7fHEi-s2y2H3DOgx"
+                                target="_blank">Webinars</a></li>
+                            <li><a href="{{.Site.Params.learn_url}}">Learn</a></li>
+                            <li><a href="{{.Site.Params.youtube_url}}" target="_blank">Demos</a></li>
+                            <!-- <li><a
+                                href="https://www.youtube.com/watch?v=xSq0OdlVLRI&list=PLoiT1Gv2KR1gE-WK7dIQ5bsJ_RAVZnzP8"
+                                target="_blank">Tutorials</a></li> -->
+                            <!-- <li><a href="#" target="_blank">Community</a></li> -->
+                          </ul>
+                        </div>
+                        <!-- single resources list  -->
+
+                        <!-- single resources list  -->
+                        <div class="list-items is-hidden">
+                          <h6>RECENT NEWS/BLOG</h6>
+                          {{- $pctx := . -}}
+                          {{- if .IsHome -}}{{ $pctx = .Site }}{{- end -}}
+                          {{- $pages := $pctx.RegularPages -}}
+
+
+                          <div class="press-wrapper">
+                            {{ range $idx, $p := $pages.ByDate.Reverse }}
+                            {{ if lt $idx 2 }}
+                            <!-- single press start  -->
+                            <a class="single-press">
+                              <div class="calender">
+                                <span class="date">{{ $p.Date.Format "2" }}</span>
+                                <span class="month">{{ $p.Date.Format "Jan" }}</span>
+                              </div>
+
+                              <div class="description">
+                                <h6>{{ $p.Title }}</h6>
+                                {{ range $author := $p.Params.authors }}
+                                <a href="/authors/{{ $author | urlize }}"
+                                  class="author"><span>by</span>{{ $author }}</a>
+                                {{ end }}
+                                <p class="is-ellipsis-2">{{ $p.Summary }}</p>
+                              </div>
+                            </a>
+                            <!-- <a class="single-press">
+                          <div class="description">
+                            <h6><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h6>
+                          </div>
+                        </a> -->
+                            <!-- single press end -->
+                            {{ end }}
+                            {{ end }}
+                            <a href="#" class="button ac-button inline-button">See More <span
+                                class="material-icons">arrow_forward</span></a>
+                          </div>
+                        </div>
+                        <!-- single resources list  -->
+                      </div>
+                      <!-- list menu items end -->
+                    </div>
+                  </div>
                 </li>
                 <li class="nav-item">
-                  <a href="{{.Site.Params.domain_appscode}}/about/" target="_blank" class="link">About Us</a>
-                </li>
-                  <li class="nav-item">
-                    <a href="{{.Site.Params.domain_appscode}}/contact/" target="_blank" class="link">Contact</a>
-                  </li>
-                <li class="nav-item">
-                  <a href="https://appscode.com/webinar" target="_blank" class="link">Webinar <span
-                      class="whats-new">New</span></a>
+                  <a href="/webinar" class="link">Webinar <span class="whats-new">New</span></a>
                 </li>
               </ul>
-              <div class="navbar-item p-0">
-                <div class="buttons">
-                  <a href="{{.Site.Params.domain_accounts}}/user/login"
-                    class="button ac-button is-primary is-uppercase">
-                    Sign in
-                  </a>
-                  <a href="{{.Site.Params.domain_accounts}}/user/sign_up"
-                    class="button ac-button is-secondary is-uppercase ml-0">
-                    Sign up
-                  </a>
-                </div>
-              </div>
+              <!-- navbar items end -->
               <!-- if webinar exist script  -->
               <script type="text/javascript">
                 (function () {
@@ -189,11 +425,70 @@
                 }());
               </script>
               <!-- navbar items start -->
+             <div class="navbar-right-group">
+              <ul>
+                <li class="nav-item">
+                  <a href="https://support.appscode.com" class="link">Support</a>
+                </li>
+              </ul>
+              <!-- navbar items end -->
+              <div class="buttons">
+                <a id="ac-sign-in-button" href="https://accounts.appscode.com/user/login"
+                class="button ac-button is-primary is-outlined is-loading"><span>SIGN IN</span></a>
+                <a href="{{ $.Site.Params.domain_appscode }}/contact/"
+                class="button is-primary ac-button">CONTACT
+                SALES</a>
+              </div>
+             </div>
+
             </div>
+            {{ $currentPageType := cond (le (len (split (trim .Page.RelPermalink "/") "/")) 2) "products" "docs" }}
+
           </div>
         </div>
+        <!-- appscode navbar end -->
       </div>
+
+      <!-- navbar product end -->
+
+      <script type="text/javascript">
+        const navbarRightAll = document.querySelectorAll(".navbar-right");
+        const navbarBurgerAll = document.querySelectorAll(".navbar-burger");
+
+        // Create event listeners for each navbar-burger button
+        Array.from(navbarBurgerAll).forEach((el, idx) => {
+          el.addEventListener("click", function () {
+
+            // Remove visible class from previous selected navbar right
+            Array.from(navbarRightAll).forEach((rightEl, rightElIdx) => {
+              if (idx !== rightElIdx && navbarRightAll[rightElIdx].classList.contains("is-visible")) {
+                navbarRightAll[rightElIdx].classList.remove("is-visible");
+                navbarBurgerAll[rightElIdx].classList.remove("is-active");
+              }
+            });
+
+            const modalBackdropElement = document.querySelector(".modal-backdrop");
+
+            // if modal backdrop element is visible then hide it
+            if (modalBackdropElement && modalBackdropElement.classList.contains("is-show")) {
+              modalBackdropElement.classList.remove("is-show")
+            }
+
+            // if any nav element is visible then hide it
+            const activeNavItem = document.querySelector(".nav-item.is-active");
+            if (activeNavItem && activeNavItem.classList.contains("is-active")) {
+              activeNavItem.classList.remove("is-active");
+            }
+
+            navbarRightAll[idx].classList.toggle("is-visible");
+          });
+        })
+      </script>
     </div>
+    <!-- new navbar area end -->
+    {{ end }}
+    <!-- navabar product end  -->
+  </div>
 
   </header>
   {{ end }}
@@ -230,7 +525,8 @@
   </section>
   {{ end }}
   <!-- cta-area end -->
-
+  <!-- is-show -->
+  <div class="modal-backdrop"></div>
   <!-- footer area start  -->
   {{ block "footer" . }}
   <footer class="footer-area">
@@ -406,6 +702,8 @@
   <script src="{{.Site.Params.basePath}}assets/js/search.js"></script>
   <!-- Main JS -->
   <script src="{{.Site.Params.basePath}}assets/js/main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  
 
   <!--Start of Tawk.to Script-->
   <script type="text/javascript">
@@ -425,5 +723,80 @@
   <noscript>
     <img src="https://ws.zoominfo.com/pixel/63344a0551510bcd6667d667" width="1" height="1" style="display: none;" alt="websights"/>
   </noscript>
+
+  <!-- console beta button  -->
+  <script>
+    const acSignInButton = document.getElementById('ac-sign-in-button')
+
+    // define Beta tag
+    const betaSpan = document.createElement("span")
+    betaSpan.innerText = "BETA"
+    betaSpan.classList.add('tag')
+
+    // function to get cookie
+    function getCookie(cname) {
+      let name = cname + "=";
+      let ca = document.cookie.split(';');
+      for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+
+    // function to fetch user
+    async function fetchUser() {
+      try {
+        const hostname = window.location.hostname;
+        const protocol = window.location.protocol;
+        const port = window.location.port;
+
+        const apiDomain = protocol + "//api." + hostname +  (port? ":3003" : "");
+        const consoleDomain = protocol + "//console." + hostname +  (port? ":5990" : "");
+
+        acSignInButton.classList.add('is-loading');
+
+        const response = await fetch(apiDomain + "/api/v1/user", {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "X-Csrf-Token": getCookie("_csrf"),
+            "X-Requested-With": "xmlhttprequest"
+          }
+        })
+
+        if(response.status === 200) {
+          // user is logged in
+          // show console link
+          acSignInButton.firstElementChild.innerHTML =  "CONSOLE"
+          acSignInButton.href = consoleDomain
+        }
+      } catch(error) {
+        console.log("Failed to fetch user", error)
+      }
+      // remove the loader
+      acSignInButton.classList.remove('is-loading');
+      // append beta tag
+      acSignInButton.appendChild(betaSpan);
+    }
+
+    window.addEventListener('load', function() {
+      jQuery('a:contains("KubeDB")').click(function() {
+        gtag('event', 'conversion', {
+          'send_to': 'AW-10933819571/j5J-CL2sweQDELOx090o'
+        });
+      })
+
+
+      // fetch if user is logged in or not
+      fetchUser();
+    });
+  </script>
+  
 </body>
 </html>

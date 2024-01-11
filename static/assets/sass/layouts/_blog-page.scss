@@ -7,6 +7,7 @@
   min-height: 62vh;
   display: flex;
   align-items: center;
+  background-color: #119551;
 
   &.author-page {
     min-height: auto;
@@ -111,7 +112,7 @@
 
 // section title small end
 .recent-blog-posts {
-  background-color: $primary-97;
+  background-color: $secondary-97;
   padding: 60px 0 70px;
 
   .button.is-mini {
@@ -425,7 +426,7 @@ ul.social-share-button {
 }
 
 .search-filter-area {
-  z-index: 99;
+  z-index: 9;
   background: #fff;
   box-shadow: 0 1px 3px rgba(15, 20, 40, 0.08);
   border-bottom: 1px solid $color-border;
@@ -860,6 +861,10 @@ ul.social-share-button {
 
         h1 {
           font-size: 28px;
+          margin-bottom: 8px;
+        }
+        p{
+          margin-bottom: 16px;
         }
 
         .social-share {
@@ -1246,7 +1251,7 @@ ul.social-share-button {
 
 @media (min-width: 2000px) {
   .hero-area-blog {
-    background-image: url(/blog/assets/images/bg-image/hero-bg-2x.png);
+    background-image: url(/blog/assets/images/bg-image/hero-bg-2x.jpg);
   }
 }
 
