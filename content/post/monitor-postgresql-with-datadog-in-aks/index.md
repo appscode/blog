@@ -3,22 +3,22 @@ title: Monitor KubeDB Managed PostgreSQL With Datadog in Azure Kubernetes Servic
 date: "2024-01-09"
 weight: 14
 authors:
-- Dipta Roy
+  - Dipta Roy
 tags:
-- aks
-- azure
-- cloud-native
-- dashboard
-- database
-- database-monitoring
-- datadog
-- dbaas
-- kubedb
-- kubernetes
-- microsoft-azure
-- postgres
-- postgresql
-- postgresql-metrics
+  - aks
+  - azure
+  - cloud-native
+  - dashboard
+  - database
+  - database-monitoring
+  - datadog
+  - dbaas
+  - kubedb
+  - kubernetes
+  - microsoft-azure
+  - postgres
+  - postgresql
+  - postgresql-metrics
 ---
 
 ## Introduction
@@ -26,12 +26,11 @@ tags:
 KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases supported by KubeDB include MongoDB, Elasticsearch, MySQL, MariaDB, Redis, PostgreSQL, Percona XtraDB, and Memcached. Additionally, KubeDB also supports ProxySQL, PgBouncer, and the streaming platform Kafka. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/).
 In this tutorial we will Monitor PostgreSQL With Datadog in Azure Kubernetes Service (AKS) Using KubeDB. We will cover the following steps:
 
-1) Install KubeDB
-2) Install Datadog
-3) Deploy PostgreSQL Cluster
-4) Read/Write Sample Data
-5) Monitor PostgreSQL with Datadog
-
+1. Install KubeDB
+2. Install Datadog
+3. Deploy PostgreSQL Cluster
+4. Read/Write Sample Data
+5. Monitor PostgreSQL with Datadog
 
 ### Get Cluster ID
 
@@ -55,28 +54,28 @@ Now, let's install `KubeDB`.
 
 ```bash
 $ helm search repo appscode/kubedb
-NAME                              	CHART VERSION	APP VERSION	DESCRIPTION                                       
+NAME                              	CHART VERSION	APP VERSION	DESCRIPTION
 appscode/kubedb                   	v2023.12.28  	v2023.12.28	KubeDB by AppsCode - Production ready databases...
 appscode/kubedb-autoscaler        	v0.25.0      	v0.25.0    	KubeDB Autoscaler by AppsCode - Autoscale KubeD...
 appscode/kubedb-catalog           	v2023.12.28  	v2023.12.28	KubeDB Catalog by AppsCode - Catalog for databa...
 appscode/kubedb-community         	v0.24.2      	v0.24.2    	KubeDB Community by AppsCode - Community featur...
-appscode/kubedb-crds              	v2023.12.28  	v2023.12.28	KubeDB Custom Resource Definitions                
-appscode/kubedb-dashboard         	v0.16.0      	v0.16.0    	KubeDB Dashboard by AppsCode                      
+appscode/kubedb-crds              	v2023.12.28  	v2023.12.28	KubeDB Custom Resource Definitions
+appscode/kubedb-dashboard         	v0.16.0      	v0.16.0    	KubeDB Dashboard by AppsCode
 appscode/kubedb-enterprise        	v0.11.2      	v0.11.2    	KubeDB Enterprise by AppsCode - Enterprise feat...
 appscode/kubedb-grafana-dashboards	v2023.12.28  	v2023.12.28	A Helm chart for kubedb-grafana-dashboards by A...
 appscode/kubedb-kubestash-catalog 	v2023.12.28  	v2023.12.28	KubeStash Catalog by AppsCode - Catalog of Kube...
-appscode/kubedb-metrics           	v2023.12.28  	v2023.12.28	KubeDB State Metrics                              
+appscode/kubedb-metrics           	v2023.12.28  	v2023.12.28	KubeDB State Metrics
 appscode/kubedb-one               	v2023.12.28  	v2023.12.28	KubeDB and Stash by AppsCode - Production ready...
 appscode/kubedb-ops-manager       	v0.27.0      	v0.27.0    	KubeDB Ops Manager by AppsCode - Enterprise fea...
-appscode/kubedb-opscenter         	v2023.12.28  	v2023.12.28	KubeDB Opscenter by AppsCode                      
+appscode/kubedb-opscenter         	v2023.12.28  	v2023.12.28	KubeDB Opscenter by AppsCode
 appscode/kubedb-provider-aws      	v2023.12.28  	v0.2.0     	A Helm chart for KubeDB AWS Provider for Crossp...
 appscode/kubedb-provider-azure    	v2023.12.28  	v0.2.0     	A Helm chart for KubeDB Azure Provider for Cros...
 appscode/kubedb-provider-gcp      	v2023.12.28  	v0.2.0     	A Helm chart for KubeDB GCP Provider for Crossp...
 appscode/kubedb-provisioner       	v0.40.0      	v0.40.0    	KubeDB Provisioner by AppsCode - Community feat...
-appscode/kubedb-schema-manager    	v0.16.0      	v0.16.0    	KubeDB Schema Manager by AppsCode                 
-appscode/kubedb-ui                	v2023.12.20  	0.6.1      	A Helm chart for Kubernetes                       
-appscode/kubedb-ui-server         	v2021.12.21  	v2021.12.21	A Helm chart for kubedb-ui-server by AppsCode     
-appscode/kubedb-webhook-server    	v0.16.0      	v0.16.0    	KubeDB Webhook Server by AppsCode   
+appscode/kubedb-schema-manager    	v0.16.0      	v0.16.0    	KubeDB Schema Manager by AppsCode
+appscode/kubedb-ui                	v2023.12.20  	0.6.1      	A Helm chart for Kubernetes
+appscode/kubedb-ui-server         	v2021.12.21  	v2021.12.21	A Helm chart for kubedb-ui-server by AppsCode
+appscode/kubedb-webhook-server    	v0.16.0      	v0.16.0    	KubeDB Webhook Server by AppsCode
 
 $ helm install kubedb oci://ghcr.io/appscode-charts/kubedb \
   --version v2023.12.28 \
@@ -210,7 +209,7 @@ spec:
   standbyMode: Hot
   storageType: Durable
   storage:
-    storageClassName: "gp2"
+    storageClassName: "default"
     accessModes:
       - ReadWriteOnce
     resources:
@@ -237,8 +236,7 @@ spec:
         ad.datadoghq.com/postgres.logs: '[{"source":"postgresql","service":"postgresql"}]'
 ```
 
-
-Let's save this yaml configuration into `postgres-cluster-dd.yaml` 
+Let's save this yaml configuration into `postgres-cluster-dd.yaml`
 Then create the above PostgreSQL CRD
 
 ```bash
@@ -247,10 +245,11 @@ postgres.kubedb.com/postgres-cluster-dd created
 ```
 
 In this yaml,
-* `spec.version` field specifies the version of PostgreSQL. Here, we are using PostgreSQL `version 15.1`. You can list the KubeDB supported versions of PostgreSQL by running `$ kubectl get postgresversions` command.
-* Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
-* `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn more about [Termination Policy](https://kubedb.com/docs/latest/guides/postgres/concepts/postgres/#specterminationpolicy).
-* `spec.podTemplate.metadata.annotations` field specifes [Autodiscovery Integrations Templates](https://docs.datadoghq.com/containers/kubernetes/integrations/?tab=kubernetesadv2) as pod annotations on your application container. Learn more about [Autodiscovery Template Variables](https://docs.datadoghq.com/containers/guide/template_variables/).
+
+- `spec.version` field specifies the version of PostgreSQL. Here, we are using PostgreSQL `version 15.1`. You can list the KubeDB supported versions of PostgreSQL by running `$ kubectl get postgresversions` command.
+- Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
+- `spec.terminationPolicy` field is _Wipeout_ means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn more about [Termination Policy](https://kubedb.com/docs/latest/guides/postgres/concepts/postgres/#specterminationpolicy).
+- `spec.podTemplate.metadata.annotations` field specifes [Autodiscovery Integrations Templates](https://docs.datadoghq.com/containers/kubernetes/integrations/?tab=kubernetesadv2) as pod annotations on your application container. Learn more about [Autodiscovery Template Variables](https://docs.datadoghq.com/containers/guide/template_variables/).
 
 > Note: To align with the configurations specified in our annotations, it is essential to create a PostgreSQL user with the username `datadog` and the password `admin123`. You can change these fields to your preference.
 
@@ -275,6 +274,7 @@ statefulset.apps/postgres-cluster-dd   3/3     3m42s
 NAME                                                     TYPE                  VERSION   AGE
 appbinding.appcatalog.appscode.com/postgres-cluster-dd   kubedb.com/postgres   15.1      3m43s
 ```
+
 Let’s check if the database is ready to use,
 
 ```bash
@@ -282,6 +282,7 @@ $ kubectl get postgres -n default postgres-cluster-dd
 NAME                  VERSION   STATUS   AGE
 postgres-cluster-dd   15.1      Ready    4m36s
 ```
+
 > We have successfully deployed PostgreSQL in AKS with Datadog. Now we can exec into the container to use the database.
 
 ### Accessing Database Through CLI
@@ -299,6 +300,7 @@ postgres-cluster-dd           ClusterIP   10.124.10.229   <none>        5432/TCP
 postgres-cluster-dd-pods      ClusterIP   None            <none>        5432/TCP,2380/TCP,2379/TCP   5m25s
 postgres-cluster-dd-standby   ClusterIP   10.124.10.196   <none>        5432/TCP                     5m25s
 ```
+
 Now, we are going to use `postgres-cluster-dd-auth` to get the credentials.
 
 ```bash
@@ -344,7 +346,6 @@ To access the monitoring dashboards in the Datadog UI, navigate to the `Dashboar
 
 ![PostgreSQL Metrics Summary](PostgresqlMetricsSummary.png)
 
-
 #### Insert Sample Data
 
 Let's insert some sample data into our PostgreSQL database.
@@ -357,10 +358,10 @@ Type "help" for help.
 
 postgres=# \l
                                                   List of databases
-     Name      |  Owner   | Encoding |  Collate   |   Ctype    | ICU Locale | Locale Provider |   Access privileges   
+     Name      |  Owner   | Encoding |  Collate   |   Ctype    | ICU Locale | Locale Provider |   Access privileges
 ---------------+----------+----------+------------+------------+------------+-----------------+-----------------------
- kubedb_system | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            | 
- postgres      | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            | 
+ kubedb_system | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            |
+ postgres      | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            |
  template0     | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            | =c/postgres          +
                |          |          |            |            |            |                 | postgres=CTc/postgres
  template1     | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            | =c/postgres          +
@@ -372,11 +373,11 @@ CREATE DATABASE
 
 postgres=# \l
                                                   List of databases
-     Name      |  Owner   | Encoding |  Collate   |   Ctype    | ICU Locale | Locale Provider |   Access privileges   
+     Name      |  Owner   | Encoding |  Collate   |   Ctype    | ICU Locale | Locale Provider |   Access privileges
 ---------------+----------+----------+------------+------------+------------+-----------------+-----------------------
- kubedb_system | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            | 
- music         | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            | 
- postgres      | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            | 
+ kubedb_system | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            |
+ music         | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            |
+ postgres      | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            |
  template0     | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            | =c/postgres          +
                |          |          |            |            |            |                 | postgres=CTc/postgres
  template1     | postgres | UTF8     | en_US.utf8 | en_US.utf8 |            | libc            | =c/postgres          +
@@ -393,7 +394,7 @@ music=# INSERT INTO artist (name, song) VALUES('Avicii', 'The Nights');
 INSERT 0 1
 
 music=# SELECT * FROM artist;
-  name  |    song    
+  name  |    song
 --------+------------
  Avicii | The Nights
 (1 row)
@@ -405,7 +406,6 @@ exit
 ```
 
 > We’ve successfully inserted some sample data to our database. More information about Run & Manage PostgreSQL on Kubernetes can be found in [PostgreSQL Kubernetes](https://kubedb.com/kubernetes/databases/run-and-manage-postgres-on-kubernetes/)
-
 
 Following the insertion of sample data into our PostgreSQL database, we can monitor any resultant changes in the Datadog UI. Go to the `Postgres - Metrics` and `Postgres - Overview` dashboards to observe any updates in performance metrics and insights for our PostgreSQL database.
 
@@ -420,7 +420,6 @@ In this article, we've explored the process of monitoring PostgreSQL with Datado
 If you want to learn more about Production-Grade PostgreSQL on Kubernetes you can have a look into that playlist below:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=qWrgJVmoEJRbVx29&amp;list=PLoiT1Gv2KR1imqnrYFhUNTLHdBNFXPKr_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
 
 ## Support
 
