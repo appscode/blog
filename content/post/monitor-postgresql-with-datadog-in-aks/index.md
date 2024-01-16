@@ -3,22 +3,22 @@ title: Monitor KubeDB Managed PostgreSQL With Datadog in Azure Kubernetes Servic
 date: "2024-01-09"
 weight: 14
 authors:
-  - Dipta Roy
+- Dipta Roy
 tags:
-  - aks
-  - azure
-  - cloud-native
-  - dashboard
-  - database
-  - database-monitoring
-  - datadog
-  - dbaas
-  - kubedb
-  - kubernetes
-  - microsoft-azure
-  - postgres
-  - postgresql
-  - postgresql-metrics
+- aks
+- azure
+- cloud-native
+- dashboard
+- database
+- database-monitoring
+- datadog
+- dbaas
+- kubedb
+- kubernetes
+- microsoft-azure
+- postgres
+- postgresql
+- postgresql-metrics
 ---
 
 ## Introduction
@@ -193,7 +193,7 @@ To access the PostgreSQL dashboard, go to `Integrations` and then install the Po
 
 ### Deploy PostgreSQL Cluster
 
-Now we are going to deploy PostgreSQL cluster using KubeDB. You'll need to deploy your PostgreSQL cluster with the same namespace `default` where Datadog is installed.
+Now, we are going to deploy PostgreSQL cluster using KubeDB. You'll need to deploy your PostgreSQL cluster with the same namespace `default` where Datadog is installed.
 
 Here is the yaml of the PostgreSQL we are going to use:
 
