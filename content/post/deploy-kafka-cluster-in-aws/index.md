@@ -280,7 +280,7 @@ Show Me The Meaning
 ```
 > Here we can see messages are coming to the consumer as you continue sending messages via producer. So, we have created a Kafka topic and used Kafka console producer and consumer for publishing and consuming messages successfully. More information about Run & Manage Kafka on Kubernetes can be found in [Kafka Kubernetes](https://kubedb.com/kubernetes/databases/run-and-manage-kafka-on-kubernetes/)
 
-If you want to learn more about Kafka Ops Requests - Day 2 Lifecycle Management Using KubeDB you can have a look into that video below:
+If you want to learn about Kafka Ops Requests - Day 2 Lifecycle Management Using KubeDB you can have a look into that video below:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/EYGZaKfbqVE?si=UxxA2uXY6X000Vdj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
