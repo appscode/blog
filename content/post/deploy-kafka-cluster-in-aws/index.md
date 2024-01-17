@@ -1,6 +1,6 @@
 ---
 title: Deploy Kafka Cluster in Amazon Elastic Kubernetes Service (Amazon EKS)
-date: "2023-01-15"
+date: "2024-01-15"
 weight: 14
 authors:
 - Dipta Roy
