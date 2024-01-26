@@ -18,7 +18,7 @@ tags:
 ## Overview
 
 KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases supported by KubeDB include MongoDB, Elasticsearch, MySQL, MariaDB, Redis, PostgreSQL, Percona XtraDB, and Memcached. Additionally, KubeDB also supports ProxySQL, PgBouncer, and the streaming platform Kafka. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/). KubeDB provides support not only for the official [Elasticsearch](https://www.elastic.co/) by Elastic and [OpenSearch](https://opensearch.org/) by AWS, but also other open source distributions like [SearchGuard](https://search-guard.com/) and [OpenDistro](https://opendistro.github.io/for-elasticsearch/). **KubeDB provides all of these distribution's support under the Elasticsearch CR of KubeDB**.
-In this tutorial we will update version of OpenSearch cluster in Google Kubernetes Engine (GKE). We will cover the following steps:
+In this tutorial we will update version of OpenSearch database in Google Kubernetes Engine (GKE). We will cover the following steps:
 
 1) Install KubeDB
 2) Deploy OpenSearch Cluster
@@ -438,9 +438,9 @@ opensearch-2.11.1
 > You can see from above, our OpenSearch database has been updated with the new version `opensearch-2.11.1`. So, the database update process is successfully completed.
 
 
-We have made a tutorial on Provision OpenSearch Multi-node Combined cluster and Topology Cluster using KubeDB. You can have a look into the video below:
+If you want to learn more about Production-Grade OpenSearch on Kubernetes you can have a look into that playlist below:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/O42Pvf2NuCo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=NX1Xoaq7ceJW5SnQ&amp;list=PLoiT1Gv2KR1gvo2SbHjg4KMajG8Q59ecu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Support
 
