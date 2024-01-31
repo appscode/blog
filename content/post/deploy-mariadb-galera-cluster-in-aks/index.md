@@ -96,7 +96,7 @@ We can list the CRD Groups that have been registered by the operator by running 
 ```bash
 $ kubectl get crd -l app.kubernetes.io/name=kubedb
 NAME                                              CREATED AT
-elasticsearchautoscalers.autoscaling.kubedb.com   2024-01-26T05:40:44Z
+elasticsearchautoscalers.autoscaling.kubedb.com   2024-01-26T05:39:44Z
 elasticsearchdashboards.dashboard.kubedb.com      2024-01-26T05:40:44Z
 elasticsearches.kubedb.com                        2024-01-26T05:40:44Z
 elasticsearchopsrequests.ops.kubedb.com           2024-01-26T05:40:57Z
