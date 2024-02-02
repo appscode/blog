@@ -79,9 +79,9 @@ In this post, we'll highlight the key updates.
          tasks:
          - name: logical-backup
    ```
-   Now, we will find two separate directory named after corresponding session name in gcs bucket. 
+   For the above configuration you will find two separate directories based on the corresponding session name inside the repository `demo-pvc-gcs`.
 
-2. We've added support for disabling TLS certificate verification for S3 storage backend ([#100](https://github.com/kubestash/apimachinery/pull/100)). We've introduced a new field `insecureTLS` in `BackupStorage`'s `spec.backend.s3` section. When this field is set to `true`, it disables TLS certificate verification. By default, this value is set to `false`. It is important to note that this option should only be utilized for testing purposes or in combination with VerifyConnection or VerifyPeerCertificate.
+2. We've added support for disabling TLS certificate verification for S3 storage backend ([#100](https://github.com/kubestash/apimachinery/pull/100)). We've introduced a new field `insecureTLS` in `BackupStorage`'s `spec.backend.s3` section. When this field is set to `true`, it disables TLS certificate verification. By default, this value is set to `false`. It is important to note that this option should only be utilized for testing purposes or in combination with `VerifyConnection` or `VerifyPeerCertificate`.
 
    Below is an example demonstrating the usage of disabling TLS certificate verification for a TLS-secured S3 storage backend:
    ```yaml
@@ -107,15 +107,15 @@ In this post, we'll highlight the key updates.
      deletionPolicy: WipeOut
    ```
 
-3. In this release, we've enhanced security by adding `RoleBinding` instead of `ClusterRoleBinding`. In earlier releases, RBAC for backup and restore jobs used `ClusterRoleBinding`, which raised potential conflicts with security policies. In this release, we've enhanced security by shifting RBAC from `ClusterRoleBinding` to `RoleBinding`, aligning with best practices for a more resilient access control mechanism.
+3. In this release, we've enhanced security by switching from `ClusterRoleBinding` to `RoleBinding` for RBAC in backup and restore jobs. This change aligns with the best practices and enhances access control, reducing potential conflicts with security policies.
 
-   For Local `BackupStorage` i.e (NFS, Local-host, PVC) the initializer Job uses `ClusterRoleBinding`. It's important to note that this doesn't compromise security policies, as the associated Role do not have permissions to access any `Secret`.
+   For Local `BackupStorage` (i.e. NFS, Local-host, PVC) the initializer Job uses `ClusterRoleBinding`. It's important to note that this doesn't compromise security policies, as the associated ClusterRole only grants access to resources within the KubeStash `Storage` API group.
 
-4.  We've updated `Addon`'s tasks name ([#48](https://github.com/kubestash/installer/pull/48)). These are not compatible with the previous versions. To find out the new tasks name, at first get the corresponding addon and find out proper task name in task's name section.
+4.  We've updated `Addon`'s tasks name ([#48](https://github.com/kubestash/installer/pull/48)). To find out the new tasks name, at first get the corresponding addon and find out proper task name in task's name section.
 
 ### Improvements & Bug Fixes
-- Updated components name which are not compatible with previous versions.
-- Fixed a bug that was preventing to delete synced failed snapshot properly according to Retention Policy.
+- We have updated the names of the snapshot components used for workload, PVC, and MongoDB sharded database backups. Please be aware that this change is considered breaking.
+- Fixed a bug that caused incorrect pruning for failed snapshots when applying retention policies to synchronized snapshots from the backend.
 
 ## What Next?
 Please try the latest release and give us your valuable feedback.
