@@ -214,10 +214,10 @@ This feature supports continuous archiving of a MySQL database. You can also do 
 To use this feature, You need [KubeStash](https://kubestash.com/) installed in your cluster. KubeStash (aka Stash 2.0) is a ground up rewrite of [Stash](https://stash.run/docs/v2023.10.9/welcome/) with various improvements planned. KubeStash works with any existing KubeDB or Stash license key. To use continuous archiving feature, We have introduced a CRD also in KubeDB side, named `MySQLArchiver`.
 
 Here is all the details of using [MySQLArchiver](https://kubedb.com/docs/v2023.12.11/guides/mysql/pitr/archiver/).
-In short, You need to create an
+In short, you need to create the following resources:
 - `BackupStorage` which refers a cloud storage backend (like s3, gcs etc.) you prefer.
 - `RetentionPolicy` allows you to set how long you'd like to retain the backup data.
-- encryption-secret which will be used for encryption before uploading the backed-up data into cloud.
+- `Secret` holds restic password which will be used to encrypt the backup snapshots.
 - `VolumeSnapshotClass` which holds the csi-driver information which is responsible for taking VolumeSnapshots. This is vendor specific.
 - `MySQLArchiver` which holds all of these metadata information.
 
@@ -270,12 +270,12 @@ spec:
 
 Now after creating this archiver CR, if we create a MySQL with `archiver: "true"` label, in the same namespace (as per the double-optin configured in `.spec.databases` field), The KubeDB operator will start doing 3 separate things:
 - Create 2 `Repository` with convention `<db-name>-full` & `<db-name>-manifest`.
-- Take full back-up in every day at 3:30 (`.spec.fullBackup.scheduler`) to `<db-name>-full` repository.
-- Take manifest back-up in every day at 3:30 (`.spec.manifestBackup.scheduler`) to `<db-name>-manifest`.
-- Start syncing mysql wal files to `<db-name>-full` in a directory named `oplog`.
+- Take full backup in every day at 3:30 (`.spec.fullBackup.scheduler`) to `<db-name>-full` repository.
+- Take manifest backup in every day at 3:30 (`.spec.manifestBackup.scheduler`) to `<db-name>-manifest` repository.
+- Start syncing mysql wal files to the directory `<db-namespace>/<db-name>`.
 
 
-For point-in-time-recovery, all you need is to set the repository names & set a recoveryTimestamp in `mysql.spec.init.archiver` section.
+For point-in-time-recovery, all you need is to set the repository names & set a `recoveryTimestamp` in `mysql.spec.init.archiver` section.
 
 Here is an example of `MySQL` CR for point-in-time-recovery.
 
