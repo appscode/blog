@@ -272,7 +272,7 @@ Now after creating this archiver CR, if we create a MySQL with `archiver: "true"
 - Create 2 `Repository` with convention `<db-name>-full` & `<db-name>-manifest`.
 - Take full backup in every day at 3:30 (`.spec.fullBackup.scheduler`) to `<db-name>-full` repository.
 - Take manifest backup in every day at 3:30 (`.spec.manifestBackup.scheduler`) to `<db-name>-manifest` repository.
-- Start syncing mysql wal files to the directory `.spec.backupStorage.subDir/<db-namespace>/<db-name>/binlog`.
+- Start syncing mysql wal files to the directory `<db-namespace>/<db-name>`.
 
 
 For point-in-time-recovery, all you need is to set the repository names & set a `recoveryTimestamp` in `mysql.spec.init.archiver` section.
