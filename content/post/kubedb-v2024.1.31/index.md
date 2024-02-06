@@ -38,7 +38,7 @@ We are pleased to announce the release of [KubeDB v2024.1.31](https://kubedb.com
 
 ## Introducing FeatureGate for KubeDB installation
 
-With this release KubeDB installation is getting enhanced with featuregates support. Now you can manage the CRDs while installing KubeDB via helm chart. Earlier, all the supported CRDs were installed. With featuregate, now it's possible to enable or disable certain database CRDs while installing KubeDB.  
+With this release KubeDB installation is getting enhanced with FeatureGates support. Now you can manage the CRDs while installing KubeDB via helm chart. Earlier, all the supported CRDs were installed. With FeatureGate, now it's possible to enable or disable certain database CRDs while installing KubeDB.
 
 Let's say you want to provision Druid, use MySQL or PostgreSQL as metadata storage and ZooKeeper for Coordination. You want to install just those required CRDs on your cluster. Install KubeDB using the following command:
 
