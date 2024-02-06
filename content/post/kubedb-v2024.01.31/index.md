@@ -335,13 +335,6 @@ spec:
   authSecret:
     externallyManaged: true
     name: ha-postgres-auth
-  storage:
-    storageClassName: "standard"
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 600Mi  
   backend:
     externallyManaged: true
     postgres:
@@ -359,7 +352,6 @@ metadata:
   namespace: demo
 spec:
   version: "1.18.0"
-  terminationPolicy: WipeOut
   replicas: 1
   sslMode: disabled  
   storage:
@@ -370,8 +362,7 @@ spec:
         storage: 1Gi
   backend:
     externallyManaged: false
-  authSecret:
-    externallyManaged: false
+  terminationPolicy: WipeOut
 ```
 
 #### supported versions
