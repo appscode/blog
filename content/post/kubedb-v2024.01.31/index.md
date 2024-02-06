@@ -499,19 +499,14 @@ In order to use the alert dashboards, You need to do the following:
 
 We have updated the backup directory structure for point-in-time recovery, providing a more organized layout. Going forward, the directories will follow the following standardized structure:
 
-- **Full Backup:**
-<SUB-DIRECTORY>/<DATABASE_NAMESPACE>/<DATABASE_NAME>/full-backup
-- **Manifest Backup:**
-<SUB-DIRECTORY>/<DATABASE_NAMESPACE>/<DATABASE_NAME>/manifest-backup
-- **Binlog Backup (MySQL/MariaDB):**
-<SUB-DIRECTORY>/<DATABASE_NAMESPACE>/<DATABASE_NAME>/binlog-backup
-- **Oplog Backup (MongoDB):**
-<SUB-DIRECTORY>/<DATABASE_NAMESPACE>/<DATABASE_NAME>/oplog-backup
-- **WAL Backup (PostgreSQL):**
-<SUB-DIRECTORY>/<DATABASE_NAMESPACE>/<DATABASE_NAME>/wal-backup
+- **Full Backup:** <sub-directory>/<database_namespace>/<database_name>/full-backup
+- **Manifest Backup:** <sub-directory>/<database_namespace>/<database_name>/manifest-backup
+- **Binlog Backup (MySQL/MariaDB):** <sub-directory>/<database_namespace>/<database_name>/binlog-backup
+- **Oplog Backup (MongoDB):** <sub-directory>/<database_namespace>/<database_name>/oplog-backup
+- **WAL Backup (PostgreSQL):** <sub-directory>/<database_namespace>/<database_name>/wal-backup
 
-We've introduced TLS support for MySQL point-in-time recovery. Additionally, we now support using NFS, GCS, and Azure Storage as backend options for MySQL point-in-time recovery.
 
+We've added TLS support and included support for NFS, GCS, and Azure Storage as backend options for MySQL point-in-time recovery.
 
 ## What Next?
 
