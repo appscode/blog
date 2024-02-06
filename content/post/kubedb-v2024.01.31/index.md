@@ -419,9 +419,9 @@ spec:
 ### Grafana Alerts Dashboard
 In this release, we bring support for Postgres grafana summary dashboard with alerts for a specific Postgres instance.
 
-In order to use the alert dashboards, You need to do the following:
+To use the alert dashboards :
 
-* First you need to have kubedb operator and a postgres instance running on you cluster along with prometheus operator.
+* First you need to have KubeDB operator and a Postgres instance running on you cluster along with Prometheus operator.
 
 * Then create a file named overwrite.yaml having following values. Make sure you change the values matching your needs.
 
@@ -479,20 +479,7 @@ In order to use the alert dashboards, You need to do the following:
     ```
 
 ### Bug fix and improvements
-* Upgrade ops request bugfix has been implemented. Now you can upgrade your postgres instance using postgres version upgrade ops request.
-    ```yaml
-    apiVersion: ops.kubedb.com/v1alpha1
-    kind: PostgresOpsRequest
-    metadata:
-    name: update-version
-    namespace: demo
-    spec:
-    type: UpdateVersion
-    updateVersion:
-        targetVersion: "16.1"
-    databaseRef: 
-        name: ha-postgres
-    ```
+* We have fixed a bug in Upgrade OpsRequest for Postgres.
 
 # Point in Time Recovery:
 
