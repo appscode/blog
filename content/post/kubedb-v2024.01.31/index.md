@@ -425,9 +425,83 @@ spec:
 
 # Postgres
 
+### Grafana Alerts Dashboard
 In this release, we bring support for Postgres grafana summary dashboard with alerts for a specific Postgres instance.
-Also we have fixed existing bugs on postgres version upgrade ops request.
 
+In order to use the alert dashboards, You need to do the following:
+
+* First you need to have kubedb operator and a postgres instance running on you cluster along with prometheus operator.
+
+* Then create a file named overwrite.yaml having following values. Make sure you change the values matching your needs.
+
+    - For prometheus operator
+        ```yaml
+        resources:
+          - postgres
+
+        dashboard:
+          folderID: 0
+          overwrite: true
+          alerts: true 
+          replacements: []
+
+        grafana:
+          version: “provide your grafana version”
+          url: "provide your grafana service dns" # example: http://grafana.monitoring.svc:80 
+          apikey: "provide grafana apikey"
+
+        app:
+          name: “provide your postgres instance name”
+          namespace: “provide the namespace”
+        ```
+    - For prometheus builtin
+       ```yaml
+        resources:
+          - postgres
+
+        dashboard:
+          folderID: 0
+          overwrite: true
+          alerts: true 
+        replacements:
+          job=\"kube-state-metrics\": job=\"kubernetes-service-endpoints\"
+          job=\"kubelet\": job=\"kubernetes-nodes-cadvisor\"
+          job=\"$app-stats\": job=\"kubedb-databases\"
+
+        grafana:
+          version: “provide your grafana version”
+          url: "provide your grafana service dns" # example: http://grafana.monitoring.svc:80 
+          apikey: "provide grafana apikey"
+
+        app:
+          name: “provide your postgres instance name”
+          namespace: “provide the namespace”
+        ```    
+
+* now follow the steps to install grafana dashboards:
+    ```bash
+    $ helm repo add appscode https://charts.appscode.com/stable/
+    $ helm repo update
+    $ helm search repo appscode/kubedb-grafana-dashboards --version=v2024.1.31
+    $ helm upgrade -i kubedb-grafana-dashboards appscode/kubedb-grafana-dashboards -n kubeops --create-namespace --version=v2024.1.31 
+    -f  /path/to/the/overwrite.yaml
+    ```
+
+### Bug fix and improvements
+* Upgrade ops request bugfix has been implemented. Now you can upgrade your postgres instance using postgres version upgrade ops request.
+    ```yaml
+    apiVersion: ops.kubedb.com/v1alpha1
+    kind: PostgresOpsRequest
+    metadata:
+    name: update-version
+    namespace: demo
+    spec:
+    type: UpdateVersion
+    updateVersion:
+        targetVersion: "16.1"
+    databaseRef: 
+        name: ha-postgres
+    ```
 
 # Point in Time Recovery:
 
