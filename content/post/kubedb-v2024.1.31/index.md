@@ -34,14 +34,32 @@ tags:
 - walg
 ---
 
-We are pleased to announce the release of [KubeDB v2024.1.31](https://kubedb.com/docs/v2024.1.31/setup/). This release is primarily focused on extending support for new databases including `Solr`, `Singlestore`, `Druid`, `RabbitMQ`, `FerretDB` and `ZooKeeper`. Besides provisioning, Customizable health checker, Custom template for services, Custom template for pods & containers, Authentication, Multiple Termination strategies, Default Container Security includes this new database supports. This release also brings support for `ConnectCluster` for Kafka and `PgPool` for Postgres. A mojor API change for `ElasticsearchDashboard` has been added to this release as well. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.1.31/README.md). Let’s see the changes done in this release.
+We are pleased to announce the release of [KubeDB v2024.1.31](https://kubedb.com/docs/v2024.1.31/setup/). This release is primarily focused on extending support for new databases including `Solr`, `Singlestore`, `Druid`, `RabbitMQ`, `FerretDB` and `ZooKeeper`. Besides provisioning, Customizable health checker, Custom template for services, Custom template for pods & containers, Authentication, Multiple Termination strategies, Default Container Security includes this new database supports. This release also brings support for `ConnectCluster` for Kafka and `PgPool` for Postgres. A breaking update in API for `ElasticsearchDashboard` has been added to this release as well. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.1.31/README.md). Let’s see the changes done in this release.
 
+## Introducing FeatureGate for KubeDB installation
 
-# Kafka:
+With this release KubeDB installation is getting enhanced with featuregates support. Now you can manage the CRDs while installing KubeDB via helm chart. Earlier, all the supported CRDs were installed. With featuregate, now it's possible to enable or disable certain database CRDs while installing KubeDB.  
+
+Let's say you want to provision Druid, use MySQL or PostgreSQL as metadata storage and ZooKeeper for Coordination. You want to install just those required CRDs on your cluster. Install KubeDB using the following command:
+
+```bash
+    helm upgrade -i kubedb oci://ghcr.io/appscode-charts/kubedb \
+        --version v2024.1.31 \
+        --namespace kubedb --create-namespace \
+        --set-file global.license=/path/to/the/license.txt \
+        --set kubedb-provisioner.operator.securityContext.seccompProfile.type=RuntimeDefault \
+        --set kubedb-webhook-server.server.securityContext.seccompProfile.type=RuntimeDefault \
+        --set kubedb-ops-manager.operator.securityContext.seccompProfile.type=RuntimeDefault \
+        --set kubedb-autoscaler.operator.securityContext.seccompProfile.type=RuntimeDefault \
+        --set global.featureGates.Druid=true --set global.featureGates.ZooKeeper=true \
+        --set global.featureGates.MySQL=true -set global.featureGates.PostgreSQL=true 
+```
+
+## Kafka
 In this release, we have improved Kafka Health Checker. The health checker now ensures all kafka brokers are connected in a cluster, messages can be concurrently published and consumed via clients.
 Earlier, KubeDB managed Kafka had only two types of termination policy supports - `WipeOut` and `DoNotTerminate`. This release is bringing support for two more - `Halt` and `Delete`, providing the privilege of keeping PVCs and Secrets on cluster deletion.
 
-## Kafka Connect Cluster
+### Kafka Connect Cluster
 
 This release introduces `ConnectCluster` for **Kafka**, an awesome tool for building reliable and scalable data pipelines. Its pluggable design makes it possible to build powerful pipelines without writing a single line of code. The initial release of Kafka Connect Cluster is bringing support for Provisioning, Custom-Configuration via kubernetes secret and TLS. You can now enable source/sink connector plugins for `GCS`, `S3`, `MongoDB`, `Postgres` and `MySQL`. This release also introduces support for `Connector` CRD. This enables to easily connect source/sink clients to the `ConnectCluster`. 
 
@@ -94,7 +112,7 @@ spec:
 #### supported versions
 `3.3.2`, `3.4.1`, `3.5.1`, `3.6.0`
 
-# Zookeeper
+## Zookeeper
 
 With This release, KubeDB is bringing support for **Apache ZooKeeper**, a pivotal open-source distributed coordination service for managing and synchronizing distributed systems. It offers essential primitives like configuration management, distributed locking, leader election, and naming services. Utilizing a quorum-based approach, ZooKeeper ensures high availability and fault tolerance. Widely applied in systems like Apache Hadoop, Solr, Druid and Kafka, ZooKeeper streamlines development by providing a consistent foundation for coordination tasks. This release of Zookeeper is bringing support for Provisioning and authentication via kubernetes secret.
 
@@ -112,7 +130,7 @@ spec:
   storage:
     resources:
       requests:
-        storage: "100Mi"
+        storage: "1Gi"
     storageClassName: "standard"
     accessModes:
     - ReadWriteOnce
@@ -122,11 +140,11 @@ spec:
 #### supported versions
 `3.7.2`, `3.8.3` and `3.9.1`
 
-# Solr
+## Solr
 
 This release includes support for **Solr**, an open-source enterprise-search platform, written in Java. Its major features include full-text search, hit highlighting, faceted search, real-time indexing, dynamic clustering, database integration, NoSQL features and rich document handling. This release of Solr is coming with support for Provisioning SolrCloud cluster, Embedded Admin UI, Custom Configuration via kubernetes secret. You can deploy Solr either in combined mode or the production preferred topology mode.
 
-Here's a sample yaml for provisioning Solr using KubeDB.
+Here's a sample yaml for provisioning Solr using KubeDB. A ZooKeeper instance `zk-cluster` should be provisioned in the same namespace before deploying.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -172,7 +190,7 @@ spec:
 #### supported versions
 `9.4.1` and `8.11.2`
 
-# Singlestore:
+## Singlestore
 This release introduces support for **SingleStore**, a distributed SQL database for real-time analytics, transactional workloads, and operational applications. With its in-memory processing and scalable architecture, SingleStore enables organizations to achieve high-performance and low-latency data processing across diverse data sets, making it ideal for modern data-intensive applications and analytical workflows. This release is bring support for Provisioning Singlestore in both standalone and cluster mode, Custom Configuration using kubernetes secret and Initialization using script.
 
 You can provision Singlestore cluster in production ideal cluster mode using the following YAML.
@@ -213,9 +231,9 @@ spec:
 #### supported versions
 `3.1.32`
 
-# Pgpool
+## Pgpool
 
-This release also introduces support for **Pgpool**, an advanced connection pooling and load balancing solution for PostgreSQL databases. It serves as an intermediary between client applications and PostgreSQL database servers, providing features such as connection pooling, load balancing, query caching, and high availability. This release includes support for Provisioning, Custom Configuration using kubernetes secret and Postgres users synchronization.
+This release also introduces support for **Pgpool**, an advanced connection pooling and load balancing solution for PostgreSQL databases. It serves as an intermediary between client applications and PostgreSQL database servers, providing features such as connection pooling, load balancing, query caching, and high availability. This release includes support for Provisioning, Custom configuration provided in `.spec.initConfig.pgpoolConfig` field and Postgres users synchronization.
 
 Deploy Pgpool with a postgres backend using the following YAML.
 
@@ -257,11 +275,11 @@ spec:
 #### supported versions
 `4.4.5` and `4.5.0`
 
-# Druid
+## Druid
 
-This release is introducing support for **Apache Druid**, a real-time analytics database designed for fast slice-and-dice analytics ("OLAP" queries) on large data sets. Most often, Druid powers use cases where real-time ingestion, fast query performance, and high uptime are important. This release includes support for Provisioning Druid cluster, Custom Configuration using kubernetes secret, Management UI, External Dependency Management: Configuring External Dependencies i.e. MetadataStorage (MySQL/PostgreSQL), Deep Storage, ZooKeeper directly from YAML.
+This release is introducing support for **Apache Druid**, a real-time analytics database designed for fast slice-and-dice analytics ("OLAP" queries) on large data sets. Most often, Druid powers use cases where real-time ingestion, fast query performance, and high uptime are important. This release includes support for Provisioning Druid cluster, Custom Configuration using kubernetes secret, Management UI, External Dependency Management i.e. Configuring Metadata Storage (MySQL/PostgreSQL), Deep Storage, ZooKeeper directly from YAML.
 
-Here's a sample YAML to provision Druid cluster which uses mysql as metadata storage, s3 as deepstorage and zookeeper for coordination. 
+Here's a sample YAML to provision Druid cluster which uses mysql as metadata storage, S3 as Deepstorage and zookeeper for coordination. A ZooKeeper instance `zk-cluster` needs ans MySQL instance `mysql-cluster` need to be provisioned prior to deploying the following manifest.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -315,11 +333,11 @@ spec:
 #### supported versions
 `28.0.1` and `25.0.0`
 
-# FerretDB
+## FerretDB
 
 This release extends to supporting **FerretDB**, an open-source proxy that translates MongoDB wire protocol queries to SQL, with PostgreSQL or SQLite as the database engine. FerretDB was founded to become the true open-source alternative to MongoDB, making it the go-to choice for most MongoDB users looking for an open-source alternative to MongoDB. With FerretDB, users can run the same MongoDB protocol queries without needing to learn a new language or command.
 
-Currently KubeDB only supports Postgres backend as database engine for FerretDB. Users can use its own Postgres or let KubeDB create and manage backend engine with KubeDB native Postgres. This release includes support for provisioning and monitoring with prometheus and grafana dashboards.
+Currently KubeDB supports Postgres backend as database engine for FerretDB. Users can use its own Postgres or let KubeDB create and manage backend engine with KubeDB native Postgres. This release includes support for provisioning and monitoring with prometheus and grafana dashboards.
 
 Here's a sample manifest to provision FerretDB with User provided backend
 
@@ -368,7 +386,7 @@ spec:
 #### supported versions
 `1.18.0`
 
-# RabbitMQ
+## RabbitMQ
 
 This release also brings support for provisioning **RabbitMQ**, a popular message queue tool that connects applications to exchange messages, facilitating scalability and stability for a competitive edge. Support for provisioning, Custom configuration via kubernetes secrets and preinstalled management UI has been added in this release.
 
@@ -397,9 +415,11 @@ spec:
 #### supported versions
 `3.12.12`
 
-# Elasticsearch
+## Elasticsearch
 
-ElasticsearchDashboard, a custom resource is used to provision Kibana for Elasticsearch cluster and Opensearch-Dashboards for Opensearch cluster has received a major change. The `apiVersion` for this CR has been updated to  `elasticsearch.kubedb.com/v1alpha1`. Here's a sample manifest to provision ElasticsearchDashboard.
+ElasticsearchDashboard, a custom resource is used to provision Kibana for Elasticsearch cluster and Opensearch-Dashboards for Opensearch cluster has received a major change. Through this release we are bringing a breaking change by updatingn the `apiVersion` for this CR has been updated to  `elasticsearch.kubedb.com/v1alpha1`.
+
+Here's a sample manifest to provision ElasticsearchDashboard. An Elasticsearch intance `es-cluster` is expected to be provisioned prior to deploying the following manifest.
 
 ```yaml
 apiVersion: elasticsearch.kubedb.com/v1alpha1
@@ -410,11 +430,11 @@ metadata:
 spec:
   enableSSL: true
   databaseRef:
-    name: es
+    name: es-cluster
   terminationPolicy: WipeOut
 ```
 
-# Postgres
+## Postgres
 
 ### Grafana Alerts Dashboard
 In this release, we bring support for Postgres grafana summary dashboard with alerts for a specific Postgres instance.
@@ -481,8 +501,8 @@ To use the alert dashboards :
 ### Bug fix and improvements
 * We have fixed a bug in Upgrade OpsRequest for Postgres.
 
-# Point in Time Recovery:
 
+## Point in Time Recovery
 
 We have updated the backup directory structure for point-in-time recovery, providing a more organized layout. Going forward, the directories will follow the following standardized structure:
 
