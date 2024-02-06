@@ -1,5 +1,5 @@
 ---
-title: Announcing KubeDB v2024.01.31
+title: Announcing KubeDB v2024.1.31
 date: "2024-02-06"
 weight: 14
 authors:
@@ -34,7 +34,7 @@ tags:
 - walg
 ---
 
-We are pleased to announce the release of [KubeDB v2024.01.31](https://kubedb.com/docs/v2024.01.31/setup/). This release is primarily focused on extending support for new databases including `Solr`, `Singlestore`, `Druid`, `RabbitMQ`, `FerretDB` and `ZooKeeper`. Besides provisioning, Customizable health checker, Custom template for services, Custom template for pods & containers, Authentication, Multiple Termination strategies, Default Container Security includes this new database supports. This release also brings support for `ConnectCluster` for Kafka and `PgPool` for Postgres. A mojor API change for `ElasticsearchDashboard` has been added to this release as well. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.01.31/README.md). Let’s see the changes done in this release.
+We are pleased to announce the release of [KubeDB v2024.1.31](https://kubedb.com/docs/v2024.1.31/setup/). This release is primarily focused on extending support for new databases including `Solr`, `Singlestore`, `Druid`, `RabbitMQ`, `FerretDB` and `ZooKeeper`. Besides provisioning, Customizable health checker, Custom template for services, Custom template for pods & containers, Authentication, Multiple Termination strategies, Default Container Security includes this new database supports. This release also brings support for `ConnectCluster` for Kafka and `PgPool` for Postgres. A mojor API change for `ElasticsearchDashboard` has been added to this release as well. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.1.31/README.md). Let’s see the changes done in this release.
 
 
 # Kafka:
@@ -499,16 +499,16 @@ We've added TLS support and included support for NFS, GCS, and Azure Storage as 
 
 Please try the latest release and give us your valuable feedback.
 
-- If you want to install KubeDB, please follow the installation instruction from [KubeDB Setup](https://kubedb.com/docs/v2024.01.31/setup).
+- If you want to install KubeDB, please follow the installation instruction from [KubeDB Setup](https://kubedb.com/docs/v2024.1.31/setup).
 
-- If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [KubeDB Upgrade](https://kubedb.com/docs/v2024.01.31/setup/upgrade/).
+- If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [KubeDB Upgrade](https://kubedb.com/docs/v2024.1.31/setup/upgrade/).
 
 
 ## Support
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
+To receive product announcements, follow us on [Twitter/X](https://twitter.com/KubeDB).
 
 To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
 
