@@ -1,23 +1,23 @@
 ---
-title: Introducing Stash v2024.02.13
-date: "2023-02-14"
+title: Introducing Stash v2024.2.13
+date: "2024-02-14"
 weight: 10
 authors:
 - Md Ishtiaq Islam
 tags:
 - backup
 - cli
-- disaster-recovery
-- kubernetes
-- elasticsearch
-- opensearch
 - dashboard-backup
+- disaster-recovery
+- elasticsearch
 - kibana
+- kubernetes
+- opensearch
 - restore
 - stash
 ---
 
-We are pleased to announce the relase of [Stash v2024.02.13](https://stash.run/docs/v2024.2.13/setup/), packed with new features and important bug fixes. You can check out the full changelog [HERE](https://github.com/stashed/CHANGELOG/blob/master/releases/v2024.2.13/README.md).
+We are pleased to announce the release of [Stash v2024.2.13](https://stash.run/docs/v2024.2.13/setup/), packed with new features and important bug fixes. You can check out the full changelog [HERE](https://github.com/stashed/CHANGELOG/blob/master/releases/v2024.2.13/README.md).
 In this post, we'll highlight the key updates.
 
 ### New Features
@@ -137,6 +137,6 @@ Please try the latest release and give us your valuable feedback.
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To receive product announcements, follow us on [Twitter](https://twitter.com/KubeStash).
+To receive product announcements, follow us on [Twitter/X](https://twitter.com/KubeStash).
 
 If you have found a bug with Stash or want to request new features, please [file an issue](https://github.com/stashed/project/issues/new).
