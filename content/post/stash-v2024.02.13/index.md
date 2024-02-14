@@ -17,8 +17,8 @@ tags:
 - stash
 ---
 
-We are pleased to announce the release of [Stash v2024.2.13](https://stash.run/docs/v2024.2.13/setup/), packed with new features and important bug fixes. You can check out the full changelog [HERE](https://github.com/stashed/CHANGELOG/blob/master/releases/v2024.2.13/README.md).
-In this post, we'll highlight the key updates.
+We are pleased to announce the release of [Stash v2024.2.13](https://stash.run/docs/v2024.2.13/setup/), packed with new features and improvements. This release was mainly focused on adding support for `Elasticsearch` dashboard backup and restore feature. We also added support for disabling TLS certificate verification for S3 storage backend. You can check out the full changelog [HERE](https://github.com/stashed/CHANGELOG/blob/master/releases/v2024.2.13/README.md).
+In this post, we'll highlight the changes done in this release.
 
 ### New Features
 
@@ -103,7 +103,7 @@ In this post, we'll highlight the key updates.
    
    You can find the available `Elasticsearch` addon versions [HERE](https://stash.run/docs/v2024.2.13/addons/elasticsearch/#available-elasticsearch-addon-versions). Any addon with matching major version with the database version should be able to take backup of that database. For example, Elasticsearch addon with version `7.x.x` should be able to take backup of any Elasticsearch of `7.x.x` series. Here we have added dashboard backup and restore support for Elasticsearch of `7.x.x` and `8.x.x` series.
    
-2. We’ve added support for disabling TLS certificate verification for S3 storage backend ([#219](https://github.com/stashed/apimachinery/pull/219)). We’ve introduced a new field insecureTLS in `Repository`’s `spec.backend.s3` section. When this field is set to `true`, it disables TLS certificate verification. By default, this value is set to `false`. It is important to note that this option should only be utilized for testing purposes or in combination with `VerifyConnection` or `VerifyPeerCertificate`.
+2. We’ve added support for disabling TLS certificate verification for S3 storage backend ([#219](https://github.com/stashed/apimachinery/pull/219)). We’ve introduced a new field `insecureTLS` in `Repository`’s `spec.backend.s3` section. When this field is set to `true`, it disables TLS certificate verification. By default, this value is set to `false`. It is important to note that this option should only be utilized for testing purposes or in combination with `VerifyConnection` or `VerifyPeerCertificate`.
 
    Below is an example demonstrating the usage of disabling TLS certificate verification for a TLS-secured S3 storage backend:
    ```yaml
@@ -123,15 +123,15 @@ In this post, we'll highlight the key updates.
        storageSecretName: s3-secret
    ```
 
-### Improvements & bug fixes
-- Previously the addon task parameters in `BackupConfiguration` always replaced by the parameters provided in the tasks. Now we fixed the issue by upserting the parameters that are provided in the `BackupConfiguration`. 
+### Improvements
 
+Previously, the stash parameters in the `Appbinding` object for KubeDB managed databases were replaced by those in the `BackupConfiguration`. Now, the `Appbinding` parameters will be merged with those in the `BackupConfiguration`. If a parameter exists in both, the one in the `BackupConfiguration` takes precedence.
 
 ## What Next?
 Please try the latest release and give us your valuable feedback.
 
-- If you want to install Stash in a clean cluster, please follow the installation instruction from [here](https://stash.run/docs/latest/setup/).
-- If you want to upgrade Stash from a previous version, please follow the upgrade instruction from [here](https://stash.run/docs/latest/setup/upgrade/).
+- If you want to install Stash in a clean cluster, please follow the installation instruction from [HERE](https://stash.run/docs/latest/setup/).
+- If you want to upgrade Stash from a previous version, please follow the upgrade instruction from [HERE](https://stash.run/docs/latest/setup/upgrade/).
 
 ### Support
 
