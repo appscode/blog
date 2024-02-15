@@ -34,7 +34,7 @@ tags:
 - walg
 ---
 
-We are pleased to announce the release of [KubeDB v2024.2.14](https://kubedb.com/docs/v2024.2.14/setup/). This release is primarily focused on extending support for new databases including `Solr`, `Singlestore`, `Druid`, `RabbitMQ`, `FerretDB` and `ZooKeeper`. Besides provisioning, customizable health checker, custom template for services, custom template for pods & containers, authentication, multiple termination strategies, default container security are included along with these new database supports. This release also brings support for `ConnectCluster` for Kafka and `Pgpool` for Postgres. A breaking update in API for `ElasticsearchDashboard` has been added to this release as well. `Grafana summary dashboard with alerts` for Postgres and `Point in Time Recovery` for archiver supported databases are further additions in this release. All the KubeDB managed database images has been custom-built ensuring less CVEs. This post lists all the major changes done in this release since the last release.  Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.1.31/README.md). Let’s see the changes done in this release.
+We are pleased to announce the release of [KubeDB v2024.2.14](https://kubedb.com/docs/v2024.2.14/setup/). This release is primarily focused on extending support for new databases including `Solr`, `Singlestore`, `Druid`, `RabbitMQ`, `FerretDB` and `ZooKeeper`. Besides provisioning, customizable health checker, custom template for services, custom template for pods & containers, authentication, multiple termination strategies, default container security are included along with these new database supports. This release also brings support for `ConnectCluster` for Kafka and `Pgpool` for Postgres. A breaking update in API for `ElasticsearchDashboard` has been added to this release as well. `Grafana summary dashboard with alerts` for Postgres and `Point in Time Recovery` for archiver supported databases are further additions in this release. All the KubeDB managed database images has been custom-built ensuring less CVEs. This post lists all the major changes done in this release since the last release.  Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.2.14/README.md). Let’s see the changes done in this release.
 
 ## Introducing FeatureGate for KubeDB installation
 
@@ -44,7 +44,7 @@ Let's say you want to provision Druid, use MySQL or PostgreSQL as metadata stora
 
 ```bash
     helm upgrade -i kubedb oci://ghcr.io/appscode-charts/kubedb \
-        --version v2024.1.31 \
+        --version v2024.2.14 \
         --namespace kubedb --create-namespace \
         --set-file global.license=/path/to/the/license.txt \
         --set kubedb-provisioner.operator.securityContext.seccompProfile.type=RuntimeDefault \
@@ -465,7 +465,17 @@ data:
     redis-cli ACL SETUSER "${user1}" on ">${pass1}" +@read ~* 
     redis-cli ACL SETUSER "${user2}" on ">${pass2}"
 ```
-Here's a sample Redis manifest that runs this script at the start.
+First create two basic-auth type secrets which will be mounted on `redis` pod and will be used by the script.
+```bash
+kubectl create secret -n demo generic rd-auth1 \
+          --from-literal=username=alice \
+          --from-literal=password='1234'
+kubectl create secret -n demo generic rd-auth1 \
+          --from-literal=username=bob \
+          --from-literal=password='5678'
+
+```
+Then deploy redis with `init` configured. Here's a sample Redis manifest that runs this script at the start.
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: Redis
@@ -503,7 +513,7 @@ spec:
             name: redis-init-script
   terminationPolicy: WipeOut
 ```
-After successful deployment two given users using secrets `rd-auth1` and `rd-auth2` are created along with `default` user.
+After successful deployment two acl users will be created in redis nodes named `alice` and `bob` as per referred secrets.
 
 ## Postgres
 
@@ -564,13 +574,15 @@ To use the alert dashboards :
     ```bash
     $ helm repo add appscode https://charts.appscode.com/stable/
     $ helm repo update
-    $ helm search repo appscode/kubedb-grafana-dashboards --version=v2024.1.31
+    $ helm search repo appscode/kubedb-grafana-dashboards --version=v2024.2.14
     $ helm upgrade -i kubedb-grafana-dashboards appscode/kubedb-grafana-dashboards -n kubeops --create-namespace --version=v2024.1.31 
     -f  /path/to/the/overwrite.yaml
     ```
 
-### Bug fix and improvements
-* We have fixed a bug in VersionUpdate OpsRequest for Postgres, which was causing issues on updating major versions .
+## Bug fix and improvements
+* We have fixed a bug in VersionUpdate OpsRequest for Postgres, which was causing issues on updating major versions.
+* The archiver feature has been Improved. Restructured the wal directory.
+* **Breaking changes**: We have made the volumeExpansion mode required. `ops.volumeExpansion.mode` is not being defaulted now. Similar changes are also done for `<scaler>.spec.storage.<node_type>`.
 
 ## Point in Time Recovery
 
