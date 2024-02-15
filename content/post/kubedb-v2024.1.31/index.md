@@ -434,6 +434,68 @@ spec:
   terminationPolicy: WipeOut
 ```
 
+## Redis
+We have added support for initialization script in Redis. You can provide a `bash` or `lua` script through configmap and The script will be run at the start.
+
+Here is a sample configmap which has a `bash` script that creates two users in Redis nodes
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-init-script
+  namespace: demo
+data:
+  script.sh: |
+
+    user1=$(cat auth/1/username)
+    pass1=$(cat auth/1/password)
+    user2=$(cat auth/2/username)
+    pass2=$(cat auth/2/password)
+
+
+    redis-cli ACL SETUSER "${user1}" on ">${pass1}" +@read ~* 
+    redis-cli ACL SETUSER "${user2}" on ">${pass2}"
+```
+Here's a sample Redis manifest that runs this script at the start.
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: Redis
+metadata:
+  name: standalone-redis
+  namespace: demo
+spec:
+  version: 7.2.3
+  storage:
+    storageClassName: "standard"
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  init:
+    script:
+      projected:
+        sources:
+        - secret:
+            name: rd-auth1
+            items:
+              - key: username
+                path: auth/1/username
+              - key: password
+                path: auth/1/password
+        - secret:
+            name: rd-auth2
+            items:
+              - key: username
+                path: auth/2/username
+              - key: password
+                path: auth/2/password
+        - configMap:
+            name: redis-init-script
+  terminationPolicy: WipeOut
+```
+After successful deployment two given users using secrets `rd-auth1` and `rd-auth2` are created along with `default` user.
+
 ## Postgres
 
 ### Grafana Alerts Dashboard
