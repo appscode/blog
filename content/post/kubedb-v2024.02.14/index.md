@@ -34,7 +34,7 @@ tags:
 - walg
 ---
 
-We are pleased to announce the release of [KubeDB v2024.2.14](https://kubedb.com/docs/v2024.2.14/setup/). This release is primarily focused on extending support for new databases including `Solr`, `Singlestore`, `Druid`, `RabbitMQ`, `FerretDB` and `ZooKeeper`. Besides provisioning, customizable health checker, custom template for services, custom template for pods & containers, authentication, multiple termination strategies, default container security are included along with these new database supports. This release also brings support for `ConnectCluster` for Kafka and `Pgpool` for Postgres. A breaking update in API for `ElasticsearchDashboard` has been added to this release as well. `Grafana summary dashboard with alerts` for Postgres and `Point in Time Recovery` for archiver supported databases are further additions in this release. All the KubeDB managed database images has been custom-built ensuring less CVEs. This post lists all the major changes done in this release since the last release.  Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.2.14/README.md). Let’s see the changes done in this release.
+We are pleased to announce the release of [KubeDB v2024.2.14](https://kubedb.com/docs/v2024.2.14/setup/). This release is primarily focused on extending support for new databases including `Solr`, `Singlestore`, `Druid`, `RabbitMQ`, `FerretDB` and `ZooKeeper`. Besides provisioning, customizable health checker, custom template for services, custom template for pods & containers, authentication, multiple termination strategies, default container security are included along with these new database supports. This release also brings support for `ConnectCluster` for Kafka and `Pgpool` for Postgres. A breaking update in API for `ElasticsearchDashboard` has been added to this release as well. `Grafana summary dashboard with alerts` for Postgres and `Point in Time Recovery` for archiver supported databases are further additions in this release. All the KubeDB managed database images has been custom-built ensuring less CVEs. This post lists all the major changes done in this release since the last release.  Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.2.14/README.md) and [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.1.31/README.md). Let’s see the changes done in this release.
 
 ## Introducing FeatureGate for KubeDB installation
 
@@ -517,6 +517,8 @@ After successful deployment two acl users will be created in redis nodes named `
 
 ## Postgres
 
+We have fixed a bug in VersionUpdate OpsRequest for Postgres, which was causing issues on updating major versions.
+
 ### Grafana Alerts Dashboard
 In this release, we bring support for Postgres grafana summary dashboard with alerts for a specific Postgres instance.
 
@@ -579,11 +581,6 @@ To use the alert dashboards :
     -f  /path/to/the/overwrite.yaml
     ```
 
-## Bug fix and improvements
-* We have fixed a bug in VersionUpdate OpsRequest for Postgres, which was causing issues on updating major versions.
-* The archiver feature has been Improved. Restructured the wal directory.
-* **Breaking changes**: We have made the volumeExpansion mode required. `ops.volumeExpansion.mode` is not being defaulted now. Similar changes are also done for `<scaler>.spec.storage.<node_type>`.
-
 ## Point in Time Recovery
 
 We have updated the backup directory structure for point-in-time recovery, providing a more organized layout. These changes are applicable to all of our archiver supported databases. More specifically : `MongoDB`, `MySQL` & `Postgres`. Going forward, the directories will follow the following standardized structure:
@@ -596,6 +593,8 @@ We have updated the backup directory structure for point-in-time recovery, provi
 
 
 We've added TLS support and included support for NFS, GCS, and Azure Storage as backend options for MySQL point-in-time recovery.
+
+> **Breaking changes**: We have made the volumeExpansion mode required. `ops.volumeExpansion.mode` is not being defaulted now. Similar changes are also done for `<scaler>.spec.storage.<node_type>`.
 
 ## What Next?
 
