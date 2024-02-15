@@ -503,9 +503,9 @@ In this release, we bring support for Postgres grafana summary dashboard with al
 
 To use the alert dashboards :
 
-* First you need to have KubeDB operator and a Postgres instance running on you cluster along with Prometheus operator.
+* First you need to have KubeDB operator and a Postgres instance running on your cluster along with Prometheus operator or Builtin Prometheus supported by Kubedb.
 
-* Then create a file named overwrite.yaml having following values. Make sure you change the values matching your needs.
+* Then create a file named overwrite.yaml having the following values. Make sure you change the values matching your needs.
 
     - For prometheus operator
         ```yaml
@@ -561,7 +561,7 @@ To use the alert dashboards :
     ```
 
 ### Bug fix and improvements
-* We have fixed a bug in Upgrade OpsRequest for Postgres.
+* We have fixed a bug in VersionUpdate OpsRequest for Postgres, which was causing issues on updating major versions .
 
 
 ## Point in Time Recovery
