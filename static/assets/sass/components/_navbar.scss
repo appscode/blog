@@ -160,6 +160,13 @@
       gap: 32px;
 
       .buttons {
+        iframe {
+          transition: 0.3s ease-in-out;
+          &:hover {
+            box-shadow: 2px 4px 24px rgba(0,0,0,.3)!important;
+            transform: translateY(-2px);
+          }
+        }
         .button {
           &:has(.tag) {
             gap: 4px;

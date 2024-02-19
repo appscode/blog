@@ -2,13 +2,14 @@
   margin-top: 30px;
   .cta-area-inner {
     padding: 20px 50px;
-    background-image: url(../images/bg-image/cta-bg.png);
+    background-image: url(../images/bg-image/cta-bg-transparent.png);
     background-size: cover;
     background-position: center;
     border-radius: 8px;
     min-height: 170px;
     display: flex;
     align-items: center;
+    background-color: $primary;
 
     h3 {
       color: $white-100;

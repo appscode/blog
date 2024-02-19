@@ -16,10 +16,10 @@ params:
   domain_kubevault: https://kubevault.com
   domain_kubeci: https://kube.ci
   domain_kubeshield: https://kubeshield.com
-  domain_bytebuilders: https://appscode.com
+  domain_bytebuilders: https://byte.builders
   domain_accounts: https://accounts.appscode.com
-  domain_marketplace: https://marketplace.appscode.com
-  blog_url: https://appscode.com/blog
+  domain_marketplace: https://marketplace.byte.builders
+  blog_url: https://blog.byte.builders
   slack_url: https://slack.appscode.com
   twitter_url: https://twitter.com/AppsCodeHQ
   facebook_url: https://www.facebook.com/appscode
