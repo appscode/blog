@@ -1,6 +1,6 @@
 ---
-title: Updates on Community License
-date: "2023-12-1"
+title: Update on Community License
+date: "2023-12-01"
 weight: 16
 authors:
 - Tamal Saha
