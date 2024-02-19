@@ -3,7 +3,7 @@ title: Postgres WAL archiving using NFS
 date: "2024-01-05"
 weight: 25
 authors:
-- Sourav Biswas
+- Saurov Chandra Biswas
 tags:
 - cloud-native
 - database
