@@ -72,7 +72,7 @@ Array.from(backButtonAll).forEach((el) => {
 });
 
 // ====================== MutationObserver -> for blog site navbar white-bg changes ================
-const embedButton = document.querySelector("#embedeButton");
+const embedButton = document.querySelector("#embedButton");
 
 // Observer to monitor changes to the class attribute of the navbar
 const classChangeObserver = new MutationObserver((mutationsList) => {
