@@ -3,46 +3,45 @@ const navItems = document.querySelectorAll(".navbar-appscode .nav-item");
 
 const navbarArea = document.querySelector(".navbar-area");
 
-
-
-navItems.forEach(navItem => {
-  const item = navItem.querySelector('.link');
-  item.addEventListener('click', function (el) {
-
-    
-
+navItems.forEach((navItem) => {
+  const item = navItem.querySelector(".link");
+  item.addEventListener("click", function (el) {
     // to remove active class from previously selected navItem
     const selectedNav = document.querySelector(".nav-item.is-active");
     if (selectedNav && selectedNav !== item.parentElement) {
-      selectedNav.classList.toggle('is-active')
+      selectedNav.classList.toggle("is-active");
     }
 
     // handle selected navItem class
     const hasActiveClass = navItem.classList.contains("is-active");
-    navItem.classList.toggle('is-active')
+    navItem.classList.toggle("is-active");
 
     // handle background dark-shadow of navItem
     const darkBodyEl = document.querySelector(".modal-backdrop");
 
     function handleDarkBodyClickEvent(el) {
-      el.target.classList.remove('is-show')
+      el.target.classList.remove("is-show");
       navbarArea.classList.remove("has-background-white");
       const selectedNavItem = document.querySelector(".nav-item.is-active");
-      selectedNavItem ? selectedNavItem.classList.toggle('is-active') : null;
+      selectedNavItem ? selectedNavItem.classList.toggle("is-active") : null;
     }
 
     if (hasActiveClass && darkBodyEl.classList.contains("is-show")) {
       darkBodyEl.classList.toggle("is-show");
       navbarArea.classList.toggle("has-background-white");
 
-      darkBodyEl.removeEventListener('click', handleDarkBodyClickEvent);
-    } else if (!hasActiveClass && !darkBodyEl.classList.contains("is-show") && !!navItem.querySelector('.mega-menu-wrapper')) {
+      darkBodyEl.removeEventListener("click", handleDarkBodyClickEvent);
+    } else if (
+      !hasActiveClass &&
+      !darkBodyEl.classList.contains("is-show") &&
+      !!navItem.querySelector(".mega-menu-wrapper")
+    ) {
       darkBodyEl.classList.toggle("is-show");
-      navbarArea.classList.toggle("has-background-white");
-      darkBodyEl.addEventListener('click', handleDarkBodyClickEvent);
+      navbarArea.classList.add("has-background-white");
+      darkBodyEl.addEventListener("click", handleDarkBodyClickEvent);
     }
-  })
-})
+  });
+});
 
 // mega menu active class
 var navbarItems = document.querySelectorAll(".navbar-item");
@@ -63,14 +62,43 @@ navbarItems.forEach((navbarItem) => {
 
 // Responsive menu back button
 const backButtonAll = document.querySelectorAll(".back-button");
-// create click event for all back button	
+// create click event for all back button
 Array.from(backButtonAll).forEach((el) => {
   el.addEventListener("click", () => {
-    // closeset nav item ancestor	
+    // closeset nav item ancestor
     const activeNavElement = el.closest(".nav-item.is-active");
     if (activeNavElement) activeNavElement.classList.remove("is-active");
-  })
+  });
 });
+
+// ====================== MutationObserver -> for blog site navbar white-bg changes ================
+const embedButton = document.querySelector("#embedeButton");
+
+// Observer to monitor changes to the class attribute of the navbar
+const classChangeObserver = new MutationObserver((mutationsList) => {
+  mutationsList.forEach((mutation) => {
+    if (mutation.attributeName === "class") {
+      updateNavbarContent();
+    }
+  });
+});
+
+// Configuration for the observer
+const observerConfig = { attributes: true };
+
+// Start observing changes to the class attribute of the navbar
+classChangeObserver.observe(navbarArea, observerConfig);
+
+// Function to update navbar content based on class
+function updateNavbarContent() {
+  if (navbarArea.classList.contains("has-background-white")) {
+    embedButton.src = "https://appscode.com/embed/?color=00994a&text=ffffff";
+  } else {
+    embedButton.src = "https://appscode.com/embed/?color=ffffff&text=00994a";
+  }
+}
+// ====================== MutationObserver -> for blog site navbar white-bg changes ================
+
 // navbar area JS v.2022 end
 
 // responsive navbar area
@@ -79,21 +107,32 @@ const selctorsForResponsiveMenu = [
   ".left-sidebar-wrapper",
   ".navbar-appscode.documentation-menu > .navbar-right",
   ".right-sidebar",
-  ".sidebar-search-area"
+  ".sidebar-search-area",
 ];
 
 // toggle classes for responsive buttons
-const toggleClassesForResponsiveMenu = ["is-block", "is-visible", "is-block", "right-0"];
+const toggleClassesForResponsiveMenu = [
+  "is-block",
+  "is-visible",
+  "is-block",
+  "right-0",
+];
 // All responsive menu buttons
-const responsiveMenus = document.querySelectorAll(".responsive-menu > .is-flex.is-justify-content-space-between > .button");
+const responsiveMenus = document.querySelectorAll(
+  ".responsive-menu > .is-flex.is-justify-content-space-between > .button"
+);
 // iterate thorugh the menus to handle click event
 Array.from(responsiveMenus).forEach((menu, idx) => {
   menu.addEventListener("click", function () {
-    const toggleElement = document.querySelector(selctorsForResponsiveMenu[idx]);
+    const toggleElement = document.querySelector(
+      selctorsForResponsiveMenu[idx]
+    );
     if (toggleElement) {
       // toggle active menu class
       toggleElement.classList.toggle(toggleClassesForResponsiveMenu[idx]);
-      if (toggleElement.classList.contains(toggleClassesForResponsiveMenu[idx])) {
+      if (
+        toggleElement.classList.contains(toggleClassesForResponsiveMenu[idx])
+      ) {
         const backButtonElement = toggleElement.querySelector(".back-button");
 
         function handleClick() {
@@ -103,36 +142,44 @@ Array.from(responsiveMenus).forEach((menu, idx) => {
         }
 
         backButtonElement.addEventListener("click", handleClick);
-
       }
     }
 
-    const modalBackdropElement = document.querySelector(".modal-backdrop.is-show");
+    const modalBackdropElement = document.querySelector(
+      ".modal-backdrop.is-show"
+    );
     // if modal backdrop element is visible then hide it
     if (modalBackdropElement) {
-      modalBackdropElement.classList.remove("is-show")
+      modalBackdropElement.classList.remove("is-show");
       document.querySelector(header).style.backgroundColor = "#ffffff";
     }
 
     const navItem = document.querySelector(".nav-item.is-active");
     // if modal backdrop element is visible then hide it
     if (navItem) {
-      navItem.classList.remove("is-active")
+      navItem.classList.remove("is-active");
     }
 
     // remove previous active menu
     selctorsForResponsiveMenu.forEach((el, selectorIdx) => {
       if (selectorIdx !== idx) {
-        const selectorElement = document.querySelector(selctorsForResponsiveMenu[selectorIdx]);
-        if (selectorElement.classList.contains(toggleClassesForResponsiveMenu[selectorIdx])) {
-          selectorElement.classList.remove(toggleClassesForResponsiveMenu[selectorIdx])
+        const selectorElement = document.querySelector(
+          selctorsForResponsiveMenu[selectorIdx]
+        );
+        if (
+          selectorElement.classList.contains(
+            toggleClassesForResponsiveMenu[selectorIdx]
+          )
+        ) {
+          selectorElement.classList.remove(
+            toggleClassesForResponsiveMenu[selectorIdx]
+          );
         }
       }
     });
   });
 });
 // =====================================
-
 
 document.addEventListener("DOMContentLoaded", () => {
   // AOS initialization
@@ -148,6 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // navbar for mobile device
   let navbar = document.querySelector(".navbar-burger");
   navbar?.addEventListener("click", function () {
+    navbarArea.classList.add("has-background-white");
     const hasActiveClass = navbar.classList.contains("is-active");
     let dropdown = document.querySelector(".navbar-right");
     navbar.classList.toggle("is-active");
