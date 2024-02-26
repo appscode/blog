@@ -246,7 +246,7 @@ CurrentVoters:          [0,1,2]
 CurrentObservers:       []
 ```
 
-We can see the important metadata information like clusterID, current leader ID, broker IDs which are participating in leader election voting and IDs of those brokers who are observers. It is important to mention that each broker is assigned a numeric ID which is called its broker ID. The ID is assigned sequentially with respect to the host pod name.
+We can see the important metadata information like clusterID, current leader ID, node IDs which are participating in leader election voting and IDs of those brokers who are observers. It is important to mention that each broker is assigned a numeric ID which is called its broker ID. The ID is assigned sequentially with respect to the host pod name.
 
 ### Create a Topic
 
@@ -267,7 +267,7 @@ Topic: music	TopicId: 2iCBGBHyQDa2iImRBJmJ6g	PartitionCount: 3	ReplicationFactor
 	Topic: music	Partition: 2	Leader: 0	Replicas: 0,1,2	Isr: 0,1,2
 
 ```
-Now, we are going to start a producer and a consumer for topic `music`. Let’s use this current terminal for producing messages and open a new terminal for consuming messages. From the topic description we can see that the leader partition for partition 0 is 1 (the broker that we are on). If we produce messages to `kafka-cluster-1` broker(brokerID=1) it will store those messages in partition 0. Let’s produce messages in the producer terminal and consume them from the consumer terminal.
+Now, we are going to start a producer and a consumer for topic `music`. Let’s use this current terminal for producing messages and open a new terminal for consuming messages. From the topic description we can see that the leader partition for partition 0 is 1 (the broker that we are on). If we produce messages to `kafka-cluster-1` broker(brokerID=1) it will store those messages in partition 0 and  `--request-required-acks all` ensures that the message is durably stored on all replicas before the producer considers the message sent. Let’s produce messages in the producer terminal and consume them from the consumer terminal.
 
 ```bash
 $ kubectl exec -it -n demo  kafka-cluster-1 -- bash
