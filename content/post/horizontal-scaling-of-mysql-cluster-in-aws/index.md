@@ -248,7 +248,7 @@ mysql-cluster-standby   ClusterIP   10.44.19.195   <none>        3306/TCP   17m
 Now, we are going to use `mysql-cluster-auth` to get the credentials.
 
 ```bash
-$ kubectl get secrets -n demo mysql-cluster-auth-o jsonpath='{.data.username}' | base64 -d
+$ kubectl get secrets -n demo mysql-cluster-auth -o jsonpath='{.data.username}' | base64 -d
 root
 
 $ kubectl get secrets -n demo mysql-cluster-auth -o jsonpath='{.data.password}' | base64 -d
@@ -402,7 +402,7 @@ $ kubectl get mysql -n demo mysql-cluster -o json | jq '.spec.replicas'
 ```
 > From all the above outputs we can see that the replicas of the cluster is decreased to 3. That means we have successfully scaled down the replicas of the MySQL cluster.
 
-If you want to learn more about Production-Grade PostgreSQL on Kubernetes you can have a look into that playlist below:
+If you want to learn more about Production-Grade MySQL on Kubernetes you can have a look into that playlist below:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=ThdfNCRulTAsqfnz&amp;list=PLoiT1Gv2KR1gNPaHZtfdBZb6G4wLx6Iks" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
