@@ -172,7 +172,7 @@ spec:
     resources:
       requests:
         storage: 1Gi
-    storageClassName: standard
+    storageClassName: gp2
   storageType: Durable
   terminationPolicy: WipeOut
 ```
