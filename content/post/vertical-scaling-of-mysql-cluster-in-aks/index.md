@@ -1,6 +1,6 @@
 ---
 title: Vertical Scaling of MySQL Cluster in Azure Kubernetes Service (AKS)
-date: "2023-02-20"
+date: "2024-02-20"
 weight: 14
 authors:
 - Dipta Roy
