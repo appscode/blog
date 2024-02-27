@@ -42,7 +42,7 @@ In this tutorial, We will cover the following steps:
 3) Kafka User Management in Kafka UI
 
 ## Add ACL and Users using Reconfigure KafkaOpsRequest
-A Kafka instance has already deployed with one default user. We have also deployed Kafka Connect Cluster and Connector(mongo-source, s3-sink) in the previous webinar.
+A Kafka instance has already deployed with one default user. We have also deployed Kafka Connect Cluster and Connector(mongo-source, s3-sink) in the previous webinar. You can find the video [here](https://youtu.be/21BN-uRsMzs?feature=shared).
 Now reconfigure Kafka adding `ACL`, Users(`alice`, `bob`) and a superuser which is default `admin` with KafkaOpsRequest.
 At first, we will create `broker.properties` and `controller.properties` file containing required configuration settings.
 ```bash
@@ -257,4 +257,16 @@ Now, click on the `topics` from the user `bob` cluster. You will see the list of
 ## Summary
 
 In this tutorial, we have learned how to configure Kafka ACL, Kafka User, install `Provectus UI for Apache Kafka` and manage Kafka Users in Kafka UI. We have also seen how to add ACL rules to restrict access to topics for different users.
-As a next step, you can try to add more users and ACL rules and manage those users in Kafka UI. Also, you can try to produce and consume messages from the UI to topics, configure Kafka Connectors and manage those connectors in Kafka UI. 
+As a next step, you can try to add more users and ACL rules and manage those users in Kafka UI. Also, you can try to produce and consume messages from the UI to topics, configure Kafka Connectors and manage those connectors in Kafka UI.
+
+## Support
+
+To speak with us, please leave a message on [our website](https://appscode.com/contact/).
+
+To receive product announcements, follow us on [Twitter/X](https://twitter.com/KubeDB).
+
+To watch tutorials of various Production-Grade Kubernetes Tools Subscribe to our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
+
+Learn more about [Kafka in Kubernetes](https://kubedb.com/kubernetes/databases/run-and-manage-kafka-on-kubernetes/)
+
+If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
