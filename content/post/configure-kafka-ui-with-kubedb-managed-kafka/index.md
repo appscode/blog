@@ -22,7 +22,7 @@ Apache Kafka is a powerful-distributed event streaming platform where Kafka Conn
 
 Kafka ACL(Access Control List) is like a set of rules that say who is allowed to do specific things. For example, an ACL might say that `User:alice` can send messages to a certain topic, while `User:bob` can only read messages from that topic. So, Kafka's ACLs help manage and restrict what different users or applications are allowed to do with the brokers in the system, ensuring that only the right people can perform specific actions.
 
-There are a few open source Kafka UI. We are using `Provectus UI for Apache Kafka`. Provectus Kafka UI simplifies the management and monitoring of multiple Kafka clusters. It provides a user-friendly interface to manage Kafka clusters, topics, and ACLs. It has lots of features like,
+There are a few open source Kafka UI. We are using `Provectus UI for Apache Kafka` in this blog. It simplifies the management and monitoring of multiple Kafka clusters. It provides a user-friendly interface to manage Kafka clusters, topics, Kafka Connect Clusters and ACLs etc. It has lots of features like,
 * `Configuration wizard` — configure your Kafka clusters right in the UI
 * `Multi-Cluster Management` — monitor and manage all your clusters in one place
 * `Performance Monitoring with Metrics Dashboard` — track key Kafka metrics with a lightweight dashboard
@@ -43,8 +43,8 @@ In this tutorial, We will cover the following steps:
 3) Kafka User Management in Kafka UI
 
 ## Add ACL and Users using Reconfigure KafkaOpsRequest
-A Kafka instance has already deployed with one default user. We have also deployed Kafka Connect Cluster and Connector(mongo-source, s3-sink) in the previous webinar. You can find the video [here](https://youtu.be/21BN-uRsMzs?feature=shared).
-Now reconfigure Kafka adding `ACL`, Users(`alice`, `bob`) and a superuser which is default `admin` with KafkaOpsRequest.
+A Kafka topology instance has already deployed with one default user. We have also deployed Kafka Connect Cluster and Connectors(mongo-source, s3-sink). You can find the video [here](https://youtu.be/21BN-uRsMzs?feature=shared), to deploy Kafka Connect Cluster and Connectors.
+Now reconfigure Kafka adding `ACL`, Users(`alice`, `bob`) and a superuser `admin` with KafkaOpsRequest.
 At first, we will create `broker.properties` and `controller.properties` file containing required configuration settings.
 ```bash
 $ cat broker.properties
@@ -82,7 +82,7 @@ Here,
 
 * `spec.databaseRef.name` specifies that we are reconfiguring `kafka-prod` cluster.
 * `spec.type` specifies that we are performing Reconfigure on our Kafka Cluster.
-* `spec.configuration.configSecret.name` specifies the name of the new secret.
+* `spec.configuration.configSecret.name` specifies the name of the secret.
 
 Lets save this yaml in a file `kafka-acl.yaml` and apply it using kubectl.
 ```bash
@@ -117,7 +117,7 @@ We will add ACL rules to:
 * Allow `alice` to read and write messages from `finance` and `marketing` topics.
 * Allow `bob` to read and write messages from `sales` and `marketing` topics.
 
-Exec one of the kafka broker and use the following commands to add ACL rules to the Kafka cluster.
+Exec one of the kafka broker and use the following commands to add ACL rules to the Kafka cluster using `kafka-acls.sh` script.
 ```bash
 $ kubectl exec -it -n demo kafka-prod-0 -- bash
 
@@ -148,7 +148,7 @@ Current ACLs for resource `ResourcePattern(resourceType=TOPIC, name=marketing, p
 ```
 
 ## Install Kafka UI
-In this section, we will install UI for Apache Kafka. 
+In this section, we will install `Provectus UI for Apache Kafka`. 
 UI can be deployed by simple helm command. First you need to make a `values.yml` file. `values.yml` will configure the necessary Kafka and Kafka Connect Cluster configuration like bootstrap-server, user credentials etc.
 
 We need `admin` user password to configure `kafka` and `connect` user password to configure `kafka-connect` cluster. You will find the passwords from the secrets by following the below commands.
