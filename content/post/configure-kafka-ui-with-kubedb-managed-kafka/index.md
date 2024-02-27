@@ -5,13 +5,14 @@ weight: 14
 authors:
 - Obaydullah
 tags:
-- apache-kafka
-- kafka-ui
-- cloud-native
 - acl
+- apache-kafka
+- cloud-native
 - kafka
+- kafka-ui
 - kubedb
 - kubernetes
+- provectus
 - streaming-platform
 ---
 
@@ -116,7 +117,7 @@ We will add ACL rules to:
 * Allow `alice` to read and write messages from `finance` and `marketing` topics.
 * Allow `bob` to read and write messages from `sales` and `marketing` topics.
 
-Use the following commands to add ACL rules to the Kafka cluster.
+Exec one of the kafka broker and use the following commands to add ACL rules to the Kafka cluster.
 ```bash
 $ kubectl exec -it -n demo kafka-prod-0 -- bash
 
@@ -148,9 +149,9 @@ Current ACLs for resource `ResourcePattern(resourceType=TOPIC, name=marketing, p
 
 ## Install Kafka UI
 In this section, we will install UI for Apache Kafka. 
-UI can be deployed by simple helm command. First you need to make a `values.yml` file. values.yml will configure the necessary Kafka and Kafka Connect Cluster configuration like bootstrap-server, user credentials etc.
-`values.yaml` for our configuration is given below,
-We need `admin` user password to configure `kafka` and `connect` user password to configure `kafka-connect` cluster. 
+UI can be deployed by simple helm command. First you need to make a `values.yml` file. `values.yml` will configure the necessary Kafka and Kafka Connect Cluster configuration like bootstrap-server, user credentials etc.
+
+We need `admin` user password to configure `kafka` and `connect` user password to configure `kafka-connect` cluster. You will find the passwords from the secrets by following the below commands.
 
 ```bash
 $ kubectl get secrets -n demo kafka-prod-admin-cred -o jsonpath='{.data.\password}' | base64 -d
@@ -159,6 +160,7 @@ $ kubectl get secrets -n demo kafka-prod-admin-cred -o jsonpath='{.data.\passwor
 $ kubectl get secrets -n demo connect-cluster-connect-cred -o jsonpath='{.data.\password}' | base64 -d
 DNY!mWfLCs6R(kXH
 ```
+`values.yaml` for our configuration is given below,
 
 ```yaml
 yamlApplicationConfig:
@@ -222,7 +224,7 @@ $ kubectl port-forward -n demo deploy/kafka-ui 8080:8080
 ```
 Now the kafka-ui is accessible at http://localhost:8080.
 
-We can see list of Brokers, Topics, Connectors, ACLs etc. Also, we can produce and consume messages from the UI to topics. 
+We can see list of Brokers, Topics, Connectors, ACLs etc. Also, we can produce and consume messages from the UI to Kafka topics. 
 
 ## Kafka User Management in Kafka UI
 
@@ -256,8 +258,8 @@ Now, click on the `topics` from the user `bob` cluster. You will see the list of
 
 ## Summary
 
-In this tutorial, we have learned how to configure Kafka ACL, Kafka User, install `Provectus UI for Apache Kafka` and manage Kafka Users in Kafka UI. We have also seen how to add ACL rules to restrict access to topics for different users.
-As a next step, you can try to add more users and ACL rules and manage those users in Kafka UI. Also, you can try to produce and consume messages from the UI to topics, configure Kafka Connectors and manage those connectors in Kafka UI.
+In this tutorial, we have learned how to configure Kafka ACL, Kafka Users and how to install `Provectus UI for Apache Kafka` and manage Kafka Users in Kafka UI. We have also learned how to add ACL rules to restrict access to topics for different users.
+As a next step, you can try to add more users and ACL rules and manage those users in Kafka UI. Also, you can try to produce and consume messages from the UI to Kafka topics, configure Kafka Connectors and manage those connectors in Kafka UI.
 
 ## Support
 
