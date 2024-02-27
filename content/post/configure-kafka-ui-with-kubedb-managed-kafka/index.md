@@ -17,11 +17,21 @@ tags:
 
 ## Overview
 
-Apache Kafka is a powerful-distributed event streaming platform where Kafka Connect Cluster is a framework for building connectors to integrate Kafka with other systems.
+Apache Kafka is a powerful-distributed event streaming platform where Kafka Connect Cluster is a framework for building connectors to integrate Kafka with other systems. It makes it simple to quickly define connectors that move large collections of data into and out of Kafka. Kafka Connect can ingest entire databases or collect metrics from all your application servers into Kafka topics, making the data available for stream processing with low latency.
 
 Kafka ACL(Access Control List) is like a set of rules that say who is allowed to do specific things. For example, an ACL might say that `User:alice` can send messages to a certain topic, while `User:bob` can only read messages from that topic. So, Kafka's ACLs help manage and restrict what different users or applications are allowed to do with the brokers in the system, ensuring that only the right people can perform specific actions.
 
-There are a few open source Kafka UI. We are using `UI for Apache Kafka` by Provectus. Provectus Kafka UI simplifies the management and monitoring of multiple Kafka clusters. 
+There are a few open source Kafka UI. We are using `Provectus UI for Apache Kafka`. Provectus Kafka UI simplifies the management and monitoring of multiple Kafka clusters. It provides a user-friendly interface to manage Kafka clusters, topics, and ACLs. It has lots of features like,
+* `Configuration wizard` — configure your Kafka clusters right in the UI
+* `Multi-Cluster Management` — monitor and manage all your clusters in one place
+* `Performance Monitoring with Metrics Dashboard` — track key Kafka metrics with a lightweight dashboard
+* `View Kafka Brokers` — view topic and partition assignments, controller status
+* `View Kafka Topics` — view partition count, replication status, and custom configuration
+* `View Consumer Groups` — view per-partition parked offsets, combined and per-partition lag
+* `Browse Messages` — browse messages with JSON, plain text, and Avro encoding
+* `Dynamic Topic Configuration` — create and configure new topics with dynamic configuration
+* `Configurable Authentification` — secure your installation with optional Github/Gitlab/Google OAuth 2.0
+* `Kafka Connector Management` — manage Kafka Connect clusters and connectors
 
 ## Workflow
 
@@ -219,29 +229,32 @@ We can see list of Brokers, Topics, Connectors, ACLs etc. Also, we can produce a
 In this section, we will see how to manage Kafka Users in Kafka UI. 
 Earlier in this blog, we have added two users alice, bob and ACL rules for those users. In this UI configuration, we have also added these two users. If we open topics from different users, we can see specific users only can access specific topics from UI as per ACL.
 
+For the first time, Use `admin:admin` to login to the Kafka UI as we have configured `admin` user in the `values.yml` file. After login, you will see the Kafka UI dashboard like below,
+
+![Kafka UI](UIDashboard.png)
+
 From the Kafka UI, click on the `topics` from the `admin` user cluster. You will see the list of all topics in the cluster like below,
 
-![Kafka UI](kafka-ui.png)
+![Kafka UI](AdminTopics.png)
 
 Now, click on the `ACLs` tab. You will see the list of all ACLs in the cluster like below that we have added using `kafka-acls.sh` script earlier.
 
-![Kafka UI](kafka-ui-acl.png)
+![Kafka UI](ACLs.png)
+
+Now, click on the `Kafka Connect` from the user `admin` cluster. You will see the list of all connectors in the cluster like below as we have added using Kafka Connect Cluster.,
+
+![Kafka UI](Connectors.png)
 
 Now, click on the `topics` from the user `alice` cluster. You will see the list of specific topics in the cluster like below that `alice` has access to.,
 
-![Kafka UI](kafka-ui-alice.png)
+![Kafka UI](AliceTopics.png)
 
 Now, click on the `topics` from the user `bob` cluster. You will see the list of specific topics in the cluster like below that `bob` has access to.,
 
-![Kafka UI](kafka-ui-bob.png)
+![Kafka UI](BobTopics.png)
 
-Now, click on the `Kafka Connect' from the user `admin` cluster. You will see the list of all connectors in the cluster like below as we have added using Kafka Connect Cluster.,
-
-![Kafka UI](kafka-ui-connect.png)
 
 ## Summary
 
-In this tutorial, we have learned how to configure Kafka ACL and Kafka User, Install UI for Apache Kafka and manage Kafka Users in Kafka UI. 
-
-
-
+In this tutorial, we have learned how to configure Kafka ACL, Kafka User, install `Provectus UI for Apache Kafka` and manage Kafka Users in Kafka UI. We have also seen how to add ACL rules to restrict access to topics for different users.
+As a next step, you can try to add more users and ACL rules and manage those users in Kafka UI. Also, you can try to produce and consume messages from the UI to topics, configure Kafka Connectors and manage those connectors in Kafka UI. 
