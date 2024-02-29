@@ -7,10 +7,12 @@ authors:
 tags:
 - acl
 - apache-kafka
+- kafka-connect
 - cloud-native
 - kafka
 - kafka-ui
 - kubedb
+- dashboard
 - kubernetes
 - provectus
 - streaming-platform
@@ -18,7 +20,7 @@ tags:
 
 ## Overview
 
-Apache Kafka is a powerful-distributed event streaming platform where Kafka Connect Cluster is a framework for building connectors to integrate Kafka with other systems. It makes it simple to quickly define connectors that move large collections of data into and out of Kafka. Kafka Connect can ingest entire databases or collect metrics from all your application servers into Kafka topics, making the data available for stream processing with low latency.
+Apache Kafka is a powerful-distributed event streaming platform where Kafka Connect Cluster is a framework for building connectors to integrate Kafka with other systems. It makes it simple to quickly define connectors that move large collections of data in and out of Kafka. Kafka Connect can ingest entire databases or collect metrics from all your application servers into Kafka topics, making the data available for stream processing with low latency.
 
 Kafka ACL(Access Control List) is like a set of rules that say who is allowed to do specific things. For example, an ACL might say that `User:alice` can send messages to a certain topic, while `User:bob` can only read messages from that topic. So, Kafka's ACLs help manage and restrict what different users or applications are allowed to do with the brokers in the system, ensuring that only the right people can perform specific actions.
 
@@ -233,27 +235,27 @@ Earlier in this blog, we have added two users alice, bob and ACL rules for those
 
 For the first time, Use `admin:admin` to login to the Kafka UI as we have configured `admin` user in the `values.yml` file. After login, you will see the Kafka UI dashboard like below,
 
-![Kafka UI](UIDashboard.png)
+![Kafka UI](images/UIDashboard.png)
 
 From the Kafka UI, click on the `topics` from the `admin` user cluster. You will see the list of all topics in the cluster like below,
 
-![Kafka UI](AdminTopics.png)
+![Kafka UI](images/AdminTopics.png)
 
 Now, click on the `ACLs` tab. You will see the list of all ACLs in the cluster like below that we have added using `kafka-acls.sh` script earlier.
 
-![Kafka UI](ACLs.png)
+![Kafka UI](imagesACLs.png)
 
 Now, click on the `Kafka Connect` from the user `admin` cluster. You will see the list of all connectors in the cluster like below as we have added using Kafka Connect Cluster.,
 
-![Kafka UI](Connectors.png)
+![Kafka UI](images/Connectors.png)
 
 Now, click on the `topics` from the user `alice` cluster. You will see the list of specific topics in the cluster like below that `alice` has access to.,
 
-![Kafka UI](AliceTopics.png)
+![Kafka UI](images/AliceTopics.png)
 
 Now, click on the `topics` from the user `bob` cluster. You will see the list of specific topics in the cluster like below that `bob` has access to.,
 
-![Kafka UI](BobTopics.png)
+![Kafka UI](images/BobTopics.png)
 
 
 ## Summary
