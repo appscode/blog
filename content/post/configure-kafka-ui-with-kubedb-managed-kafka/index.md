@@ -7,12 +7,12 @@ authors:
 tags:
 - acl
 - apache-kafka
-- kafka-connect
 - cloud-native
+- dashboard
 - kafka
+- kafka-connect
 - kafka-ui
 - kubedb
-- dashboard
 - kubernetes
 - provectus
 - streaming-platform
@@ -20,9 +20,13 @@ tags:
 
 ## Overview
 
-Apache Kafka is a powerful-distributed event streaming platform where Kafka Connect Cluster is a framework for building connectors to integrate Kafka with other systems. It makes it simple to quickly define connectors that move large collections of data in and out of Kafka. Kafka Connect can ingest entire databases or collect metrics from all your application servers into Kafka topics, making the data available for stream processing with low latency.
+Apache Kafka is a powerful-distributed event streaming platform. Kafka itself provides a command-line interface (CLI) and APIs for interacting with Kafka topics, producers, and consumers. Kafka's command-line interface (CLI) and APIs can be complex and difficult to use like creating and configuring topics, managing partitions etc. It's harder to get real-time updates about the state of your Kafka cluster. You would need to continuously run commands or scripts to get this information. Here, Kafka UI simplifies the management and monitoring of Kafka clusters. It is also possible to create topics, produce or consume messages from the UI. 
 
-Kafka ACL(Access Control List) is like a set of rules that say who is allowed to do specific things. For example, an ACL might say that `User:alice` can send messages to a certain topic, while `User:bob` can only read messages from that topic. So, Kafka's ACLs help manage and restrict what different users or applications are allowed to do with the brokers in the system, ensuring that only the right people can perform specific actions.
+You can also manage Kafka Connect Clusters and Connectors from the UI. Kafka Connect Cluster is a framework for building connectors to integrate Kafka with other systems. It makes it simple to quickly define connectors that move large collections of data in and out of Kafka. Kafka Connect can ingest entire databases or collect metrics from all your application servers into Kafka topics, making the data available for stream processing with low latency.
+
+User management in Kafka is a necessity for maintaining a secure, efficient, and compliant data processing environment. It allows you to control who can access your Kafka resources, what they can do with them, and track their activity. With Kafka ACLs (Access Control Lists), you can specify which operations (read, write, create, delete) a user can perform on a specific resource (topic, consumer group, cluster). This helps prevent unauthorized actions on your Kafka resources. For example, an ACL might say that `User:alice` can send messages to a certain topic, while `User:bob` can only read messages from that topic. So, Kafka's ACLs help manage and restrict what different users or applications are allowed to do with the brokers in the system, ensuring that only the right people can perform specific actions. It is possible to manage Kafka Users and list ACLs from Kafka UI.
+
+Overall, a Kafka UI simplifies the management and monitoring of Kafka clusters, making it easier for developers, administrators, and operators to work with Kafka. It provides a visual representation of the Kafka ecosystem, allowing you to perform administrative tasks, monitor performance, and troubleshoot issues more efficiently.
 
 There are a few open source Kafka UI. We are using `Provectus UI for Apache Kafka` in this blog. It simplifies the management and monitoring of multiple Kafka clusters. It provides a user-friendly interface to manage Kafka clusters, topics, Kafka Connect Clusters and ACLs etc. It has lots of features like,
 * `Configuration wizard` — configure your Kafka clusters right in the UI
@@ -34,8 +38,7 @@ There are a few open source Kafka UI. We are using `Provectus UI for Apache Kafk
 * `Browse Messages` — browse messages with JSON, plain text, and Avro encoding
 * `Dynamic Topic Configuration` — create and configure new topics with dynamic configuration
 * `Configurable Authentification` — secure your installation with optional Github/Gitlab/Google OAuth 2.0
-* `Kafka Connector Management` — manage Kafka Connect clusters and connectors
-
+* `Kafka Connector Management` — manage Kafka Connect clusters and connectors etc.
 ## Workflow
 
 In this tutorial, We will cover the following steps:
@@ -45,7 +48,8 @@ In this tutorial, We will cover the following steps:
 3) Kafka User Management in Kafka UI
 
 ## Add ACL and Users using Reconfigure KafkaOpsRequest
-A Kafka topology instance has already deployed with one default user. We have also deployed Kafka Connect Cluster and Connectors(mongo-source, s3-sink). You can find the video [here](https://youtu.be/21BN-uRsMzs?feature=shared), to deploy Kafka Connect Cluster and Connectors.
+Let's assume a Kafka cluster `kafka-prod` is already deployed using KubeDB. We have deployed Kafka cluster with 2 brokers and 2 controllers. In our previous webinar, we have deployed Kafka Connect Cluster `connect-cluster` and Connectors(`mongo-source`, `s3-sink`). You can find the webinar [here](https://youtu.be/21BN-uRsMzs?feature=shared), to get the details of deploying Kafka Connect Cluster and Connectors.
+
 Now reconfigure Kafka adding `ACL`, Users(`alice`, `bob`) and a superuser `admin` with KafkaOpsRequest.
 At first, we will create `broker.properties` and `controller.properties` file containing required configuration settings.
 ```bash
@@ -151,7 +155,7 @@ Current ACLs for resource `ResourcePattern(resourceType=TOPIC, name=marketing, p
 
 ## Install Kafka UI
 In this section, we will install `Provectus UI for Apache Kafka`. 
-UI can be deployed by simple helm command. First you need to make a `values.yml` file. `values.yml` will configure the necessary Kafka and Kafka Connect Cluster configuration like bootstrap-server, user credentials etc.
+UI can be deployed by simple helm command. First you need to make a `values.yaml` file. It is used to configure the necessary Kafka and Kafka Connect Cluster configuration like bootstrap-server, user credentials etc. for Kafka UI.
 
 We need `admin` user password to configure `kafka` and `connect` user password to configure `kafka-connect` cluster. You will find the passwords from the secrets by following the below commands.
 
@@ -212,7 +216,7 @@ Here,
 Now, we will install Kafka UI using helm.
 ```bash
 $ helm repo add kafka-ui https://provectus.github.io/kafka-ui-charts
-$ helm install kafka-ui kafka-ui/kafka-ui -f values.yml -n demo
+$ helm install kafka-ui kafka-ui/kafka-ui -f values.yaml -n demo
 ```
 A deployment and pod will be created. Check the resource using this command:
 ```bash
@@ -231,9 +235,9 @@ We can see list of Brokers, Topics, Connectors, ACLs etc. Also, we can produce a
 ## Kafka User Management in Kafka UI
 
 In this section, we will see how to manage Kafka Users in Kafka UI. 
-Earlier in this blog, we have added two users alice, bob and ACL rules for those users. In this UI configuration, we have also added these two users. If we open topics from different users, we can see specific users only can access specific topics from UI as per ACL.
+Earlier in this blog, we have added two users `alice`, `bob` and ACL rules for those users. In this UI configuration, we have also added these two users. If we open topics from different users, we can see specific users only can access specific topics from UI as per ACL.
 
-For the first time, Use `admin:admin` to login to the Kafka UI as we have configured `admin` user in the `values.yml` file. After login, you will see the Kafka UI dashboard like below,
+For the first time, Use `admin:admin` to login to the Kafka UI as we have configured `admin` user in the `values.yaml` file. After login, you will see the Kafka UI dashboard like below,
 
 ![Kafka UI](images/UIDashboard.png)
 
@@ -243,7 +247,7 @@ From the Kafka UI, click on the `topics` from the `admin` user cluster. You will
 
 Now, click on the `ACLs` tab. You will see the list of all ACLs in the cluster like below that we have added using `kafka-acls.sh` script earlier.
 
-![Kafka UI](imagesACLs.png)
+![Kafka UI](images/ACLs.png)
 
 Now, click on the `Kafka Connect` from the user `admin` cluster. You will see the list of all connectors in the cluster like below as we have added using Kafka Connect Cluster.,
 
