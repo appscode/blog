@@ -1,6 +1,6 @@
 ---
 title: Configure Kafka-UI with KubeDB Managed Kafka and Kafka Connect Cluster
-date: "2024-02-26"
+date: "2024-03-01"
 weight: 14
 authors:
 - Obaydullah
