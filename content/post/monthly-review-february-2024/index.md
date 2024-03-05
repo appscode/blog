@@ -20,7 +20,7 @@ tags:
 
 #### Announcing KubeDB v2024.2.14
 
-We are pleased to announce the release of **KubeDB v2024.2.14**. This release is primarily focused on extending support for new databases including `Solr`, `Singlestore`, `Druid`, `RabbitMQ`, `Pgpool`, `FerretDB` and `ZooKeeper`.
+We are pleased to announce the release of **KubeDB v2024.2.14**. This release is primarily focused on extending support for new databases including `Solr`, `Singlestore`, `Druid`, `RabbitMQ`, `FerretDB` and `ZooKeeper`. It also brings support for `ConnectCluster` for Kafka and `Pgpool` for PostgreSQL. 
 
 Link: https://appscode.com/blog/post/kubedb-v2024.02.14/
 
