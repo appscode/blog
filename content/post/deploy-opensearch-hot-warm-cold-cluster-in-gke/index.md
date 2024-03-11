@@ -424,7 +424,7 @@ ip          heap.percent ram.percent cpu load_1m load_5m load_15m node.role node
 
 ### Insert Sample Data
 
-In this section, we are going to create few indexes in OpenSearch. You can use `curl` for post some sample data into OpenSearch. Use the `-k` flag to disable attempts to verify self-signed certificates for testing purposes.:
+In this section, we are going to create few indexes in OpenSearch. You can use `curl` for post some sample data into OpenSearch. Use the `-k` flag to disable attempts to verify self-signed certificates for testing purposes.
 
 ```bash
 $ curl -XPOST -k --user 'admin:A;qdVR(WI3XjczBa' "https://localhost:9200/music/_doc?pretty" -H 'Content-Type: application/json' -d'
