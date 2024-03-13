@@ -104,6 +104,7 @@ elasticsearches.kubedb.com                         2024-03-11T09:46:54Z
 elasticsearchopsrequests.ops.kubedb.com            2024-03-11T09:46:54Z
 elasticsearchversions.catalog.kubedb.com           2024-03-11T09:46:14Z
 etcdversions.catalog.kubedb.com                    2024-03-11T09:46:14Z
+ferretdbs.kubedb.com                               2024-03-11T09:46:14Z
 ferretdbversions.catalog.kubedb.com                2024-03-11T09:46:14Z
 kafkaconnectorversions.catalog.kubedb.com          2024-03-11T09:46:14Z
 kafkaopsrequests.ops.kubedb.com                    2024-03-11T09:46:57Z
@@ -193,7 +194,7 @@ In this yaml,
 * `spec.version` field specifies the version of FerretDB. Here, we are using FerretDB `1.18.0`. You can list the KubeDB supported versions of FerretDB by running `$ kubectl get ferretdbversions` command.
 * `spec.storageType` specifies the type of storage that will be used for FerretDB. It can be `Durable` or `Ephemeral`. Default value of this field is `Durable`.
 * `spec.backend` denotes the backend database information for FerretDB instance.
-* `spec.terminationPolicy` field is *Wipeout* means it will be deleted without restrictions. It can also be “Halt”, “Delete” and “DoNotTerminate”.
+* `spec.terminationPolicy` field is *Wipeout* means it will be deleted without restrictions.
 
 Once these are handled correctly and the FerretDB object is deployed, you will see that the following objects are created:
 
