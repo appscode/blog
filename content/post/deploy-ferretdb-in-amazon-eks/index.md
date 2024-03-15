@@ -331,9 +331,9 @@ musicdb> exit
 ```
 > Here, we've stored some sample data in our `ferret-pg-backend` PostgreSQL using `mongosh`.
 
-### Check Tables in PostgrSQL Backend Engine
+### Verify Data in PostgreSQL Backend Engine
 
-Now, We are going to exec into the PostgreSQL pod to check if the data has been stored successfully.
+Now, We are going to exec into the PostgreSQL pod to verify if the data has been stored successfully.
 
 ```bash
 $ kubectl exec -it -n demo ferret-pg-backend-0 -- bash
