@@ -247,7 +247,7 @@ metadata:
   name: redis-cluster-dd
   namespace: default
 spec:
-  version: 7.0.5
+  version: 7.2.3
   mode: Cluster
   authSecret:
     name: mysecret
@@ -291,7 +291,7 @@ redis.kubedb.com/redis-cluster-dd created
 ```
 
 In this yaml,
-* `spec.version` field specifies the version of Redis. Here, we are using Redis `7.0.5`. You can list the KubeDB supported versions of Redis by running `$ kubectl get redisversions` command.
+* `spec.version` field specifies the version of Redis. Here, we are using Redis `7.2.3`. You can list the KubeDB supported versions of Redis by running `$ kubectl get redisversions` command.
 * Another field to notice is the `spec.storageType` field. This can be `Durable` or `Ephemeral` depending on the requirements of the database to be persistent or not.
 * `spec.authSecret` is an optional field that points to a Secret used to hold credentials for Redis superuser. If not set, KubeDB operator creates a new Secret `{redis-object-name}-auth` for storing the password for Redis superuser. Here, we are using custom secret `mysecret`. 
 * `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn more about [Termination Policy](https://kubedb.com/docs/latest/guides/redis/concepts/redis/#specterminationpolicy).
@@ -321,14 +321,14 @@ statefulset.apps/redis-cluster-dd-shard1   2/2     5m30s
 statefulset.apps/redis-cluster-dd-shard2   2/2     5m29s
 
 NAME                                                  TYPE               VERSION   AGE
-appbinding.appcatalog.appscode.com/redis-cluster-dd   kubedb.com/redis   7.0.5     5m31s
+appbinding.appcatalog.appscode.com/redis-cluster-dd   kubedb.com/redis   7.2.3     5m31s
 ```
 Let’s check if the database is ready to use,
 
 ```bash
 $ kubectl get redis -n default redis-cluster-dd
 NAME               VERSION   STATUS   AGE
-redis-cluster-dd   7.0.5     Ready    6m13s
+redis-cluster-dd   7.2.3     Ready    6m13s
 ```
 > We have successfully deployed Redis in Azure with Datadog. Now we can exec into the container to use the database.
 
@@ -378,7 +378,7 @@ To access the monitoring dashboards in the Datadog UI, navigate to the `Dashboar
 Let's insert some sample data into our Redis database.
 
 ```bash
-$ $ kubectl exec -it -n default redis-cluster-dd-shard0-0 -- redis-cli -c -a $PASSWORD
+$ kubectl exec -it -n default redis-cluster-dd-shard0-0 -- redis-cli -c -a $PASSWORD
 
 127.0.0.1:6379> set Product1 KubeDB
 -> Redirected to slot [15299] located at 10.92.7.11:6379
