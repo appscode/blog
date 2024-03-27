@@ -91,40 +91,40 @@ This release includes Grafana dashboards for easier monitoring of KubeDB managed
 
 ![zookeeper-dashboard](images/kubedb-zookeeper-summary.png)
 
-A step-by-step guide to monitoring is given here ( https://github.com/appscode/grafana-dashboards/tree/master/zookeeper)
+A step-by-step guide to monitoring is given [here](https://github.com/appscode/grafana-dashboards/tree/master/zookeeper)
 We have also added configurable alerting support for KubeDB ZooKeeper. You can configure Alert-manager to get notified when a metrics of zookeeper servers exceeds a given threshold.
 
-To learn more, have a look here ( https://github.com/appscode/alerts/tree/master/charts )
+To learn more, have a look [here]( https://github.com/appscode/alerts/tree/master/charts )
 
 
 ## RabbitMQ
 
 This release includes Grafana dashboards for easier monitoring of KubeDB managed RabbitMQ. The grafana dashboards shows several RabbitMQ specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your RabbitMQ servers easily. As usual KubeDB provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically.
-A step-by-step guide to monitoring is given here ( https://github.com/appscode/grafana-dashboards/tree/master/rabbitmq)
+A step-by-step guide to monitoring is given [here]( https://github.com/appscode/grafana-dashboards/tree/master/rabbitmq)
 We have also added configurable alerting support for KubeDB RabbitMQ. You can configure Alert-manager to get notified when a metrics of rabbitmq servers exceeds a given threshold. Here's a preview of RabbitMQ alert dashboard. The dashboard shows an alert has been triggered for cluster being in critical state.
 
 ![RabbitMQ Alert Dashboard](images/kubedb-rabbitmq-alert.png)
 
-To learn more, have a look here ( https://github.com/appscode/alerts/tree/master/charts )
+To learn more, have a look [here]( https://github.com/appscode/alerts/tree/master/charts )
 
 
 ## Kafka
 
 This release includes Grafana dashboards for easier monitoring of KubeDB managed Kafka. The grafana dashboard shows several Kafka broker and cluster specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your Kafka brokers easily. As usual KubeDB provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically.
 
-A step-by-step guide to monitoring is given here ( https://github.com/appscode/grafana-dashboards/tree/master/kafka).
+A step-by-step guide to monitoring is given [here]( https://github.com/appscode/grafana-dashboards/tree/master/kafka).
 
 In this release, KubeDB is introducing support for Kafka Connect Cluster monitoring using Grafana dashboards. These dashboards give you clear visuals on how your clusters are doing, including things like connectors details, worker details, tasks details, performance metrics and resource usage. It's a simple way to make sure everything is running smoothly. Here's a sneak preview of the summary dashboard for connect cluster.
 
 ![connect-cluster dashboard](images/kubedb-kafka-connectcluster-summary.png)
 
-To get started with monitoring, we've prepared a step-by-step guide available at: (https://github.com/appscode/grafana-dashboards/tree/master/connectcluster).
+To get started with monitoring, we've prepared a step-by-step guide available [here](https://github.com/appscode/grafana-dashboards/tree/master/connectcluster).
 
 We have also added configurable alerting support for KubeDB Kafka. You can configure Alert-manager to get notified when a metrics of kafka brokers exceeds a given threshold. Here's a preview of the alert dashboard on Grafana v7.5.5.
 
 ![Kafka alert dashboard](images/kubedb-kafka-alert.png)
 
-To learn more, have a look here ( https://github.com/appscode/alerts/tree/master/charts).
+To learn more, have a look [here](https://github.com/appscode/alerts/tree/master/charts).
 
 ### Autoscaler
 
@@ -172,12 +172,13 @@ Note: We have deprecated versions `3.4.0` and `3.3.0` from this release. These v
 ## SingleStore
 
 This release introduces an enhanced monitoring feature for KubeDB-managed SingleStore deployments by integrating the Grafana dashboard. This dashboard offers comprehensive insights into various SingleStore-specific metrics, including data status and visualizations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of their SingleStore clusters, enabling more informed decision-making and efficient management of resources. Here's a preview of the summary dashboard.
+
 ![Singlestore dashboard](images/kubedb-singlestore-summary.png)
 
-Here is the step-by-step guideline (https://github.com/appscode/grafana-dashboards/tree/master/singlestore)
+Here is the step-by-step [guideline](https://github.com/appscode/grafana-dashboards/tree/master/singlestore)
 We have added configurable alerting support for KubeDB SingleStore. Users can configure Alertmanager to receive notifications when a metric of SingleStore exceeds a given threshold.
 
-To learn more, have a look here ( https://github.com/appscode/alerts/tree/master/charts )
+To learn more, have a look [here]( https://github.com/appscode/alerts/tree/master/charts )
 
 ### Backup and Restore
 
@@ -196,13 +197,13 @@ This release adds support for SingleStore `v8.5.7`.
 ## Pgpool
 In this latest release, KubeDB now supports monitoring for Pgpool which includes Grafana dashboards tailored specifically for monitoring KubeDB-managed Pgpool instances. These dashboards provide comprehensive insights into various Pgpool-specific metrics, statuses, as well as visual representations of memory and CPU consumption. 
 
-To get started with monitoring, we've prepared a step-by-step guide available at: (https://github.com/appscode/grafana-dashboards/tree/master/pgpool).
+To get started with monitoring, we've prepared a step-by-step guide available [here](https://github.com/appscode/grafana-dashboards/tree/master/pgpool).
 
 Additionally, we've introduced configurable alerting support for KubeDB Pgpool. Now, you can easily set up alerts to receive notifications based on customizable alert rules. Here's a sneak preview fo the summary dashboard when alert is enabled.
 
 ![pgpool dashboard](images/kubedb-pgpool-summary.png)
 
-For more details and to explore these new alert capabilities further, please visit: (https://github.com/appscode/alerts/tree/master/charts).
+For more details and to explore these new alert capabilities further, please visit [here](https://github.com/appscode/alerts/tree/master/charts).
 
 
 ## Redis
