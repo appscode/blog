@@ -1,6 +1,6 @@
 ---
 title: Announcing KubeDB v2024.3.16
-date: "2024-03-27"
+date: "2024-03-28"
 weight: 14
 authors:
 - Raihan Khan
@@ -85,14 +85,6 @@ If your used postgres major version is more than `12`, then you can use either o
 Note `walKeepSegment`, `walKeepSize`, `maxSlotWALKeepSize` resembles `wal_keep_segment`, `wal_keep_size` and `max_slot_wal_keep_size` of `postgresql.conf` file.
 
 
-## Redis
-
-Redis metrics exporter images has been updated to the latest version `v1.58.0`. The latest version contains several CVE fixes.
-
-## Elasticsearch
-
-Metrics exporter images for Elasticsearch has been updated from `v1.3.0` to `v1.7.0`. The updated image contains less CVE and have a few bug fixes. These changes are applicable to both the elasticsearch versions with xpack plugins and OpenSearch. 
-
 ## Zookeeper
 
 This release includes Grafana dashboards for easier monitoring of KubeDB managed ZooKeeper. The grafana dashboard shows several ZooKeeper specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your zookeeper servers easily. As usual KubeDB provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically. Here's a preview of the summary dashboard for Zookeeper.
@@ -109,7 +101,9 @@ To learn more, have a look here ( https://github.com/appscode/alerts/tree/master
 
 This release includes Grafana dashboards for easier monitoring of KubeDB managed RabbitMQ. The grafana dashboards shows several RabbitMQ specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your RabbitMQ servers easily. As usual KubeDB provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically.
 A step-by-step guide to monitoring is given here ( https://github.com/appscode/grafana-dashboards/tree/master/rabbitmq)
-We have also added configurable alerting support for KubeDB RabbitMQ. You can configure Alert-manager to get notified when a metrics of rabbitmq servers exceeds a given threshold.
+We have also added configurable alerting support for KubeDB RabbitMQ. You can configure Alert-manager to get notified when a metrics of rabbitmq servers exceeds a given threshold. Here's a preview of RabbitMQ alert dashboard. The dashboard shows an alert has been triggered for cluster being in critical state.
+
+![RabbitMQ Alert Dashboard](images/kubedb-rabbitmq-alert.png)
 
 To learn more, have a look here ( https://github.com/appscode/alerts/tree/master/charts )
 
@@ -126,7 +120,9 @@ In this release, KubeDB is introducing support for Kafka Connect Cluster monitor
 
 To get started with monitoring, we've prepared a step-by-step guide available at: (https://github.com/appscode/grafana-dashboards/tree/master/connectcluster).
 
-We have also added configurable alerting support for KubeDB Kafka. You can configure Alert-manager to get notified when a metrics of kafka brokers exceeds a given threshold.
+We have also added configurable alerting support for KubeDB Kafka. You can configure Alert-manager to get notified when a metrics of kafka brokers exceeds a given threshold. Here's a preview of the alert dashboard on Grafana v7.5.5.
+
+![Kafka alert dashboard](images/kubedb-kafka-alert.png)
 
 To learn more, have a look here ( https://github.com/appscode/alerts/tree/master/charts).
 
@@ -170,7 +166,7 @@ spec:
 In this release, we have extended support to include two new versions each for both Kafka and Kafka Connect Cluster.
 - `3.6.1`
 - `3.5.2`
-Note: We have deprecated versions `3.4.0` and `3.3.0` from this release. These versions are unstable and will not be maintained in the upcoming releases. We recommend using versions `3.4.1` and `3.3.2`. 
+Note: We have deprecated versions `3.4.0` and `3.3.0` from this release. These versions are unstable and will not be maintained in the upcoming releases. We recommend using versions `3.4.1` and `3.3.2`.
 
 
 ## SingleStore
@@ -196,6 +192,7 @@ This release also introduces integrated SingleStore Studio (UI) with SingleStore
 #### New Version Support
 This release adds support for SingleStore `v8.5.7`.
 
+
 ## Pgpool
 In this latest release, KubeDB now supports monitoring for Pgpool which includes Grafana dashboards tailored specifically for monitoring KubeDB-managed Pgpool instances. These dashboards provide comprehensive insights into various Pgpool-specific metrics, statuses, as well as visual representations of memory and CPU consumption. 
 
@@ -206,6 +203,17 @@ Additionally, we've introduced configurable alerting support for KubeDB Pgpool. 
 ![pgpool dashboard](images/kubedb-pgpool-summary.png)
 
 For more details and to explore these new alert capabilities further, please visit: (https://github.com/appscode/alerts/tree/master/charts).
+
+
+## Redis
+
+Redis metrics exporter images has been updated to the latest version `v1.58.0`. The latest version contains several CVE fixes.
+
+
+## Elasticsearch
+
+Metrics exporter images for Elasticsearch has been updated from `v1.3.0` to `v1.7.0`. The updated image contains less CVE and have a few bug fixes. These changes are applicable to both the elasticsearch versions with xpack plugins and OpenSearch.
+
 
 ## MariaDB
 
