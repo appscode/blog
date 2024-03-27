@@ -122,7 +122,9 @@ This release includes Grafana dashboards for easier monitoring of KubeDB managed
 
 A step-by-step guide to monitoring is given here ( https://github.com/appscode/grafana-dashboards/tree/master/kafka).
 
-In this release, KubeDB is introducing support for Kafka Connect Cluster monitoring using Grafana dashboards. These dashboards give you clear visuals on how your clusters are doing, including things like connectors details, worker details, tasks details, performance metrics and resource usage. It's a simple way to make sure everything is running smoothly.
+In this release, KubeDB is introducing support for Kafka Connect Cluster monitoring using Grafana dashboards. These dashboards give you clear visuals on how your clusters are doing, including things like connectors details, worker details, tasks details, performance metrics and resource usage. It's a simple way to make sure everything is running smoothly. Here's a sneak preview of the summary dashboard for connect cluster.
+
+![connect-cluster dashboard](images/kubedb-kafka-connectcluster-summary.png)
 
 To get started with monitoring, we've prepared a step-by-step guide available at: (https://github.com/appscode/grafana-dashboards/tree/master/connectcluster).
 
@@ -130,7 +132,7 @@ We have also added configurable alerting support for KubeDB Kafka. You can confi
 
 To learn more, have a look here ( https://github.com/appscode/alerts/tree/master/charts).
 
-#### Autoscaler
+### Autoscaler
 
 This release includes support for `KafkaAutoscaler`, a Kubernetes Custom Resource Definitions (CRD). It provides a declarative configuration for autoscaling `Kafka` compute resources and storage of database components in a Kubernetes native way. Let’s assume we have a KubeDB managed kafka cluster running in topology mode named `kafka-prod`. Here’s a sample yaml for autoscaling `Kafka` compute resources.
 
@@ -183,11 +185,11 @@ We have added configurable alerting support for KubeDB SingleStore. Users can co
 
 To learn more, have a look here ( https://github.com/appscode/alerts/tree/master/charts )
 
-#### Backup and Restore
+### Backup and Restore
 
 This release introduces support for comprehensive disaster recovery with Stash 2.0, also known as Kubestash. Shortly Kubestash offered by AppsCode, provides a cloud-native backup and recovery solution for Kubernetes workloads, streamlining operations through its operator-driven approach. It facilitates the backup of volumes, databases, and custom workloads via addons, leveraging restic or Kubernetes CSI Driver VolumeSnapshotter functionality. For SingleStore, creating backups involves configuring resources like BackupStorage (for cloud storage backend), RetentionPolicy (for backup data retention settings), Secret (for storing restic password), BackupConfiguration (specifying backup task details), and RestoreSession(specifying restore task details).
 
-#### SingleStore Studio (UI)
+### SingleStore Studio (UI)
 
 This release also introduces integrated SingleStore Studio (UI) with SingleStore. To connect to SingleStore Studio need to hit `8081` port of the primary service for your database. Here's a preview of the Studio UI.
 
@@ -201,7 +203,9 @@ In this latest release, KubeDB now supports monitoring for Pgpool which includes
 
 To get started with monitoring, we've prepared a step-by-step guide available at: (https://github.com/appscode/grafana-dashboards/tree/master/pgpool).
 
-Additionally, we've introduced configurable alerting support for KubeDB Pgpool. Now, you can easily set up alerts to receive notifications based on customizable alert rules.
+Additionally, we've introduced configurable alerting support for KubeDB Pgpool. Now, you can easily set up alerts to receive notifications based on customizable alert rules. Here's a sneak preview fo the summary dashboard when alert is enabled.
+
+![pgpool dashboard](images/kubedb-pgpool-summary.png)
 
 For more details and to explore these new alert capabilities further, please visit: (https://github.com/appscode/alerts/tree/master/charts).
 
