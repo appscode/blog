@@ -33,9 +33,7 @@ tags:
 - solr
 ---
 
-We are pleased to announce the release of [KubeDB v2024.3.16](https://kubedb.com/docs/v2024.3.16/setup/). This release is primarily focused on adding monitoring support for `Kafka`, `RabbitMQ`, `Zookeeper`, `SingleStore` and `Pgpool`. Besides monitoring support additions of new database versions and a few bug fixes are coming out in this release. Postgres is getting replication slot support through this release as well. We have also focused on updating some of the metrics exporter sidecar images resulting in less CVEs and more stability. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.3.16/README.md). Let’s see the changes done in this release.
-
-
+We are pleased to announce the release of [KubeDB v2024.3.16](https://kubedb.com/docs/v2024.3.16/setup/). This release is primarily focused on adding monitoring support for `Kafka`, `RabbitMQ`, `Zookeeper`, `SingleStore` and `Pgpool`. Besides monitoring support additions of new database versions and a few bug fixes are coming out in this release. This release is bringing a major change which is replacing database `StatefulSet` workloads with `PetSet`. Initially, `RabbitMQ`, `Zookeeper`, `SingleStore`, `Druid`, `FerretDB` and `Pgpool` are receiving this update. Postgres is getting replication slot support through this release as well. We have also focused on updating some of the metrics exporter sidecar images resulting in less CVEs and more stability. MariaDB archiver and restic plugin support are launching with this release. Autoscaler support for Kafka cluster and SingleStore's support for backup & restore are making into this release as well. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.3.16/README.md). Let’s see the changes done in this release.
 
 ## Postgres
 In this release we have introduced replication slot support for Postgres Database. Our replication slot support can tolerate failover. Below is a sample yaml that you need to use for using replication slot:
@@ -209,6 +207,169 @@ Additionally, we've introduced configurable alerting support for KubeDB Pgpool. 
 
 For more details and to explore these new alert capabilities further, please visit: (https://github.com/appscode/alerts/tree/master/charts).
 
+## MariaDB
+
+### Archiver
+
+KubeDB now supports continuous archiving of a MariaDB database. So, you can also do point-in-time recovery (PITR) restoration of the database at any point.
+
+To use this feature, You need KubeStash installed in your cluster. KubeStash (aka Stash 2.0) is a ground up rewrite of Stash with various improvements planned. It works with any existing KubeDB or Stash license key. 
+
+To use the continuous archiving feature, we have introduced a CRD on the KubeDB side, named MariaDBArchiver. Here are all the details of using MariaDBArchiver . In short, you need to create the following resources:
+
+**BackupStorage**: refers to a cloud storage backend (like `s3`, `gcs` etc.) you prefer.
+
+**RetentionPolicy**: allows you to set how long you’d like to retain the backup data.
+
+**Secrets**: hold the backend access credentials and a restic encryption password to encrypt the backup snapshots.
+
+**VolumeSnapshotClass**: holds the csi-driver information which is responsible for taking VolumeSnapshots. This is vendor specific.
+
+**MariaDBArchiver**: holds all of above metadata information.
+
+Here is an example of MariaDB archiver CR:
+```yaml
+apiVersion: archiver.kubedb.com/v1alpha1
+kind: MariaDBArchiver
+metadata:
+ name: mariadb-archiver
+ namespace: demo
+spec:
+ databases:
+   namespaces:
+     from: Selector
+     selector:
+       matchLabels:
+        kubernetes.io/metadata.name: demo
+   selector:
+     matchLabels:
+       archiver: "true"
+ retentionPolicy:
+   name: mariadb-retention-policy
+   namespace: demo
+ encryptionSecret:
+   name: encrypt-secret
+   namespace: demo 
+ fullBackup:
+   driver: VolumeSnapshotter
+   task:
+     params:
+       volumeSnapshotClassName: longhorn-vsc
+   scheduler:
+     successfulJobsHistoryLimit: 0
+     failedJobsHistoryLimit: 0
+     schedule: "30 3 * * *"
+   sessionHistoryLimit: 1
+ manifestBackup:
+   scheduler:
+     successfulJobsHistoryLimit: 0
+     failedJobsHistoryLimit: 0
+     schedule: "30 3 * * *"
+   sessionHistoryLimit: 1
+ backupStorage:
+   ref:
+     name: s3-storage
+     namespace: demo
+   subDir: test
+```
+
+Now After creating this archiver CR, if we create a MariaDB with archiver: **"true"** label, in the same namespace (as per the double-optin configured in .spec.databases field), The KubeDB operator will start doing the following tasks:
+
+Create a BackupConfiguration named **<db-name>-backup**
+Start syncing mysql wal files to the directory **<sub-directory>/<database_namespace>/<database_name>/binlog-backup**
+
+When the BackupConfiguration is created KubeStash operator will start doing the following tasks:
+Creates two Repositories with convention **<db-name>-full** and **<db-name>-manifest**.
+
+Takes full backup every day at 3:30 (`.spec.fullBackup.scheduler`) to **<db-name>-full** repository and takes manifest backup every day at 3:30 (`.spec.manifestBackup.scheduler`) to **<db-name>-manifest** repository.
+
+Here is an example of MariaDB CR with continuous archiving enabled:
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: MariaDB
+metadata:
+  name: mariadb
+  namespace: demo
+  labels:
+    archiver: "true"
+spec:
+  archiver:
+    ref:
+      name: mariadb-archiver
+      namespace: demo
+  version: "11.2.2"
+  podTemplate:
+    spec:
+      args:
+      - "--log-bin"
+      - "--log-slave-updates"
+      - "--wsrep-gtid-mode=ON"
+  replicas: 3
+  storageType: Durable
+  storage:
+    storageClassName: longhorn
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+  terminationPolicy: WipeOut
+```
+
+For point-in-time-recovery, all you need is to set the encprytion secret, repository names and a recoveryTimestamp in  the `.spec.init.archiver` section of the MariaDB object.
+
+Here is an example of MariaDB CR for point-in-time-recovery:
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: MariaDB
+metadata:
+  name: md-restore
+  namespace: demo
+spec:
+  init:
+    archiver:
+      encryptionSecret:
+        name: encrypt-secret
+        namespace: demo
+      fullDBRepository:
+        name: mariadb-full
+        namespace: demo
+      manifestRepository:
+        name: mariadb-manifest
+        namespace: demo
+      recoveryTimestamp: "2024-03-18T12:46:50Z" 
+  version: "11.2.2" 
+  podTemplate:
+    spec:
+      args:
+      - "--log-bin"
+      - "--log-slave-updates" 
+      - "--wsrep-gtid-mode=ON"
+  replicas: 3
+  storageType: Durable
+  storage:
+    storageClassName: longhorn
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+  terminationPolicy: WipeOut
+```
+
+### Restic Plugin
+KubeDB now supports backup and restore MariaDB database using KubeStash.
+Here are all the details of using MariaDB restic plugin . In short, you need to create the following resources to create backup of MariaDB database:
+
+**BackupStorage**: which refers a cloud storage backend (like `s3`, `gcs` etc.) you prefer.
+
+**RetentionPolicy**: allows you to set how long you’d like to retain the backup data.
+
+**Secret**: holds a restic password which will be used to encrypt the backup snapshots.
+
+**BackupConfiguration**: specifies the task to use to backup the database
 
 ## What Next?
 
