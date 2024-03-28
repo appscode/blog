@@ -13,7 +13,8 @@ tags:
 - kubedb
 ---
 
-## Overview
+
+
 
 In this blog we will look to build a production grade DBaaS platform using AppsCode and Dell Technologies leading platforms simplifying the entire endeavor and allowing a true enterprise experience. Needless to say, the cost and operational implications of building such powerful DBaaS platforms can be immense if done correctly.
 
@@ -24,13 +25,13 @@ The below visual overviews the environmental setup used in this example, wherein
 
 AppsCode products ([KubeDB](https://kubedb.com/), [KubeVault](https://kubevault.com/) and [KubeStash](https://kubestash.com/)) are used in conjunction with Dell Storage platforms (PowerFlex and ECS) to serve the persistence layer and backup requirements. The entire exhibit runs on top of EKS Anywhere, however can be equally rendered on any other compliant Kubernetes platform.
 
-![Infra](infra.png)
+![Infra](infra.jpg)
 
 The comprehensive use-cases within the scope of this blog extend much beyond a typical “hello-world” type of demonstration. Examples being import of existing databases, using a distributed vault client-server architecture, auto-scaling, integration with observability tools, etc.
 
 Being an end-to-end scenario, there is a wide range of technical comprehension and deep dives captured in the series of YouTube videos that demonstrate actual implementation.
 
-*Let’s begin with a brief perspective and a great dialogue with Tamal Saha (Founder and CEO of AppsCode)*
+**Let’s begin with a brief perspective and a great dialogue with Tamal Saha (Founder and CEO of AppsCode)**
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/wERbfMWdC90?si=ITeZMnepVym3D544" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
@@ -64,13 +65,16 @@ The concluding act will demonstrate integration of DBaaS with Prometheus and Gra
 
 Hopefully you had the patience to actually view all the videos and enjoyed the practicality of the use-cases. Also hoping that one could comprehend the benefits of KubeDB and how it can simplify adoption of DBaaS on Kubernetes.
 
-*Lastly a big shout to Tamal Saha (Founder and CEO of AppsCode) and his entire team., first for building such awesome products and secondly partnering in this blog development!*
+**Lastly a big shout to Tamal Saha (Founder and CEO of AppsCode) and his entire team, first for building such awesome products and secondly partnering in this blog development!**
 
 Cheers,
 Ambar@thecloudgarage
 #iwork4dell
 
 >PS: This blog was initially published on [Medium](https://ambar-thecloudgarage.medium.com/production-grade-dbaas-on-kubernetes-with-appscode-kubedb-kubevault-kubestash-dell-powerflex-379b393ad98b)
+
+
+
 
 
 ## Support
