@@ -13,9 +13,6 @@ tags:
 - kubedb
 ---
 
-
-
-
 In this blog we will look to build a production grade DBaaS platform using AppsCode and Dell Technologies leading platforms simplifying the entire endeavor and allowing a true enterprise experience. Needless to say, the cost and operational implications of building such powerful DBaaS platforms can be immense if done correctly.
 
 > As a collaborative effort, I had the pleasure of building this end-to-end deployment scenario with [Tamal Saha](https://www.linkedin.com/in/tamalsaha/), founder and CEO of AppsCode along with this engineering team. Special thanks to their partnership and helping deliver this experiential blog.
@@ -51,7 +48,7 @@ Now that we have the EKS Anywhere clusters and KubeVault setup, the next video w
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/VWPvbiiHWvU?si=4smO8VBmMPdyFXCE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-With the KubeDB operator deployed and operational, we will setup the persistent databases in a high-availability cluster configuration using MySQL, MongoDB, Redis and RabbitMQ CRD. Along the way we will also understand how easily databases can be seeded with intial data (maybe a migration from some other DBaaS). In a tandem execution, we will also deploy the sock-shop microservices and also observe the leverage of database secrets sourced from KubeVault.
+With the KubeDB operator deployed and operational, we will setup the persistent databases in a high-availability cluster configuration using MySQL, MongoDB, Redis and RabbitMQ CRD. Along the way we will also understand how easily databases can be seeded with initial data (maybe a migration from some other DBaaS). In a tandem execution, we will also deploy the sock-shop microservices and also observe the leverage of database secrets sourced from KubeVault.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/5YEp3J_C8mc?si=rK41Z5ihO2yn3Stm" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
