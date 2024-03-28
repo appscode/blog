@@ -466,15 +466,15 @@ spec:
 KubeDB now supports backup and restore MariaDB database using KubeStash.
 Here are all the details of using MariaDB restic plugin . In short, you need to create the following resources to create backup of MariaDB database:
 
-**BackupStorage**: which refers a cloud storage backend (like `s3`, `gcs` etc.) you prefer.
+- **BackupStorage**: which refers a cloud storage backend (like `s3`, `gcs` etc.) you prefer.
 
-**RetentionPolicy**: allows you to set how long you’d like to retain the backup data.
+- **RetentionPolicy**: allows you to set how long you’d like to retain the backup data.
 
-**Secrets**: hold the backend access credentials and a restic encryption password to encrypt the backup snapshots.
+- **Secrets**: hold the backend access credentials and a restic encryption password to encrypt the backup snapshots.
 
-**BackupConfiguration**: specifies the target database, backend, addon etc to use to backup the database.
+- **BackupConfiguration**: specifies the target database, backend, addon etc to use to backup the database.
 
-**RestoreSession**: specifies the target database, addon, datasource to restore the backed up database.
+- **RestoreSession**: specifies the target database, addon, datasource to use to restore the backed up data.
 
 Here is an example of the BackupConfiguration:
 
