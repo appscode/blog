@@ -166,7 +166,8 @@ spec:
 In this release, we have extended support to include two new versions each for both Kafka and Kafka Connect Cluster.
 - `3.6.1`
 - `3.5.2`
-Note: We have deprecated versions `3.4.0` and `3.3.0` from this release. These versions are unstable and will not be maintained in the upcoming releases. We recommend using versions `3.4.1` and `3.3.2`.
+
+**Note**: We have deprecated versions `3.4.0` and `3.3.0` from this release. These versions are unstable and will not be maintained in the upcoming releases. We recommend using versions `3.4.1` and `3.3.2`.
 
 
 ## SingleStore
