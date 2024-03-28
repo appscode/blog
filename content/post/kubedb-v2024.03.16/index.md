@@ -478,7 +478,7 @@ Here are all the details of using MariaDB restic plugin . In short, you need to 
 
 Here is an example of the BackupConfiguration:
 
-```
+```yaml
 apiVersion: core.kubestash.com/v1alpha1
 kind: BackupConfiguration
 metadata:
@@ -517,7 +517,7 @@ spec:
 
 And here is an example of the RestoreSession:
 
-```
+```yaml
 apiVersion: core.kubestash.com/v1alpha1
 kind: RestoreSession
 metadata:
