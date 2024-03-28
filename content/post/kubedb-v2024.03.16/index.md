@@ -41,7 +41,7 @@ We are pleased to announce the release of [KubeDB v2024.3.16](https://kubedb.com
 ## PetSet (aka StatefulSet 2.0 !!)
 We are pleased to introduce a unique feature on cloud-cost minimization. This PetSet feature is perfectly suitable for handling the pods with different-different types of cloud node pools. You can think of it as a smart statefulSet.  To be more specific, let's assume a concrete example.
 
-Lets say, you have a MongoDB sharded cluster, where the number of shards is 2. 5 replicas(1primary-3secondary-1abiter) on each shard, 3 replicas in configServer & 4 replicas for mongos.  Also you have different types of nodepools machines like m7.xlarge, c7g.medium, t3.micro etc. And all these machines can be of on-demand & spot instances. You want to use m7.large for shard nodes, c7g.medium for configServer nodes & t3.micro for mongos nodes. For each shard, one pod will go on-demand & rest of them to spots. For configServer, the majority will go on-demand, the rest of them to spot. And for mongos, majority in spots.
+Lets say, you have a MongoDB sharded cluster, where the number of shards is 2. 5 replicas(1primary-3secondary-1arbiter) on each shard, 3 replicas in configServer & 4 replicas for mongos.  Also you have different types of nodepools machines like m7.xlarge, c7g.medium, t3.micro etc. And all these machines can be of on-demand & spot instances. You want to use m7.large for shard nodes, c7g.medium for configServer nodes & t3.micro for mongos nodes. For each shard, one pod will go on-demand & rest of them to spots. For configServer, the majority will go on-demand, the rest of them to spot. And for mongos, majority in spots.
 
 
 
@@ -199,10 +199,10 @@ This release includes Grafana dashboards for easier monitoring of KubeDB managed
 
 ![zookeeper-dashboard](images/kubedb-zookeeper-summary.png)
 
-A step-by-step guide to monitoring is given [here](https://github.com/appscode/grafana-dashboards/tree/master/zookeeper)
+A step-by-step guide to monitoring is given [here](https://github.com/appscode/grafana-dashboards/tree/master/zookeeper).
 We have also added configurable alerting support for KubeDB ZooKeeper. You can configure Alert-manager to get notified when a metrics of zookeeper servers exceeds a given threshold.
 
-To learn more, have a look [here]( https://github.com/appscode/alerts/tree/master/charts )
+To learn more, have a look [here]( https://github.com/appscode/alerts/tree/master/charts ).
 
 
 ## RabbitMQ
@@ -333,17 +333,17 @@ KubeDB now supports continuous archiving of a MariaDB database. So, you can also
 
 To use this feature, You need KubeStash installed in your cluster. KubeStash (aka Stash 2.0) is a ground up rewrite of Stash with various improvements planned. It works with any existing KubeDB or Stash license key. 
 
-To use the continuous archiving feature, we have introduced a CRD on the KubeDB side, named MariaDBArchiver. Here are all the details of using MariaDBArchiver . In short, you need to create the following resources:
+To use the continuous archiving feature, we have introduced a CRD on the KubeDB side, named `MariaDBArchiver`. Here are all the details of using `MariaDBArchiver` . In short, you need to create the following resources:
 
-**BackupStorage**: refers to a cloud storage backend (like `s3`, `gcs` etc.) you prefer.
+- **BackupStorage**: refers to a cloud storage backend (like `s3`, `gcs` etc.) you prefer.
 
-**RetentionPolicy**: allows you to set how long you’d like to retain the backup data.
+- **RetentionPolicy**: allows you to set how long you’d like to retain the backup data.
 
-**Secrets**: hold the backend access credentials and a restic encryption password to encrypt the backup snapshots.
+- **Secrets**: hold the backend access credentials and a restic encryption password to encrypt the backup snapshots.
 
-**VolumeSnapshotClass**: holds the csi-driver information which is responsible for taking VolumeSnapshots. This is vendor specific.
+- **VolumeSnapshotClass**: holds the csi-driver information which is responsible for taking VolumeSnapshots. This is vendor specific.
 
-**MariaDBArchiver**: holds all of above metadata information.
+- **MariaDBArchiver**: holds all of above metadata information.
 
 Here is an example of MariaDB archiver CR:
 ```yaml
@@ -397,9 +397,9 @@ Create a BackupConfiguration named **<db-name>-backup**
 Start syncing mysql wal files to the directory **<sub-directory>/<database_namespace>/<database_name>/binlog-backup**
 
 When the BackupConfiguration is created KubeStash operator will start doing the following tasks:
-Creates two Repositories with convention **<db-name>-full** and **<db-name>-manifest**.
+- Creates two Repositories with convention **<db-name>-full** and **<db-name>-manifest**.
 
-Takes full backup every day at 3:30 (`.spec.fullBackup.scheduler`) to **<db-name>-full** repository and takes manifest backup every day at 3:30 (`.spec.manifestBackup.scheduler`) to **<db-name>-manifest** repository.
+- Takes full backup every day at 3:30 (`.spec.fullBackup.scheduler`) to **<db-name>-full** repository and takes manifest backup every day at 3:30 (`.spec.manifestBackup.scheduler`) to **<db-name>-manifest** repository.
 
 Here is an example of MariaDB CR with continuous archiving enabled:
 
