@@ -35,6 +35,114 @@ tags:
 
 We are pleased to announce the release of [KubeDB v2024.3.16](https://kubedb.com/docs/v2024.3.16/setup/). This release is primarily focused on adding monitoring support for `Kafka`, `RabbitMQ`, `Zookeeper`, `SingleStore` and `Pgpool`. Besides monitoring support additions of new database versions and a few bug fixes are coming out in this release. This release is bringing a major change which is replacing database `StatefulSet` workloads with `PetSet`. Initially, `RabbitMQ`, `Zookeeper`, `SingleStore`, `Druid`, `FerretDB` and `Pgpool` are receiving this update. Postgres is getting replication slot support through this release as well. We have also focused on updating some of the metrics exporter sidecar images resulting in less CVEs and more stability. MariaDB archiver and restic plugin support are launching with this release. Autoscaler support for Kafka cluster and SingleStore's support for backup & restore are making into this release as well. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.3.16/README.md). Let’s see the changes done in this release.
 
+
+
+
+## PetSet (aka StatefulSet 2.0 !!)
+We are pleased to introduce a unique feature on cloud-cost minimization. This PetSet feature is perfectly suitable for handling the pods with different-different types of cloud node pools. You can think of it as a smart statefulSet.  To be more specific, let's assume a concrete example.
+
+Lets say, you have a MongoDB sharded cluster, where the number of shards is 2. 5 replicas(1primary-3secondary-1abiter) on each shard, 3 replicas in configServer & 4 replicas for mongos.  Also you have different types of nodepools machines like m7.xlarge, c7g.medium, t3.micro etc. And all these machines can be of on-demand & spot instances. You want to use m7.large for shard nodes, c7g.medium for configServer nodes & t3.micro for mongos nodes. For each shard, one pod will go on-demand & rest of them to spots. For configServer, the majority will go on-demand, the rest of them to spot. And for mongos, majority in spots.
+
+
+
+
+|        #        |   Shard    | ConfigServer | MongoS |
+|:---------------:|:----------:|:------------:|:------:|
+| Machine Profile | m7.xlarge  |  c7g.medium  | t3.micro  |
+|  Replica Count  |    2 shard, 5 replicas on each     |     3 replicas      | 4 replicas  |
+|  Distribution   |    1 in on-demand, rest in sports for each shard     |     Majority in on-demand, rest in spot      | Majority in spot, rest in -on-demand  |
+
+Here is an example `NodePool` by karpenter :
+
+```yaml
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: spot-mongos
+spec:
+  template:
+    spec:
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot"]
+        - key: "topology.kubernetes.io/zone"
+          operator: In
+          values: ["us-west-2a", "us-west-2c", "us-west-2d"]
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["t"]
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["2"]
+      nodeClassRef:
+        name: default
+  limits:
+    cpu: 1000
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    expireAfter: 720h # 30 * 24h = 720h
+```
+
+And we have introduced two new things to achieve this kind of distribution: `PlacementPolicy` & `Petset`.
+
+```yaml
+apiVersion: apps.k8s.appscode.com/v1
+kind: PlacementPolicy
+metadata:
+  name: majority-on-spot
+spec:
+  zoneSpreadConstraint:
+    maxSkew: 1
+    whenUnsatisfiable: ScheduleAnyway
+  nodeSpreadConstraint:
+    maxSkew: 1
+    whenUnsatisfiable: DoNotSchedule
+  affinity:
+    nodeAffinity:
+      - topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        domains:
+          - values:
+              - us-west-2a
+              - us-west-2c
+              - us-west-2d
+            replicas: "" # empty means rest of the replicas
+        weight: 40
+      - topologyKey: karpenter.sh/capacity-type
+        whenUnsatisfiable: DoNotSchedule
+        domains:
+          - values: ["spot"]
+            replicas: "obj.spec.replicas/2+1"
+          - values: ["on-demand"]
+            replicas: "" # empty means rest of the replicas
+        weight: 70
+```
+
+In the above majority-on-spot `PlacemenPolicy`, We specify that only us-west-2a, us-west-2c, us-west-2d zones should be used. Also, OBJ.REPLICAS/2 +1 number of replicas should go to karpenter.sh/capacity-type:on-demand & others to karpenter.sh/capacity-type: spot.  All we need to do now is to refer this policy in the petset. 
+
+```yaml
+apiVersion: apps.k8s.appscode.com/v1
+kind: PetSet
+metadata:
+  name: <mongos-petset-name>
+  namespace:  <mongodb-namespace>
+spec:
+  … other fields …
+  podPlacementPolicy:
+    name: majority-on-spot
+```
+
+
+
+
+
 ## Postgres
 In this release we have introduced replication slot support for Postgres Database. Our replication slot support can tolerate failover. Below is a sample yaml that you need to use for using replication slot:
 
