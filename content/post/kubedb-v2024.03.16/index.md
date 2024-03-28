@@ -39,11 +39,9 @@ We are pleased to announce the release of [KubeDB v2024.3.16](https://kubedb.com
 
 
 ## PetSet (aka StatefulSet 2.0 !!)
-We are pleased to introduce a unique feature on cloud-cost minimization. This PetSet feature is perfectly suitable for handling the pods with different-different types of cloud node pools. You can think of it as a smart statefulSet.  To be more specific, let's assume a concrete example.
+We are pleased to introduce a unique feature for cloud-cost minimization. This PetSet feature is perfectly suitable for running database pods on different types of node pools (on-demand vs spot instances). You can think of it as a smart statefulSet.  To be more specific, let's assume a concrete example.
 
-Lets say, you have a MongoDB sharded cluster, where the number of shards is 2. 5 replicas(1primary-3secondary-1arbiter) on each shard, 3 replicas in configServer & 4 replicas for mongos.  Also you have different types of nodepools machines like m7.xlarge, c7g.medium, t3.micro etc. And all these machines can be of on-demand & spot instances. You want to use m7.large for shard nodes, c7g.medium for configServer nodes & t3.micro for mongos nodes. For each shard, one pod will go on-demand & rest of them to spots. For configServer, the majority will go on-demand, the rest of them to spot. And for mongos, majority in spots.
-
-
+Let's say, you have a MongoDB sharded cluster, where the number of shards is 2. 5 replicas(1primary-3secondary-1arbiter) on each shard, 3 replicas in configServer & 4 replicas for mongos.  Also you have different types of node pool machines like m7.xlarge, c7g.medium, t3.micro etc. And all these machines can be of on-demand & spot instances. You want to use m7.large for shard nodes, c7g.medium for configServer nodes & t3.micro for mongos nodes. For each shard, one pod will go on-demand & rest of them to spot instances. For configServer, the majority will go on-demand, the rest of them to spot. And for mongos, majority in spots.
 
 
 |        #        |   Shard    | ConfigServer | MongoS |
@@ -125,7 +123,7 @@ spec:
         weight: 70
 ```
 
-In the above majority-on-spot `PlacemenPolicy`, We specify that only us-west-2a, us-west-2c, us-west-2d zones should be used. Also, OBJ.REPLICAS/2 +1 number of replicas should go to karpenter.sh/capacity-type:on-demand & others to karpenter.sh/capacity-type: spot.  All we need to do now is to refer this policy in the petset. 
+In the above majority-on-spot `PlacemenPolicy`, We specify that only us-west-2a, us-west-2c, us-west-2d zones should be used. Also, OBJ.REPLICAS/2 +1 number of replicas should go to karpenter.sh/capacity-type:spot & others to karpenter.sh/capacity-type: on-demand.  All we need to do now is to refer this policy in the petset. 
 
 ```yaml
 apiVersion: apps.k8s.appscode.com/v1
@@ -144,7 +142,7 @@ Please visit [this](https://github.com/kubedb/eks-demo), for more examples.
 
 
 ## Postgres
-In this release we have introduced replication slot support for Postgres Database. Our replication slot support can tolerate failover. Below is a sample yaml that you need to use for using replication slot:
+In this release we have introduced replication slot support for Postgres Database. Earlier, KubeDB operator will keep wal segments which will require manual intervention in case the stand-by replicas were disconnected for too long and primary has remove the old WAL files. With the ReplicationSlot approach, the primary will keep the wal segments until all the stand-by replicas have completed replication. Our replication slot support can tolerate failover. Below is a sample yaml that you need to use for using replication slot:
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -179,11 +177,13 @@ If your used postgres major version is below `13`, then you’ll have to use:
 ```
 
 If your used postgres major version is more than `12`, then you can use either of them:
+
 ```yaml
   replication:
     walLimitPolicy: "WALKeepSize"
     walKeepSize: 1024
 ```
+
 ```yaml
   replication:
     walLimitPolicy: "ReplicationSlot"
@@ -195,21 +195,22 @@ Note `walKeepSegment`, `walKeepSize`, `maxSlotWALKeepSize` resembles `wal_keep_s
 
 ## Zookeeper
 
-This release includes Grafana dashboards for easier monitoring of KubeDB-managed ZooKeeper. The grafana dashboard shows several ZooKeeper specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your zookeeper servers easily. As usual KubeDB-provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically. Here's a preview of the summary dashboard for Zookeeper.
+This release includes Grafana dashboards for easier monitoring of KubeDB managed ZooKeeper. The Grafana dashboard shows several ZooKeeper specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your zookeeper servers easily. As usual KubeDB provided Grafana dashboards come in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically. Here's a preview of the summary dashboard for Zookeeper.
 
 ![zookeeper-dashboard](images/kubedb-zookeeper-summary.png)
 
 A step-by-step guide to monitoring is given [here](https://github.com/appscode/grafana-dashboards/tree/master/zookeeper).
-We have also added configurable alerting support for KubeDB ZooKeeper. You can configure Alert-manager to get notified when a metrics of zookeeper servers exceeds a given threshold.
+We have also added configurable alerting support for KubeDB ZooKeeper. You can configure Alertmanager to get notified when a metrics of zookeeper servers exceeds a given threshold.
 
 To learn more, have a look [here]( https://github.com/appscode/alerts/tree/master/charts ).
 
 
 ## RabbitMQ
 
-This release includes Grafana dashboards for easier monitoring of KubeDB-managed RabbitMQ. The grafana dashboards shows several RabbitMQ specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your RabbitMQ servers easily. As usual KubeDB-provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically.
+This release includes Grafana dashboards for easier monitoring of KubeDB managed RabbitMQ. The Grafana dashboards shows several RabbitMQ specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your RabbitMQ servers easily. As usual KubeDB provided Grafana dashboards come in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically.
+
 A step-by-step guide to monitoring is given [here]( https://github.com/appscode/grafana-dashboards/tree/master/rabbitmq)
-We have also added configurable alerting support for KubeDB RabbitMQ. You can configure Alert-manager to get notified when a metrics of RabbitMQ server exceeds a given threshold. Here's a preview of RabbitMQ alert dashboard. The dashboard shows an alert has been triggered for cluster being in critical state.
+We have also added configurable alerting support for KubeDB RabbitMQ. You can configure Alertmanager to get notified when a metrics of RabbitMQ server exceeds a given threshold. Here's a preview of RabbitMQ alert dashboard. The dashboard shows an alert has been triggered for cluster being in critical state.
 
 ![RabbitMQ Alert Dashboard](images/kubedb-rabbitmq-alert.png)
 
@@ -218,17 +219,17 @@ To learn more, have a look [here]( https://github.com/appscode/alerts/tree/maste
 
 ## Kafka
 
-This release includes Grafana dashboards for easier monitoring of KubeDB-managed Kafka. The grafana dashboard shows several Kafka broker and cluster specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your Kafka brokers easily. As usual KubeDB-provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically.
+This release includes Grafana dashboards for easier monitoring of KubeDB managed Kafka. The Grafana dashboard shows several Kafka broker and cluster specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your Kafka brokers easily. As usual KubeDB provided Grafana dashboards come in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically.
 
 A step-by-step guide to monitoring is given [here]( https://github.com/appscode/grafana-dashboards/tree/master/kafka).
 
-In this release, KubeDB is introducing support for Kafka Connect Cluster monitoring using Grafana dashboards. These dashboards give you clear visuals on how your clusters are doing, including things like connectors details, worker details, tasks details, performance metrics and resource usage. It's a simple way to make sure everything is running smoothly. Here's a sneak preview of the summary dashboard for connect cluster.
+In this release, KubeDB is introducing support for Kafka Connect Cluster monitoring using Grafana dashboards. These dashboards give you clear visuals on how your clusters are doing, including things like connectors details, worker details, tasks details, performance metrics and resource usage. It is a simple way to make sure everything is running smoothly. Here's a sneak preview of the summary dashboard for connect cluster.
 
 ![connect-cluster dashboard](images/kubedb-kafka-connectcluster-summary.png)
 
 To get started with monitoring, we've prepared a step-by-step guide available [here](https://github.com/appscode/grafana-dashboards/tree/master/connectcluster).
 
-We have also added configurable alerting support for KubeDB Kafka. You can configure Alert-manager to get notified when a metrics of kafka brokers exceeds a given threshold. Here's a preview of the alert dashboard on Grafana v7.5.5.
+We have also added configurable alerting support for KubeDB Kafka. You can configure Alertmanager to get notified when a metrics of kafka brokers exceeds a given threshold. Here's a preview of the alert dashboard on Grafana v7.5.5.
 
 ![Kafka alert dashboard](images/kubedb-kafka-alert.png)
 
@@ -236,7 +237,7 @@ To learn more, have a look [here](https://github.com/appscode/alerts/tree/master
 
 ### Autoscaler
 
-This release includes support for `KafkaAutoscaler`, a Kubernetes Custom Resource Definitions (CRD). It provides a declarative configuration for autoscaling `Kafka` compute resources and storage of database components in a Kubernetes native way. Let’s assume we have a KubeDB-managed kafka cluster running in topology mode named `kafka-prod`. Here’s a sample yaml for autoscaling `Kafka` compute resources.
+This release includes support for `KafkaAutoscaler`, a Kubernetes Custom Resource Definitions (CRD). It provides a declarative configuration for autoscaling `Kafka` compute resources and storage of database components in a Kubernetes native way. Let’s assume we have a KubeDB managed kafka cluster running in topology mode named `kafka-prod`. Here’s a sample yaml for autoscaling `Kafka` compute resources.
 
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
@@ -280,7 +281,7 @@ In this release, we have extended support to include two new versions each for b
 
 ## Singlestore
 
-This release introduces an enhanced monitoring feature for KubeDB-managed SingleStore deployments by integrating the Grafana dashboard. This dashboard offers comprehensive insights into various SingleStore-specific metrics, including data status and visualizations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of their SingleStore clusters, enabling more informed decision-making and efficient management of resources. Here's a preview of the summary dashboard.
+This release introduces an enhanced monitoring feature for KubeDB managed SingleStore deployments by integrating the Grafana dashboard. This dashboard offers comprehensive insights into various SingleStore-specific metrics, including data status and visualizations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of their SingleStore clusters, enabling more informed decision-making and efficient management of resources. Here's a preview of the summary dashboard.
 
 ![Singlestore dashboard](images/kubedb-singlestore-summary.png)
 
@@ -291,7 +292,7 @@ To learn more, have a look [here]( https://github.com/appscode/alerts/tree/maste
 
 ### Backup and Restore
 
-This release introduces support for comprehensive disaster recovery with Stash 2.0, also known as Kubestash. Shortly Kubestash offered by AppsCode, provides a cloud-native backup and recovery solution for Kubernetes workloads, streamlining operations through its operator-driven approach. It facilitates the backup of volumes, databases, and custom workloads via addons, leveraging restic or Kubernetes CSI Driver VolumeSnapshotter functionality. For SingleStore, creating backups involves configuring resources like BackupStorage (for cloud storage backend), RetentionPolicy (for backup data retention settings), Secret (for storing restic password), BackupConfiguration (specifying backup task details), and RestoreSession(specifying restore task details).
+This release introduces support for comprehensive disaster recovery with Stash 2.0, also known as Kubestash. Kubestash, offered by AppsCode, provides a cloud-native backup and recovery solution for Kubernetes workloads, streamlining operations through its operator-driven approach. It facilitates the backup of volumes, databases, and custom workloads via addons, leveraging restic or Kubernetes CSI Driver VolumeSnapshotter functionality. For SingleStore, creating backups involves configuring resources like BackupStorage (for cloud storage backend), RetentionPolicy (for backup data retention settings), Secret (for storing restic password), BackupConfiguration (specifying backup task details), and RestoreSession(specifying restore task details).
 
 ### SingleStore Studio (UI)
 
@@ -304,7 +305,7 @@ This release adds support for SingleStore `v8.5.7`.
 
 
 ## Pgpool
-In this latest release, KubeDB now supports monitoring for Pgpool which includes Grafana dashboards tailored specifically for monitoring KubeDB-managed Pgpool instances. These dashboards provide comprehensive insights into various Pgpool-specific metrics, statuses, as well as visual representations of memory and CPU consumption. 
+In this latest release, KubeDB now supports monitoring for Pgpool which includes Grafana dashboards tailored specifically for monitoring KubeDB managed Pgpool instances. These dashboards provide comprehensive insights into various Pgpool-specific metrics, statuses, as well as visual representations of memory and CPU consumption. 
 
 To get started with monitoring, we've prepared a step-by-step guide available [here](https://github.com/appscode/grafana-dashboards/tree/master/pgpool).
 
@@ -329,9 +330,9 @@ Metrics exporter images for Elasticsearch has been updated from `v1.3.0` to `v1.
 
 ### Archiver
 
-KubeDB now supports continuous archiving of a MariaDB database. So, you can also do point-in-time recovery (PITR) restoration of the database at any point.
+KubeDB now supports continuous archiving of a MariaDB database. This allows point-in-time recovery (PITR) of the database.
 
-To use this feature, You need KubeStash installed in your cluster. KubeStash (aka Stash 2.0) is a ground up rewrite of Stash with various improvements planned. It works with any existing KubeDB or Stash license key. 
+To use this feature, You need KubeStash installed in your cluster. KubeStash (aka Stash 2.0) is a ground up rewrite of Stash with various improvements. It works with any existing KubeDB or Stash license key. 
 
 To use the continuous archiving feature, we have introduced a CRD on the KubeDB side, named `MariaDBArchiver`. Here are all the details of using `MariaDBArchiver` . In short, you need to create the following resources:
 
@@ -346,6 +347,7 @@ To use the continuous archiving feature, we have introduced a CRD on the KubeDB 
 - **MariaDBArchiver**: holds all of above metadata information.
 
 Here is an example of MariaDB archiver CR:
+
 ```yaml
 apiVersion: archiver.kubedb.com/v1alpha1
 kind: MariaDBArchiver
@@ -428,7 +430,7 @@ spec:
   ...
 ```
 
-For point-in-time-recovery, all you need is to set the encprytion secret, repository names and a `recoveryTimestamp` in  the `.spec.init.archiver` section of the MariaDB object.
+For point-in-time-recovery, all you need is to set the encryption secret, repository names and a `recoveryTimestamp` in  the `.spec.init.archiver` section of the MariaDB object.
 
 Here is an example of MariaDB CR for point-in-time-recovery:
 
