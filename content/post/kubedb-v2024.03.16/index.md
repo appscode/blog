@@ -391,15 +391,16 @@ spec:
    subDir: test
 ```
 
-Now After creating this archiver CR, if we create a MariaDB with archiver: **"true"** label, in the same namespace (as per the double-optin configured in .spec.databases field), The KubeDB operator will start doing the following tasks:
+Now After creating this archiver CR, if we create a MariaDB with `archiver: "true"` label, in the same namespace (as per the double-optin configured in .spec.databases field), The KubeDB operator will start doing the following tasks:
 
-Create a BackupConfiguration named **<db-name>-backup**
-Start syncing mysql wal files to the directory **<sub-directory>/<database_namespace>/<database_name>/binlog-backup**
+- Create a BackupConfiguration named `<db-name>-backup`
+- Start syncing mysql wal files to the directory `<sub-directory>/<db_namespace>/<db_name>/binlog-backup`
 
 When the BackupConfiguration is created KubeStash operator will start doing the following tasks:
-- Creates two Repositories with convention **<db-name>-full** and **<db-name>-manifest**.
 
-- Takes full backup every day at 3:30 (`.spec.fullBackup.scheduler`) to **<db-name>-full** repository and takes manifest backup every day at 3:30 (`.spec.manifestBackup.scheduler`) to **<db-name>-manifest** repository.
+- Creates two Repositories with convention `<db-name>-full` and `<db-name>-manifest`.
+
+- Takes full backup every day at 3:30 (`.spec.fullBackup.scheduler`) to `<db-name>-full` repository and takes manifest backup every day at 3:30 (`.spec.manifestBackup.scheduler`) to `<db-name>-manifest` repository.
 
 Here is an example of MariaDB CR with continuous archiving enabled:
 
@@ -424,15 +425,7 @@ spec:
       - "--log-slave-updates"
       - "--wsrep-gtid-mode=ON"
   replicas: 3
-  storageType: Durable
-  storage:
-    storageClassName: longhorn
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 5Gi
-  terminationPolicy: WipeOut
+  ...
 ```
 
 For point-in-time-recovery, all you need is to set the encprytion secret, repository names and a recoveryTimestamp in  the `.spec.init.archiver` section of the MariaDB object.
@@ -466,15 +459,7 @@ spec:
       - "--log-slave-updates" 
       - "--wsrep-gtid-mode=ON"
   replicas: 3
-  storageType: Durable
-  storage:
-    storageClassName: longhorn
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 5Gi
-  terminationPolicy: WipeOut
+  ...
 ```
 
 ### Restic Plugin
