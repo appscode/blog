@@ -33,7 +33,7 @@ tags:
 - solr
 ---
 
-We are pleased to announce the release of [KubeDB v2024.3.16](https://kubedb.com/docs/v2024.3.16/setup/). This release is primarily focused on adding monitoring support for `Kafka`, `RabbitMQ`, `Zookeeper`, `SingleStore` and `Pgpool`. Besides monitoring support additions of new database versions and a few bug fixes are coming out in this release. This release is bringing a major change which is replacing database `StatefulSet` workloads with `PetSet`. Initially, `RabbitMQ`, `Zookeeper`, `SingleStore`, `Druid`, `FerretDB` and `Pgpool` are receiving this update. Postgres is getting replication slot support through this release as well. We have also focused on updating some of the metrics exporter sidecar images resulting in less CVEs and more stability. MariaDB archiver and restic plugin support are launching with this release. Autoscaler support for Kafka cluster and SingleStore's support for backup & restore are making into this release as well. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.3.16/README.md). Let’s see the changes done in this release.
+We are pleased to announce the release of [KubeDB v2024.3.16](https://kubedb.com/docs/v2024.3.16/setup/). This release is primarily focused on adding monitoring support for `Kafka`, `RabbitMQ`, `Zookeeper`, `SingleStore` and `Pgpool`. Besides monitoring support, some additional database versions and a few bug fixes are also coming out in this release. This release is bringing a major change which is replacing database `StatefulSet` workloads with `PetSet`. Initially, `RabbitMQ`, `Zookeeper`, `SingleStore`, `Druid`, `FerretDB` and `Pgpool` are receiving this update. Postgres is getting replication slot support through this release as well. We have also focused on updating some of the metrics exporter sidecar images resulting in less CVEs and more stability. MariaDB archiver and restic plugin support are launching with this release. Autoscaler support for Kafka cluster and SingleStore's support for backup & restore are making into this release as well. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.3.16/README.md). Let’s see the changes done in this release.
 
 
 
@@ -140,7 +140,7 @@ spec:
 ```
 
 
-
+Please visit [this](https://github.com/kubedb/eks-demo), for more examples.
 
 
 ## Postgres
@@ -195,7 +195,7 @@ Note `walKeepSegment`, `walKeepSize`, `maxSlotWALKeepSize` resembles `wal_keep_s
 
 ## Zookeeper
 
-This release includes Grafana dashboards for easier monitoring of KubeDB managed ZooKeeper. The grafana dashboard shows several ZooKeeper specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your zookeeper servers easily. As usual KubeDB provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically. Here's a preview of the summary dashboard for Zookeeper.
+This release includes Grafana dashboards for easier monitoring of KubeDB-managed ZooKeeper. The grafana dashboard shows several ZooKeeper specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your zookeeper servers easily. As usual KubeDB-provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically. Here's a preview of the summary dashboard for Zookeeper.
 
 ![zookeeper-dashboard](images/kubedb-zookeeper-summary.png)
 
@@ -207,9 +207,9 @@ To learn more, have a look [here]( https://github.com/appscode/alerts/tree/maste
 
 ## RabbitMQ
 
-This release includes Grafana dashboards for easier monitoring of KubeDB managed RabbitMQ. The grafana dashboards shows several RabbitMQ specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your RabbitMQ servers easily. As usual KubeDB provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically.
+This release includes Grafana dashboards for easier monitoring of KubeDB-managed RabbitMQ. The grafana dashboards shows several RabbitMQ specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your RabbitMQ servers easily. As usual KubeDB-provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically.
 A step-by-step guide to monitoring is given [here]( https://github.com/appscode/grafana-dashboards/tree/master/rabbitmq)
-We have also added configurable alerting support for KubeDB RabbitMQ. You can configure Alert-manager to get notified when a metrics of rabbitmq servers exceeds a given threshold. Here's a preview of RabbitMQ alert dashboard. The dashboard shows an alert has been triggered for cluster being in critical state.
+We have also added configurable alerting support for KubeDB RabbitMQ. You can configure Alert-manager to get notified when a metrics of RabbitMQ server exceeds a given threshold. Here's a preview of RabbitMQ alert dashboard. The dashboard shows an alert has been triggered for cluster being in critical state.
 
 ![RabbitMQ Alert Dashboard](images/kubedb-rabbitmq-alert.png)
 
@@ -218,7 +218,7 @@ To learn more, have a look [here]( https://github.com/appscode/alerts/tree/maste
 
 ## Kafka
 
-This release includes Grafana dashboards for easier monitoring of KubeDB managed Kafka. The grafana dashboard shows several Kafka broker and cluster specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your Kafka brokers easily. As usual KubeDB provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically.
+This release includes Grafana dashboards for easier monitoring of KubeDB-managed Kafka. The grafana dashboard shows several Kafka broker and cluster specific data, status and diagram of memory and cpu consumption. You can check the dashboard to see the overall health of your Kafka brokers easily. As usual KubeDB-provided Grafana dashboards comes in a bundle of three - Summary dashboard for overall monitoring of the database cluster, Database dashboard for database insights and Pod dashboard for monitoring database pods specifically.
 
 A step-by-step guide to monitoring is given [here]( https://github.com/appscode/grafana-dashboards/tree/master/kafka).
 
@@ -236,7 +236,7 @@ To learn more, have a look [here](https://github.com/appscode/alerts/tree/master
 
 ### Autoscaler
 
-This release includes support for `KafkaAutoscaler`, a Kubernetes Custom Resource Definitions (CRD). It provides a declarative configuration for autoscaling `Kafka` compute resources and storage of database components in a Kubernetes native way. Let’s assume we have a KubeDB managed kafka cluster running in topology mode named `kafka-prod`. Here’s a sample yaml for autoscaling `Kafka` compute resources.
+This release includes support for `KafkaAutoscaler`, a Kubernetes Custom Resource Definitions (CRD). It provides a declarative configuration for autoscaling `Kafka` compute resources and storage of database components in a Kubernetes native way. Let’s assume we have a KubeDB-managed kafka cluster running in topology mode named `kafka-prod`. Here’s a sample yaml for autoscaling `Kafka` compute resources.
 
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
@@ -278,7 +278,7 @@ In this release, we have extended support to include two new versions each for b
 **Note**: We have deprecated versions `3.4.0` and `3.3.0` from this release. These versions are unstable and will not be maintained in the upcoming releases. We recommend using versions `3.4.1` and `3.3.2`.
 
 
-## SingleStore
+## Singlestore
 
 This release introduces an enhanced monitoring feature for KubeDB-managed SingleStore deployments by integrating the Grafana dashboard. This dashboard offers comprehensive insights into various SingleStore-specific metrics, including data status and visualizations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of their SingleStore clusters, enabling more informed decision-making and efficient management of resources. Here's a preview of the summary dashboard.
 
@@ -488,6 +488,9 @@ Here are all the details of using MariaDB restic plugin . In short, you need to 
 **Secret**: holds a restic password which will be used to encrypt the backup snapshots.
 
 **BackupConfiguration**: specifies the task to use to backup the database
+
+## MongoDB
+Improvements: We have added a sidecar container for mode-detection on each of the shard pods in MongoDB. The `replication-mode-detector` container will update `kubedb.com/role` label for shard pods. It can only have two values: `primary` & `standby`. This helps some external-applications to communicate with a specific-type of mongo pod if necessary.
 
 ## What Next?
 
