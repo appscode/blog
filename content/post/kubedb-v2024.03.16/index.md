@@ -470,9 +470,77 @@ Here are all the details of using MariaDB restic plugin . In short, you need to 
 
 **RetentionPolicy**: allows you to set how long you’d like to retain the backup data.
 
-**Secret**: holds a restic password which will be used to encrypt the backup snapshots.
+**Secrets**: hold the backend access credentials and a restic encryption password to encrypt the backup snapshots.
 
-**BackupConfiguration**: specifies the task to use to backup the database
+**BackupConfiguration**: specifies the target database, backend, addon etc to use to backup the database.
+
+**RestoreSession**: specifies the target database, addon, datasource to restore the backed up database.
+
+Here is an example of the BackupConfiguration:
+
+```
+apiVersion: core.kubestash.com/v1alpha1
+kind: BackupConfiguration
+metadata:
+  name: md-backup
+  namespace: demo
+spec:
+  target:
+    apiGroup: kubedb.com
+    kind: MariaDB
+    namespace: demo
+    name: mariadb
+  backends:
+    - name: s3-backend
+      storageRef:
+        namespace: demo
+        name: s3-storage
+      retentionPolicy:
+        name: sample-rp
+        namespace: demo      
+  sessions:
+    - name: frequent
+      scheduler:
+        schedule: "*/5 * * * *"
+      repositories:
+        - name: s3-repo
+          backend: s3-backend
+          directory: /db/mariadb
+          encryptionSecret:
+           name: encrypt-secret
+           namespace: demo
+      addon:
+        name: mariadb-addon
+        tasks:
+          - name: LogicalBackup
+```
+
+And here is an example of the RestoreSession:
+
+```
+apiVersion: core.kubestash.com/v1alpha1
+kind: RestoreSession
+metadata:
+  name: md-restore
+  namespace: demo
+spec:
+  target:
+    apiGroup: kubedb.com
+    kind: MariaDB
+    namespace: demo
+    name: restored-mariadb
+  dataSource:
+    snapshot: latest
+    repository: s3-repo
+    encryptionSecret:
+      name: encrypt-secret 
+      namespace: demo
+  addon:
+    name: mariadb-addon
+    tasks:
+      - name: LogicalBackupRestore
+```
+
 
 ## MongoDB
 Improvements: We have added a sidecar container for mode-detection on each of the shard pods in MongoDB. The `replication-mode-detector` container will update `kubedb.com/role` label for shard pods. It can only have two values: `primary` & `standby`. This helps some external-applications to communicate with a specific-type of mongo pod if necessary.
