@@ -393,8 +393,8 @@ spec:
 
 Now After creating this archiver CR, if we create a MariaDB with `archiver: "true"` label, in the same namespace (as per the double-optin configured in .spec.databases field), The KubeDB operator will start doing the following tasks:
 
-- Create a BackupConfiguration named `<db-name>-backup`
-- Start syncing mysql wal files to the directory `<sub-directory>/<db_namespace>/<db_name>/binlog-backup`
+- Creates a BackupConfiguration named `<db-name>-backup`
+- Starts syncing mysql wal files to the directory `<sub-directory>/<db_namespace>/<db_name>/binlog-backup`
 
 When the BackupConfiguration is created KubeStash operator will start doing the following tasks:
 
