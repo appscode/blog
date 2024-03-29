@@ -64,8 +64,8 @@ Hopefully you had the patience to actually view all the videos and enjoyed the p
 
 **Lastly a big shout to Tamal Saha (Founder and CEO of AppsCode) and his entire team, first for building such awesome products and secondly partnering in this blog development!**
 
-Cheers,
-Ambar@thecloudgarage
+Cheers,<br/>
+Ambar@thecloudgarage<br/>
 #iwork4dell
 
 >PS: This blog was initially published on [Medium](https://ambar-thecloudgarage.medium.com/production-grade-dbaas-on-kubernetes-with-appscode-kubedb-kubevault-kubestash-dell-powerflex-379b393ad98b)
