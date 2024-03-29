@@ -13,8 +13,6 @@ tags:
 - kubedb
 ---
 
->PS: This blog was initially published on [Medium](https://ambar-thecloudgarage.medium.com/production-grade-dbaas-on-kubernetes-with-appscode-kubedb-kubevault-kubestash-dell-powerflex-379b393ad98b)
-
 In this blog we will look to build a production grade DBaaS platform using AppsCode and Dell Technologies leading platforms simplifying the entire endeavor and allowing a true enterprise experience. Needless to say, the cost and operational implications of building such powerful DBaaS platforms can be immense if done correctly.
 
 > As a collaborative effort, I had the pleasure of building this end-to-end deployment scenario with [Tamal Saha](https://www.linkedin.com/in/tamalsaha/), founder and CEO of AppsCode along with this engineering team. Special thanks to their partnership and helping deliver this experiential blog.
@@ -70,16 +68,4 @@ Cheers,
 Ambar@thecloudgarage
 #iwork4dell
 
-
-
-
-
-## Support
-
-To speak with us, please leave a message on [our website](https://appscode.com/contact/).
-
-To receive product announcements, follow us on [X](https://twitter.com/KubeDB).
-
-To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
-
-If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
+>PS: This blog was initially published on [Medium](https://ambar-thecloudgarage.medium.com/production-grade-dbaas-on-kubernetes-with-appscode-kubedb-kubevault-kubestash-dell-powerflex-379b393ad98b)
