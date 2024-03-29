@@ -40,7 +40,7 @@
                         <div class="information">
                           <a href="{{$.Site.Params.basePath}}authors/{{ .name | urlize }}" class="author-name">{{ .name }}</a>
                           <p class="designation has-text-light">{{.designation}}</p>
-                          <a href="https://appscode.com" target="_blank" class="company has-text-light">AppsCode Inc</a>
+                          <p class="company has-text-light">{{.company}}</p>
                         </div>
                       </div>
                   {{ end }}
