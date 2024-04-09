@@ -1,5 +1,5 @@
 ---
-title: Comparing Stash and Stash 2.0 (aka KubeStash)
+title: Comparison between Stash and Stash 2.0 (aka KubeStash)
 date: "2024-04-08"
 weight: 10
 authors:
@@ -28,13 +28,13 @@ To avoid confusion between Stash and Stash 2.0 due to their similar names, we ha
 Many noticeable changes have been made in KubeStash compared to Stash. Let's discuss them below:
 
 - The declarative APIs have undergone drastic changes. You may find that some Custom Resource Definitions (CRDs) have similar names, but their use cases have changed in most instances. To learn about the KubeStash declarative api visit [HERE](https://kubestash.com/docs/v2024.3.16/concepts/#declarative-api).
-- In Stash, you need to create a [BackupConfiguration](https://stash.run/docs/v2024.4.8/concepts/crds/backupconfiguration/) object and a [Repository](https://stash.run/docs/v2024.4.8/concepts/crds/repository/) object for each target application to take backup. To provide different schedule or multiple repository for a target application, you need to create more `BackupConfiguration` and `Repository` for a target application according to the requirement. In KubeStash, you need to create only [BackupConfiguration](https://kubestash.com/docs/v2024.3.16/concepts/crds/backupconfiguration/) object for a target application. In the `BackupConfigution`, you can configure multiple sessions (multiple schedule) and multiple repositories for a target application as per requirement. 
-- To perform backup and restore process Stash injects a [sidecar or init-container](https://stash.run/docs/v2024.4.8/guides/workloads/overview/) to the target if it is workload (i.e. `Deployment`, `DaemonSet`, `StatefulSet` etc.). This causes the workload to restart, which is generally not preferred by users in most cases. To mitigate this issue, KubeStash introduces [Job Model](https://kubestash.com/docs/v2024.3.16/guides/workloads/overview/) to perform backup and restore process. 
-- In Stash, user has to provide the backend (where the backed up data will be stored) specification in `Repository` CR. Since, `Repository` CR has one-to-one mapping with the target application, user has to repeat the backend information in every `Repository` CR they create in the cluster. To solve this issue, we've introduced [BackupStorage](https://kubestash.com/docs/v2024.3.16/concepts/crds/backupstorage/) CR in KubeStash and moved the backend information into it. This will allow the users re-use the backend within a namespace or within the cluster.
-- In KubeStash, the Repositories and Snapshots linked to a `BackupStorage` is uploaded in the backend as metadata. When a `BackupStorage` is created with existing backup data, KubeStash automatically synchronizes the Repositories and Snapshots linked to it from the backend. There is no such feature in Stash.
-- In KubeStash, we've introduced a new CRD named [Snapshot](https://kubestash.com/docs/v2024.3.16/concepts/crds/snapshot/) which represents the state of a backup run for one or more components of an application. For every `BackupSession`, it creates `Snapshot` CRs. If a `BackupSession` involves multiple repositories, a `Snapshot` is created for each repository. This makes the task easier to restore specific snapshot and components of an application. To restore specific snapshot in Stash was more complex and tiresome process.
-- In KubeStash, we've introduced a new CRD named [RetentionPolicy](https://kubestash.com/docs/v2024.3.16/concepts/crds/retentionpolicy/) which specifies how the old Snapshots should be cleaned up. This is re-usable across namespaces. By this, users are able to specify that they want to remove backup data that are older than particular duration. In Stash, there is no option for re-usable retention policy.
-- In KubeStash, we've introduced a new CRD named [HookTemplate](https://kubestash.com/docs/v2024.3.16/concepts/crds/hooktemplate/) which basically specifies a template for an action that will be executed before or/and after backup/restore process. This is re-usable across namespaces. In Stash, there is no option for re-usable hook.
+- In Stash, you need to create a [BackupConfiguration](https://stash.run/docs/v2024.4.8/concepts/crds/backupconfiguration/) and a [Repository](https://stash.run/docs/v2024.4.8/concepts/crds/repository/) for each application you want to backup. If you need multiple schedules or backends for one application, you'll have to create several BackupConfigurations and Repositories accordingly. However, in KubeStash, you only need to create one [BackupConfiguration](https://kubestash.com/docs/v2024.3.16/concepts/crds/backupconfiguration/), which allows you to specify multiple backends and schedules as needed. 
+- To perform backup and restore operations Stash injects a [sidecar or init-container](https://stash.run/docs/v2024.4.8/guides/workloads/overview/) to the target if it is workload (i.e. `Deployment`, `DaemonSet`, `StatefulSet` etc.). This causes the workload to restart, which is generally not preferred by users in most cases. To mitigate this issue, KubeStash introduces the [Job Model](https://kubestash.com/docs/v2024.3.16/guides/workloads/overview/) for performing backup and restore operations, eliminating the need for injecting sidecar/init containers. 
+- In Stash, you need to specify the backend information (where the backed up data will be stored) in each Repository. This means repeating the backend information in every Repository, even if it's the same backend. To simplify this, KubeStash introduces the [BackupStorage](https://kubestash.com/docs/v2024.3.16/concepts/crds/backupstorage/) CRD. It holds backend information for a specific backend and can be referenced in multiple Repositories. This allows users to reuse the same backend within a namespace or across the cluster.
+- KubeStash can sync your Repositories between your storage backend and your cluster. Now, when you create a `BackupStorage` object with respective backend information, KubeStash will automatically create the respective Repositories object that were backed up in that storage. This makes restoring into a new cluster much more convenient as you no longer need to create the respective repository manually.
+- In KubeStash, we've introduced a new CRD named [Snapshot](https://kubestash.com/docs/v2024.3.16/concepts/crds/snapshot/) which represents the state of a backup run for one or more components of an application. For every `BackupSession`, it creates `Snapshot` CRs. If a `BackupSession` involves multiple repositories, a `Snapshot` is created for each repository. This makes the task easier to restore specific snapshot and components of an application. Restoring a specific snapshot in Stash was more complex and tiresome process.
+- In KubeStash, we've introduced a new CRD named [RetentionPolicy](https://kubestash.com/docs/v2024.3.16/concepts/crds/retentionpolicy/) that allows you to set how long you’d like to retain the backup data. It offers more control over snapshot cleanup policies compared to Stash. It is also reusable across namespaces. In contrast, in Stash, you need to provide the retention policy separately in every BackupConfiguration.
+- In KubeStash, we've introduced a new CRD named [HookTemplate](https://kubestash.com/docs/v2024.3.16/concepts/crds/hooktemplate/) which specifies a template for an action that will be executed before or/and after backup/restore process. It provides better control over the backup process by letting you use custom variable in the `BackupBlueprint`. It is also reusable across namespaces. In contrast, in Stash, you need to specify the hook separately in every `BackupConfiguration`/`RestoreSession`.
 - KubeStash supports Point-In-Time Recovery (PITR). This feature is not available in Stash.
 
 These are some key features that have been improved or added in KubeStash. Additionally, there are numerous other features that have been enhanced or incorporated into KubeStash. To learn more visit [KubeStash docs](https://kubestash.com/docs/v2024.3.16/welcome/).
@@ -50,15 +50,15 @@ Now, you are ready to go with only KubeStash.
 
 If you are not using Stash, then just [install KubeStash](https://kubestash.com/docs/v2024.3.16/setup/install/kubestash/).
 
-> It is recommended to use KubeStash over Stash.
+> It is recommended to use `KubeStash` if you are looking for a cloud-native data backup and recovery solution for Kubernetes workloads.
 
 ### Upcoming Features in KubeStash
 
 The following features are planned to incorporate into KubeStash in future releases.
-- Backup Verification
-- Support for creating backups across Multiple Backends
-- Support for multi-level restore
-- Implement new addons according to the users requirements
+- Support Backup Verification which will support automatic verification of backed up data, verification of subset of the sessions, verification of after every few backups, triggering backup verification manually, and application specific verification logic.
+- Support for creating backups across Multiple Backends for same session.
+- Support for multi-level restore. For example, deploy the application first, then restore data into it.
+- Implement new addons according to the further requirements.
 
 ### Support
 
