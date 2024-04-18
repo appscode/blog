@@ -37,7 +37,7 @@ Many noticeable changes have been made in KubeStash compared to Stash. Let's dis
 - In KubeStash, we've introduced a new CRD named [HookTemplate](https://kubestash.com/docs/v2024.3.16/concepts/crds/hooktemplate/) which specifies a template for an action that will be executed before or/and after backup/restore process. It provides better control over the backup process by letting you use custom variable in the `BackupBlueprint`. It is also reusable across namespaces. In contrast, in Stash, you need to specify the hook separately in every `BackupConfiguration`/`RestoreSession`.
 - KubeStash supports Point-In-Time Recovery (PITR). This feature is not available in Stash.
 
-These are some key features that have been improved or added in KubeStash. Additionally, there are numerous other features that have been enhanced or incorporated into KubeStash. To learn more visit [KubeStash docs](https://kubestash.com/docs/v2024.3.16/welcome/).
+While the above highlights some of the key features and improvements of KubeStash, explore the KubeStash [documentation](https://kubestash.com/docs/v2024.3.16/welcome/) for a comprehensive view of all the new features.
 
 ### Migrate from Stash to KubeStash
 
@@ -55,10 +55,9 @@ If you are not using Stash, then just [install KubeStash](https://kubestash.com/
 ### Upcoming Features in KubeStash
 
 The following features are planned to incorporate into KubeStash in future releases.
-- Support Backup Verification which will support automatic verification of backed up data, verification of subset of the sessions, verification of after every few backups, triggering backup verification manually, and application specific verification logic.
-- Support for creating backups across Multiple Backends for same session.
-- Support for multi-level restore. For example, deploy the application first, then restore data into it.
-- Implement new addons according to the further requirements.
+- **Backup Verification:** No backup is admissible until you can successfully restore your application from it. So, it is necessary to ensure that your application is recoverable from the backed up data. Support for automatic verification of your backed up data will be added where it automatically spins up a temporary instance of your application, restore data into it, run some checks, and then removes the temporary instance.
+- **Application Level Backup:** If you deploy, your application using any package manager like Helm or an operator, backing up only the application manifest and the data is not enough. You can not just re-create your application from the backed up manifest. Instead, your restored application should be managed by the same package manager or operator you deployed originally. Support for taking backup of the relative resources based on application manager will be added so that it can restore in the same way as you deployed originally.
+- **New Addons:** Support backup and restore for new databases (i.e. MS SQL, RabbitMQ, etc.) will be added.
 
 ### Support
 
