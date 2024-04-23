@@ -20,7 +20,7 @@ We are pleased to announce the release of [Stash v2024.4.8](https://stash.run/do
 
 ### New Features
 
-1. With this new feature in `Kubedump`, you can now specify the types of resources you want to ignore during backup by defining their `GroupKind`. GroupKind refers to the category and type of Kubernetes resource. For example, `Deployment` is a kind in `apps` group. All you have to do is to provide the value of `ignoreGroupKinds` parameter in respective `BackupConfiguration`. When specifying which GroupKinds to ignore, you'll use the `<kind.group>` format. For instance, if you want to exclude Deployments from your backup, you would provide it like this: `Deployment.apps`. You can specify multiple GroupKinds to ignore by separating them with commas. For instance, if you want to ignore DaemonSets and Snapshots, you would list them like this: `DaemonSet.apps,Snapshot.repositories.stash.appscode.com`.
+1. We've added new feature in `Kubedump` addon. You can now specify the types of resources you want to ignore during backup by defining their `GroupKind`. GroupKind refers to the category and type of Kubernetes resource. For example, `Deployment` is a kind in `apps` group. All you have to do is to provide the value of `ignoreGroupKinds` parameter in respective `BackupConfiguration`. When specifying which GroupKinds to ignore, you'll use the `<kind.group>` format. For instance, if you want to exclude Deployments from your backup, you would provide it like this: `Deployment.apps`. You can specify multiple GroupKinds to ignore by separating them with commas. For instance, if you want to ignore DaemonSets and Snapshots, you would list them like this: `DaemonSet.apps,Snapshot.repositories.stash.appscode.com`.
 
    Here is an example of the corresponding `BackupConfiguration` where we have ignored `Snapshot` resources:
    ```yaml
@@ -52,9 +52,9 @@ We are pleased to announce the release of [Stash v2024.4.8](https://stash.run/do
        prune: true
    ```
 
-2. We’ve added support for setting node labels, tolerations and affinity rules for CRD installer and cleaner job. You can find the values file [HERE](https://github.com/stashed/installer/blob/a5779c26b41c2ded9b0e6fa1372dc517b2eb9f71/charts/stash-enterprise/values.yaml).
+2. We’ve added support for setting node selector, tolerations and affinity rules for CRD installer and cleaner job. You can find the values file [HERE](https://github.com/stashed/installer/blob/a5779c26b41c2ded9b0e6fa1372dc517b2eb9f71/charts/stash-enterprise/values.yaml).
 
-3. We have added support for backup and restore of `PostgreSQL` version `16`. You can find the supported `PostgreSQL` addon versions [HERE](https://stash.run/docs/v2024.4.8/addons/postgres/#supported-postgresql-versions).
+3. We've added support for backup and restore of `PostgreSQL` version `16`. You can find the supported `PostgreSQL` addon versions [HERE](https://stash.run/docs/v2024.4.8/addons/postgres/#supported-postgresql-versions).
 
 ### Bug fixes
 
