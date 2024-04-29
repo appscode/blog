@@ -13,16 +13,19 @@ tags:
 - kubernetes
 - rabbitmq
 - rabbitmq-migration
+- publisher-subscriber-system
+- blue-green-deployment
 ---
 
 ## Overview
 
-KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases supported by KubeDB include MongoDB, Elasticsearch, MySQL, MariaDB, Redis, PostgreSQL, FerretDB, Percona XtraDB, and Memcached. Additionally, KubeDB also supports ProxySQL, PgBouncer and the streaming platform Kafka, RabbitMQ. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/). Blue-green deployment is an upgrade strategy that is based on the idea of setting up a second RabbitMQ cluster (the "green" one) next to the current production cluster (the "blue" one). Applications are then switched to the "green" cluster. When that migration is done, the "blue" cluster is decommissioned (shut down). To simplify the switch, federated queues can be used to transfer enqueued messages from the "blue" to the "green" cluster.
-In this tutorial we will Migrate RabbitMQ to KubeDB Using Blue-Green Deployment Strategy.
+RabbitMQ is a very well known and highly used messaging and streaming broker, which is easy to deploy on cloud environments, on-premises, and on your local machine. It is currently used by millions worldwide. However, from provisioning RabbitMQ on kubernetes with stable cluster configuration and managing production operations like scaling, monitoring, ensuring security etc. are often proved as a hurdle for many systems. KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The wide range of databases supported by KubeDB include MongoDB, Elasticsearch, MySQL, MariaDB, Redis, PostgreSQL, FerretDB, Percona XtraDB and Memcached. Additionally, KubeDB also supports ProxySQL, PgBouncer and the streaming platform Kafka, RabbitMQ. Basically, it's a one operator solution for all of these databases. In order migrate to KubeDB managed RabbitMQ cluster Blue-green deployment strategy can be adopted. It is an upgrade strategy that is based on the idea of setting up a second RabbitMQ cluster (the "green" one) next to the current production cluster (the "blue" one). Producer and Consumer Application traffics are then switched to the "green" cluster. When that migration is done, the "blue" cluster can be decommissioned (shut down). To simplify the switch, federated queues can be used to transfer enqueued messages from the "blue" to the "green" cluster.
+
+In this tutorial we will Migrate a RabbitMQ cluster hosted on CloudAMQP to a newly deployed KubeDB managed RabbitMQ cluster Using Blue-Green Deployment Strategy.
 
 ## RabbitMQ Blue Cluster
 
-We have an existing cluster in CloudAMQP, which has a `music-queue` that is continuously consuming and publishing messages.
+We have an existing cluster in CloudAMQP, which has a queue  named `music-queue` that is continuously being published to and consumed by microservices.
 
 ![music-queue](BlueMusicQueue.png)
 
@@ -172,6 +175,7 @@ solrversions.catalog.kubedb.com                    2024-04-09T05:49:59Z
 subscribers.postgres.kubedb.com                    2024-04-09T05:53:01Z
 zookeeperversions.catalog.kubedb.com               2024-04-09T05:49:59Z
 ```
+> We recommend you to install the latest KubeDB version available 
 
 ## Deploy KubeDB RabbitMQ to the Green Cluster
 
