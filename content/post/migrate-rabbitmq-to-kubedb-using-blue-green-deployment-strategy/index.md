@@ -6,15 +6,15 @@ authors:
 - Dipta Roy
 tags:
 - amazon-eks
+- blue-green-deployment
 - cloud-native
 - gcp
 - gke
 - kubedb
 - kubernetes
+- publisher-subscriber-system
 - rabbitmq
 - rabbitmq-migration
-- publisher-subscriber-system
-- blue-green-deployment
 ---
 
 ## Overview
