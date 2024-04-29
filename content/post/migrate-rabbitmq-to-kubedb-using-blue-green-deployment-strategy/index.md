@@ -1,6 +1,6 @@
 ---
 title: Migrate RabbitMQ to KubeDB Using Blue-Green Deployment Strategy
-date: "2024-04-09"
+date: "2024-04-29"
 weight: 14
 authors:
 - Dipta Roy
