@@ -41,7 +41,7 @@ We are pleased to announce the release of [KubeDB v2024.4.27](https://kubedb.com
 
 This release introduces an enhanced monitoring feature for KubeDB-managed Druid deployments by integrating Grafana dashboards. These dashboards provide comprehensive insights into various Druid-specific metrics, statuses, as well as visual representations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of their Druid clusters, enabling more informed decision-making and efficient management of resources.
 
-[Here](https://github.com/appscode/grafana-dashboards/tree/master/druid) is the step-by-step guideline
+Have a look [Here](https://github.com/appscode/grafana-dashboards/tree/master/druid) for the step-by-step guide to use the monitoring feature in Druid.
 
 Here's a preview of the Summary dashboard for Druid.
 
@@ -139,11 +139,11 @@ Health Check has been updated which will ensure that the database is healthy. Th
 
 ## Pgpool
 
-In this release, we are having `TLS support for Pgpool`. To configure TLS/SSL in Pgpool, KubeDB uses cert-manager to issue certificates. So, first you have to make sure that the cluster has cert-manager installed. To install cert-manager in your cluster following steps [here](https://cert-manager.io/docs/installation/kubernetes/).
+In this release, we are introducing `TLS support for Pgpool`. To configure TLS/SSL in Pgpool, KubeDB uses cert-manager to issue certificates. So, first you have to make sure that the cluster has cert-manager installed. To install cert-manager in your cluster following steps [here](https://cert-manager.io/docs/installation/kubernetes/).
 
 To issue a certificate, the following cr of cert-manager is used:
 
-`Issuer/ClusterIssuer`: Issuers and ClusterIssuers represent certificate authorities (CAs) that are able to generate signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer that is in a ready condition to attempt to honor the request. You can learn more details [here](https://cert-manager.io/docs/concepts/issuer/).
+`Issuer/ClusterIssuer`: Issuers and ClusterIssuers represent certificate authorities (CAs) that are able to generate signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer that is in a ready condition to attempt to serve the request. You can learn more details [here](https://cert-manager.io/docs/concepts/issuer/).
 
 `Certificate`: cert-manager has the concept of Certificates that define the desired `x509 certificate` which will be renewed and kept up to date. You can learn more details [here](https://cert-manager.io/docs/concepts/certificate/).
 
