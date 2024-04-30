@@ -35,7 +35,7 @@ tags:
 - zookeeper
 ---
 
-We are pleased to announce the release of [KubeDB v2024.4.27](https://kubedb.com/docs/v2024.4.27/setup/). This release includes features like TLS support for SingleStore & PgPool; Monitoring & Alerting Support for Druid & Solr using Prometheus and Grafana; PDB support for Kafka, Kafka Connect Cluster and RabbitMQ; Microsoft SQL Server Provisioning; Backup and Restore support for ZooKeeper using KubeStash; OpsRequest and Autoscaler support for RabbitMQ; New version supports for MongoDB; Health Checker improvement for Memcached; and Grafana dashboard enhancement for Postgres. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.4.27/README.md). Let’s see the changes done in this release.
+We are pleased to announce the release of [KubeDB v2024.4.27](https://kubedb.com/docs/v2024.4.27/setup/). This release includes features like (1) TLS support for SingleStore & PgPool, (2) Monitoring & Alerting Support for Druid & Solr using Prometheus and Grafana, (3) PDB support for Kafka, Kafka Connect Cluster and RabbitMQ, (4) initial release of Microsoft SQL Server support, (5) Backup and Restore support for ZooKeeper using KubeStash, (6) OpsRequest and Autoscaler support for RabbitMQ, (7) new version support for MongoDB, (8) health checker improvement for Memcached; and (9) Grafana dashboard enhancement for Postgres. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.4.27/README.md). Now, let's get into the details of various changes done in this release.
 
 ## Druid
 
@@ -60,10 +60,10 @@ Support for `JDBC Connector (Source and Sink)` have been added for KubeDB manage
 
 ## Microsoft SQL Server
 
-We are thrilled to announce that KubeDB now extends its support to `Microsoft SQL Server`, one of the most popular relational database management systems (RDBMS) in the world. With this addition, KubeDB users can now seamlessly provision and manage SQL Server instances directly within their Kubernetes clusters. Besides provisioning, customizable health checker, custom template for pods & containers, authentication, multiple termination strategies, default container security etc. are included.
+We are thrilled to announce that KubeDB now supports `Microsoft SQL Server`, one of the most popular relational database management systems (RDBMS) in the world. With this addition, KubeDB users can now seamlessly provision and manage SQL Server instances directly within their Kubernetes clusters. Besides provisioning, customizable health checker, custom template for pods & containers, authentication, multiple termination strategies, default container security etc. are included.
 
 This release includes support for `Provisioning SQL Server Availability Group` and `Standalone SQL Server` instance
-Utilize SQL Server's high availability features by deploying instances in availability group mode. KubeDB leverages the `Raft Consensus Algorithm for cluster coordination`, enabling automatic leader election and failover decisions. `Quorum support` ensures the reliability and fault tolerance of your SQL Server deployments.
+Utilize SQL Server's high availability features by deploying instances in availability group mode. KubeDB leverages the `Raft Consensus Algorithm` for cluster coordination, enabling automatic leader election and failover decisions. Quorum support ensures the reliability and fault tolerance of your SQL Server deployments.
 
 You can also Deploy SQL Server instances in standalone mode for simple, single-node configurations. Here's a sample YAML to provision one. 
 
@@ -136,7 +136,6 @@ spec:
 
 Health Check has been updated which will ensure that the database is healthy. This will continuously check the database connection and the capability of `read-write operation` in the database.
 
-
 ## Pgpool
 
 In this release, we are introducing `TLS support for Pgpool`. To configure TLS/SSL in Pgpool, KubeDB uses cert-manager to issue certificates. So, first you have to make sure that the cluster has cert-manager installed. To install cert-manager in your cluster following steps [here](https://cert-manager.io/docs/installation/kubernetes/).
@@ -180,8 +179,10 @@ spec:
         ipAddresses:
           - "127.0.0.1"
 ```
+
 sslMode supported values are [disable, allow, prefer, require, verify-ca, verify-full]
-disable: It ensures that the server does not use TLS/SSL.
+
+**disable**: It ensures that the server does not use TLS/SSL.
 
 **allow**: You don’t care about security, but you will pay the overhead of encryption if the server insists on it.
 
@@ -210,7 +211,7 @@ Postgres Support for Monitoring with Grafana Dashboards gets and enhancement. A 
 ### OpsRequests
 RabbitMQ Ops Request support has been introduced through this release. Initially, Ops Requests for `Restart`, `Vertical Scaling`, and `Volume Expansion` have been added in this release. `VerticalScaling` is used to vertically scale the RabbitMQ nodes (i.e. pods). The necessary information required for vertical scaling, must be provided in `spec.verticalScaling` field `VolumeExpansion` is used to expand the storage of the RabbitMQ nodes (i.e. pods). The necessary information required for volume expansion, must be provided in `spec.volumeExpansion` field.
 
-Here's a sample yaml for vertical scaling OpsRequest - 
+Here's a sample yaml for vertical scaling OpsRequest:
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -263,6 +264,7 @@ spec:
       usageThreshold: 20
       scalingThreshold: 30
 ```
+
 `Pod Disruption Budget (PDB)` support has been added for RabbitMQ. A PDB limits the number of Pods of a replicated application that are down simultaneously from voluntary disruptions.
 
 
@@ -380,6 +382,7 @@ spec:
 ```
 
 And here is an example of RestoreSession
+
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
 kind: RestoreSession
