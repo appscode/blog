@@ -128,11 +128,9 @@ spec:
 
 - KubeDB support for two new MongoDB versions `5.0.26` & `7.0.8` have been introduced in this release.
 
-- RestoreSession still running even after a failure bug fixes for MongoDB Restic backup and restore support.
+- Bug fix on updating the RestoreSession status: After a failed restore process with KubeStash Restic support, the RestoreSession status was not updated correctly. That has been fixed in this release.
 
 - Improvement in MongoDB Go-client. Added new authentication support for specific users and specific databases.
-
-- Bug fix on updating the RestoreSession status: After a failed restore process with KubeStash Restic support, the RestoreSession status was not updated correctly. That has been fixed in this release.
 
 ## Memcached
 
