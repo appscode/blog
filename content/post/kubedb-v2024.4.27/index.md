@@ -19,6 +19,7 @@ tags:
 - kubestash
 - memcached
 - mongodb
+- mssql
 - pgpool
 - postgres
 - postgresql
@@ -42,7 +43,7 @@ This release introduces an enhanced monitoring feature for KubeDB-managed Druid 
 
 [Here](https://github.com/appscode/grafana-dashboards/tree/master/druid) is the step-by-step guideline
 
-Here's a sneak peak to Summary dashboard for Druid.
+Here's a preview of the Summary dashboard for Druid.
 
 ![Druid Summary](images/druid-summary.png)
 
@@ -209,7 +210,7 @@ Postgres Support for Monitoring with Grafana Dashboards gets and enhancement. A 
 ## RabbitMQ
 
 ### OpsRequests
-RabbitMQ Ops Request support has been introduced through this release. Initially, Ops Requests for `Restart`, `Vertical Scaling`, and `Volume Expansion` have been added in this release. `VerticalScaling` is used to vertically scale the RabbitMQ nodes (ie. pods). The necessary information required for vertical scaling, must be provided in `spec.verticalScaling` field `VolumeExpansion` is used to expand the storage of the RabbitMQ nodes (ie. pods). The necessary information required for volume expansion, must be provided in `spec.volumeExpansion` field.
+RabbitMQ Ops Request support has been introduced through this release. Initially, Ops Requests for `Restart`, `Vertical Scaling`, and `Volume Expansion` have been added in this release. `VerticalScaling` is used to vertically scale the RabbitMQ nodes (i.e. pods). The necessary information required for vertical scaling, must be provided in `spec.verticalScaling` field `VolumeExpansion` is used to expand the storage of the RabbitMQ nodes (i.e. pods). The necessary information required for volume expansion, must be provided in `spec.volumeExpansion` field.
 
 Here's a sample yaml for vertical scaling OpsRequest - 
 
@@ -288,9 +289,7 @@ To issue a certificate, cert-manager employs the following Custom Resource (CR):
 SingleStore CRD Specifications:
 
 ```yaml
-.
-.
-.
+# other fields ...
 spec:
   tls:
      issuerRef:
@@ -335,7 +334,7 @@ You need to create the following resources to successfully take a backup and res
 
 **Secrets**: hold the backend access credentials and a Restic encryption password to encrypt the backup snapshots.
 
-**BackupConfiguration**: specifies the target database, backend, addon etc to use to backup the database.
+**BackupConfiguration**: specifies the target database, backend, addon etc. to use to back up the database.
 
 **RestoreSession**: specifies the target database, addon, datasource to use to restore the backed up data.
 Here is an example of BackupConfiguration
