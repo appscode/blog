@@ -34,7 +34,7 @@ tags:
 - zookeeper
 ---
 
-We are pleased to announce the release of [KubeDB v2024.4.27](https://kubedb.com/docs/v2024.4.27/setup/). This release includes features like TLS support for SingleStore & PgPool, Monitoring & Alerting Support for Druid & Solr using Prometheus and Grafana, PDB support for Kafka, Kafka Connect Cluster and RabbitMQ, Microsoft SQL Server provisioning, Backup and Restore support for ZooKeeper using KubeStash, OpsRequest and Autoscaler support for RabbitMQ, New version supports for MongoDB, Health Checker improvement for Memcached and Grafana dashboard enhancement for Postgres. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.4.27/README.md). Let’s see the changes done in this release.
+We are pleased to announce the release of [KubeDB v2024.4.27](https://kubedb.com/docs/v2024.4.27/setup/). This release includes features like TLS support for SingleStore & PgPool; Monitoring & Alerting Support for Druid & Solr using Prometheus and Grafana; PDB support for Kafka, Kafka Connect Cluster and RabbitMQ; Microsoft SQL Server Provisioning; Backup and Restore support for ZooKeeper using KubeStash; OpsRequest and Autoscaler support for RabbitMQ; New version supports for MongoDB; Health Checker improvement for Memcached; and Grafana dashboard enhancement for Postgres. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.4.27/README.md). Let’s see the changes done in this release.
 
 ## Druid
 
@@ -52,18 +52,39 @@ To learn more, have a look [here](https://github.com/appscode/alerts/tree/master
 
 ## Kafka
 
-`Pod Disruption Budget (PDB)` support has been added for Kafka. A PDB limits the number of Pods of a replicated application that are down simultaneously from voluntary disruptions. For example, a quorum-based application like Kafka would like to ensure that the number of replicas running is never brought below the number needed for a KRaft quorum.
+`Pod Disruption Budget (PDB)` support has been added for Kafka. A PDB limits the number of Pods of a replicated application that can be down simultaneously from voluntary disruptions. For example, a quorum-based application like Kafka would like to ensure that the number of replicas running is never brought below the number needed for a KRaft quorum.
 
 ### Kafka-Connect
 Support for `JDBC Connector (Source and Sink)` have been added for KubeDB managed Kafka connect clusters. This connector will allow you to exchange data between relational databases and Kafka. The JDBC source connector allows you to import data from any relational database with a JDBC driver into Kafka topics. `Pod Disruption Budget (PDB)` support also has been added for Kafka Connect.
 
 ## Microsoft SQL Server
 
-We are thrilled to announce that KubeDB now extends its support to `Microsoft SQL Server`, one of the most popular relational database management systems (RDBMS) in the world. With this addition, KubeDB users can now seamlessly provision and manage SQL Server instances directly within their Kubernetes clusters.
+We are thrilled to announce that KubeDB now extends its support to `Microsoft SQL Server`, one of the most popular relational database management systems (RDBMS) in the world. With this addition, KubeDB users can now seamlessly provision and manage SQL Server instances directly within their Kubernetes clusters. Besides provisioning, customizable health checker, custom template for pods & containers, authentication, multiple termination strategies, default container security etc. are included.
 
-This release includes support for `Provisioning SQL Server Availability Group` and S`tandalone SQL Server` instance
+This release includes support for `Provisioning SQL Server Availability Group` and `Standalone SQL Server` instance
 Utilize SQL Server's high availability features by deploying instances in availability group mode. KubeDB leverages the `Raft Consensus Algorithm for cluster coordination`, enabling automatic leader election and failover decisions. `Quorum support` ensures the reliability and fault tolerance of your SQL Server deployments.
-Deploy SQL Server instances in standalone mode for simple, single-node configurations.
+
+You can also Deploy SQL Server instances in standalone mode for simple, single-node configurations. Here's a sample YAML to provision one. 
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: MSSQLServer
+metadata:
+  name: sqlserver-standalone
+  namespace: sample
+spec:
+  version: "2022-cu12"
+  replicas: 1
+  storageType: Durable
+  storage:
+    storageClassName: "standard"
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  terminationPolicy: Delete
+```
 
 Here’s a sample YAML to provision the Availability Group cluster. To generate the certificate used for internal endpoint authentication of availability group replicas, an Issuer named `mssqlserver-ca-issuer` need to be created prior to deploying the following manifest.
 
@@ -110,6 +131,8 @@ spec:
 
 - Improvement in MongoDB Go-client. Added new authentication support for specific users and specific databases.
 
+- Bug fix on updating the RestoreSession status: After a failed restore process with KubeStash Restic support, the RestoreSession status was not updated correctly. That has been fixed in this release.
+
 ## Memcached
 
 Health Check has been updated which will ensure that the database is healthy. This will continuously check the database connection and the capability of `read-write operation` in the database.
@@ -117,16 +140,17 @@ Health Check has been updated which will ensure that the database is healthy. Th
 
 ## Pgpool
 
-In this release, we are having `TLS support for Pgpool`. To configure TLS/SSL in Pgpool, KubeDB uses cert-manager to issue certificates. So, first you have to make sure that the cluster has cert-manager installed. To install cert-manager in your cluster following steps here.
-To issue a certificate, the following cr of cert-manager is used:
-`Issuer/ClusterIssuer`: Issuers and ClusterIssuers represent certificate authorities (CAs) that are able to generate signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer that is in a ready condition to attempt to honor the request. You can learn more details here.
-`Certificate`: cert-manager has the concept of Certificates that define the desired `x509 certificate` which will be renewed and kept up to date. You can learn more details here.
+In this release, we are having `TLS support for Pgpool`. To configure TLS/SSL in Pgpool, KubeDB uses cert-manager to issue certificates. So, first you have to make sure that the cluster has cert-manager installed. To install cert-manager in your cluster following steps [here](https://cert-manager.io/docs/installation/kubernetes/).
 
-Here,s a Sample yaml for TLS enabled Pgpool:
+To issue a certificate, the following cr of cert-manager is used:
+
+`Issuer/ClusterIssuer`: Issuers and ClusterIssuers represent certificate authorities (CAs) that are able to generate signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer that is in a ready condition to attempt to honor the request. You can learn more details [here](https://cert-manager.io/docs/concepts/issuer/).
+
+`Certificate`: cert-manager has the concept of Certificates that define the desired `x509 certificate` which will be renewed and kept up to date. You can learn more details [here](https://cert-manager.io/docs/concepts/certificate/).
+
+Here's a Sample yaml for TLS enabled Pgpool:
 
 ```yaml
-Sample yaml for TLS enabled Pgpool:
-
 apiVersion: kubedb.com/v1alpha2
 kind: Pgpool
 metadata:
@@ -160,18 +184,13 @@ spec:
 sslMode supported values are [disable, allow, prefer, require, verify-ca, verify-full]
 disable: It ensures that the server does not use TLS/SSL.
 
-
 **allow**: You don’t care about security, but you will pay the overhead of encryption if the server insists on it.
-
 
 **prefer**: You don’t care about encryption, but you wish to pay the overhead of encryption if the server supports it.
 
-
 **require**: You want your data to be encrypted, and you accept the overhead. You trust that the network will make sure you always connect to the server you want.
 
-
 **verify-ca**: You want your data encrypted, and you accept the overhead. You want to be sure that you connect to a server that you trust.
-
 
 **verify-full**: You want your data encrypted, and you accept the overhead. You want to be sure that you connect to a server you trust, and that it's the one you specify.
 
@@ -181,7 +200,7 @@ disable: It ensures that the server does not use TLS/SSL.
 
 - We brought change to our sync users mechanism for Pgpool. Now users have to create a secret with the fields username and password, if they want to sync a postgres user to Pgpool. KubeDB operator expects  that secrets will be created inside the namespace of the postgres reference given in Pgpool CR with the labels, `app.kubernetes.io/name: postgreses.kubedb.com and app.kubernetes.io/instance: <postgres reference name>`.
 
-- KubeDB Pgpool is now fully independent of KubeDB postgres. You can now provision Pgpool with any Postgres with just AppBinding reference.
+- KubeDB Pgpool is now fully independent of KubeDB postgres. You can now provision Pgpool with any Postgres with just AppBinding reference. This release also includes PgPool's own appbinding support as well.
 
 ## Postgres
 
