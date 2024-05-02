@@ -1,6 +1,6 @@
 ---
 title: Introducing KubeStash v2024.4.27
-date: "2024-04-27"
+date: "2024-04-30"
 weight: 10
 authors:
 - Md Ishtiaq Islam
@@ -26,7 +26,7 @@ Here, we are going to highlight the new features that have been introduced in th
 
 #### Monitoring KubeStash 
 
-We've added support for monitoring KubeStash via [Prometheus](https://prometheus.io/). You can use builtin [Prometheus](https://github.com/prometheus/prometheus) scraper or [prometheus-operator](https://github.com/prometheus-operator/prometheus-operator) to monitor KubeStash. KubeStash monitoring metrics source is [Panopticon](https://appscode.com/blog/post/introducing-panopticon/) which is a generic state metric exporter for Kubernetes developed by AppsCode. It watches KubeStash CRDs and export necessary metrics. You can get necessary metrics related to backup, restore and repository/backend.
+We've added support for monitoring KubeStash via [Prometheus](https://prometheus.io/). You can use builtin [Prometheus](https://github.com/prometheus/prometheus) scraper or [prometheus-operator](https://github.com/prometheus-operator/prometheus-operator) to monitor KubeStash. KubeStash monitoring metrics source is [Panopticon](https://appscode.com/blog/post/introducing-panopticon/) which is a generic state metric exporter for Kubernetes developed by AppsCode. It watches KubeStash CRDs and export necessary metrics. You can get necessary metrics related to backup, restore and backend resources.
 
 To enhance monitoring feature, we also provide a pre-built Grafana dashboard which provides an elegant graphical user interface to visualize KubeStash data. By importing `kubestash_dashboard.json` file, you should see the KubeStash dashboard similar to this.
 
