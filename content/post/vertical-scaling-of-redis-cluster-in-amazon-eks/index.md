@@ -249,7 +249,7 @@ To access the database through CLI, we have to get the credentials to access. Le
 
 #### Export the Credentials
 
-KubeDB will create Secret and Service for the database `redis-cluster` that we have deployed. Let’s check them by following command,
+KubeDB has created Secret and Service for the database `redis-cluster` that we have deployed. Let’s check them by following command,
 
 ```bash
 $ kubectl get secret -n demo -l=app.kubernetes.io/instance=redis-cluster
@@ -291,7 +291,7 @@ OK
 
 ## Vertical Scaling of Redis Cluster
 
-We are going to scale up the current cpu resource of the Redis cluster by applying Vertical Scaling.
+We are going to scale up the current cpu and memory resource of the Redis cluster by applying Vertical Scaling.
 Before applying it, let's check the current resources,
 
 ```bash
