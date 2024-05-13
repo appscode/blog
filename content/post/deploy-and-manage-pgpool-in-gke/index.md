@@ -273,7 +273,7 @@ exit
 
 #### Create Secret
 
-Now, we'll create a secret that includes the `User` and `Password` that we created as PostgreSQL role above.
+Now, we'll create a secret that includes the `User` and `Password` with values from newly created role and password above. The secret must have two labels, one is `app.kubernetes.io/name: postgreses.kubedb.com` and another is `app.kubernetes.io/instance: <appbinding name>`.
 
 ```yaml
 apiVersion: v1
@@ -327,7 +327,6 @@ pgpool.kubedb.com/pgpool created
 In this yaml,
 * `spec.version` field specifies the version of Pgpool. Here, we are using Pgpool `4.5.0`. You can list the KubeDB supported versions of Pgpool by running `$ kubectl get pgpoolversions` command.
 * `spec.postgresRef` specifies the name and the namespace of the appbinding that points to the PostgreSQL server.
-* `spec.postgresRef.namespace` contains the namespace information of backend server.
 * `spec.syncUsers` specifies whether user want to sync additional users to Pgpool.
 * And the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate".
 
