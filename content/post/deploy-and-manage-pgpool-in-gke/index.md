@@ -367,7 +367,7 @@ pgpool.kubedb.com/pgpool   kubedb.com/v1alpha2   4.5.0     Ready    60s
 NAME                                   VERSION   STATUS   AGE
 postgres.kubedb.com/postgres-cluster   16.1      Ready    5m7s
 ```
-> We have successfully deployed Pgpool in GKE. Now, we can exec into the container to use the database.
+> We have successfully deployed Pgpool in GKE.  Now, we can use the `pgpool` service to use the database.
 
 
 ### Connect via Pgpool
