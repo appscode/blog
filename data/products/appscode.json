@@ -12,7 +12,7 @@
     "themeColor": ""
   },
   "heroImage": {
-    "src": "/assets/images/products/appscode/appscode-hero.png",
+    "src": "/assets/images/products/appscode/appscode-hero.webp",
     "alt": "AppsCode"
   },
   "logo": {
@@ -47,7 +47,7 @@
       "summary": "Our Mission is to Accelerate the transition to Containers by building a Kubernetes-native Data Platform",
       "get_in_touch_url": "https://appscode.com/contact/",
       "intro": "8az5rYUxyGs",
-      "hero_image": "/assets/images/products/appscode/appscode-hero.png"
+      "hero_image": "/assets/images/products/appscode/appscode-hero.webp"
     },
     "main_products": [
       {
@@ -111,7 +111,7 @@
           "Monitoring",
           "Security"
         ],
-        "illustration": "/assets/images/products/kubedb/kubedb-illustration-1.png"
+        "illustration": "/assets/images/products/kubedb/kubedb-illustration-1.webp"
       },
       {
         "id": "disaster-recovery",
@@ -193,8 +193,8 @@
     ],
     "subscription": {
       "title": "Cloud reimagined <br /> for the age of Kubernetes",
-      "summary_left": "Deploy, manage, upgrade Kubernetes on any cloud and automate deployment, scaling, and management of containerized applications. Make Kubernetes accessible any member of your development team using ByteBuilder's innovative Kubernetes Dashboard.",
-      "summary_right": "AppsCode simplifies and automate every single component related to Kubernetes. We produce high quality production-grade tools for developers to experience to make the most of their Kubernetes journey."
+      "summary_left": "Deploy, manage, upgrade Kubernetes on any cloud and automate deployment, scaling, and management of containerized applications. Make Kubernetes accessible any member of your development team using AppsCode's innovative Kubernetes Dashboard.",
+      "summary_right": "AppsCode simplifies every aspect of Kubernetes clusters. We produce high quality production-grade tools for developers so they can make the most out of their Kubernetes journey."
     },
     "social_connect": {
       "title": "More than 5,000 developers use AppsCode products every month to deliver value",
@@ -214,7 +214,7 @@
       "social_cards": [
         {
           "name": "Github",
-          "icon": "/assets/images/icon/count/octocat.svg",
+          "icon": "/assets/images/icon/count/octocat.webp",
           "users": "5,000+",
           "sub_title": "Github Stars",
           "summary": "5000+ Github Stars. Lorem ipsum is a dular site advantage of the",
@@ -222,7 +222,7 @@
         },
         {
           "name": "Docker",
-          "icon": "/assets/images/icon/count/docker.svg",
+          "icon": "/assets/images/icon/count/docker.webp",
           "users": "4.5M+",
           "sub_title": "Docker Downloads",
           "summary": "5000+ Github Stars. Lorem ipsum is a dular site advantage of the",
@@ -230,7 +230,7 @@
         },
         {
           "name": "Get Support",
-          "icon": "/assets/images/icon/count/support.svg",
+          "icon": "/assets/images/icon/count/support.webp",
           "users": "70,000+",
           "sub_title": "Operators Deployed",
           "summary": "5000+ Github Stars. Lorem ipsum is a dular site advantage of the",
