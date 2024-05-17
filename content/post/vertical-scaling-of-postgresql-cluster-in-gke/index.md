@@ -320,7 +320,7 @@ exit
 
 > We've successfully inserted some sample data to our database. More information about Run & Manage PostgreSQL on Kubernetes can be found in [PostgreSQL Kubernetes](https://kubedb.com/kubernetes/databases/run-and-manage-postgres-on-kubernetes/)
 
-## Vetical Scaling of PostgreSQL Cluster
+## Vertical Scaling of PostgreSQL Cluster
 
 We are going to scale up the current cpu resource of the PostgreSQL cluster by applying Vertical Scaling.
 Before applying it, let's check the current resources,
