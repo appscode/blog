@@ -185,7 +185,7 @@ spec:
   replicaSet:
     name: rs0
   storage:
-    storageClassName: "standard"
+    storageClassName: "default"
     accessModes:
     - ReadWriteOnce
     resources:
@@ -330,7 +330,7 @@ spec:
   databaseRef:
     name: mongodb-rs
   horizontalScaling:
-      replicas: 5
+    replicas: 5
 ```
 In this yaml,
 
@@ -383,7 +383,7 @@ spec:
   databaseRef:
     name: mongodb-rs
   horizontalScaling:
-      replicas: 3
+    replicas: 3
 ```
 
 In this yaml,
