@@ -26,6 +26,8 @@ AppsCode's booth was a hub of activity at Kubernetes Community Days Dhaka, attra
 ### Overview of the Keynote by the Founder
 Tamal Saha, Founder & CEO of AppsCode, delivered a compelling keynote speech on the Challenges of Managing Stateful Applications in Kubernetes. His presentation delved into the complexities and nuances of managing databases and other stateful applications within the Kubernetes environment.
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/qY-l2DR9y1I?si=_2q0Y65VwSY24ol_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 #### Key Points Discussed
 * Intrinsic challenges of stateful applications in a dynamic Kubernetes environment
 * Strategies for maintaining data consistency and reliability
@@ -40,6 +42,8 @@ Tamal emphasized the importance of robust solutions like KubeDB in addressing th
 #### Event-Driven Communication with Kafka on Kubernetes by Raihan Khan Raka
 Raihan Khan Raka, Senior Software Engineer at AppsCode, presented an engaging talk on event-driven communication using Kafka on Kubernetes. He explored how Kafka, a distributed event streaming platform, can be effectively deployed and managed within a Kubernetes cluster.
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/iwyk7uyl2i8?si=QRx53IuDPTtfoEGG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 #### Key Takeaways for the Audience
 * Practical insights into setting up and managing Kafka on Kubernetes
 * Understanding the benefits of event-driven communication in a microservices architecture
@@ -47,6 +51,9 @@ Raihan Khan Raka, Senior Software Engineer at AppsCode, presented an engaging ta
 
 #### Dedicated Cluster Management Using Cluster API and Kube-Bind by Rasel Hossain
 Rasel Hossain, Software Engineer at AppsCode, delivered a talk on managing dedicated Kubernetes clusters using Cluster API and Kube-Bind. His presentation focused on simplifying cluster lifecycle management and enhancing operational efficiency.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KFHk0K1wRAM?si=9fXZl8S1ZazdOtul" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 #### Key Takeaways for the Audience
 * Effective strategies for managing cluster lifecycle with Cluster API
 * Benefits of using Kube-Bind for dedicated cluster management
