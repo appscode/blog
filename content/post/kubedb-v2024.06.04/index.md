@@ -116,7 +116,7 @@ spec:
 ```
 
 ### OpsRequest
-In this release, support for Druid Ops Request support has been integrated. Druid Ops Request provides a declarative configuration for the Druid administrative operations like database restart, vertical scaling, volume expansion, etc. in a Kubernetes native way.
+In this release, support for Druid Ops Request has been integrated. Druid Ops Request provides a declarative configuration for the Druid administrative operations like database restart, vertical scaling, volume expansion, etc. in a Kubernetes native way.
 
 #### Restart
 Restart ops request is used to perform a smart restart of the Druid cluster. An example YAML is provided below:
@@ -333,8 +333,8 @@ spec:
         storage: 1Gi
   deletionPolicy: WipeOut
 ```
-The users must specify the `spec.tls.issuerRef field`. If user set `spec.tls.clientTLS`: true  then tls enabled SQL Server will be provisioned. 
-If `tls.clientTLS: false` is specified then tls will not be enabled for SQL Server but the Issuer will be used to configure tls enabled wal-g proxy-server which is required for SQL Server backup restore.
+The users must specify the `spec.tls.issuerRef` field. If user set `spec.tls.clientTLS`: true  then tls enabled SQL Server will be provisioned. 
+If `tls.clientTLS`: false is specified then tls will not be enabled for SQL Server but the Issuer will be used to configure tls enabled wal-g proxy-server which is required for SQL Server backup restore.
 KubeDB uses the issuer or clusterIssuer referenced in the `tls.issuerRef` field, and the certificate specs provided in `tls.certificate` to generate certificate secrets using Issuer/ClusterIssuers specification. These certificate secrets includes `ca.crt`, `tls.crt` and `tls.key` etc. and are used to configure Microsoft SQL Server
 
 
