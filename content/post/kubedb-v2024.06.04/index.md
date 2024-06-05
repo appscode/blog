@@ -210,6 +210,49 @@ spec:
       usageThreshold: 2
       scalingThreshold: 50
 ```
+## Elasticsearch
+**New Version**: We have added two new versions. One for Elasticsearch and the other for Opensearch. Newly available versions are `xpack-8.13.4`(Elasticsearch) and `opensearch-2.14.0`(Opensearch)
+
+Elasticsearch yaml for xpack-8.13.4:
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: Elasticsearch
+metadata:
+  name: es-cluster
+  namespace: demo
+spec:
+  storageType: Durable
+  version: xpack-8.13.4
+  enableSSL: true
+  topology:
+    data:
+      replicas: 2
+      storage:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
+    ingest:
+      replicas: 1
+      storage:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
+    master:
+      replicas: 1
+      storage:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
+```
 
 ## Kafka Schema Registry
 This release introduces Schema Registry for Kafka, an awesome tool that provides a centralized repository and validating schemas for kafka topic messages and for serialization and deserialization of the data.It plays a critical role in ensuring that data formats are consistent and compatible over time, especially in environments where multiple producers and consumers interact with Kafka.
