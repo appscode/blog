@@ -7,10 +7,10 @@ authors:
 tags:
 - alert
 - backup
+- clickhouse
 - cloud-native
 - dashboard
 - database
-- clickhouse
 - druid
 - grafana
 - kafka
@@ -115,7 +115,7 @@ spec:
   topology: {}
 ```
 
-### Ops Request
+### OpsRequest
 In this release, support for Druid Ops Request support has been integrated. Druid Ops Request provides a declarative configuration for the Druid administrative operations like database restart, vertical scaling, volume expansion, etc. in a Kubernetes native way.
 
 #### Restart
@@ -243,16 +243,15 @@ In this release, we are introducing TLS support for Microsoft SQL Server. By imp
 
 With TLS enabled, client applications can securely connect to the Microsoft SQL Server cluster, ensuring that data transmitted between clients and servers remains encrypted and protected from unauthorized access or tampering. This encryption adds an extra layer of security, essential for sensitive data environments where confidentiality and integrity are paramount.
 
-To configure TLS/SSL in Microsoft SQL Server, KubeDB utilizes the cert-manager to issue certificates. So, first, you have to ensure the cluster has the cert-manager installed. To install cert-manager in your cluster, follow the steps here. https://cert-manager.io/docs/installation/
+To configure TLS/SSL in Microsoft SQL Server, KubeDB utilizes the cert-manager to issue certificates. So, first, you have to ensure the cluster has the cert-manager installed. To install cert-manager in your cluster, follow the steps [here](https://cert-manager.io/docs/installation/).
 
 To issue a certificate, the following Custom Resource (CR) of cert-manager is used:
 
-Issuer/ClusterIssuer: Issuers and ClusterIssuers represent certificate authorities (CAs) that can generate signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer in a ready condition to attempt to serve the request. You can learn more details here. https://cert-manager.io/docs/concepts/issuer/
+**Issuer/ClusterIssuer**: Issuers and ClusterIssuers represent certificate authorities (CAs) that can generate signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer in a ready condition to attempt to serve the request. You can learn more details [here](https://cert-manager.io/docs/concepts/issuer/).
 
-Certificate: The cert-manager has the concept of Certificates that define the desired x509 certificate which will be renewed and kept up to date. You can learn more details here. https://cert-manager.io/docs/usage/certificate/
+**Certificate**: The cert-manager has the concept of Certificates that define the desired x509 certificate which will be renewed and kept up to date. You can learn more details [here](https://cert-manager.io/docs/usage/certificate/).
 
-Here’s a sample YAML for TLS-enabled MS SQL Server:
-
+Here’s a sample YAML for TLS-enabled Microsoft SQL Server:
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: MSSQLServer
@@ -291,61 +290,10 @@ spec:
         storage: 1Gi
   deletionPolicy: WipeOut
 ```
-The users must specify the tls.issuerRef field. KubeDB uses the issuer or clusterIssuer referenced in the `tls.issuerRef` field, and the certificate specs provided in `tls.certificate` to generate certificate secrets using Issuer/ClusterIssuers specification. These certificate secrets includes `ca.crt`, `tls.crt` and `tls.key` etc. and are used to configure Microsoft SQL Server.
+The users must specify the `spec.tls.issuerRef field`. If user set `spec.tls.clientTLS`: true  then tls enabled SQL Server will be provisioned. 
+If `tls.clientTLS: false` is specified then tls will not be enabled for SQL Server but the Issuer will be used to configure tls enabled wal-g proxy-server which is required for SQL Server backup restore.
+KubeDB uses the issuer or clusterIssuer referenced in the `tls.issuerRef` field, and the certificate specs provided in `tls.certificate` to generate certificate secrets using Issuer/ClusterIssuers specification. These certificate secrets includes `ca.crt`, `tls.crt` and `tls.key` etc. and are used to configure Microsoft SQL Server
 
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: MSSQLServer
-metadata:
-  name: sqlserver-standalone
-  namespace: sample
-spec:
-  version: "2022-cu12"
-  replicas: 1
-  storageType: Durable
-  storage:
-    storageClassName: "standard"
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 1Gi
-  deletionPolicy: Delete
-```
-
-Here’s a sample YAML to provision the Availability Group cluster. To generate the certificate used for internal endpoint authentication of availability group replicas, an Issuer named `mssqlserver-ca-issuer` need to be created prior to deploying the following manifest.
-
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: MSSQLServer
-metadata:
-  name: sqlserver-ag
-  namespace: demo
-spec:
-  version: "2022-cu12"
-  replicas: 3
-  topology:
-    mode: AvailabilityGroup
-    availabilityGroup:
-      databases:
-        - AgDB1
-        - AgDB2
-  internalAuth:
-    endpointCert:
-      issuerRef:
-        apiGroup: cert-manager.io
-        name: mssqlserver-ca-issuer
-        kind: Issuer
-  storageType: Durable
-  storage:
-    storageClassName: "standard"
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 1Gi
-  deletionPolicy: Delete
-```
 
 ## MongoDB
 ### MongoDBArchiver Shard Support: 
@@ -356,8 +304,50 @@ We have introduced support for Sharded MongoDB Cluster in the `mongodb-csi-snaps
 Specific components restoression provided in KubeStash Restoression wasn’t working properly. This bug has been fixed in this release.
 
 ## Memcached
+### Custom Configuration
+This release introduces custom configuration for Memcached. By using custom configuration file, you can use KubeDB to run Memcached with custom configuration.
+The necessary information required for custom configuration is memcached.conf file which is the Memcached configuration file containing the custom configurations. For custom configuration, you can use YAML like this:
 
-### Ops Request
+```yaml
+apiVersion: v1 
+stringData: 
+  memcached.conf: | 
+    -m 32
+    -c 500
+kind: Secret 
+metadata: 
+  name: mc-configuration 
+  namespace: demo 
+  resourceVersion: "4505"
+```
+
+In the above YAML, -m is max memory limit to use for object storage & -c is max simultaneous connections.
+
+To apply this custom configuration, the Memcached YAML will be like:
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: Memcached
+metadata:
+  name: memcached
+  namespace: demo
+spec:
+  replicas: 1
+  version: "1.6.22"
+  configSecret:
+    name: mc-configuration
+  podTemplate:
+    spec:
+      resources:
+        limits:
+          cpu: 500m
+          memory: 128Mi
+        requests:
+          cpu: 250m
+          memory: 64Mi
+  terminationPolicy: WipeOut
+```
+
+### OpsRequest
 Memcached Ops Request support has been introduced through this release. Ops Request for Restart, Vertical Scaling, and Reconfiguration have been added.
 
 #### Restart
@@ -444,7 +434,7 @@ Previously there were multiple postgres database servers which the pgbouncer can
 Health check is configured in this release. Now it can do write check and it can check every pgbouncer pod if it is healthy or not.
 
 ## Pgpool
-### Ops Request
+### OpsRequest
 In this release, we have introduced support for Pgpool Ops Requests. Current Ops Request supports for Pgpool are: Restart, Vertical Scaling, and Reconfigure.
 #### Restart
 Restart ops request is used to perform a smart restart to Pgpool pods. An example YAML is provided below:
@@ -460,7 +450,7 @@ spec:
     name: pgpool
 ```
 
-### Vertical Scaling
+#### Vertical Scaling
 Vertical Scaling allows to vertically scale pgpool pods. The necessary information for vertical scaling must be provided in the `spec.verticalScaling.node` field. Additionally it can also take `spec.verticalScaling.nodeSelectionPolicy` and  `spec.verticalScaling.topology` fields. An example YAML is provided below:
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -542,7 +532,7 @@ Alpine: https://github.com/kubedb/postgres-docker/tree/release-15.5-alpine-age
 Debian: https://github.com/kubedb/postgres-docker/tree/release-15.5-bookworm-age
 
 ## RabbitMQ
-### Ops Requests
+### OpsRequest
 
 This release is going to introduce more OpsRequest for RabbitMQ clusters. The last release included RabbitMQ OpsRequests for Restart, Vertical Scaling, and Volume Expansion. This release brings support for Horizontal Scaling, Update Version, Reconfigurations, and ReconfigureTLS. Here’s a sample YAML for Upgrading RabbitMQ v3.12.12 cluster named **rabbitmq** in demo namespace to v3.13.2 - 
 
@@ -613,7 +603,7 @@ spec:
 
 ## SingleStore
 
-### Ops Request
+### OpsRequest
 In this release, we have introduced support for SingleStore Ops Requests. Initially, Ops Requests for Restart, Vertical Scaling, Volume Expansion, and Reconfiguration have been added for both clustering and standalone modes.
 
 #### Vertical Scaling
