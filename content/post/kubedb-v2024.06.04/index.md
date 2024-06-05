@@ -59,7 +59,7 @@ spec:
     resources:
       requests:
         storage: 2Gi
-  terminationPolicy: WipeOut
+  deletionPolicy: WipeOut
 ```
 Here's a sample manifest to provision ClickHouse in clusterTopology mode.
 ```yaml
@@ -85,8 +85,10 @@ spec:
         resources:
           requests:
             storage: 2Gi
-  terminationPolicy: WipeOut
+  deletionPolicy: WipeOut
 ```
+**Supported version**: 24.4.1
+
 > Note: To get clickhouse keeper server host and port, You need to setup clickhouse-keeper server manually. 
 
 ## Druid
@@ -209,6 +211,31 @@ spec:
       scalingThreshold: 50
 ```
 
+## Kafka Schema Registry
+This release introduces Schema Registry for Kafka, an awesome tool that provides a centralized repository and validating schemas for kafka topic messages and for serialization and deserialization of the data.It plays a critical role in ensuring that data formats are consistent and compatible over time, especially in environments where multiple producers and consumers interact with Kafka.
+The initial release of Schema Registry is bringing support for Provisioning. You can now enable schema registry for Avro, Protobuf, JSON etc. You can also use this schema registry with Kafka Connect Cluster source/sink connector to serialize and deserialize data.
+
+You can run Schema Registry with `In-memory` and `KafkaSQL` as storage backend in this release.
+
+Let’s assume you have a Kafka cluster `kafka-prod`, provisioned using KubeDB is deployed in a namespace called demo. You can now provision a SchemaRegistry using the following yaml.
+
+```yaml
+apiVersion: kafka.kubedb.com/v1alpha1
+kind: SchemaRegistry
+metadata:
+  name: schemaregistry
+  namespace: demo
+spec:
+  version: 2.5.11.final
+  replicas: 2
+  kafkaRef:
+    name: kafka-prod
+    namespace: demo
+  deletionPolicy: WipeOut
+```
+**Supported version**: 2.5.11.final
+
+> Note: To run Schema Registry as `In-memory`, you just need to remove `kafkaRef` field from the above yaml.
 
 ## Microsoft SQL Server
 
@@ -262,9 +289,9 @@ spec:
     resources:
       requests:
         storage: 1Gi
-  terminationPolicy: WipeOut
+  deletionPolicy: WipeOut
 ```
-The users must specify the tls.issuerRef field. KubeDB uses the issuer or clusterIssuer referenced in the tls.issuerRef field, and the certificate specs provided in tls.certificate to generate certificate secrets using Issuer/ClusterIssuers specification. These certificate secrets includes ca.crt, tls.crt and tls.key etc. and are used to configure Microsoft SQL Server.
+The users must specify the tls.issuerRef field. KubeDB uses the issuer or clusterIssuer referenced in the `tls.issuerRef` field, and the certificate specs provided in `tls.certificate` to generate certificate secrets using Issuer/ClusterIssuers specification. These certificate secrets includes `ca.crt`, `tls.crt` and `tls.key` etc. and are used to configure Microsoft SQL Server.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -283,7 +310,7 @@ spec:
     resources:
       requests:
         storage: 1Gi
-  terminationPolicy: Delete
+  deletionPolicy: Delete
 ```
 
 Here’s a sample YAML to provision the Availability Group cluster. To generate the certificate used for internal endpoint authentication of availability group replicas, an Issuer named `mssqlserver-ca-issuer` need to be created prior to deploying the following manifest.
@@ -317,11 +344,15 @@ spec:
     resources:
       requests:
         storage: 1Gi
-  terminationPolicy: Delete
+  deletionPolicy: Delete
 ```
 
 ## MongoDB
-#### Bug Fix: 
+### MongoDBArchiver Shard Support: 
+We are pleased to announce that this release includes support for the `MongoDBArchiver` in Sharded MongoDB Cluster environments. This significant enhancement enables Point-in-Time Recovery (PITR) for the Sharded MongoDB Cluster managed by KubeDB, providing the capability to restore data to any specific point in time following a disaster. This constitutes a major feature addition that will greatly benefit users by improving disaster recovery processes and minimizing potential data loss.
+### PVCs Backup for Shard: 
+We have introduced support for Sharded MongoDB Cluster in the `mongodb-csi-snapshotter` plugin.This enhancement allows users to back up Persistent Volume Claims (PVCs) of their KubeDB-managed Sharded MongoDB Cluster, thereby ensuring greater data protection and ease of recovery.
+### Bug Fix: 
 Specific components restoression provided in KubeStash Restoression wasn’t working properly. This bug has been fixed in this release.
 
 ## Memcached
@@ -370,7 +401,7 @@ spec:
 ```
 
 #### Reconfiguration
-Reconfiguration allows you to update the configuration through a new secret or apply a config. Users can also remove the custom config using RemoveCustomConfig. The spec.configuration field needs to contain the data required for reconfiguration. An example yaml is provided below:
+Reconfiguration allows you to update the configuration through a new secret or apply a config. Users can also remove the custom config using RemoveCustomConfig. The `spec.configuration` field needs to contain the data required for reconfiguration. An example yaml is provided below:
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -390,7 +421,7 @@ spec:
 ```
 ## PgBouncer
 ### Multiple user support:
-In this release an user can provide multiple postgres users to connect with pgbouncer. User just need to create secrets which contain user name & password. To apply those secrets into pgbouncer pods the user needs to add some specific labels. An example of secret:
+In this release an user can provide multiple postgres users to connect with pgbouncer. User just need to create secrets which contain `username` & `password`. To apply those secrets into pgbouncer pods the user needs to add some specific labels. An example of secret:
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -453,7 +484,7 @@ spec:
 ```
 
 #### Reconfigure
-Reconfigure allows you to reconfigure Pgpool with new configuration via `spec.configuration.configSecret` or `spec.configuration.applyConfig` can be used if you want to apply changes or add some new configuration in addition to currently used configuration. Also, you can remove currently used configuration and use the default configuration by using ‘spec.configuration.removeCustomConfig’. An example YAML is provided below:
+Reconfigure allows you to reconfigure Pgpool with new configuration via `spec.configuration.configSecret` or `spec.configuration.applyConfig` can be used if you want to apply changes or add some new configuration in addition to currently used configuration. Also, you can remove currently used configuration and use the default configuration by using `spec.configuration.removeCustomConfig`. An example YAML is provided below:
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: PgpoolOpsRequest
