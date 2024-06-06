@@ -93,7 +93,7 @@ spec:
 
 **New Version support**: `24.4.1`
 
-> Note: To get clickhouse keeper server host and port, You need to setup [clickhouse-keeper](https://clickhouse.com/docs/en/guides/sre/keeper/clickhouse-keeper) server manually. 
+> Note: To get clickhouse keeper server host and port, You need to set up [clickhouse-keeper](https://clickhouse.com/docs/en/guides/sre/keeper/clickhouse-keeper) server manually.
 
 ## Druid
 In this release, Druid API has been updated. Now, Druid can be installed with a simpler YAML. Consequently, users do not need to mention the required nodes (i.e. `coordinators`, `brokers`, `middleManager`, `historicals`) anymore and the KubeDB operator will handle those and deploy the mandatory nodes with the default configurations. 
@@ -141,7 +141,7 @@ spec:
 ```
 
 #### Vertical Scaling:
-Vertical Scaling allows you to vertically scale the Druid nodes (ie. pods). The necessary information required for vertical scaling, must be provided in the `spec.verticalScaling` field.
+Vertical Scaling allows you to vertically scale the Druid nodes (i.e. pods). The necessary information required for vertical scaling, must be provided in the `spec.verticalScaling` field.
 
 An example yaml is provided below:
 ```yaml
@@ -172,7 +172,7 @@ spec:
 ```
 
 #### Volume Expansion:
-Volume Expansion is used to expand the storage of the Druid nodes (ie. pods). The necessary information required for volume expansion, must be provided in `spec.volumeExpansion` field. 
+Volume Expansion is used to expand the storage of the Druid nodes (i.e. pods). The necessary information required for volume expansion, must be provided in `spec.volumeExpansion` field.
 
 An example yaml is provided below:
 ```yaml
@@ -427,7 +427,7 @@ spec:
 ```
 
 #### Vertical Scaling
-Vertical Scaling allows you to vertically scale the Memcached nodes (ie. pods). The necessary information required for vertical scaling, must be provided in the `spec.verticalScaling` field.
+Vertical Scaling allows you to vertically scale the Memcached nodes (i.e. pods). The necessary information required for vertical scaling, must be provided in the `spec.verticalScaling` field.
 An example YAML is provided below:
 
 ```yaml
@@ -512,7 +512,7 @@ spec:
 ```
 
 #### Vertical Scaling
-Vertical Scaling allows to vertically scale pgpool pods. The necessary information for vertical scaling must be provided in the `spec.verticalScaling.node` field. Additionally it can also take `spec.verticalScaling.nodeSelectionPolicy` and  `spec.verticalScaling.topology` fields. An example YAML is provided below:
+Vertical Scaling allows to vertically scale pgpool pods. The necessary information for vertical scaling must be provided in the `spec.verticalScaling.node` field. Additionally, it can also take `spec.verticalScaling.nodeSelectionPolicy` and  `spec.verticalScaling.topology` fields. An example YAML is provided below:
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: PgpoolOpsRequest
@@ -553,7 +553,7 @@ spec:
 ```
 
 ### AutoScaler
-In this release, we are introducing PgpoolAutoscaler, a Kubernetes Custom Resource Definition (CRD) that supports auto scaling for Pgpool. This allows you to configure auto scaling for Pgpool based on cpu, memory and nodeTopology. An example YAML is provided below:
+In this release, we are introducing `PgpoolAutoscaler`, a Kubernetes Custom Resource Definition (CRD) that supports auto-scaling for Pgpool. This allows you to configure auto-scaling for Pgpool based on cpu, memory and nodeTopology. An example YAML is provided below:
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: PgpoolAutoscaler
@@ -581,7 +581,7 @@ Now we can create a secret with `pgpool.conf` as the key and  refer this secret 
 ### Pod Disruption Budget (PDB)
 We are now automatically creating a Pod Disruption Budgets (PDB) for Pgpool upon creating PetSet for it. A PDB helps ensure the availability of Pgpool by limiting the number of pods that can be down simultaneously due to voluntary disruptions (e.g., maintenance or upgrades).
 ### New service port for pcp user
-Now you can use pcp users through the primary service to do administrative level tasks for Pgpool. By default the port is `9595`.
+Now you can use pcp users through the primary service to do administrative level tasks for Pgpool. By default, the port is `9595`.
 
 ## Postgres
 In this release, we have added a PostgreSQL extension for the Apache AGE Graph Database in PostgreSQL version 15. This extension will be supported on Linux Alpine and Debian-based PostgreSQL images. 
@@ -630,7 +630,7 @@ spec:
 ```
 
 #### TLS support: 
-Now you can deploy RabbitMQ clusters with TLS enabled. This will let publishers and consumers communicate with TLS (SSL) listener on the `5671` port via `AMQP` protocol. RabbitMQ peers will also communicate with TLS-encrypted messages. KubeDB only provides TLS support via cert-manager issued certificates. So, you need to have cert-manager installed first. Create either a Issuer or ClusterIssuer representing certificate authorities (CAs) that can generate signed certificates by honoring certificate signing requests. Here’s a sample YAML of RabbitMQ cluster with enabled TLS. 
+Now you can deploy RabbitMQ clusters with TLS enabled. This will let publishers and consumers communicate with TLS (SSL) listener on the `5671` port via `AMQP` protocol. RabbitMQ peers will also communicate with TLS-encrypted messages. KubeDB only provides TLS support via cert-manager issued certificates. So, you need to have cert-manager installed first. Create either an Issuer or ClusterIssuer representing certificate authorities (CAs) that can generate signed certificates by honoring certificate signing requests. Here’s a sample YAML of RabbitMQ cluster with enabled TLS. 
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
