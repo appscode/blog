@@ -567,12 +567,15 @@ Now you can use pcp users through the primary service to do administrative level
 
 
 ## Postgres
-In this release, we have added a PostgreSQL extension for the Apache AGE Graph Database in PostgreSQL version 15. This extension will be supported on Linux Alpine and Debian-based PostgreSQL images. Additionally, Remote Replica will be supported for PostgreSQL major versions 13 and 14. As a reminder, we already have support for major versions 15 and 16.
+In this release, we have added a PostgreSQL extension for the Apache AGE Graph Database in PostgreSQL version 15. This extension will be supported on Linux Alpine and Debian-based PostgreSQL images. 
 Please refer to these links for Apache AGE extension trial. 
 
 Alpine: https://github.com/kubedb/postgres-docker/tree/release-15.5-alpine-age
 
 Debian: https://github.com/kubedb/postgres-docker/tree/release-15.5-bookworm-age
+
+Additionally, Postgres Remote Replica will be supported for PostgreSQL major versions 13 and 14. As a reminder, we already have support for major PostgresSQL versions 15 and 16.
+Please refer to this [link](https://kubedb.com/docs/v2024.4.27/guides/postgres/remote-replica/remotereplica/) to know more about Postgres Remote Replica concepts and example.
 
 ## RabbitMQ
 ### OpsRequest
