@@ -6,6 +6,7 @@ authors:
 - Obaydullah
 tags:
 - alert
+- archiver
 - backup
 - clickhouse
 - cloud-native
@@ -19,7 +20,7 @@ tags:
 - kubestash
 - memcached
 - mongodb
-- mssql
+- mssqlserver
 - pgbouncer
 - pgpool
 - postgres
@@ -37,7 +38,7 @@ tags:
 - zookeeper
 ---
 
-We are pleased to announce the release of [KubeDB v2024.6.4](https://kubedb.com/docs/v2024.6.4/setup/). This release includes features like (1) OpsRequest support for Druid, Memcached, Pgpool, RabbitMQ and Singlestore (2) Autoscaling support for Druid, Pgpool and Singlestore (3) PDB support for Singlestore, Pgpool, ClickHouse and Zookeeper, (4) initial release of ClickHouse and Kafka Schema Registry support (5) Multi user support for PgBouncer;. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.6.4/README.md). Now, you can proceed to detail the specific features and updates included in the release.
+We are pleased to announce the release of [KubeDB v2024.6.4](https://kubedb.com/docs/v2024.6.4/setup/). This release includes features like (1) OpsRequest support for Druid, Memcached, Pgpool, RabbitMQ and Singlestore. (2) Autoscaling support for Druid, Pgpool and Singlestore. (3) PDB support for Singlestore, Pgpool, ClickHouse and Zookeeper. (4) initial release of ClickHouse and Kafka Schema Registry support (5) Multi user support for PgBouncer. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.6.4/README.md). Now, you can proceed to detail the specific features and updates included in the release.
 ## ClickHouse
 We are thrilled to announce that KubeDB now supports ClickHouse, an open-source column-oriented DBMS (columnar database management system) for online analytical processing (OLAP) that allows users to generate analytical reports using SQL queries in real-time.
 ClickHouse works `100-1000x` faster than traditional database management systems, and processes hundreds of millions to over a billion rows and tens of gigabytes of data per server per second. With a widespread user base around the globe, the technology has received praise for its reliability, ease of use, and fault tolerance.
@@ -87,9 +88,9 @@ spec:
             storage: 2Gi
   deletionPolicy: WipeOut
 ```
-**Supported version**: 24.4.1
+**New Version support**: `24.4.1`
 
-> Note: To get clickhouse keeper server host and port, You need to setup clickhouse-keeper server manually. 
+> Note: To get clickhouse keeper server host and port, You need to setup [clickhouse-keeper](https://clickhouse.com/docs/en/guides/sre/keeper/clickhouse-keeper) server manually. 
 
 ## Druid
 In this release, Druid API has been updated. Now, Druid can be installed with a simpler YAML. Consequently, users do not need to mention the required nodes (i.e. `coordinators`, `brokers`, `middleManager`, `historicals`) anymore and the KubeDB operator will handle those and deploy the mandatory nodes with the default configurations. You can find the sample YAML below:
@@ -193,7 +194,7 @@ spec:
   databaseRef:
     name: druid  
   compute:
-   middleManagers:
+    middleManagers:
       trigger: "On"
       podLifeTimeThreshold: 1m
       minAllowed:
@@ -204,15 +205,15 @@ spec:
         memory: 5Gi
       resourceDiffPercentage: 20
       controlledResources: [ "cpu", "memory" ]
-   historicals:
+  storage:
+    historicals:
       expansionMode: "Online"
       trigger: "On"
-      usageThreshold: 2
+      usageThreshold: 70
       scalingThreshold: 50
 ```
 ## Elasticsearch
-**New Version**: We have added two new versions. One for Elasticsearch and the other for Opensearch. Newly available versions are `xpack-8.13.4`(Elasticsearch) and `opensearch-2.14.0`(Opensearch)
-
+**New Version support**: `xpack-8.13.4`(Elasticsearch), `opensearch-2.14.0`(Opensearch)
 Elasticsearch yaml for xpack-8.13.4:
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -276,7 +277,7 @@ spec:
     namespace: demo
   deletionPolicy: WipeOut
 ```
-**Supported version**: 2.5.11.final
+**New Version support**: `2.5.11.final`
 
 > Note: To run Schema Registry as `In-memory`, you just need to remove `kafkaRef` field from the above yaml.
 
@@ -565,7 +566,6 @@ We are now automatically creating a Pod Disruption Budgets (PDB) for Pgpool upon
 ### New service port for pcp user
 Now you can use pcp users through the primary service to do administrative level tasks for Pgpool. By default the port is `9595`.
 
-
 ## Postgres
 In this release, we have added a PostgreSQL extension for the Apache AGE Graph Database in PostgreSQL version 15. This extension will be supported on Linux Alpine and Debian-based PostgreSQL images. 
 Please refer to these links for Apache AGE extension trial. 
@@ -645,7 +645,7 @@ spec:
   deletionPolicy: Delete
 ```
 
-**New Version**: This release includes support for RabbitMQ version `3.13.2`.
+**New Version support**: `3.13.2`.
 
 ## SingleStore
 
@@ -654,15 +654,6 @@ In this release, we have introduced support for SingleStore Ops Requests. Initia
 
 #### Vertical Scaling
 Vertical Scaling allows you to vertically scale the SingleStore nodes (i.e., pods). The necessary information for vertical scaling must be provided in the `spec.verticalScaling.(aggregator/leaf/node/coordinator)` field.
-
-#### Volume Expansion
-Volume Expansion allows you to expand the storage of the SingleStore nodes (i.e., pods). The necessary information for volume expansion must be provided in the `spec.volumeExpansion.(aggregator/leaf/node)` field.
-
-#### Reconfiguration
-Reconfiguration allows you to update the configuration through a new secret or apply a config. Users can also remove the custom config using RemoveCustomConfig. The necessary information for reconfiguration must be provided in the `spec.configuration.(aggregator/leaf/node)` field.
-
-Below is a sample YAML file for a vertical scaling and reconfigure OpsRequest:
-
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: SinglestoreOpsRequest
@@ -684,7 +675,25 @@ spec:
           cpu: "0.7"
 
 ```
-
+#### Volume Expansion
+Volume Expansion allows you to expand the storage of the SingleStore nodes (i.e., pods). The necessary information for volume expansion must be provided in the `spec.volumeExpansion.(aggregator/leaf/node)` field.
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: SinglestoreOpsRequest
+metadata:
+  name: sdb-volume-ops
+  namespace: demo
+spec:
+  type: VolumeExpansion
+  databaseRef:
+    name: sdb-sample
+  volumeExpansion:
+    mode: "Offline"
+    aggregator: 10Gi
+    leaf: 20Gi
+```
+#### Reconfiguration
+Reconfiguration allows you to update the configuration through a new secret or apply a config. Users can also remove the custom config using RemoveCustomConfig. The necessary information for reconfiguration must be provided in the `spec.configuration.(aggregator/leaf/node)` field.
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: SinglestoreOpsRequest
@@ -701,7 +710,6 @@ spec:
         sdb-apply.cnf: |-
           max_connections = 350
 ```
-
 ### Autoscaler
 
 In this release, we are also introducing the SinglestoreAutoscaler, a Kubernetes Custom Resource Definition (CRD) that supports autoscaling for SingleStore. This CRD allows you to configure autoscaling for SingleStore compute resources and storage in a declarative, Kubernetes-native manner.
@@ -720,12 +728,6 @@ spec:
   databaseRef:
     name: sdb-sample
   storage:
-    leaf:
-      trigger: "On"
-      usageThreshold: 30
-      scalingThreshold: 50
-      expansionMode: "Offline"
-      upperBound: "100Gi"
     aggregator:
       trigger: "On"
       usageThreshold: 40
@@ -733,17 +735,6 @@ spec:
       expansionMode: "Offline"
       upperBound: "100Gi"
   compute:
-    aggregator:
-      trigger: "On"
-      podLifeTimeThreshold: 5m
-      minAllowed:
-        cpu: 900m
-        memory: 3000Mi
-      maxAllowed:
-        cpu: 2000m
-        memory: 6Gi
-      controlledResources: ["cpu", "memory"]
-      resourceDiffPercentage: 10
     leaf:
       trigger: "On"
       podLifeTimeThreshold: 5m
@@ -755,7 +746,6 @@ spec:
         memory: 6Gi
       controlledResources: ["cpu", "memory"]
       resourceDiffPercentage: 10
-
 ```
 
 ### Pod Disruption Budget (PDB)
@@ -773,9 +763,9 @@ In this release, we have added support for Pod Disruption Budgets (PDB) for ZooK
 
 Please try the latest release and give us your valuable feedback.
 
-- If you want to install KubeDB, please follow the installation instruction from [KubeDB Setup](https://kubedb.com/docs/v2024.4.27/setup).
+- If you want to install KubeDB, please follow the installation instruction from [KubeDB Setup](https://kubedb.com/docs/v2024.6.4/setup).
 
-- If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [KubeDB Upgrade](https://kubedb.com/docs/v2024.4.27/setup/upgrade/).
+- If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [KubeDB Upgrade](https://kubedb.com/docs/v2024.6.4/setup/upgrade/).
 
 
 ## Support
