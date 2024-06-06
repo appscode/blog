@@ -40,7 +40,7 @@ tags:
 We are pleased to announce the release of [KubeDB v2024.6.4](https://kubedb.com/docs/v2024.6.4/setup/). This release includes features like (1) OpsRequest support for Druid, Memcached, Pgpool, RabbitMQ and Singlestore (2) Autoscaling support for Druid, Pgpool and Singlestore (3) PDB support for Singlestore, Pgpool, ClickHouse and Zookeeper, (4) initial release of ClickHouse and Kafka Schema Registry support (5) Multi user support for PgBouncer;. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.6.4/README.md). Now, you can proceed to detail the specific features and updates included in the release.
 ## ClickHouse
 We are thrilled to announce that KubeDB now supports ClickHouse, an open-source column-oriented DBMS (columnar database management system) for online analytical processing (OLAP) that allows users to generate analytical reports using SQL queries in real-time.
-ClickHouse works 100-1000x faster than traditional database management systems, and processes hundreds of millions to over a billion rows and tens of gigabytes of data per server per second. With a widespread user base around the globe, the technology has received praise for its reliability, ease of use, and fault tolerance.
+ClickHouse works `100-1000x` faster than traditional database management systems, and processes hundreds of millions to over a billion rows and tens of gigabytes of data per server per second. With a widespread user base around the globe, the technology has received praise for its reliability, ease of use, and fault tolerance.
 
 Here's a sample manifest to provision ClickHouse.
 
@@ -292,7 +292,7 @@ To issue a certificate, the following Custom Resource (CR) of cert-manager is us
 
 **Issuer/ClusterIssuer**: Issuers and ClusterIssuers represent certificate authorities (CAs) that can generate signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer in a ready condition to attempt to serve the request. You can learn more details [here](https://cert-manager.io/docs/concepts/issuer/).
 
-**Certificate**: The cert-manager has the concept of Certificates that define the desired x509 certificate which will be renewed and kept up to date. You can learn more details [here](https://cert-manager.io/docs/usage/certificate/).
+**Certificate**: The cert-manager has the concept of Certificates that define the desired `x509` certificate which will be renewed and kept up to date. You can learn more details [here](https://cert-manager.io/docs/usage/certificate/).
 
 Here’s a sample YAML for TLS-enabled Microsoft SQL Server:
 ```yaml
@@ -364,7 +364,7 @@ metadata:
   resourceVersion: "4505"
 ```
 
-In the above YAML, -m is max memory limit to use for object storage & -c is max simultaneous connections.
+In the above YAML, `-m` is max memory limit to use for object storage & `-c` is max simultaneous connections.
 
 To apply this custom configuration, the Memcached YAML will be like:
 ```yaml
@@ -577,7 +577,7 @@ Debian: https://github.com/kubedb/postgres-docker/tree/release-15.5-bookworm-age
 ## RabbitMQ
 ### OpsRequest
 
-This release is going to introduce more OpsRequest for RabbitMQ clusters. The last release included RabbitMQ OpsRequests for Restart, Vertical Scaling, and Volume Expansion. This release brings support for Horizontal Scaling, Update Version, Reconfigurations, and ReconfigureTLS. Here’s a sample YAML for Upgrading RabbitMQ v3.12.12 cluster named **rabbitmq** in demo namespace to v3.13.2 - 
+This release is going to introduce more OpsRequest for RabbitMQ clusters. The last release included RabbitMQ OpsRequests for Restart, Vertical Scaling, and Volume Expansion. This release brings support for Horizontal Scaling, Update Version, Reconfigurations, and ReconfigureTLS. Here’s a sample YAML for Upgrading RabbitMQ `v3.12.12` cluster named **rabbitmq** in demo namespace to `v3.13.2` - 
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -610,7 +610,7 @@ spec:
 ```
 
 #### TLS support: 
-Now you can deploy RabbitMQ clusters with TLS enabled. This will let publishers and consumers communicate with TLS (SSL) listener on the 5671 port via AMQP protocol. RabbitMQ peers will also communicate with TLS-encrypted messages. KubeDB only provides TLS support via cert-manager issued certificates. So, you need to have cert-manager installed first. Create either a Issuer or ClusterIssuer representing certificate authorities (CAs) that can generate signed certificates by honoring certificate signing requests. Here’s a sample YAML of RabbitMQ cluster with enabled TLS. 
+Now you can deploy RabbitMQ clusters with TLS enabled. This will let publishers and consumers communicate with TLS (SSL) listener on the `5671` port via `AMQP` protocol. RabbitMQ peers will also communicate with TLS-encrypted messages. KubeDB only provides TLS support via cert-manager issued certificates. So, you need to have cert-manager installed first. Create either a Issuer or ClusterIssuer representing certificate authorities (CAs) that can generate signed certificates by honoring certificate signing requests. Here’s a sample YAML of RabbitMQ cluster with enabled TLS. 
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -642,7 +642,7 @@ spec:
   deletionPolicy: Delete
 ```
 
-**New Version**: This release includes support for RabbitMQ version 3.13.2. 
+**New Version**: This release includes support for RabbitMQ version `3.13.2`.
 
 ## SingleStore
 
