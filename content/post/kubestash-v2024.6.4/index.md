@@ -22,9 +22,9 @@ Here, we are going to highlight the new features that have been introduced in th
 
 #### Workload Manifest Backup & Restore
 
-We've introduced functionality to backup and restore workload manifests within the `workload-addon`. These tasks encompass backing up and restoring the manifests of the workload, including their associated volumes, service account (if utilized), and service (only the headless service employed in StatefulSet).
+We've introduced functionality to backup and restore workload (`Deployment`/`StatefulSet`/`DaemonSet`) manifests within the `workload-addon`. The new `mainfest-backup` and `manifest-restore` tasks of the `workload-addon` enable backing up and restoring of workload manifests, including their associated volumes, service account (if used), and service (in case of `StatefulSet`).
 
-Here is an example of `BackupConfiguration` that will take backup of a StatefulSet manifest:
+Here is an example of `BackupConfiguration` that takes backup of a `StatefulSet` manifests:
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -69,7 +69,7 @@ spec:
       delay: 1m
 ```
 
-Here is the example of `RestoreSession` that will restore the StatefulSet manifest:
+Here is the example of `RestoreSession` that restores the `StatefulSet` manifests:
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -92,9 +92,13 @@ spec:
     - name: manifest-restore
 ```
 
-Here, we can configure in which namespace we want to restore our workload by providing the namespace name in `spec.manifestOptions.restoreNamespace`.
+Here, we can configure in which namespace we want to restore our workload by providing the namespace in `spec.manifestOptions.restoreNamespace`.
 
-We can also use these manifest tasks in case of application level backup and restore. To do so, we need to configure `BackupConfiguration` in the following manner:
+#### Unified Manifest and Data Recovery
+
+Now you can restore the manifests and data of workloads or databases (`MySQL`, `MariaDB`, `MongoDB`, `PostgreSQL`) by creating just one `RestoreSession`. KubeStash will deploy the workload or database in a cluster from the backed-up manifests and then restore data into it from the backed-up data. For this, you need to configure the manifest backup and data backup in the same session of a `BackupConfiguration`. This enables KubeStash to restore the manifests and data using a single `Snapshot`.
+
+Here is an example of a `BackupConfiguration` for backing up both the manifests and data of a `StatefulSet` in the same session:
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -143,7 +147,7 @@ spec:
       delay: 1m
 ```
 
-Here is the example of `RestoreSession` that will restore the StatefulSet manifest and also its data:
+Here's an example of a `RestoreSession` that restores `StatefulSet` manifests and then restores its data:
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -169,11 +173,7 @@ spec:
 
 In this case, a helper `RestoreSession` will be created in the same namespace of the applied `RestoreSession` to restore the data of the workload.
 
-#### MySQL, MariaDB, MongoDB & PostgreSQL Application Level Backup & Restore
-
-We've added support application level backup and restore for `MySQL`, `MariaDB`, `MongoDB` and `PostgreSQL`. We'll be backing up both the database manifests and their associated data. When it comes to restoration, the manifests will be restored first, followed by the data.
-
-Here is an example of `BackupConfiguration` for MySQL:
+Here is an example of a `BackupConfiguration` for backing up both the manifests and data (dump) of a `MySQL` database in the same session:
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -212,7 +212,7 @@ spec:
       delay: 1m
 ```
 
-Here is an example of `RestoreSession` for MySQL:
+Here's an example of a `RestoreSession` that restores `MySQL` manifests and then restores its data:
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -238,11 +238,11 @@ spec:
     - name: manifest-restore
 ```
 
-Make sure you have provided the `spec.manifestOptions.mySQL.db` as the restore of the MySQL manifest depends on this field.
+ > Ensure that you have set the `spec.manifestOptions.mySQL.db` to `true`, as the restoration of the `MySQL` object manifest relies on this field.
 
 ### Improvements & Bug Fixes
 
-- In this release, we've addressed an issue with `MongoDB` restoration. Previously, even when specifying components in the RestoreSession, all components present in the snapshot were restored. Now, if the components are provided in the RestoreSession that will be restored, otherwise all the components in snapshot will be restored.
+- In this release, we've addressed an issue with `MongoDB` restoration. Previously, even when specifying components in the `RestoreSession`, all components present in the `Snapshot` were restored. Now, if the components are provided in the `RestoreSession` that will be restored, otherwise all the components in `Snapshot` will be restored.
 - In this release, we've resolved an RBAC issue where no `RoleBinding` was created in the manifest restore namespace.
 
 ## What Next?
