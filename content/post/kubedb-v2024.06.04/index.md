@@ -1,6 +1,6 @@
 ---
 title: Announcing KubeDB v2024.6.4
-date: "2024-06-04"
+date: "2024-06-06"
 weight: 14
 authors:
 - Obaydullah
@@ -38,7 +38,8 @@ tags:
 - zookeeper
 ---
 
-We are pleased to announce the release of [KubeDB v2024.6.4](https://kubedb.com/docs/v2024.6.4/setup/). This release includes features like (1) OpsRequest support for Druid, Memcached, Pgpool, RabbitMQ and Singlestore. (2) Autoscaling support for Druid, Pgpool and Singlestore. (3) PDB support for Singlestore, Pgpool, ClickHouse and Zookeeper. (4) initial release of ClickHouse and Kafka Schema Registry support (5) Multi user support for PgBouncer. (6) TLS support for Microsoft SQL Server. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.6.4/README.md). Now, you can proceed to detail the specific features and updates included in the release.
+We are pleased to announce the release of [KubeDB v2024.6.4](https://kubedb.com/docs/v2024.6.4/setup/). This release includes features like (1) OpsRequest support for Druid, Memcached, Pgpool, RabbitMQ and Singlestore. (2) Autoscaling support for Druid, Pgpool and Singlestore. (3) PDB support for Singlestore, Pgpool, ClickHouse and Zookeeper. (4) Initial support for ClickHouse and Kafka Schema Registry provisioning. (5) Multi user support for PgBouncer. (6) TLS support for Microsoft SQL Server. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.6.4/README.md). Now, you can proceed to detail the specific features and updates included in the release.
+
 ## ClickHouse
 We are thrilled to announce that KubeDB now supports ClickHouse, an open-source column-oriented DBMS (columnar database management system) for online analytical processing (OLAP) that allows users to generate analytical reports using SQL queries in real-time.
 ClickHouse works `100-1000x` faster than traditional database management systems, and processes hundreds of millions to over a billion rows and tens of gigabytes of data per server per second. With a widespread user base around the globe, the technology has received praise for its reliability, ease of use, and fault tolerance.
@@ -62,6 +63,7 @@ spec:
         storage: 2Gi
   deletionPolicy: WipeOut
 ```
+
 Here's a sample manifest to provision ClickHouse in clusterTopology mode.
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -88,12 +90,15 @@ spec:
             storage: 2Gi
   deletionPolicy: WipeOut
 ```
+
 **New Version support**: `24.4.1`
 
 > Note: To get clickhouse keeper server host and port, You need to setup [clickhouse-keeper](https://clickhouse.com/docs/en/guides/sre/keeper/clickhouse-keeper) server manually. 
 
 ## Druid
-In this release, Druid API has been updated. Now, Druid can be installed with a simpler YAML. Consequently, users do not need to mention the required nodes (i.e. `coordinators`, `brokers`, `middleManager`, `historicals`) anymore and the KubeDB operator will handle those and deploy the mandatory nodes with the default configurations. You can find the sample YAML below:
+In this release, Druid API has been updated. Now, Druid can be installed with a simpler YAML. Consequently, users do not need to mention the required nodes (i.e. `coordinators`, `brokers`, `middleManager`, `historicals`) anymore and the KubeDB operator will handle those and deploy the mandatory nodes with the default configurations. 
+
+You can find the sample YAML below:
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: Druid
@@ -120,7 +125,9 @@ spec:
 In this release, support for Druid Ops Request has been integrated. Druid Ops Request provides a declarative configuration for the Druid administrative operations like database restart, vertical scaling, volume expansion, etc. in a Kubernetes native way.
 
 #### Restart
-Restart ops request is used to perform a smart restart of the Druid cluster. An example YAML is provided below:
+Restart ops request is used to perform a smart restart of the Druid cluster. 
+
+An example YAML is provided below:
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: DruidOpsRequest
@@ -135,6 +142,7 @@ spec:
 
 #### Vertical Scaling:
 Vertical Scaling allows you to vertically scale the Druid nodes (ie. pods). The necessary information required for vertical scaling, must be provided in the `spec.verticalScaling` field.
+
 An example yaml is provided below:
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -164,8 +172,9 @@ spec:
 ```
 
 #### Volume Expansion:
-Volume Expansion is used to expand the storage of the Druid nodes (ie. pods). The necessary information required for volume expansion, must be provided in `spec.volumeExpansion` field. Example YAML:
+Volume Expansion is used to expand the storage of the Druid nodes (ie. pods). The necessary information required for volume expansion, must be provided in `spec.volumeExpansion` field. 
 
+An example yaml is provided below:
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: DruidOpsRequest
@@ -183,7 +192,9 @@ spec:
 ```
 
 ### Autoscaler
-Support for Druid Compute Autoscaling for all druid nodes (i.e. pods) and Storage Autoscaling for druid data nodes (i.e. `historicals` & `middleManagers` pod) has also been added. To enable autoscaling with a particular specification users need to install a Custom Resource Object of Kind `DruidAutoscaler`. DruidAutoscaler is a Kubernetes Custom Resource Definitions (CRD). It provides a declarative configuration for autoscaling Druid compute resources and storage of database components in a Kubernetes native way.  Some sample DruidAutoscaler CRs for autoscaling different components of database is given below:
+Support for Druid Compute Autoscaling for all druid nodes (i.e. pods) and Storage Autoscaling for druid data nodes (i.e. `historicals` & `middleManagers` pod) has also been added. To enable autoscaling with a particular specification users need to install a Custom Resource Object of Kind `DruidAutoscaler`. DruidAutoscaler is a Kubernetes Custom Resource Definitions (CRD). It provides a declarative configuration for autoscaling Druid compute resources and storage of database components in a Kubernetes native way. 
+
+Some sample DruidAutoscaler CRs for autoscaling different components of database is given below:
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: DruidAutoscaler
@@ -212,9 +223,11 @@ spec:
       usageThreshold: 70
       scalingThreshold: 50
 ```
+
 ## Elasticsearch
 **New Version support**: `xpack-8.13.4`(Elasticsearch), `opensearch-2.14.0`(Opensearch)
-Elasticsearch yaml for xpack-8.13.4:
+
+Elasticsearch yaml for `xpack-8.13.4`:
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: Elasticsearch
@@ -256,7 +269,8 @@ spec:
 ```
 
 ## Kafka Schema Registry
-This release introduces Schema Registry for Kafka, an awesome tool that provides a centralized repository and validating schemas for kafka topic messages and for serialization and deserialization of the data.It plays a critical role in ensuring that data formats are consistent and compatible over time, especially in environments where multiple producers and consumers interact with Kafka.
+
+This release introduces Schema Registry for Kafka, an awesome tool that provides a centralized repository and validating schemas for kafka topic messages and for serialization and deserialization of the data. It plays a critical role in ensuring that data formats are consistent and compatible over time, especially in environments where multiple producers and consumers interact with Kafka.
 The initial release of Schema Registry is bringing support for Provisioning. You can now enable schema registry for Avro, Protobuf, JSON etc. You can also use this schema registry with Kafka Connect Cluster source/sink connector to serialize and deserialize data.
 
 You can run Schema Registry with `In-memory` and `KafkaSQL` as storage backend in this release.
@@ -277,6 +291,7 @@ spec:
     namespace: demo
   deletionPolicy: WipeOut
 ```
+
 **New Version support**: `2.5.11.final`
 
 > Note: To run Schema Registry as `In-memory`, you just need to remove `kafkaRef` field from the above yaml.
@@ -334,26 +349,26 @@ spec:
         storage: 1Gi
   deletionPolicy: WipeOut
 ```
+
 The users must specify the `spec.tls.issuerRef` field. If user set `spec.tls.clientTLS: true`  then tls enabled SQL Server will be provisioned. The user have to install [csi-driver-cacerts](https://github.com/kubeops/csi-driver-cacerts) which will be used to add self-signed ca certificates to the OS trusted certificate issuers (/etc/ssl/certs/ca-certificates.crt).
-
-
 
 If `tls.clientTLS: false` is specified then tls will not be enabled for SQL Server but the Issuer will be used to configure tls enabled wal-g proxy-server which is required for SQL Server backup restore.
 KubeDB uses the issuer or clusterIssuer referenced in the `tls.issuerRef` field, and the certificate specs provided in `tls.certificate` to generate certificate secrets using Issuer/ClusterIssuers specification. These certificate secrets includes `ca.crt`, `tls.crt` and `tls.key` etc. and are used to configure Microsoft SQL Server
 
 
 ## MongoDB
+
 ### MongoDBArchiver Shard Support: 
 We are pleased to announce that this release includes support for the `MongoDBArchiver` in Sharded MongoDB Cluster environments. This significant enhancement enables Point-in-Time Recovery (PITR) for the Sharded MongoDB Cluster managed by KubeDB, providing the capability to restore data to any specific point in time following a disaster. This constitutes a major feature addition that will greatly benefit users by improving disaster recovery processes and minimizing potential data loss.
 ### PVCs Backup for Shard: 
 We have introduced support for Sharded MongoDB Cluster in the `mongodb-csi-snapshotter` plugin.This enhancement allows users to back up Persistent Volume Claims (PVCs) of their KubeDB-managed Sharded MongoDB Cluster, thereby ensuring greater data protection and ease of recovery.
 ### Bug Fix: 
-Specific components restoression provided in KubeStash Restoression wasn’t working properly. This bug has been fixed in this release.
+Specific components restoration provided in KubeStash RestoreSession wasn’t working properly. This bug has been fixed in this release.
 
 ## Memcached
 ### Custom Configuration
 This release introduces custom configuration for Memcached. By using custom configuration file, you can use KubeDB to run Memcached with custom configuration.
-The necessary information required for custom configuration is memcached.conf file which is the Memcached configuration file containing the custom configurations. For custom configuration, you can use YAML like this:
+The necessary information required for custom configuration is `memcached.conf` file which is the Memcached configuration file containing the custom configurations. For custom configuration, you can use YAML like this:
 
 ```yaml
 apiVersion: v1 
@@ -364,8 +379,7 @@ stringData:
 kind: Secret 
 metadata: 
   name: mc-configuration 
-  namespace: demo 
-  resourceVersion: "4505"
+  namespace: demo
 ```
 
 In the above YAML, `-m` is max memory limit to use for object storage & `-c` is max simultaneous connections.
@@ -458,7 +472,7 @@ spec:
 ```
 ## PgBouncer
 ### Multiple user support:
-In this release an user can provide multiple postgres users to connect with pgbouncer. User just need to create secrets which contain `username` & `password`. To apply those secrets into pgbouncer pods the user needs to add some specific labels. An example of secret:
+In this release, user can provide multiple postgres users to connect with pgbouncer. User just need to create secrets which contain `username` & `password`. To apply those secrets into pgbouncer pods the user needs to add some specific labels. An example of secret:
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -472,13 +486,13 @@ stringData:
   password: "<password>"
   username: "<username>"
 ```
-In previous versions if a user made any changes on the secret, it doesn’t reflect on a running pgbouncer pod. But, now if any secret with those specific labels creates/update/delete, it will reflect on running pgbouncer pods via reloading the pgbouncer configuration.
+In previous versions, if a user made any changes on the secret, it didn’t reflect on a running pgbouncer pod. But, now if any secret with those specific labels `create`/`update`/`delete`, it will reflect on running pgbouncer pods via reloading the pgbouncer configuration.
 
 ### One database per pgbouncer resource:
 Previously there were multiple postgres database servers which the pgbouncer can connect to. But, there was a conflict between them with the same username with different password. To solve this we removed the feature of multiple database servers and made this to connect only one postgres database server.
 
 ### HealthCheck:
-Health check is configured in this release. Now it can do write check and it can check every pgbouncer pod if it is healthy or not.
+Health check is configured in this release. Now it can do write check, and it can check every pgbouncer pod if it is healthy or not.
 
 ## Pgpool
 ### OpsRequest
@@ -715,9 +729,9 @@ spec:
 ```
 ### Autoscaler
 
-In this release, we are also introducing the SinglestoreAutoscaler, a Kubernetes Custom Resource Definition (CRD) that supports autoscaling for SingleStore. This CRD allows you to configure autoscaling for SingleStore compute resources and storage in a declarative, Kubernetes-native manner.
+In this release, we are also introducing the `SinglestoreAutoscaler`, a Kubernetes Custom Resource Definition (CRD) that supports autoscaling for SingleStore. This CRD allows you to configure autoscaling for SingleStore compute resources and storage in a declarative, Kubernetes-native manner.
 
-Deploying the SingleStore Autoscaler
+Using `SinglestoreAutoscaler`, you can configure autoscaling for SingleStore `Aggregator` and `Leaf` node to scale compute resources based on CPU and memory usages. You can also configure autoscaling for storage resources based on storage usages for both `Aggregator` and `Leaf` nodes.
 
 To deploy an Autoscaler for a KubeDB-managed SingleStore cluster, you can use the following YAML configuration:
 
