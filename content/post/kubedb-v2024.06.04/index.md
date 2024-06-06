@@ -359,9 +359,9 @@ KubeDB uses the issuer or clusterIssuer referenced in the `tls.issuerRef` field,
 ## MongoDB
 
 ### MongoDBArchiver Shard Support: 
-We are pleased to announce that this release includes support for the `MongoDBArchiver` in Sharded MongoDB Cluster environments. This significant enhancement enables Point-in-Time Recovery (PITR) for the Sharded MongoDB Cluster managed by KubeDB, providing the capability to restore data to any specific point in time following a disaster. This constitutes a major feature addition that will greatly benefit users by improving disaster recovery processes and minimizing potential data loss.
+We are pleased to announce that this release includes support for the `MongoDBArchiver` in Sharded MongoDB Cluster environments. This significant enhancement enables Point-in-Time Recovery (PITR) for the Sharded MongoDB Cluster managed by KubeDB, providing the capability to restore data to any specific point in time following a disaster. This constitutes a major feature addition that will greatly benefit users by improving disaster recovery processes and minimizing potential data loss. Samples for `MongoDBArchiver` is provided [here](https://github.com/kubedb/archiver-demo/tree/master/mongodb)
 ### PVCs Backup for Shard: 
-We have introduced support for Sharded MongoDB Cluster in the `mongodb-csi-snapshotter` plugin.This enhancement allows users to back up Persistent Volume Claims (PVCs) of their KubeDB-managed Sharded MongoDB Cluster, thereby ensuring greater data protection and ease of recovery.
+We have introduced support for Sharded MongoDB Cluster in the `mongodb-csi-snapshotter` plugin. This enhancement allows users to back up Persistent Volume Claims (PVCs) of their KubeDB-managed Sharded MongoDB Cluster, thereby ensuring greater data protection and ease of recovery.
 ### Bug Fix: 
 Specific components restoration provided in KubeStash RestoreSession wasn’t working properly. This bug has been fixed in this release.
 
