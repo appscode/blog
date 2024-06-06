@@ -38,7 +38,7 @@ tags:
 - zookeeper
 ---
 
-We are pleased to announce the release of [KubeDB v2024.6.4](https://kubedb.com/docs/v2024.6.4/setup/). This release includes features like (1) OpsRequest support for Druid, Memcached, Pgpool, RabbitMQ and Singlestore. (2) Autoscaling support for Druid, Pgpool and Singlestore. (3) PDB support for Singlestore, Pgpool, ClickHouse and Zookeeper. (4) initial release of ClickHouse and Kafka Schema Registry support (5) Multi user support for PgBouncer. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.6.4/README.md). Now, you can proceed to detail the specific features and updates included in the release.
+We are pleased to announce the release of [KubeDB v2024.6.4](https://kubedb.com/docs/v2024.6.4/setup/). This release includes features like (1) OpsRequest support for Druid, Memcached, Pgpool, RabbitMQ and Singlestore. (2) Autoscaling support for Druid, Pgpool and Singlestore. (3) PDB support for Singlestore, Pgpool, ClickHouse and Zookeeper. (4) initial release of ClickHouse and Kafka Schema Registry support (5) Multi user support for PgBouncer. (6) TLS support for Microsoft SQL Server. This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.6.4/README.md). Now, you can proceed to detail the specific features and updates included in the release.
 ## ClickHouse
 We are thrilled to announce that KubeDB now supports ClickHouse, an open-source column-oriented DBMS (columnar database management system) for online analytical processing (OLAP) that allows users to generate analytical reports using SQL queries in real-time.
 ClickHouse works `100-1000x` faster than traditional database management systems, and processes hundreds of millions to over a billion rows and tens of gigabytes of data per server per second. With a widespread user base around the globe, the technology has received praise for its reliability, ease of use, and fault tolerance.
@@ -334,8 +334,11 @@ spec:
         storage: 1Gi
   deletionPolicy: WipeOut
 ```
-The users must specify the `spec.tls.issuerRef` field. If user set `spec.tls.clientTLS`: true  then tls enabled SQL Server will be provisioned. 
-If `tls.clientTLS`: false is specified then tls will not be enabled for SQL Server but the Issuer will be used to configure tls enabled wal-g proxy-server which is required for SQL Server backup restore.
+The users must specify the `spec.tls.issuerRef` field. If user set `spec.tls.clientTLS: true`  then tls enabled SQL Server will be provisioned. The user have to install [csi-driver-cacerts](https://github.com/kubeops/csi-driver-cacerts) which will be used to add self-signed ca certificates to the OS trusted certificate issuers (/etc/ssl/certs/ca-certificates.crt).
+
+
+
+If `tls.clientTLS: false` is specified then tls will not be enabled for SQL Server but the Issuer will be used to configure tls enabled wal-g proxy-server which is required for SQL Server backup restore.
 KubeDB uses the issuer or clusterIssuer referenced in the `tls.issuerRef` field, and the certificate specs provided in `tls.certificate` to generate certificate secrets using Issuer/ClusterIssuers specification. These certificate secrets includes `ca.crt`, `tls.crt` and `tls.key` etc. and are used to configure Microsoft SQL Server
 
 
