@@ -94,9 +94,11 @@ spec:
 
 Here, we can configure in which namespace we want to restore our workload by providing the namespace in `spec.manifestOptions.restoreNamespace`.
 
-#### Unified Manifest and Data Recovery
+#### Application Level Backup
 
-Now you can restore the manifests and data of workloads or databases (`MySQL`, `MariaDB`, `MongoDB`, `PostgreSQL`) by creating just one `RestoreSession`. KubeStash will deploy the workload or database in a cluster from the backed-up manifests and then restore data into it from the backed-up data. For this, you need to configure the manifest backup and data backup in the same session of a `BackupConfiguration`. This enables KubeStash to restore the manifests and data using a single `Snapshot`.
+KubeStash now supports application-level backup for workloads (`Deployment`/`StatefulSet`/`DaemonSet`) and KubeDB-managed databases (`MySQL`, `MariaDB`, `PostgreSQL`, `MongoDB`). KubeStash takes backup of the respective manifests as well as the data. During restore, KubeStash first redeploys the database/workload from the backed-up manifests and then restores the data into it.
+
+For application-level backup, the manifest backup and data backup need to be configured in the same session of a `BackupConfiguration`.
 
 Here is an example of a `BackupConfiguration` for backing up both the manifests and data of a `StatefulSet` in the same session:
 
@@ -147,7 +149,7 @@ spec:
       delay: 1m
 ```
 
-Here's an example of a `RestoreSession` that restores `StatefulSet` manifests and then restores its data:
+Here's an example of a `RestoreSession` that first redeploys the `StatefulSet` from the backed-up manifests and then restores the data into it:
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -212,7 +214,7 @@ spec:
       delay: 1m
 ```
 
-Here's an example of a `RestoreSession` that restores `MySQL` manifests and then restores its data:
+Here's an example of a `RestoreSession` that first redeploys the `MySQL` database from the backed-up manifests and then restores the data into it:
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
