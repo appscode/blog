@@ -7,6 +7,7 @@ authors:
 tags:
 - alert
 - archiver
+- autoscaler
 - backup
 - clickhouse
 - cloud-native
@@ -376,9 +377,18 @@ We are pleased to announce that this release includes support for the `MongoDBAr
 
 We have introduced support for Sharded MongoDB Cluster in the `mongodb-csi-snapshotter` plugin. This enhancement allows users to back up Persistent Volume Claims (PVCs) of their KubeDB-managed Sharded MongoDB Cluster, thereby ensuring greater data protection and ease of recovery.
 
+### WiredTiger Cache size
+The wiredTiger cache size is a critical configuration for mongodb. This defines the maximum size of the internal cache that WiredTiger uses for all data. We can set it through the `mongod.conf` file, [Details here](https://www.mongodb.com/docs/manual/reference/configuration-options/#mongodb-setting-storage.wiredTiger.engineConfig.cacheSizeGB.
+
+In previous releases, KubeDB autoscaler didn't consider this size while scaling up/down according to the generated recommendation. We are now taking this into account.
+
+
 ### Bug Fix
 
-Specific components restoration provided in KubeStash RestoreSession wasn’t working properly. This bug has been fixed in this release.
+- If `mgops.spec.readinessCriteria` field is given, We do two important things to ensure data integrity: calculate `objectsCountDiffPercentage` & `oplogMaxLagSeconds`.
+Counting the objects for each of the collection is a very time-consuming process for mongodb, that takes a very long time if data-size is quite large(>60Gi). We now use the EstimatedDocumentCount() function from mongo driver to overcome this.
+
+- Specific components restoration provided in KubeStash RestoreSession wasn’t working properly. This bug has been fixed in this release.
 
 ## Memcached
 
@@ -830,6 +840,11 @@ In this release, we have added support for Pod Disruption Budgets (PDB) for Sing
 
 In this release, we have added support for Pod Disruption Budgets (PDB) for ZooKeeper. A PDB helps ensure the availability of your ZooKeeper application by limiting the number of pods that can be down simultaneously due to voluntary disruptions (e.g., maintenance or upgrades).
 
+## General Improvement
+We have done some general improvements in ops-manager. It has two parts:
+
+- Improve the logging in the ops-manager operator for all the supported databases.
+- Add a good amount of conditions & events, so that user can just look into the `opsRequest.status` section, and get the current picture of it.
 
 ## What Next?
 
