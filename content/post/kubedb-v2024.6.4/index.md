@@ -378,15 +378,14 @@ We are pleased to announce that this release includes support for the `MongoDBAr
 We have introduced support for Sharded MongoDB Cluster in the `mongodb-csi-snapshotter` plugin. This enhancement allows users to back up Persistent Volume Claims (PVCs) of their KubeDB-managed Sharded MongoDB Cluster, thereby ensuring greater data protection and ease of recovery.
 
 ### WiredTiger Cache size
-The wiredTiger cache size is a critical configuration for mongodb. This defines the maximum size of the internal cache that WiredTiger uses for all data. We can set it through the `mongod.conf` file, [Details here](https://www.mongodb.com/docs/manual/reference/configuration-options/#mongodb-setting-storage.wiredTiger.engineConfig.cacheSizeGB.
 
-In previous releases, KubeDB autoscaler didn't consider this size while scaling up/down according to the generated recommendation. We are now taking this into account.
+The wiredTiger cache size is a critical configuration for Mongodb. This defines the maximum size of the internal cache that WiredTiger uses for all data. We can set it through the `mongod.conf` file. You can read the details [here](https://www.mongodb.com/docs/manual/reference/configuration-options/#mongodb-setting-storage.wiredTiger.engineConfig.cacheSizeGB).
 
+In previous releases, KubeDB autoscaler didn't auto configure this parameter while scaling up/down according to the generated recommendation. From this release, the cache size will be automatically updated to the recommended value during an autoscaler triggered vertical scaling ops equest.
 
 ### Bug Fix
 
-- If `mgops.spec.readinessCriteria` field is given, We do two important things to ensure data integrity: calculate `objectsCountDiffPercentage` & `oplogMaxLagSeconds`.
-Counting the objects for each of the collection is a very time-consuming process for mongodb, that takes a very long time if data-size is quite large(>60Gi). We now use the EstimatedDocumentCount() function from mongo driver to overcome this.
+- If `mgops.spec.readinessCriteria` field is given, we perform two important checks to ensure data integrity: calculate `objectsCountDiffPercentage` & `oplogMaxLagSeconds`. Counting the objects for each of the collection is a very time-consuming process for MongoDB when the data size is large(>60Gi). This will manifest as stalled vertical scaling ops request. The operator now uses the `estimatedDocumentCount()` method to address this issue.
 
 - Specific components restoration provided in KubeStash RestoreSession wasn’t working properly. This bug has been fixed in this release.
 
