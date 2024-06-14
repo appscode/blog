@@ -218,7 +218,7 @@ spec:
     name: pg-configuration
   storageType: Durable
   storage:
-    storageClassName: "standard"
+    storageClassName: "default"
     accessModes:
       - ReadWriteOnce
     resources:
@@ -335,7 +335,7 @@ In this yaml,
 * `spec.version` field specifies the version of Pgpool. Here, we are using Pgpool `4.5.0`. You can list the KubeDB supported versions of Pgpool by running `$ kubectl get pgpoolversions` command.
 * `spec.postgresRef` specifies the name and the namespace of the appbinding that points to the PostgreSQL server.
 * `spec.syncUsers` specifies whether user want to sync additional users to Pgpool.
-* And the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate".
+* And the `spec.deletionPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate".
 
 Let’s check if the server is ready to use,
 
