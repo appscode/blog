@@ -212,7 +212,7 @@ spec:
                 memory: "2Gi"
                 cpu: "600m"
       storage:
-        storageClassName: "linode-block-storage"
+        storageClassName: "standard"
         accessModes:
         - ReadWriteOnce
         resources:
@@ -232,7 +232,7 @@ spec:
                   memory: "2Gi"
                   cpu: "600m"                      
       storage:
-        storageClassName: "linode-block-storage"
+        storageClassName: "standard"
         accessModes:
           - ReadWriteOnce
         resources:
@@ -402,7 +402,7 @@ Once you have provided all the valid information, you will gain access to the Si
 
 ![SingleStore Studio](singlestore-studio.png)
 
-> Congratulations! You have successfully accessed the SingleStore Studio UI. This interface provides a convenient way to monitor and administer your SingleStore database.
+> Congratulations! You have successfully accessed the SingleStore Studio. This interface provides a convenient way to monitor and administer your SingleStore database.
 
 We have made a in depth tutorial on Effortlessly Deploy and Manage SingleStore on Kubernetes using KubeDB. You can have a look into the video below:
 
