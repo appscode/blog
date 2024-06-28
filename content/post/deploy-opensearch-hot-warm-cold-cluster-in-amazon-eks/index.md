@@ -190,7 +190,7 @@ spec:
     master:
       replicas: 2
       storage:
-        storageClassName: "standard" 
+        storageClassName: "gp2" 
         accessModes:
         - ReadWriteOnce
         resources:
@@ -199,7 +199,7 @@ spec:
     ingest:
       replicas: 2
       storage:
-        storageClassName: "standard"
+        storageClassName: "gp2"
         accessModes:
         - ReadWriteOnce
         resources:
@@ -208,7 +208,7 @@ spec:
     dataHot:
       replicas: 3
       storage:
-        storageClassName: "standard"
+        storageClassName: "gp2"
         accessModes:
         - ReadWriteOnce
         resources:
@@ -224,7 +224,7 @@ spec:
     dataWarm:
       replicas: 2
       storage:
-        storageClassName: "standard"
+        storageClassName: "gp2"
         accessModes:
         - ReadWriteOnce
         resources:
@@ -237,7 +237,7 @@ spec:
     dataCold:
       replicas: 1
       storage:
-        storageClassName: "standard"
+        storageClassName: "gp2"
         accessModes:
         - ReadWriteOnce
         resources:
