@@ -188,7 +188,7 @@ metadata:
   namespace: demo
 spec:
   enableSSL: true
-  version: opensearch-2.8.0
+  version: opensearch-2.14.0
   topology:
       master:
         replicas: 2
@@ -237,7 +237,7 @@ elasticsearch.kubedb.com/opensearch-hwc created
 ```
 
 In this yaml,
-* `spec.version` field specifies the version of OpenSearch. Here, we are using OpenSearch version `opensearch-2.8.0`. You can list the KubeDB supported versions of OpenSearch by running `$ kubectl get elasticsearchversions | grep opensearch` command. If you want to get other distributions, use `grep` command accordingly.
+* `spec.version` field specifies the version of OpenSearch. Here, we are using OpenSearch version `opensearch-2.14.0`. You can list the KubeDB supported versions of OpenSearch by running `$ kubectl get elasticsearchversions | grep opensearch` command. If you want to get other distributions, use `grep` command accordingly.
 * `spec.storage` specifies PVC spec that will be dynamically allocated to store data for this database. This storage spec will be passed to the StatefulSet created by KubeDB operator to run database pods. You can specify any StorageClass available in your cluster with appropriate resource requests. You can get all the available `storageclass` in your cluster by running `$ kubectl get storageclass` command.
 * `spec.enableSSL` - specifies whether the HTTP layer is secured with certificates or not.
 * `spec.storageType` - specifies the type of storage that will be used for OpenSearch database. It can be `Durable` or `Ephemeral`. The default value of this field is `Durable`. If `Ephemeral` is used then KubeDB will create the OpenSearch database using `EmptyDir` volume. In this case, you don't have to specify `spec.storage` field. This is useful for testing purposes.
@@ -282,18 +282,18 @@ statefulset.apps/opensearch-hwc-data-warm   2/2     6m46s
 statefulset.apps/opensearch-hwc-ingest      2/2     6m46s
 statefulset.apps/opensearch-hwc-master      2/2     6m46s
 
-NAME                                                TYPE                       VERSION   AGE
-appbinding.appcatalog.appscode.com/opensearch-hwc   kubedb.com/elasticsearch   2.8.0     6m37s
+NAME                                                TYPE                       VERSION    AGE
+appbinding.appcatalog.appscode.com/opensearch-hwc   kubedb.com/elasticsearch   2.14.0     6m37s
 
-NAME                                      VERSION            STATUS   AGE
-elasticsearch.kubedb.com/opensearch-hwc   opensearch-2.8.0   Ready    6m46s
+NAME                                      VERSION             STATUS   AGE
+elasticsearch.kubedb.com/opensearch-hwc   opensearch-2.14.0   Ready    6m46s
 ```
 Let’s check if the database is ready to use,
 
 ```bash
 $ kubectl get elasticsearch -n demo opensearch-hwc
-NAME             VERSION            STATUS   AGE
-opensearch-hwc   opensearch-2.8.0   Ready    7m2s
+NAME             VERSION             STATUS   AGE
+opensearch-hwc   opensearch-2.14.0   Ready    7m2s
 ```
 > We have successfully deployed OpenSearch in AKS. Now we can exec into the container to use the database.
 
