@@ -3,17 +3,17 @@ title: Deploy and Manage Pgpool in Amazon Elastic Kubernetes Service (Amazon EKS
 date: "2024-07-25"
 weight: 14
 authors:
-  - Dipta Roy
+- Dipta Roy
 tags:
-  - aws
-  - cloud-native
-  - conncection-pooling
-  - database
-  - eks
-  - kubedb
-  - kubernetes
-  - pgpool
-  - postgresql
+- aws
+- cloud-native
+- conncection-pooling
+- database
+- eks
+- kubedb
+- kubernetes
+- pgpool
+- postgresql
 ---
 
 ## Overview
@@ -239,7 +239,7 @@ In this yaml,
 - `spec.version` field specifies the version of PostgreSQL. Here, we are using PostgreSQL `version 16.1`. You can list the KubeDB supported versions of PostgreSQL by running `$ kubectl get postgresversions` command.
 - `spec.storage` specifies PVC spec that will be dynamically allocated to store data for this database. This storage spec will be passed to the StatefulSet created by KubeDB operator to run database pods. You can specify any StorageClass available in your cluster with appropriate resource requests.
 - `spec.configSecret` is an optional field that allows users to provide custom configuration for PostgreSQL.
-- And the `spec.terminationPolicy` field is _Wipeout_ means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these in [Termination Policy](https://kubedb.com/docs/latest/guides/postgres/concepts/postgres/#specterminationpolicy).
+- And the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these in [Termination Policy](https://kubedb.com/docs/latest/guides/postgres/concepts/postgres/#specterminationpolicy).
 
 Let’s check if the server is ready to use,
 
