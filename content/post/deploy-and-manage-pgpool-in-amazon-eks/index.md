@@ -3,17 +3,17 @@ title: Deploy and Manage Pgpool in Amazon Elastic Kubernetes Service (Amazon EKS
 date: "2024-07-25"
 weight: 14
 authors:
-- Dipta Roy
+  - Dipta Roy
 tags:
-- aws
-- cloud-native
-- conncection-pooling
-- database
-- eks
-- kubedb
-- kubernetes
-- pgpool
-- postgresql
+  - aws
+  - cloud-native
+  - conncection-pooling
+  - database
+  - eks
+  - kubedb
+  - kubernetes
+  - pgpool
+  - postgresql
 ---
 
 ## Overview
@@ -21,10 +21,10 @@ tags:
 KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases supported by KubeDB include MongoDB, Elasticsearch, MySQL, MariaDB, Redis, PostgreSQL, FerretDB, SingleStore, Percona XtraDB, and Memcached. Additionally, KubeDB also supports ProxySQL, PgBouncer, Pgpool, ZooKeeper and the streaming platform Kafka, RabbitMQ. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/).
 In this tutorial we will deploy and manage Pgpool in Amazon Elastic Kubernetes Service (Amazon EKS). We will cover the following steps:
 
-1) Install KubeDB
-2) Deploy PostgreSQL Cluster
-3) Deploy Pgpool Cluster
-4) Read/Write through Pgpool
+1. Install KubeDB
+2. Deploy PostgreSQL Cluster
+3. Deploy Pgpool Cluster
+4. Read/Write through Pgpool
 
 ### Get Cluster ID
 
@@ -32,7 +32,7 @@ We need the cluster ID to get the KubeDB License. To get cluster ID, we can run 
 
 ```bash
 $ kubectl get ns kube-system -o jsonpath='{.metadata.uid}'
-8e336615-0dbb-4ae8-b72f-2e7ec34c399d 
+8e336615-0dbb-4ae8-b72f-2e7ec34c399d
 ```
 
 ### Get License
@@ -48,29 +48,29 @@ Now, let's install `KubeDB`.
 
 ```bash
 $ helm search repo appscode/kubedb
-NAME                              	CHART VERSION	APP VERSION	DESCRIPTION                                       
+NAME                              	CHART VERSION	APP VERSION	DESCRIPTION
 appscode/kubedb                   	v2024.6.4    	v2024.6.4  	KubeDB by AppsCode - Production ready databases...
 appscode/kubedb-autoscaler        	v0.31.0      	v0.31.0    	KubeDB Autoscaler by AppsCode - Autoscale KubeD...
 appscode/kubedb-catalog           	v2024.6.4    	v2024.6.4  	KubeDB Catalog by AppsCode - Catalog for databa...
 appscode/kubedb-community         	v0.24.2      	v0.24.2    	KubeDB Community by AppsCode - Community featur...
-appscode/kubedb-crd-manager       	v0.1.0       	v0.1.0     	KubeDB CRD Manager by AppsCode                    
-appscode/kubedb-crds              	v2024.6.4    	v2024.6.4  	KubeDB Custom Resource Definitions                
-appscode/kubedb-dashboard         	v0.22.0      	v0.22.0    	KubeDB Dashboard by AppsCode                      
+appscode/kubedb-crd-manager       	v0.1.0       	v0.1.0     	KubeDB CRD Manager by AppsCode
+appscode/kubedb-crds              	v2024.6.4    	v2024.6.4  	KubeDB Custom Resource Definitions
+appscode/kubedb-dashboard         	v0.22.0      	v0.22.0    	KubeDB Dashboard by AppsCode
 appscode/kubedb-enterprise        	v0.11.2      	v0.11.2    	KubeDB Enterprise by AppsCode - Enterprise feat...
 appscode/kubedb-grafana-dashboards	v2024.6.4    	v2024.6.4  	A Helm chart for kubedb-grafana-dashboards by A...
 appscode/kubedb-kubestash-catalog 	v2024.6.4    	v2024.6.4  	KubeStash Catalog by AppsCode - Catalog of Kube...
-appscode/kubedb-metrics           	v2024.6.4    	v2024.6.4  	KubeDB State Metrics                              
+appscode/kubedb-metrics           	v2024.6.4    	v2024.6.4  	KubeDB State Metrics
 appscode/kubedb-one               	v2023.12.28  	v2023.12.28	KubeDB and Stash by AppsCode - Production ready...
 appscode/kubedb-ops-manager       	v0.33.0      	v0.33.0    	KubeDB Ops Manager by AppsCode - Enterprise fea...
-appscode/kubedb-opscenter         	v2024.6.4    	v2024.6.4  	KubeDB Opscenter by AppsCode                      
+appscode/kubedb-opscenter         	v2024.6.4    	v2024.6.4  	KubeDB Opscenter by AppsCode
 appscode/kubedb-provider-aws      	v2024.6.4    	v0.8.0     	A Helm chart for KubeDB AWS Provider for Crossp...
 appscode/kubedb-provider-azure    	v2024.6.4    	v0.8.0     	A Helm chart for KubeDB Azure Provider for Cros...
 appscode/kubedb-provider-gcp      	v2024.6.4    	v0.8.0     	A Helm chart for KubeDB GCP Provider for Crossp...
 appscode/kubedb-provisioner       	v0.46.0      	v0.46.0    	KubeDB Provisioner by AppsCode - Community feat...
-appscode/kubedb-schema-manager    	v0.22.0      	v0.22.0    	KubeDB Schema Manager by AppsCode                 
-appscode/kubedb-ui                	v2024.6.3    	0.6.8      	A Helm chart for Kubernetes                       
-appscode/kubedb-ui-server         	v2021.12.21  	v2021.12.21	A Helm chart for kubedb-ui-server by AppsCode     
-appscode/kubedb-webhook-server    	v0.22.0      	v0.22.0    	KubeDB Webhook Server by AppsCode 
+appscode/kubedb-schema-manager    	v0.22.0      	v0.22.0    	KubeDB Schema Manager by AppsCode
+appscode/kubedb-ui                	v2024.6.3    	0.6.8      	A Helm chart for Kubernetes
+appscode/kubedb-ui-server         	v2021.12.21  	v2021.12.21	A Helm chart for kubedb-ui-server by AppsCode
+appscode/kubedb-webhook-server    	v0.22.0      	v0.22.0    	KubeDB Webhook Server by AppsCode
 
 
 $ helm install kubedb oci://ghcr.io/appscode-charts/kubedb \
@@ -193,7 +193,8 @@ metadata:
 stringData:
   user.conf: max_connections=400
 ```
-Let's save this yaml configuration into `pg-configuration.yaml` 
+
+Let's save this yaml configuration into `pg-configuration.yaml`
 Then create the above Secret,
 
 ```bash
@@ -225,18 +226,20 @@ spec:
   terminationPolicy: WipeOut
 ```
 
-Let's save this yaml configuration into `postgres-cluster.yaml` 
+Let's save this yaml configuration into `postgres-cluster.yaml`
 Then create the above PostgreSQL CRO,
 
 ```bash
 $ kubectl apply -f postgres-cluster.yaml
 postgres.kubedb.com/postgres-cluster created
 ```
+
 In this yaml,
-* `spec.version` field specifies the version of PostgreSQL. Here, we are using PostgreSQL `version 16.1`. You can list the KubeDB supported versions of PostgreSQL by running `$ kubectl get postgresversions` command.
-* `spec.storage` specifies PVC spec that will be dynamically allocated to store data for this database. This storage spec will be passed to the StatefulSet created by KubeDB operator to run database pods. You can specify any StorageClass available in your cluster with appropriate resource requests.
-* `spec.configSecret` is an optional field that allows users to provide custom configuration for PostgreSQL.
-* And the `spec.terminationPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these in [Termination Policy](https://kubedb.com/docs/latest/guides/postgres/concepts/postgres/#specterminationpolicy).
+
+- `spec.version` field specifies the version of PostgreSQL. Here, we are using PostgreSQL `version 16.1`. You can list the KubeDB supported versions of PostgreSQL by running `$ kubectl get postgresversions` command.
+- `spec.storage` specifies PVC spec that will be dynamically allocated to store data for this database. This storage spec will be passed to the StatefulSet created by KubeDB operator to run database pods. You can specify any StorageClass available in your cluster with appropriate resource requests.
+- `spec.configSecret` is an optional field that allows users to provide custom configuration for PostgreSQL.
+- And the `spec.terminationPolicy` field is _Wipeout_ means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these in [Termination Policy](https://kubedb.com/docs/latest/guides/postgres/concepts/postgres/#specterminationpolicy).
 
 Let’s check if the server is ready to use,
 
@@ -248,7 +251,7 @@ postgres-cluster   16.1      Ready    2m36s
 
 ### Create Database, User & Grant Privileges
 
-Here, we are going to create a database with a new user and grant all privileges to the database. 
+Here, we are going to create a database with a new user and grant all privileges to the database.
 
 ```bash
 $ kubectl exec -it postgres-cluster-0 -n demo -- bash
@@ -293,11 +296,12 @@ stringData:
   password: "12345"
   username: roy
 ```
-Let's save this yaml configuration into `db-user-pass.yaml` 
+
+Let's save this yaml configuration into `db-user-pass.yaml`
 Then create the above Secret,
 
 ```bash
-$ kubectl apply -f db-user-pass.yaml 
+$ kubectl apply -f db-user-pass.yaml
 secret/db-user-pass created
 ```
 
@@ -322,18 +326,20 @@ spec:
   deletionPolicy: WipeOut
 ```
 
-Let's save this yaml configuration into `pgpool.yaml` 
+Let's save this yaml configuration into `pgpool.yaml`
 Then create the above Pgpool CRO,
 
 ```bash
 $ kubectl apply -f pgpool.yaml
 pgpool.kubedb.com/pgpool created
 ```
+
 In this yaml,
-* `spec.version` field specifies the version of Pgpool. Here, we are using Pgpool `4.5.0`. You can list the KubeDB supported versions of Pgpool by running `$ kubectl get pgpoolversions` command.
-* `spec.postgresRef` specifies the name and the namespace of the appbinding that points to the PostgreSQL server.
-* `spec.syncUsers` specifies whether user want to sync additional users to Pgpool.
-* And the `spec.deletionPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate".
+
+- `spec.version` field specifies the version of Pgpool. Here, we are using Pgpool `4.5.0`. You can list the KubeDB supported versions of Pgpool by running `$ kubectl get pgpoolversions` command.
+- `spec.postgresRef` specifies the name and the namespace of the appbinding that points to the PostgreSQL server.
+- `spec.syncUsers` specifies whether user want to sync additional users to Pgpool.
+- And the `spec.deletionPolicy` field is _Wipeout_ means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate".
 
 Let’s check if the server is ready to use,
 
@@ -372,8 +378,8 @@ pgpool.kubedb.com/pgpool   kubedb.com/v1alpha2   4.5.0     Ready    66s
 NAME                                   VERSION   STATUS   AGE
 postgres.kubedb.com/postgres-cluster   16.1      Ready    4m57s
 ```
-> We have successfully deployed Pgpool in AKS. Now, we can exec into the container to use the database.
 
+> We have successfully deployed Pgpool in Amazon EKS. Now, we can exec into the container to use the database.
 
 ### Connect via Pgpool
 
@@ -388,6 +394,7 @@ postgres-cluster           ClusterIP   10.96.252.10   <none>        5432/TCP,237
 postgres-cluster-pods      ClusterIP   None           <none>        5432/TCP,2380/TCP,2379/TCP   5m54s
 postgres-cluster-standby   ClusterIP   10.96.203.14   <none>        5432/TCP                     5m54s
 ```
+
 Here, we are going to use `pgpool` Service to connect. Now, let’s port-forward the `pgpool` Service to the port `9999` to local machine:
 
 ```bash
@@ -411,7 +418,7 @@ test=> INSERT INTO music VALUES(1, 'Bobby Bare', 'Five Hundred Miles');
 INSERT 0 1
 
 test=# SELECT * FROM music;
- id | artist     |  name      
+ id | artist     |  name
 ----+------------+-------------------
   1 | Bobby Bare | Five Hundred Miles
 (1 row)
@@ -432,10 +439,10 @@ Type "help" for help.
 
 postgres=# \l
                                                         List of databases
-     Name      |  Owner   | Encoding | Locale Provider |  Collate   |   Ctype    | ICU Locale | ICU Rules |   Access privileges   
+     Name      |  Owner   | Encoding | Locale Provider |  Collate   |   Ctype    | ICU Locale | ICU Rules |   Access privileges
 ---------------+----------+----------+-----------------+------------+------------+------------+-----------+-----------------------
- kubedb_system | postgres | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           | 
- postgres      | postgres | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           | 
+ kubedb_system | postgres | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           |
+ postgres      | postgres | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           |
  template0     | postgres | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           | =c/postgres          +
                |          |          |                 |            |            |            |           | postgres=CTc/postgres
  template1     | postgres | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           | =c/postgres          +
@@ -450,13 +457,13 @@ You are now connected to database "test" as user "postgres".
 
 test=# \dt
        List of relations
- Schema | Name  | Type  | Owner 
+ Schema | Name  | Type  | Owner
 --------+-------+-------+-------
  public | music | table | roy
 (1 row)
 
 test=# SELECT * FROM music;
- id | artist     |  name      
+ id | artist     |  name
 ----+------------+-------------------
   1 | Bobby Bare | Five Hundred Miles
 (1 row)
@@ -467,7 +474,6 @@ exit
 ```
 
 > We've successfully access our PostgreSQL database through Pgpool. Click [Kubernetes Pgpool Documentation](https://kubedb.com/docs/latest/guides/pgpool/) for more detailed information.
-
 
 We have made an in depth tutorial on Seamlessly Provision and Manage Pgpool on Kubernetes Using KubeDB. You can have a look into the video below:
 
