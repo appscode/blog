@@ -177,7 +177,7 @@ First, we need to create a namespace for our SingleStore deployment. Open your t
 $ kubectl create namespace demo
 namespace/demo created
 ```
-Next, you'll need a SingleStore license to create the SingleStore database. Ensure that you have acquired a license, then create a secret to store your license information. Run the following command, replacing `your-license-here` with your actual license key:
+Next, you'll need a [SingleStore license](https://www.singlestore.com/self-managed-standard/) to create the SingleStore database. Ensure that you have acquired a license, then create a secret to store your license information. Run the following command, replacing `your-license-here` with your actual license key:
 
 ```bash
 $ kubectl create secret generic -n demo license-secret \
