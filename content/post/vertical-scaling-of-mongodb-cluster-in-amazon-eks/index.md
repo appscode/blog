@@ -1,6 +1,6 @@
 ---
 title: Vertical Scaling of MongoDB Cluster in Amazon Elastic Kubernetes Service (Amazon EKS)
-date: "2024-08-05"
+date: "2024-08-06"
 weight: 14
 authors:
 - Dipta Roy
