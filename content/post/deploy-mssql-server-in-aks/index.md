@@ -382,6 +382,7 @@ kubedb_system
 
 (6 rows affected)
 
+# Verify that the database 'music' has been created and added to the `availability group cluster`. Then, we will insert data into this `music` database.
 1> SELECT database_name
 2> FROM sys.availability_databases_cluster
 3> GO
