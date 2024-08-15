@@ -14,18 +14,20 @@ tags:
 - kubernetes
 - microsoft-azure
 - microsoft-sql
+- mssql
 - mssql-cluster
 - mssql-database
 - mssql-server
+- sqlserver
 ---
 
 ## Overview
 
-KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases supported by KubeDB include MongoDB, Elasticsearch, MySQL, MariaDB, Redis, PostgreSQL, Solr, MSSQL Server, FerretDB, SingleStore, Percona XtraDB, and Memcached. Additionally, KubeDB also supports ProxySQL, PgBouncer, Pgpool, ZooKeeper and the streaming platform Kafka, RabbitMQ. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/).
+KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases supported by KubeDB include MongoDB, Elasticsearch, MySQL, MariaDB, Redis, PostgreSQL, Solr, Microsoft SQL Server, FerretDB, SingleStore, Percona XtraDB, and Memcached. Additionally, KubeDB also supports ProxySQL, PgBouncer, Pgpool, ZooKeeper and the streaming platform Kafka, RabbitMQ. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/).
 In this tutorial we will deploy Microsoft SQL Server (MSSQL) in Azure Kubernetes Service (AKS). We will cover the following steps:
 
 1. Install KubeDB
-2. Deploy MSSQL Server Cluster
+2. Deploy MSSQL Server Availability Group Cluster
 3. Read/Write Sample Data
 
 ### Get Cluster ID
@@ -221,7 +223,7 @@ spec:
     secretName: mssqlserver-ca
 ```
 
-Create an Issuer using the CA certificate stored in the `mssqlserver-ca` Secret. 
+
 Below is the YAML definition for the Issuer:
 ```bash
 $ kubectl apply -f issuer.yaml
@@ -279,6 +281,7 @@ mssqlserver.kubedb.com/mssqlserver-ag-cluster created
 
 In this yaml,
 - `spec.version` is the name of the MSSQLServerVersion CR. Here, a MSSQLServer of `version 2022-cu12` will be created.
+- `spec.topology.availabilityGroup.databases` specifies the list of databases that must be added to the `Availability Group` cluster.
 - `spec.tls` specifies the TLS/SSL configurations. The KubeDB operator supports TLS management by using the [cert-manager](https://cert-manager.io/). Here `tls.clientTLS: false` means tls will not be enabled for SQL Server but the Issuer will be used to configure tls enabled wal-g proxy-server which is required for SQL Server backup operation.
 - `spec.storageType` specifies the type of storage that will be used for MSSQLServer database. It can be `Durable` or `Ephemeral`. The default value of this field is `Durable`. If `Ephemeral` is used then KubeDB will create the MSSQLServer database using `EmptyDir` volume. In this case, you don’t have to specify `spec.storage` field. This is useful for testing purposes.
 - `spec.storage` specifies the StorageClass of PVC dynamically allocated to store data for this database. This storage spec will be passed to the Petset created by the KubeDB operator to run database pods. You can specify any StorageClass available in your cluster with appropriate resource requests. If you don’t specify `spec.storageType: Ephemeral`, then this field is required.
@@ -347,7 +350,19 @@ pT42K58uKEe3pote
 
 ### Insert Sample Data
 
-In this section, we are going to login into our MSSQL Server pod and insert some sample data.
+In this section, we will insert sample data into our MSSQL Server deployed on Kubernetes. Before we can insert data, we need to identify the primary node, as data writes are only permitted on the primary node.
+
+To determine which pod is the primary node, run the following command to list the pods along with their roles:
+
+```bash
+$ kubectl get pods -n demo --selector=app.kubernetes.io/instance=mssqlserver-ag-cluster -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.metadata.labels.kubedb\.com/role}{"\n"}{end}'
+
+mssqlserver-ag-cluster-0	primary
+mssqlserver-ag-cluster-1	secondary
+mssqlserver-ag-cluster-2	secondary
+```
+
+From the output above, we can see that `mssqlserver-ag-cluster-0` is the primary node. To insert data, log into the primary MSSQL Server pod. Use the following command,
 
 ```bash
 $ kubectl exec -it mssqlserver-ag-cluster-0 -n demo bash
@@ -366,6 +381,16 @@ music
 kubedb_system                                                                                                                   
 
 (6 rows affected)
+
+1> SELECT database_name
+2> FROM sys.availability_databases_cluster
+3> GO
+database_name                                                                                                                   
+--------------------------------------------------------------------------------------------------------------------------------
+music                                                                                                                           
+
+(1 rows affected)
+
 1> USE music
 2> GO
 Changed database context to 'music'.
@@ -390,7 +415,8 @@ John Denver                                                                     
 
 ...
 
-# Read the sample data from Node 2
+# Confirm that the data inserted into the primary node has been replicated to the secondary nodes.
+# Access the secondary node (Node 2) to verify that the data is present.
 $ kubectl exec -it mssqlserver-ag-cluster-1 -n demo bash
 Defaulted container "mssql" out of: mssql, mssql-coordinator, mssql-init (init)
 mssql@mssqlserver-ag-cluster-1:/$ /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "pT42K58uKEe3pote"
@@ -413,7 +439,7 @@ John Denver                                                                     
 
 ...
 
-# Read the sample data from Node 3
+# Access the secondary node (Node 3) to verify that the data is present.
 $ kubectl exec -it mssqlserver-ag-cluster-2 -n demo bash
 Defaulted container "mssql" out of: mssql, mssql-coordinator, mssql-init (init)
 mssql@mssqlserver-ag-cluster-2:/$ /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "pT42K58uKEe3pote"
