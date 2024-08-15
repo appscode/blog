@@ -23,7 +23,7 @@ KubeDB is the Kubernetes Native Database Management Solution which simplifies an
 In this tutorial we will deploy Solr in Google Kubernetes Engine (GKE) Using KubeDB. We will cover the following steps:
 
 1. Install KubeDB
-3. Deploy ZooKeeper
+2. Deploy ZooKeeper
 3. Deploy Solr Cluster
 4. Read/Write Sample Data
 
