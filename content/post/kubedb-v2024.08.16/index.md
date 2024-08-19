@@ -39,8 +39,7 @@ tags:
 - zookeeper
 ---
 
-We are excited to announce the release of KubeDB v2024.7.x! This release introduces the kubedb.com/v1 APIVersion support for KubeDB-supported following databases:
-
+We are excited to announce the release of KubeDB v2024.7.x! This release introduces support for the kubedb.com/v1 APIVersion across the following KubeDB-supported databases:
 - PostgreSQL
 - MongoDB
 - MySQL
@@ -52,6 +51,17 @@ We are excited to announce the release of KubeDB v2024.7.x! This release introdu
 - Percona XtraDB
 - PGBouncer
 - Memcached
+
+This release also includes features like:
+
+- Improved operator logging by removing redundant logs and adding missing ones
+- Support for deploying Druid with TLS-secured MySQL and PostgreSQL
+- RabbitMQ pre-enabled protocol plugin support including `MQTT`, `STOMP`, `WEB_MQTT`and  `WEB_STOMP`
+- Kafka RestProxy, a new component for kafka
+- Grafana Dashboard support for Memcached and Microsoft SQL Server
+- More Ops Request support for Memcached, PGBouncer, Pgpool, Singlestore and Solr
+- AutoScaling support for PGBouncer
+- New supported catalog versions for Postgres, MariaDB, MySQL, Redis, Memcached, Pgpool, Singlestore, FerretDB and Druid
 
 This post lists all the major changes done in this release since the last release. Find the detailed changelogs HERE . Now, you can proceed to the details of the features and updates included in the release.
 
