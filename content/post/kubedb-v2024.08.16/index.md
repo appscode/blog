@@ -1,5 +1,5 @@
 ---
-title: Announcing KubeDB v2024.08.16
+title: Announcing KubeDB v2024.08.19
 date: ""
 weight: 14
 authors:
