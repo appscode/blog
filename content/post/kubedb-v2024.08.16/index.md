@@ -277,7 +277,7 @@ spec:
 
 
 
-## Kafka Schema Registry
+## Kafka Rest Proxy
 
 In this release, `RestProxy` a new kafka component has been introduced. It is a RESTful interface to the Kafka cluster. It allows you to produce and consume messages from a Kafka cluster over HTTP. It facilitates microservices to communicate with Kafka without needing Kafka client libraries.
 
