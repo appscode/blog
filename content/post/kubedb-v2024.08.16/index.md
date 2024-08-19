@@ -1,6 +1,6 @@
 ---
 title: Announcing KubeDB v2024.08.19
-date: ""
+date: "2024-08-19"
 weight: 14
 authors:
 - Saurov Chandra Biswas
