@@ -591,7 +591,7 @@ spec:
 
 This release introduces an enhanced monitoring feature for KubeDB-managed MicroSoft SQL Server deployments by integrating Grafana dashboard. The dashboard provide comprehensive insights into various SQL Server metrics, statuses, as well as visual representations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of their SQL Server clusters, enabling more informed decision-making and efficient management of resources.
 
-Have a look [here](https://github.com/appscode/grafana-dashboards/tree/master/mssqlserver) for the step-by-step guide to use the monitoring feature in SQL Server.
+Have a look [here](https://github.com/appscode/grafana-dashboards/tree/master/mssqlserver) for the step-by-step guide to use the monitoring feature of MicroSoft SQL Server.
 
 Here’s a preview of the Summary dashboard for SQL Server.
 
@@ -1327,33 +1327,30 @@ KubeDB managed RabbitMQ used to provide support for a ClusterIP service for mana
 
 In this release, the API version for Redis has been updated to v1. The new API version is `kubedb.com/v1`. Several changes have been introduced:
 
-1. The field `db.spec.cluster.master` has been changed to `db.spec.cluster.shards` and `db.spec.cluster.replicas` now mean the number of replicas (the master and slaves)
-   of each shard which previously meant the number of slaves fo each master.
+1. The field `db.spec.cluster.master` has been changed to `db.spec.cluster.shards` and `db.spec.cluster.replicas` now mean the number of replicas (the master and slaves) of each shard which previously meant the number of slaves fo each master.
 
-2. The fields `db.spec.coordinator.resources` and `db.spec.coordinator.securityContext` have been moved under the `rd-coordinator` container in `db.spec.podTemplate.spec.containers`. The `rd-coordinator` is a sidecar container that we run alongside our main database container for coordination purposes.
-
-
+2. The fields `db.spec.coordinator.resources` and `db.spec.coordinator.securityContext` have been moved under the `rd-coordinator` container in `db.spec.podTemplate.spec.containers[]`. The `rd-coordinator` is a sidecar container that we run alongside our main database container for coordination purposes.
 
 3. The field `db.spec.terminationPolicy` has been renamed to `db.spec.deletionPolicy`.
 
-4. The fields `db.spec.podTemplate.spec.resources` and `db.spec.podTemplate.spec.containerSecurityContext` have been moved under the `redis` container in `db.spec.podTemplate.spec.containers[0]`. This `redis` container is the main database container for the Redis CRO.
+4. The fields `db.spec.podTemplate.spec.resources` and `db.spec.podTemplate.spec.containerSecurityContext` have been moved under the `redis` container in `db.spec.podTemplate.spec.containers[]`. This `redis` container is the main database container for the Redis CRO.
 
-5. All other changes to the `db.spec.podTemplate` can be found at the beginning of this document.
+5. All other changes to the new `db.spec.podTemplate` can be found at the beginning of this document.
 
-A sample YAML configuration for Redis with the `kubedb/v1alpha2` API version and its corresponding `kubedb/v1` API version are provided below.
 
+A sample YAML configuration for Redis in `Sentinel` mode with the `kubedb/v1alpha2` API version and its corresponding `kubedb/v1` API version are provided below.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: Redis
 metadata:
-  name: rd-sentinel
+  name: redis-sentinel
   namespace: demo
 spec:
   version: 7.2.4
   replicas: 3
   sentinelRef:
-    name: sen-demo
+    name: sentinel
     namespace: demo
   mode: Sentinel
   storageType: Durable
@@ -1361,7 +1358,7 @@ spec:
     resources:
       requests:
         storage: 1Gi
-#    storageClassName: "standard"
+    storageClassName: "standard"
     accessModes:
       - ReadWriteOnce
   coordinator:
@@ -1369,20 +1366,40 @@ spec:
         requests:
           cpu: "150m"
           memory: "150Mi"
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      runAsGroup: 999
+      runAsNonRoot: true
+      runAsUser: 999
+      seccompProfile:
+        type: RuntimeDefault
   podTemplate:
     spec:
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        runAsGroup: 999
+        runAsNonRoot: true
+        runAsUser: 999
+        seccompProfile:
+          type: RuntimeDefault
       resources:
         requests:
           cpu: "150m"
           memory: "150Mi"
   terminationPolicy: WipeOut
 ```
-Now same yaml in kubedb/v1 apiversion
+Now same yaml in kubedb/v1 api version is 
 ```yaml
 apiVersion: kubedb.com/v1
 kind: Redis
 metadata:
-  name: rd-sentinel-v1
+  name: redis-sentinel-v1
   namespace: demo
 spec:
   version: 7.2.4
@@ -1396,7 +1413,7 @@ spec:
     resources:
       requests:
         storage: 1Gi
-#    storageClassName: "standard"
+    storageClassName: "standard"
     accessModes:
       - ReadWriteOnce
   podTemplate:
@@ -1407,11 +1424,113 @@ spec:
           requests:
             cpu: 150m
             memory: 150Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 999
+          runAsNonRoot: true
+          runAsUser: 999
+          seccompProfile:
+            type: RuntimeDefault
       - name: rd-coordinator
         resources:
           requests:
             cpu: 150m
             memory: 150Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 999
+          runAsNonRoot: true
+          runAsUser: 999
+          seccompProfile:
+            type: RuntimeDefault
+  deletionPolicy: WipeOut
+```
+
+A sample YAML configuration for Redis in `Cluster` mode with the `kubedb/v1alpha2` API version and its corresponding `kubedb/v1` API version are provided below.
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: Redis
+metadata:
+  name: redis-cluster
+  namespace: demo
+spec:
+  version: 7.2.4
+  mode: Cluster
+  cluster:
+    master: 3
+    replicas: 1
+  storageType: Durable
+  storage:
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: "standard"
+    accessModes:
+      - ReadWriteOnce
+  podTemplate:
+    spec:
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        runAsGroup: 999
+        runAsNonRoot: true
+        runAsUser: 999
+        seccompProfile:
+          type: RuntimeDefault
+      resources:
+        requests:
+          cpu: "150m"
+          memory: "150Mi"
+  terminationPolicy: WipeOut
+```
+Now same yaml in kubedb/v1 api version is 
+```yaml
+apiVersion: kubedb.com/v1
+kind: Redis
+metadata:
+  name: redis-clusterv-v1
+  namespace: demo
+spec:
+  version: 7.2.4
+  mode: Cluster
+  cluster:
+    shards: 3
+    replicas: 2
+  storageType: Durable
+  storage:
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: "standard"
+    accessModes:
+      - ReadWriteOnce
+  podTemplate:
+    spec:
+      containers:
+      - name: redis
+        resources:
+          requests:
+            cpu: 150m
+            memory: 150Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 999
+          runAsNonRoot: true
+          runAsUser: 999
+          seccompProfile:
+            type: RuntimeDefault
   deletionPolicy: WipeOut
 ```
 
@@ -1422,7 +1541,7 @@ In this release, the API version for RedisSentinel has been updated to v1. The n
 
 1. The field `db.spec.terminationPolicy` has been renamed to `db.spec.deletionPolicy`.
 
-2. The fields `db.spec.podTemplate.spec.resources` and `db.spec.podTemplate.spec.containerSecurityContext` have been moved under the `redissentinel` container in `db.spec.podTemplate.spec.containers[0]`. This `redissentinel` container is the main container for the RedisSentinel CRO.
+2. The fields `db.spec.podTemplate.spec.resources` and `db.spec.podTemplate.spec.containerSecurityContext` have been moved under the `redissentinel` container in `db.spec.podTemplate.spec.containers[]`. This `redissentinel` container is the main container for the RedisSentinel CRO.
 
 3. All other changes to the `db.spec.podTemplate` can be found at the beginning of this document.
 
@@ -1433,7 +1552,7 @@ A sample YAML configuration for RedisSentinel with the `kubedb/v1alpha2` API ver
 apiVersion: kubedb.com/v1alpha2
 kind: RedisSentinel
 metadata:
-  name: sen-demo
+  name: sentinel
   namespace: demo
 spec:
   version: 7.2.4
@@ -1443,18 +1562,26 @@ spec:
     resources:
       requests:
         storage: 1Gi
-#    storageClassName: "standard"
+    storageClassName: "standard"
     accessModes:
     - ReadWriteOnce
   podTemplate:
     spec:
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        runAsGroup: 999
+        runAsNonRoot: true
+        runAsUser: 999
+        seccompProfile:
+          type: RuntimeDefault
       resources:
         requests:
           cpu: "150m"
           memory: "150Mi"
   terminationPolicy: WipeOut
-
-
 ```
 Now same yaml in kubedb/v1 apiversion
 ```yaml
@@ -1471,7 +1598,7 @@ spec:
     resources:
       requests:
         storage: 1Gi
-#    storageClassName: "standard"
+    storageClassName: "standard"
     accessModes:
     - ReadWriteOnce
   podTemplate:
@@ -1482,6 +1609,16 @@ spec:
           requests:
             cpu: 150m
             memory: 150Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 999
+          runAsNonRoot: true
+          runAsUser: 999
+          seccompProfile:
+            type: RuntimeDefault
   deletionPolicy: WipeOut
 ```
 
