@@ -129,6 +129,26 @@ In previous releases, KubeDB utilized `kubedb.com/v1alpha2` APIVersion for the d
 | `Env`                                          | `spec.containers[i].env`                                    |
 
 
+## API Conversion
+
+Though we have moved our KubeDB APIVersion to `kubedb.com/v1`, you can still safely use `kubedb.com/v1alpha2`. The conversion between `v1` and `v1alpha2` (and vice versa) is handled by the `kubedb-webhook-server`. Therefore, it is normal to use both `v1alpha2` and `v1` DB objects simultaneously.
+
+To get a `v1` PostgreSQL DB object, you can run the following command:
+```bash
+$ kubectl get postgres.v1.kubedb.com -n demo
+NAME          VERSION   STATUS   AGE
+ha-postgres   16.1      Ready    49s
+```
+Similarly to get a `v1alhpa2` postgres db object,
+```bash
+$ kubectl get postgres.v1alpha2.kubedb.com -n demo
+NAME          VERSION   STATUS   AGE
+ha-postgres   16.1      Ready    95s
+```
+
+
+For more information, you can visit [this](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/).
+
 ## Druid
 
 #### Deploy Druid with Internally Managed Metadata Storage (MySQL, PostgreSQL), and ZooKeeper
