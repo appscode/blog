@@ -13,9 +13,8 @@ tags:
 - cloud-native
 - dashboard
 - database
-- elasticsearch
-- opensearch
 - druid
+- elasticsearch
 - grafana
 - kafka
 - kubedb
@@ -24,6 +23,7 @@ tags:
 - memcached
 - mongodb
 - mssqlserver
+- opensearch
 - pgbouncer
 - pgpool
 - postgres
