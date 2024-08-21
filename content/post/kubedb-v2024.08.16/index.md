@@ -1,6 +1,6 @@
 ---
-title: Announcing KubeDB v2024.08.19
-date: "2024-08-19"
+title: Announcing KubeDB v2024.08.21
+date: "2024-08-21"
 weight: 14
 authors:
 - Saurov Chandra Biswas
@@ -39,18 +39,20 @@ tags:
 - zookeeper
 ---
 
-We are excited to announce the release of KubeDB v2024.7.x! This release introduces support for the kubedb.com/v1 APIVersion across the following KubeDB-supported databases:
-- PostgreSQL
+We are excited to announce the release of KubeDB v2024.8.21! This release introduces support for the kubedb.com/v1 APIVersion across the following KubeDB-supported databases:
+
+- Elasticsearch
+- Kafka
+- MariaDB
+- Memcached
 - MongoDB
 - MySQL
-- MariaDB
-- Elasticsearch
+- PerconaXtraDB
+- PGBouncer
+- PostgreSQL
+- ProxySQL
 - Redis
 - Redis Sentinel
-- Kafka
-- Percona XtraDB
-- PGBouncer
-- Memcached
 
 This release also includes features like:
 
@@ -62,6 +64,16 @@ This release also includes features like:
 - More Ops Request support for Memcached, PGBouncer, Pgpool, Singlestore and Solr
 - AutoScaling support for PGBouncer
 - New supported catalog versions for Postgres, MariaDB, MySQL, Redis, Memcached, Pgpool, Singlestore, FerretDB and Druid
+- List of New supported catalog versions:
+  - Druid: 30.0.0
+  - FerretDB: 1.23.0
+  - MariaDB: 11.3.2-jammy, 11.4.3-noble, 11.5.2-noble
+  - Memcached: 1.6.29-alpine
+  - MySQL: 8.4.2-oracle, 9.0.1-oracle
+  - Pgpool: 4.4.8, 4.5.3
+  - Postgres: 16.4-alpine, 16.4-bookworm, 15.8-alpine, 15.8-bookworm, 14.13-alpine, 14.13-bookworm
+  - Redis: 7.4.0-alpine, 7.4.0-bookworm
+  - Singlestore: alma-8.7.10-95e2357384, alma-8.5.30-4f46ab16a5
 
 This post lists all the major changes done in this release since the last release. Find the detailed changelogs HERE . Now, you can proceed to the details of the features and updates included in the release.
 
@@ -160,7 +172,7 @@ Additionally, in this release, KubeDB  has been enhanced to support integration 
 
 ## Elasticsearch
 
-In this release, In this release, API version for Elasticsearch has been upgraded to `v1`. The new API version is [kubedb.com/v1](http://kubedb.com/v1).
+In this release, API version for Elasticsearch has been upgraded to `v1`. The new API version is [kubedb.com/v1](http://kubedb.com/v1).
 
 1. In `v1alpha2` API, resources for dedicated topology cluster resources have to be defined at `.spec.topology.<node-type>.resources`, NodeSelector labels have to be defined at `.spec.topology.<node-type>.nodeSelector` and Tolerations have to be defined at `.spec.topology.<node-type>.tolerations.
 Now, in `v1` API version resources has to be defined in `.spec.topology.<node-type>.podTemplate.containers[].resources`. NodeSelector labels have to be defined at `.spec.topology.<node-type>.podTemplate.containers[].nodeSelector` and Tolerations have to be defined at `..spec.topology.<node-type>.podTemplate.containers[].tolerations.
