@@ -64,7 +64,6 @@ This release also includes features like:
 - Grafana Dashboard support for Memcached and Microsoft SQL Server
 - More Ops Request support for Memcached, PGBouncer, Pgpool, Singlestore and Solr
 - AutoScaling support for PGBouncer
-- New supported catalog versions for Postgres, MariaDB, MySQL, Redis, Memcached, Pgpool, Singlestore, FerretDB and Druid
 - List of New supported catalog versions:
   - Druid: 30.0.0
   - FerretDB: 1.23.0
