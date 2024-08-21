@@ -42,6 +42,9 @@ tags:
 - zookeeper
 ---
 
+> **Note**: **If you are a KubeDB managed PostgreSQL user, then first you have to upgrade your KubeDB version
+to v2024.6.4 in order to upgrade your KubeDB to this latest release. If you are already in kubedb-v2024.6.4, then you have to update your kubedb-provisioner deployment image with `ghcr.io/kubedb/kubedb-provisioner:v0.46.2`.**
+
 We are excited to announce the release of KubeDB **v2024.8.21**! This release introduces support for the **kubedb.com/v1** APIVersion across the following KubeDB-supported databases:
 
 - Elasticsearch
