@@ -29,6 +29,7 @@ tags:
 - prometheus
 - rabbitmq
 - redis
+- rest-proxy
 - restore
 - s3
 - schema-registry
@@ -58,7 +59,7 @@ This release also includes features like:
 
 - Improved operator logging by removing redundant logs and adding missing ones
 - Support for deploying Druid with TLS-secured MySQL and PostgreSQL
-- RabbitMQ pre-enabled protocol plugin support including `MQTT`, `STOMP`, `WEB_MQTT`and  `WEB_STOMP`
+- RabbitMQ pre-enabled protocol plugin support including `MQTT`, `STOMP`, `WEB_MQTT` and  `WEB_STOMP`
 - Kafka RestProxy, a new component for kafka
 - Grafana Dashboard support for Memcached and Microsoft SQL Server
 - More Ops Request support for Memcached, PGBouncer, Pgpool, Singlestore and Solr
@@ -75,13 +76,12 @@ This release also includes features like:
   - Redis: 7.4.0
   - Singlestore: alma-8.7.10-95e2357384, alma-8.5.30-4f46ab16a5
 
-This post lists all the major changes done in this release since the last release. Find the detailed changelogs HERE . Now, you can proceed to the details of the features and updates included in the release.
+This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG) . Now, you can proceed to the details of the features and updates included in the release.
 
 
 ### Key Changes
 
-In previous releases, KubeDB utilized `kubedb.com/v1alpha2` APIVersion for the databases mentioned above, with the `db.spec.podTemplateSpec` sourced from [kmodules.xyz/offshoot-api/api/v1](https://pkg.go.dev/kmodules.xyz/offshoot-api@v0.30.0/api/v1#PodTemplateSpec). As we have introduced kubedb.com/v1 APIVersion in this release, the `db.spec.podTemplateSpec` now comes from [kmodules.xyz/offshoot-api/api/v2](https://pkg.go.dev/kmodules.xyz/offshoot-api@v0.30.0/api/v2#PodTemplateSpec). The changes introduced in these two podSpec are listed below.
-
+In previous releases, KubeDB utilized `kubedb.com/v1alpha2` APIVersion for the databases mentioned above, with the `db.spec.podTemplateSpec` sourced from [kmodules.xyz/offshoot-api/api/v1](https://pkg.go.dev/kmodules.xyz/offshoot-api@v0.30.0/api/v1#PodTemplateSpec). As we have introduced kubedb.com/v1 APIVersion in this release, the `db.spec.podTemplateSpec` now comes from [kmodules.xyz/offshoot-api/api/v2](https://pkg.go.dev/kmodules.xyz/offshoot-api@v0.30.0/api/v2#PodTemplateSpec). The changes introduced in these two PodSpecs are listed below.
 
 
 
@@ -168,14 +168,14 @@ spec:
       replicas: 1
 ```
 #### Deploying Druid with TLS secure MySQL and PostgreSQL
-Additionally, in this release, KubeDB  has been enhanced to support integration of `Druid` with TLS-secured `MySQL` and `PostgreSQL` clusters.
+Additionally, in this release, KubeDB has been enhanced to support integration of `Druid` with TLS-secured `MySQL` and `PostgreSQL` clusters.
 
 ## Elasticsearch
 
 In this release, API version for Elasticsearch has been upgraded to `v1`. The new API version is [kubedb.com/v1](http://kubedb.com/v1).
 
 1. In `v1alpha2` API, resources for dedicated topology cluster resources have to be defined at `.spec.topology.<node-type>.resources`, NodeSelector labels have to be defined at `.spec.topology.<node-type>.nodeSelector` and Tolerations have to be defined at `.spec.topology.<node-type>.tolerations.
-Now, in `v1` API version resources has to be defined in `.spec.topology.<node-type>.podTemplate.containers[].resources`. NodeSelector labels have to be defined at `.spec.topology.<node-type>.podTemplate.containers[].nodeSelector` and Tolerations have to be defined at `..spec.topology.<node-type>.podTemplate.containers[].tolerations.
+Now, in v1 API version, resources have to be defined in `.spec.topology.<node-type>.podTemplate.containers[].resources`. NodeSelector labels have to be defined at `.spec.topology.<node-type>.podTemplate.containers[].nodeSelector` and Tolerations have to be defined at `.spec.topology.<node-type>.podTemplate.containers[].tolerations.
 Here’s an example to set `Resources`, `NodeSelector` and `Tolerations` for master nodes.
 
    ```yaml
@@ -233,7 +233,7 @@ In this release, API version for Kafka has been changed to v1. The new API versi
 Here, `podTemplate` is a new field in the topology spec. Find out the new podTemplate spec [here](https://github.com/kmodules/offshoot-api/blob/master/api/v2/types.go#L44-#L279).
 The default container name for Kafka cluster is `kafka`.
 
-An Example yaml for topology cluster is given below,
+An example YAML for the topology cluster is given below:
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -291,9 +291,9 @@ spec:
 
 ## Kafka Rest Proxy
 
-In this release, `RestProxy` a new kafka component has been introduced. It is a RESTful interface to the Kafka cluster. It allows you to produce and consume messages from a Kafka cluster over HTTP. It facilitates microservices to communicate with Kafka without needing Kafka client libraries.
+In this release, RestProxy, a new Kafka component, has been introduced. It is a RESTful interface to the Kafka cluster. It allows you to produce and consume messages from a Kafka cluster over HTTP. It facilitates microservices to communicate with Kafka without needing Kafka client libraries.
 
-Let's assume you have a Kafka cluster `kafka-prod`, provisioned using KubeDB is deployed in a namespace called demo. You can now create RestProxy instance using the following YAML:
+Let's assume you have a Kafka cluster `kafka-prod`, provisioned using KubeDB, deployed in a namespace called demo. You can now create RestProxy instance using the following YAML:
 
 ```yaml
 apiVersion: kafka.kubedb.com/v1alpha1
@@ -309,7 +309,7 @@ spec:
     namespace: demo
   deletionPolicy: WipeOut
 ```
-***New Version support:*** `3.15.0`
+***New version support:*** `3.15.0`
 > **Note:** RestProxy uses `SchemaRegistryVersion` for distribution `Aiven` only.
 
 ## MariaDB
@@ -322,7 +322,7 @@ In this release, the API version for MariaDB has been updated to v1, now identif
 
 3. The fields `db.spec.podTemplate.spec.resources` and `db.spec.podTemplate.spec.containerSecurityContext` have been moved under the `mariadb` container in `db.spec.podTemplate.spec.containers[0]`. This `mariadb` container is the main database container for the MariaDB CRO.
 
-4. All other changes to the `db.spec.podTemplate` can be found at the beginning of this document.
+4. All other changes to `db.spec.podTemplate` can be found at the beginning of this document.
 
 A sample YAML configuration for MariaDB with the `kubedb/v1alpha2` API version and its corresponding `kubedb/v1` API version are provided below.
 ```yaml
@@ -553,9 +553,9 @@ spec:
 
 
 ### Add Dashboard
-This release introduces an enhanced monitoring feature for KubeDB-managed Memcached deployments by integrating Grafana dashboards. These dashboards provide comprehensive insights into various Memcached-specific metrics, statuses, as well as visual representations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of memcached, enabling more informed decision-making and efficient management of resources.
+This release introduces an enhanced monitoring feature for KubeDB-managed Memcached deployments by integrating Grafana dashboards. These dashboards provide comprehensive insights into various Memcached-specific metrics, statuses, as well as visual representations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of memcached, enabling more informed decision-making and efficient resource management.
 
-Have a look [here](https://github.com/appscode/grafana-dashboards/tree/master/memcached) for the step-by-step guide to use the monitoring feature in Memcached.
+Have a look [here](https://github.com/appscode/grafana-dashboards/tree/master/memcached) for a step-by-step guide to use the monitoring feature in Memcached.
 
 Here’s a preview of the Summary dashboard for Memcached:
 
@@ -582,7 +582,7 @@ spec:
 ```
 
 #### Update Version
-Update version allows to update the version of memcached. It can work in both ways: older version to new version and vice versa new version to older version. The necessary information for the update version must be provided in the `spec.updateVersion.targetVersion` field. An example YAML is provided below:
+Update version allows updating the version of Memcached. It can work in both ways: older version to new version and vice versa new version to older version. The necessary information for the update version must be provided in the `spec.updateVersion.targetVersion` field. An example YAML is provided below:
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: MemcachedOpsRequest
@@ -601,9 +601,9 @@ spec:
 
 ## Microsoft SQL Server
 
-This release introduces an enhanced monitoring feature for KubeDB-managed MicroSoft SQL Server deployments by integrating Grafana dashboard. The dashboard provide comprehensive insights into various SQL Server metrics, statuses, as well as visual representations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of their SQL Server clusters, enabling more informed decision-making and efficient management of resources.
+This release introduces an enhanced monitoring feature for KubeDB-managed MicroSoft SQL Server deployments by integrating Grafana dashboards. The dashboards provide comprehensive insights into various SQL Server metrics, statuses, as well as visual representations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of their SQL Server clusters, enabling more informed decision-making and efficient resource management.
 
-Have a look [here](https://github.com/appscode/grafana-dashboards/tree/master/mssqlserver) for the step-by-step guide to use the monitoring feature of MicroSoft SQL Server.
+Have a look [here](https://github.com/appscode/grafana-dashboards/tree/master/mssqlserver)  for a step-by-step guide on using the monitoring feature of Microsoft SQL Server.
 
 Here’s a preview of the Summary dashboard for SQL Server.
 
@@ -789,7 +789,7 @@ In this release, the API version for PerconaXtraDB has been updated to v1, now i
 
 2. The field `db.spec.terminationPolicy` has been renamed to `db.spec.deletionPolicy`.
 
-3. The fields `db.spec.podTemplate.spec.resources` and `db.spec.podTemplate.spec.containerSecurityContext` have been moved under the `perconaxtradb` container in `db.spec.podTemplate.spec.containers[0]`. This `mariadb` container is the main database container for the MariaDB CRO.
+3. The fields `db.spec.podTemplate.spec.resources` and `db.spec.podTemplate.spec.containerSecurityContext` have been moved under the `perconaxtradb` container in `db.spec.podTemplate.spec.containers[0]`. This `perconaxtradb` container is the main database container for the PerconaXtraDB CRO.
 
 4. All other changes to the `db.spec.podTemplate` can be found at the beginning of this document.
 
@@ -1026,7 +1026,7 @@ spec:
 
 #### AutoScaling
 
-Auto Scaling allows to automate the vertically scaling of pgbouncer pods.. It is only capable of scaling the pgbouncer container. It will automatically assign enough resources based on the resource uses of the pgbouncer container.
+Auto Scaling allows automating the vertical scaling of pgbouncer pods. It is only capable of scaling the pgbouncer container. It will automatically assign enough resources based on the resource uses of the pgbouncer container.
 
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
@@ -1079,7 +1079,7 @@ spec:
 ```
 
 #### Reconfigure TLS
-Reconfigure tls allows you to add, update, delete TLS to an existing pgpool. It also has necessary options to reconfigure the `sslMode` and `clientAuthMode` of  a pgpool. An example YAML is provided below:
+Reconfigure TLS allows you to add, update, or delete TLS for an existing pgpool. It also has necessary options to reconfigure the `sslMode` and `clientAuthMode` of  a pgpool. An example YAML is provided below:
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: PgpoolOpsRequest
@@ -1105,7 +1105,7 @@ spec:
           organizationalUnits:
             - client
 ```
-Reconfigure TLS also has these following fields, `spec.tls.rotateCertificates` and `spec.tls.remove`. Both of these fields can receive boolean values.
+Reconfigure TLS also has these following fields, `spec.tls.rotateCertificates` and `spec.tls.remove`. Both of these fields accept boolean values.
 
 #### Update Version
 Update version allows to update the version of pgpool. It can work in both ways: older version to new version and new version to older version. The necessary information for the update version must be provided in the `spec.updateVersion.targetVersion` field. An example YAML is provided below:
@@ -1322,7 +1322,7 @@ In this release, the API version for ProxySQL has been updated to v1, now identi
 
 2. **Termination Policy Renamed**: `db.spec.terminationPolicy` has been renamed to `db.spec.deletionPolicy`.
 
-3. **Pod Template Changes**: The fields `db.spec.podTemplate.spec.resources` and `db.spec.podTemplate.spec.containerSecurityContext` are now part of the main `proxysql` container within the `containers` array in `db.spec.podTemplate.spec.containers[0]`.
+3. **Pod Template Changes**: The fields `db.spec.podTemplate.spec.resources` and `db.spec.podTemplate.spec.containerSecurityContext` are now included within the main proxysql container in `db.spec.podTemplate.spec.containers[0]`.
 
 
 This configuration ensures that the ProxySQL resource definition aligns with the new `kubedb.com/v1` API version, incorporating all necessary changes.
@@ -1330,7 +1330,7 @@ This configuration ensures that the ProxySQL resource definition aligns with the
 
 ## RabbitMQ
 
-KubeDB managed RabbitMQ used to provide only pre-enabled protocol support `AMQP` for clusters. In this release, we are coming up with pre-enabled protocol plugin support including `MQTT`, `STOMP`, `WEB_MQTT`and  `WEB_STOMP`. If TLS is enabled then, these plugins also comes with corresponding secure ports.
+KubeDB managed RabbitMQ used to provide only pre-enabled protocol support `AMQP` for clusters. In this release, we are coming up with pre-enabled protocol plugin support including `MQTT`, `STOMP`, `WEB_MQTT` and  `WEB_STOMP`. If TLS is enabled then, these plugins also comes with corresponding secure ports.
 
 KubeDB managed RabbitMQ used to provide support for a ClusterIP service for management UI, amqp client etc. In this release, a separate ClusterIP type management UI service will be provisioned making the previous service to be used only for client connections (AMQP, MQTT, STOMP and web sockets). This will improve responsiveness on both management ui and client connectivity.
 
@@ -1339,7 +1339,7 @@ KubeDB managed RabbitMQ used to provide support for a ClusterIP service for mana
 
 In this release, the API version for Redis has been updated to v1. The new API version is `kubedb.com/v1`. Several changes have been introduced:
 
-1. The field `db.spec.cluster.master` has been changed to `db.spec.cluster.shards` and `db.spec.cluster.replicas` now mean the number of replicas (the master and slaves) of each shard which previously meant the number of slaves fo each master.
+1. The field `db.spec.cluster.master` has been changed to `db.spec.cluster.shards` and `db.spec.cluster.replicas` now mean the number of replicas (the master and slaves) of each shard which previously meant the number of slaves for each master.
 
 2. The fields `db.spec.coordinator.resources` and `db.spec.coordinator.securityContext` have been moved under the `rd-coordinator` container in `db.spec.podTemplate.spec.containers[]`. The `rd-coordinator` is a sidecar container that we run alongside our main database container for coordination purposes.
 
@@ -1813,8 +1813,6 @@ spec:
 
 ```
 
-
-## General Improvement
 
 ## What Next?
 
