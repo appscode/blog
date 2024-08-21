@@ -72,7 +72,7 @@ This release also includes features like:
   - MySQL: 8.4.2-oracle, 9.0.1-oracle
   - Pgpool: 4.4.8, 4.5.3
   - Postgres: 16.4-alpine, 16.4-bookworm, 15.8-alpine, 15.8-bookworm, 14.13-alpine, 14.13-bookworm
-  - Redis: 7.4.0-alpine, 7.4.0-bookworm
+  - Redis: 7.4.0
   - Singlestore: alma-8.7.10-95e2357384, alma-8.5.30-4f46ab16a5
 
 This post lists all the major changes done in this release since the last release. Find the detailed changelogs HERE . Now, you can proceed to the details of the features and updates included in the release.
