@@ -74,6 +74,7 @@
   }
 }
 .blog-content {
+  overflow: hidden;
   p {
     // text-align: justify;
     font-size: 1.125rem;
@@ -232,6 +233,8 @@
 
   table {
     margin-bottom: 20px;
+    display: block;
+    overflow-x: auto;
 
     td,
     th {
