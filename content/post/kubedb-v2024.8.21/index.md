@@ -178,8 +178,8 @@ Additionally, in this release, KubeDB has been enhanced to support integration o
 
 In this release, API version for Elasticsearch has been upgraded to `v1`. The new API version is [kubedb.com/v1](http://kubedb.com/v1).
 
-1. In `v1alpha2` API, resources for dedicated topology cluster resources have to be defined at `.spec.topology.<node-type>.resources`, NodeSelector labels have to be defined at `.spec.topology.<node-type>.nodeSelector` and Tolerations have to be defined at `.spec.topology.<node-type>.tolerations.
-Now, in v1 API version, resources have to be defined in `.spec.topology.<node-type>.podTemplate.containers[].resources`. NodeSelector labels have to be defined at `.spec.topology.<node-type>.podTemplate.containers[].nodeSelector` and Tolerations have to be defined at `.spec.topology.<node-type>.podTemplate.containers[].tolerations.
+1. In `v1alpha2` API, resources for dedicated topology cluster resources have to be defined at `.spec.topology.<node-type>.resources`, NodeSelector labels have to be defined at `.spec.topology.<node-type>.nodeSelector` and Tolerations have to be defined at `.spec.topology.<node-type>.tolerations`.
+Now, in v1 API version, resources have to be defined in `.spec.topology.<node-type>.podTemplate.containers[].resources`. NodeSelector labels have to be defined at `.spec.topology.<node-type>.podTemplate.containers[].nodeSelector` and Tolerations have to be defined at `.spec.topology.<node-type>.podTemplate.containers[].tolerations`.
 Here’s an example to set `Resources`, `NodeSelector` and `Tolerations` for master nodes.
 
    ```yaml
