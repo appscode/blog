@@ -75,6 +75,7 @@ This release also includes features like:
   - **Memcached**: 1.6.29-alpine
   - **MySQL**: 8.4.2-oracle, 9.0.1-oracle
   - **OpenSearch**: 2.15.0
+  - **PgBouncer**: 1.23.1
   - **Pgpool**: 4.4.8, 4.5.3
   - **Postgres**: 16.4-alpine, 16.4-bookworm, 15.8-alpine, 15.8-bookworm, 14.13-alpine, 14.13-bookworm
   - **Redis**: 7.4.0
