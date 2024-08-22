@@ -651,7 +651,6 @@ In this release, the API version for MongoDB has been updated to v1, now identif
 - The fields `db.spec.podTemplate.spec.resources` and `db.spec.podTemplate.spec.containerSecurityContext` have been moved under the `mongodb` container in `db.spec.podTemplate.spec.containers[0]`. This `mongodb` container is the main database container for the MongoDB CRO.
 
 - All other changes to the `db.spec.podTemplate` can be found at the beginning of this document.
-- TLS enabled MongoDB backup and restore for major versions 5,6 and 7 was not working properly due to a permission issue. This issue has been fixed in this release.
 
 Below is a sample YAML configuration for MySQL with the `kubedb/v1alpha2` API version and its corresponding configuration for the `kubedb/v1` API version.
 
@@ -748,7 +747,7 @@ spec:
   podTemplate:
     spec:
       containers:
-        name: mongodb
+      - name: mongodb
         resources:
           limits:
             memory: 1Gi
@@ -819,8 +818,9 @@ spec:
 
 
 ### Bug Fixes
-- MongoDB backup and restore permission bug fixes for major version 5, 6 and 7.
+- TLS enabled MongoDB backup and restore for major versions 5,6 and 7 was not working properly due to a permission issue. This issue has been fixed in this release.
 - Fixed bug MongoDB restore stuck when `db.spec.init.waitForInitialRestore: true`.
+
 ## MySQL
 
 In this release, the API version for MySQL has been updated to v1, now identified as `kubedb.com/v1`. Several changes have been introduced:
