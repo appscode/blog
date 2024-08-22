@@ -63,7 +63,7 @@ We are excited to announce the release of KubeDB **v2024.8.21**! This release in
 This release also includes features like:
 
 - Improved operator logging by removing redundant logs and adding missing ones.
-- Support for `Druid` deployment with TLS-secured `MySQL` and `PostgreSQL` cluster as metadata storages.
+- Support for `Druid` deployment with TLS-secured `MySQL` and `PostgreSQL` cluster as metadata storage.
 - RabbitMQ pre-enabled protocol plugin support including `MQTT`, `STOMP`, `WEB_MQTT` and  `WEB_STOMP`.
 - `Kafka RestProxy`, which provides a RESTful interface to an Apache Kafka cluster, making it easy to produce and consume messages.
 - **Grafana Dashboard** support for `Memcached` and `Microsoft SQL Server`.
