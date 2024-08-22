@@ -61,6 +61,8 @@ We are excited to announce the release of KubeDB **v2024.8.21**! This release in
 - Redis
 - Redis Sentinel
 
+**Additionally, all of our supported databases now use [petsets.apps.k8s.appscode.com](https://appscode.com/blog/post/kubedb-v2024.03.16/#petset-aka-statefulset-20-) instead of `statefulsets`.**
+
 This release also includes features like:
 
 - Improved operator logging by removing redundant logs and adding missing ones.
@@ -1522,7 +1524,8 @@ Now same yaml in kubedb/v1 apiversion
 - PostgresArchiver selection wasn't working. Fixed in this release.
 - Fixed bug Postgres restore stuck when `db.spec.init.waitForInitialRestore: true`.
 - Postgres reconfigure tls ops-request (change issuer, remove tls) bug has been fixed.
-
+- Postgres archiver backup configuration not working due to AppBinding, has been fixed.
+- `Postgres metadata.resourceVersion continuously changing` bug has been fixed.
 ## ProxySQL
 
 In this release, the API version for ProxySQL has been updated to v1, now identified as `kubedb.com/v1`. Several changes have been introduced:
