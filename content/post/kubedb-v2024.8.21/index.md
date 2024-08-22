@@ -42,9 +42,6 @@ tags:
 - zookeeper
 ---
 
-> **Note**: **If you are a KubeDB managed PostgreSQL user, then first you have to upgrade your KubeDB version
-to v2024.6.4 in order to upgrade your KubeDB to this latest release. If you are already in kubedb-v2024.6.4, then you have to update your kubedb-provisioner deployment image with `ghcr.io/kubedb/kubedb-provisioner:v0.46.2`.**
-
 We are excited to announce the release of KubeDB **v2024.8.21**! This release introduces support for the **kubedb.com/v1** APIVersion across the following KubeDB-supported databases:
 
 - Elasticsearch
@@ -70,7 +67,7 @@ This release also includes features like:
 - RabbitMQ pre-enabled protocol plugin support including `MQTT`, `STOMP`, `WEB_MQTT` and  `WEB_STOMP`.
 - `Kafka RestProxy`, which provides a RESTful interface to an Apache Kafka cluster, making it easy to produce and consume messages.
 - **Grafana Dashboard** support for `Memcached` and `Microsoft SQL Server`.
-- More Ops Request support for `Memcached`, `PGBouncer`, `Pgpool`, `Singlestore` and `Solr`.
+- More **OpsRequest** support for `Memcached`, `PGBouncer`, `Pgpool`, `Singlestore` and `Solr`.
 - **AutoScaling** support for `PGBouncer`.
 - List of New supported catalog versions:
   - **Druid**: 30.0.0
@@ -87,11 +84,15 @@ This release also includes features like:
   - **Singlestore**: alma-8.7.10-95e2357384, alma-8.5.30-4f46ab16a5
   - **Solr**: 9.6.1
 
-This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG) . Now, you can proceed to the details of the features and updates included in the release.
+This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.8.21/README.md) . Now, you can proceed to the details of the features and updates included in the release.
+
+> **Note**: **If you are a KubeDB managed PostgreSQL user, then first you have to upgrade your KubeDB version
+to v2024.6.4 in order to upgrade your KubeDB to this latest release. If you are already in kubedb-v2024.6.4, then you have to update your kubedb-provisioner deployment image with `ghcr.io/kubedb/kubedb-provisioner:v0.46.2`.**
+
 
 ### Key Changes
 
-In previous releases, KubeDB utilized `kubedb.com/v1alpha2` APIVersion for the databases mentioned above, with the `db.spec.podTemplateSpec` sourced from [kmodules.xyz/offshoot-api/api/v1](https://pkg.go.dev/kmodules.xyz/offshoot-api@v0.30.0/api/v1#PodTemplateSpec). As we have introduced kubedb.com/v1 APIVersion in this release, the `db.spec.podTemplateSpec` now comes from [kmodules.xyz/offshoot-api/api/v2](https://pkg.go.dev/kmodules.xyz/offshoot-api@v0.30.0/api/v2#PodTemplateSpec). The changes introduced in these two PodSpecs are listed below.
+In previous releases, KubeDB utilized `kubedb.com/v1alpha2` APIVersion for the databases mentioned above, with the `db.spec.podTemplateSpec` sourced from [kmodules.xyz/offshoot-api/api/v1](https://pkg.go.dev/kmodules.xyz/offshoot-api@v0.30.0/api/v1#PodTemplateSpec). As we have introduced `kubedb.com/v1` APIVersion in this release, the `db.spec.podTemplateSpec` now sources from [kmodules.xyz/offshoot-api/api/v2](https://pkg.go.dev/kmodules.xyz/offshoot-api@v0.30.0/api/v2#PodTemplateSpec). The changes introduced in these two PodSpecs are listed below.
 
 
 
@@ -144,6 +145,7 @@ $ kubectl get postgres.v1.kubedb.com -n demo
 NAME          VERSION   STATUS   AGE
 ha-postgres   16.1      Ready    49s
 ```
+However, `kubectl get pg -n demo` will get you `kubedb.com/v1` postgres object by default.
 Similarly to get a `v1alhpa2` postgres db object,
 ```bash
 $ kubectl get postgres.v1alpha2.kubedb.com -n demo
@@ -205,7 +207,7 @@ Additionally, in this release, KubeDB has been enhanced to support integration o
 
 ## Elasticsearch
 
-In this release, API version for Elasticsearch has been upgraded to `v1`. The new API version is [kubedb.com/v1](http://kubedb.com/v1).
+In this release, APIVersion for Elasticsearch has been upgraded to `v1`. The new API version is [kubedb.com/v1](http://kubedb.com/v1).
 
 1. In `v1alpha2` API, resources for dedicated topology cluster resources have to be defined at `.spec.topology.<node-type>.resources`, NodeSelector labels have to be defined at `.spec.topology.<node-type>.nodeSelector` and Tolerations have to be defined at `.spec.topology.<node-type>.tolerations`.
 Now, in v1 API version, resources have to be defined in `.spec.topology.<node-type>.podTemplate.containers[].resources`. NodeSelector labels have to be defined at `.spec.topology.<node-type>.podTemplate.containers[].nodeSelector` and Tolerations have to be defined at `.spec.topology.<node-type>.podTemplate.containers[].tolerations`.
@@ -1268,7 +1270,7 @@ spec:
 
 
 ### Add more ops-request support: Pgpool Ops Request
-In this release, we have added more ops-request  support for Pgpool. Previously we had Restart, Vertical Scaling, and Reconfigure type ops-request. Now we have added Horizontal Scaling, Reconfigure TLS, Version Update type ops-request.
+In this release, we have added more ops-request  support for Pgpool. Previously we had `Restart`, `Vertical Scaling`, and `Reconfigure` type ops-request. Now we have added `Horizontal Scaling`, `Reconfigure TLS`, `Version Update` type ops-request.
 
 
 #### Horizontal Scaling
@@ -1924,14 +1926,14 @@ spec:
 
 
 
-## SingleStore
+## Singlestore
 
-Expanded Ops-Request Support: SingleStore Ops Request
-In this release, we've expanded the ops-request support for SingleStore. Previously, ops-requests included Restart, Vertical Scaling, and Reconfigure types. Now, we've introduced additional ops-requests for Horizontal Scaling, TLS Reconfiguration, and Version Update.
+Expanded `Ops-Request` Support: Singlestore OpsRequest
+In this release, we've expanded the ops-request support for Singlestore. Previously, ops-requests included `Restart`, `Vertical Scaling`, and `Reconfigure` types. Now, we've introduced additional ops-requests for `Horizontal Scaling`, `TLS Reconfiguration`, and `Version Update`.
 
 #### Horizontal Scaling
 
-Horizontal Scaling enables you to adjust the number of SingleStore pods by scaling horizontally, either increasing or decreasing the number of replicas. The required details for horizontal scaling should be provided in the spec.horizontalScaling.node field. Below is an example YAML configuration:
+Horizontal Scaling enables you to adjust the number of Singlestore pods by scaling horizontally, either increasing or decreasing the number of replicas. The required details for horizontal scaling should be provided in the spec.horizontalScaling.node field. Below is an example YAML configuration:
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -1950,7 +1952,7 @@ spec:
 
 #### TLS Reconfiguration
 
-TLS Reconfiguration allows you to add, update, or remove TLS settings for an existing SingleStore deployment. Here's an example YAML configuration:
+TLS Reconfiguration allows you to add, update, or remove TLS settings for an existing Singlestore deployment. Here's an example YAML configuration:
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -1977,7 +1979,7 @@ spec:
 ```
 #### Version Update
 
-The Version Update feature allows you to change the version of SingleStore. You can upgrade to a newer version or revert to a previous one. The necessary version details should be provided in the spec.updateVersion.targetVersion field. Here's an example YAML configuration:
+The Version Update feature allows you to change the version of Singlestore. You can upgrade to a newer version or revert to a previous one. The necessary version details should be provided in the spec.updateVersion.targetVersion field. Here's an example YAML configuration:
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -1995,7 +1997,7 @@ spec:
 
 ## Solr
 
-We have introduced some new features for solr in this release. We have added opsrequest like upgrade version, vertical scaling, volume expansion and reconfiguration in this release. Besidde, now we can configure multiple solr cluster using only one zookeeper using chroot feature of solr.
+We have introduced some new features for solr in this release. We have added `OpsRequest` like `versionUpgrade`, `vertical scaling`, `volume expansion` and `reconfiguration` in this release. Besides, now we can configure multiple solr cluster using only one zookeeper using `chroot` feature of solr.
 #### Vertical Scaling
 
 ```yaml
