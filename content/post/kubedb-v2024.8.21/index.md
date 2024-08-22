@@ -63,13 +63,13 @@ We are excited to announce the release of KubeDB **v2024.8.21**! This release in
 
 This release also includes features like:
 
-- Improved operator logging by removing redundant logs and adding missing ones
-- Support for `Druid` deployment with TLS-secured `MySQL` and `PostgreSQL` cluster as metadata storages
-- RabbitMQ pre-enabled protocol plugin support including `MQTT`, `STOMP`, `WEB_MQTT` and  `WEB_STOMP`
-- `Kafka RestProxy`, which provides a RESTful interface to an Apache Kafka cluster, making it easy to produce and consume messages
-- **Grafana Dashboard** support for `Memcached` and `Microsoft SQL Server`
-- More Ops Request support for `Memcached`, `PGBouncer`, `Pgpool`, `Singlestore` and `Solr`
-- **AutoScaling** support for `PGBouncer`
+- Improved operator logging by removing redundant logs and adding missing ones.
+- Support for `Druid` deployment with TLS-secured `MySQL` and `PostgreSQL` cluster as metadata storages.
+- RabbitMQ pre-enabled protocol plugin support including `MQTT`, `STOMP`, `WEB_MQTT` and  `WEB_STOMP`.
+- `Kafka RestProxy`, which provides a RESTful interface to an Apache Kafka cluster, making it easy to produce and consume messages.
+- **Grafana Dashboard** support for `Memcached` and `Microsoft SQL Server`.
+- More Ops Request support for `Memcached`, `PGBouncer`, `Pgpool`, `Singlestore` and `Solr`.
+- **AutoScaling** support for `PGBouncer`.
 - List of New supported catalog versions:
   - **Druid**: 30.0.0
   - **Elasticsearch**: 8.15.0
@@ -166,7 +166,7 @@ metadata:
   name: druid-quickstart
   namespace: demo
 spec:
-  version: 28.0.1
+  version: 30.0.0
   deepStorage:
     type: s3
     configSecret:
@@ -184,7 +184,7 @@ metadata:
   name: druid-quickstart
   namespace: demo
 spec:
-  version: 28.0.1
+  version: 30.0.0
   deepStorage:
     type: s3
     configSecret:
@@ -197,6 +197,9 @@ spec:
 ```
 #### Deploying Druid with TLS secure MySQL and PostgreSQL
 Additionally, in this release, KubeDB has been enhanced to support integration of `Druid` with TLS-secured `MySQL` and `PostgreSQL` clusters.
+
+### Bug Fixes
+- Add condition to skip write check when write check is disabled.
 
 ## Elasticsearch
 
@@ -497,6 +500,10 @@ spec:
   version: 11.1.3
 ```
 
+### Bug fixes
+- MariaDB archiver backup configuration not working due to AppBinding, has been fixed.
+- MariaDB Archiver Restore not working because of `lost+found` directory presence at data directory,has been fixed.
+- Fixed bug MariaDB restore stuck when `db.spec.init.waitForInitialRestore: true`.
 ## Memcached
 
 ### V1 conversion:
@@ -633,10 +640,185 @@ Here’s a preview of the Summary dashboard for SQL Server.
 ![MSSQLServer Monitoring](mssqlserver-monitoring.png)
 
 ## MongoDB
-Along with API version update to v1, These changes have been made to MongoDB:
-- Update podTemplate for every mode of MongoDB to v2. You can find details spec for podTemplate v2 [here](https://pkg.go.dev/kmodules.xyz/offshoot-api@v0.30.0/api/v2#PodTemplateSpec).
+In this release, the API version for MongoDB has been updated to v1, now identified as `kubedb.com/v1`. Several changes have been introduced:
+
+- The fields `db.spec.coordinator.resources` and `db.spec.coordinator.securityContext` have been moved under the `replication-mood-detector` container in `db.spec.podTemplate.spec.containers`. The `replication-mood-detector` is a sidecar container that we run alongside our main database container to label the primary and secondary pods.
+
+- The field `db.spec.terminationPolicy` has been renamed to `db.spec.deletionPolicy`.
+
+- The fields `db.spec.podTemplate.spec.resources` and `db.spec.podTemplate.spec.containerSecurityContext` have been moved under the `mongodb` container in `db.spec.podTemplate.spec.containers[0]`. This `mongodb` container is the main database container for the MongoDB CRO.
+
+- All other changes to the `db.spec.podTemplate` can be found at the beginning of this document.
 - TLS enabled MongoDB backup and restore for major versions 5,6 and 7 was not working properly due to a permission issue. This issue has been fixed in this release.
 
+Below is a sample YAML configuration for MySQL with the `kubedb/v1alpha2` API version and its corresponding configuration for the `kubedb/v1` API version.
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: MongoDB
+metadata:
+  name: mg-repl
+  namespace: demo
+spec:
+  coordinator:
+    resources:
+      requests:
+        cpu: 300m
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsGroup: 999
+      runAsNonRoot: true
+      runAsUser: 999
+      seccompProfile:
+        type: RuntimeDefault
+  podTemplate:
+    spec:
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        runAsGroup: 999
+        runAsNonRoot: true
+        runAsUser: 999
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: copy-config
+          resources:
+            limits:
+              memory: 512Mi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 999
+            runAsNonRoot: true
+            runAsUser: 999
+            seccompProfile:
+              type: RuntimeDefault
+      podPlacementPolicy:
+        name: default
+      resources:
+        limits:
+          memory: 1Gi
+        requests:
+          cpu: 500m
+          memory: 1Gi
+      securityContext:
+        fsGroup: 999
+  replicas: 3
+  replicaSet: 
+    name: "replicaset"
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  storageType: Durable
+  terminationPolicy: WipeOut
+  version: "6.0.12"
+```
+
+Now same yaml in kubedb/v1 apiversion,
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: MongoDB
+metadata:
+  name: mg-repl
+  namespace: demo
+spec:
+  allowedSchemas:
+    namespaces:
+      from: Same
+  authSecret:
+    name: mg-repl-auth
+  deletionPolicy: WipeOut
+  podTemplate:
+    spec:
+      containers:
+        name: mongodb
+        resources:
+          limits:
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 999
+          runAsNonRoot: true
+          runAsUser: 999
+          seccompProfile:
+            type: RuntimeDefault
+      - name: replication-mode-detector
+        resources:
+          requests:
+            cpu: 300m
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 999
+          runAsNonRoot: true
+          runAsUser: 999
+          seccompProfile:
+            type: RuntimeDefault
+      initContainers:
+      - name: copy-config
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 512Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 999
+          runAsNonRoot: true
+          runAsUser: 999
+          seccompProfile:
+            type: RuntimeDefault
+      podPlacementPolicy:
+        name: default
+      securityContext:
+        fsGroup: 999
+      serviceAccountName: mg-repl
+  replicaSet:
+    name: replicaset
+  replicas: 3
+  sslMode: disabled
+  storage:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  storageEngine: wiredTiger
+  storageType: Durable
+  version: 6.0.12
+```
+
+
+### Bug Fixes
+- MongoDB backup and restore permission bug fixes for major version 5, 6 and 7.
+- Fixed bug MongoDB restore stuck when `db.spec.init.waitForInitialRestore: true`.
 ## MySQL
 
 In this release, the API version for MySQL has been updated to v1, now identified as `kubedb.com/v1`. Several changes have been introduced:
@@ -965,6 +1147,8 @@ spec:
   version: 8.0.31
 ```
 
+### Bug Fixes
+- Fixed bug PerconXtraDB stuck on provisioning. PerconaXtraDB `runAsUser` field updated. New PerconaXtraDB `runAsUser` is `1001`.
 
 ## PgBouncer
 
@@ -1334,6 +1518,11 @@ Now same yaml in kubedb/v1 apiversion
       version: "13.13"
 ```
 
+### Bug Fixes
+- PostgresArchiver selection wasn't working. Fixed in this release.
+- Fixed bug Postgres restore stuck when `db.spec.init.waitForInitialRestore: true`.
+- Postgres reconfigure tls ops-request (change issuer, remove tls) bug has been fixed.
+
 ## ProxySQL
 
 In this release, the API version for ProxySQL has been updated to v1, now identified as `kubedb.com/v1`. Several changes have been introduced:
@@ -1350,6 +1539,79 @@ In this release, the API version for ProxySQL has been updated to v1, now identi
 
 This configuration ensures that the ProxySQL resource definition aligns with the new `kubedb.com/v1` API version, incorporating all necessary changes.
 
+
+A sample yaml for `kubedb.com/v1alpha2`:
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: ProxySQL
+metadata:
+  name: proxy-server
+  namespace: demo
+spec:
+  version: "2.3.2-debian"
+  replicas: 3
+  podTemplate:
+    spec:
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        runAsGroup: 999
+        runAsNonRoot: true
+        runAsUser: 999
+        seccompProfile:
+          type: RuntimeDefault
+      podPlacementPolicy:
+        name: default
+      resources:
+        limits:
+          memory: 1Gi
+        requests:
+          cpu: 666m
+          memory: 1Gi
+      securityContext:
+        fsGroup: 999
+  syncUsers: true
+  backend:
+    name: mysql-server
+  terminationPolicy: WipeOut
+```
+
+A sample yaml for `kubedb.com/v1`:
+```yaml
+apiVersion: kubedb.com/v1
+kind: ProxySQL
+metadata:
+  name: proxy-server
+  namespace: demo
+spec:
+  version: "2.3.2-debian"
+  replicas: 3
+  podTemplate:
+    spec:
+      containers:
+        - name: proxysql
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 250m
+              memory: 64Mi
+      securityContext:
+        runAsGroup: 999
+        runAsNonRoot: true
+        runAsUser: 999
+        seccompProfile:
+          type: RuntimeDefault
+      podPlacementPolicy:
+        name: default
+  syncUsers: true
+  backend:
+    name: mysql-server
+  deletionPolicy: WipeOut
+```
 
 ## RabbitMQ
 
@@ -1670,7 +1932,7 @@ Horizontal Scaling enables you to adjust the number of SingleStore pods by scali
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
-kind: SingleStoreOpsRequest
+kind: SinglestoreOpsRequest
 metadata:
   name: singlestore-horizontal-scale
   namespace: demo
@@ -1716,7 +1978,7 @@ The Version Update feature allows you to change the version of SingleStore. You 
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
-kind: SingleStoreOpsRequest
+kind: SinglestoreOpsRequest
 metadata:
   name: singlestore-version-update
   namespace: demo
@@ -1810,6 +2072,23 @@ spec:
 
 #### Reconfigure
 
+With ConfigSecret:
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: SolrOpsRequest
+metadata:
+  name: myops-reconfigure-config
+  namespace: demo
+spec:
+  apply: IfReady
+  configuration:
+    configSecret:
+      name: config-secret
+  databaseRef:
+    name: solr-combined
+  type: Reconfigure
+```
+With ApplyConfig:
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: SolrOpsRequest
@@ -1828,8 +2107,6 @@ spec:
           <str name="s3.endpoint">http://s3proxy-s3.demo.svc:80</str>
         </repository>
         </backup>
-    configSecret:
-       name: config-secret
   databaseRef:
     name: solr-combined
   type: Reconfigure
