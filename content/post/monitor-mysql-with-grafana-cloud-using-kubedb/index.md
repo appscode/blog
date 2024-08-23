@@ -202,7 +202,7 @@ namespace/monitoring created
 ### Install Prometheus
 
 Now, we'll install Prometheus, which will collect and forward metrics from your application to Grafana Cloud. We’ll accomplish this using a series of YAML files. These files include configurations for Prometheus such as `ConfigMap`, `RBAC`, `Service`, and `Deployment`. Get these YAML files from the [GitHub repository](https://github.com/kubedb/MySQL-Monitoring-Builtin/). 
-In the `prom-configmap.yaml` file, replace the `data.prometheus.yml.remote_write` section with the `remote_write` configuration you obtained from Grafana Cloud. 
+> Note: In the `prom-configmap.yaml` file, replace the `data.prometheus.yml.remote_write` section with the `remote_write` configuration you obtained from Grafana Cloud. 
 
 Apply the YAML files with the following commands:
 
@@ -226,7 +226,6 @@ To verify that Prometheus is running correctly, use the following command:
 
 ```bash
 $ kubectl get all -n monitoring
-
 NAME                              READY   STATUS    RESTARTS   AGE
 pod/prometheus-66c899bbd4-nzlnd   1/1     Running   0          70s
 
@@ -311,7 +310,7 @@ In this yaml,
 * `spec.version` field specifies the version of MySQL. Here, we are using MySQL `version 8.0.36`. You can list the KubeDB supported versions of MySQL by running `$ kubectl get mysqlversions` command.
 * `spec.storage` specifies PVC spec that will be dynamically allocated to store data for this database. This storage spec will be passed to the StatefulSet created by KubeDB operator to run database pods. You can specify any StorageClass available in your cluster with appropriate resource requests.
 * `spec.monitor.agent: prometheus.io/builtin` indicates that we are going to monitor this server using Prometheus.
-* And the `spec.deletionPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these checkout [Deletion Policy](https://kubedb.com/docs/latest/guides/mysql/concepts/database/#specdeletionpolicy).
+* `spec.deletionPolicy` field is *Wipeout* means that the database will be deleted without restrictions. It can also be "Halt", "Delete" and "DoNotTerminate". Learn More about these checkout [Deletion Policy](https://kubedb.com/docs/latest/guides/mysql/concepts/database/#specdeletionpolicy).
 
 Verify that the MySQL cluster and associated resources are created and running:
 
@@ -345,7 +344,6 @@ mysql-cluster     8.0.36    Ready    3m28s
 ### Visualize MySQL Metrics in Grafana Cloud
 
 With your MySQL cluster deployed and metrics being collected, now you can visualize the data in Grafana Cloud.
-
 Go back to the Grafana Cloud Portal. In the `Grafana` section, click on the `Launch` button to open the Grafana Dashboard homepage.
 
 ![Grafana](grafana.png)
