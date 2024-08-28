@@ -187,7 +187,7 @@ namespace/demo created
 
 One of the external dependency of Druid is Deep Storage where the segments are stored. It is a storage mechanism that Apache Druid does not provide. **Amazon S3**, **Google Cloud Storage**, or **Azure Blob Storage**, **S3-compatible storage** (like **Minio**), or **HDFS** are generally convenient options for Deep Storage.
 
-In this tutorial, we will run a `minio-server` as deep storage in our local `kind` cluster using `minio-operator` and create a bucket named `druid` in it, which the deployed druid database will use.
+In this tutorial, we will run a `minio-server` as deep storage in our cluster using `minio-operator` and create a bucket named `druid` in it, which the deployed druid database will use.
 
 
 ```bash
