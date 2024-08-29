@@ -10,7 +10,7 @@ tags:
 - disaster-recovery
 - kubedump
 - kubernetes
-- postgres
+- postgresql
 - mongodb
 - restore
 - stash
