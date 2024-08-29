@@ -40,7 +40,9 @@ $ kubectl stash check <repository-name> [flags]
 
 ### Improvements & Bug fixes
 
-- We've improved the postBackup hook execution in the Job model for some scenario such as deadline exceed, backup disruption, etc. If the postBackup hook doesn’t run (e.g., because of a deadline exceed, backup disruption, etc.), the Stash operator will handle it instead of the backup job. However, if the preBackup hook is configured but doesn’t execute or fails the postBackup hook will not be run.
+- We've improved the postBackup hook execution in the Job model for certain scenarios. If the postBackup hook doesn’t run (e.g., because of a deadline exceeded, backup disruption, etc.), the Stash operator will handle it instead of the backup job. However, if the preBackup hook is configured but doesn’t execute or fails the postBackup hook will not be run.
+
+- We've fixed a bug where the backup job could remain active even after the deadline was exceeded (based on the Timeout) with the BackupSession marked as failed. Now, Stash will suspend the backup job when the deadline is exceeded.
 
 - We've fixed a bug that caused the BackupSession to remain in the `running` phase even if the backup didn't complete within the deadline or the backup container failed with an error (for job model). 
 
