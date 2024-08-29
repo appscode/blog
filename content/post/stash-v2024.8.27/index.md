@@ -46,5 +46,10 @@ $ kubectl stash rebuild-index <repository-name> [flags]
 $ kubectl stash rebuild-index myr-repo --namespace=demo
 ```
 
-### Bug fixes
+### Improvements & bug fixes
+
+#### MongoDB Addon
+
+- We have replaced the `--host` option with a `URI` format connection string to enhance external database backup and restore support. This fix allows users to perform backup and restore operations on any externally hosted MongoDB instance, such as MongoDB Atlas on AWS or GCP, MongoDB on DigitalOcean, or any self-hosted MongoDB.
+
 
