@@ -38,21 +38,9 @@ $ kubectl stash check <repository-name> [flags]
  $ kubectl stash check myr-repo --namespace=demo
 ```
 
-**Create New Index**
+### Improvements & Bug fixes
 
-`kubectl stash rebuild-index` command helps you rebuild the index of your restic repository. In cases where the repository index is damaged, making backups or restores impossible, the rebuild-index command can recreate the index based on the existing pack files in the repository, restoring functionality. For more details on how the rebuild-index command works, refer to the [restic documentation](https://restic.readthedocs.io/en/v0.13.1/manual_rest.html).
-
-**Format:**
-```bash
-$ kubectl stash rebuild-index <repository-name> [flags]
-```
-
-**Example:**
-```bash
-$ kubectl stash rebuild-index myr-repo --namespace=demo
-```
-
-### Bug fixes
+- We've improved the postBackup hook execution in the Job model for some scenario such as deadline exceed, backup disruption, etc. If the postBackup hook doesn’t run (e.g., because of a deadline exceed, backup disruption, etc.), the Stash operator will handle it instead of the backup job. However, if the preBackup hook is configured but doesn’t execute or fails the postBackup hook will not be run.
 
 - We've fixed a bug that caused the BackupSession to remain in the `running` phase even if the backup didn't complete within the deadline or the backup container failed with an error (for job model). 
 
