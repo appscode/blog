@@ -24,7 +24,7 @@ In this tutorial we will deploy and manage Pgpool in Azure Kubernetes Service (A
 
 1) Install KubeDB
 2) Deploy PostgreSQL Cluster
-3) Deploy Pgpool Cluster
+3) Deploy Pgpool
 4) Read/Write through Pgpool
 
 ### Get Cluster ID
@@ -243,7 +243,7 @@ In this yaml,
 Let’s check if the server is ready to use,
 
 ```bash
-$ kubectl get postgres -n demo postgres
+$ kubectl get postgres -n demo postgres-cluster
 NAME               VERSION   STATUS   AGE
 postgres-cluster   16.1      Ready    2m49s
 ```
