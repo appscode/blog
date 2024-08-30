@@ -480,9 +480,9 @@ After completing these steps, you should see the Pgpool Grafana Dashboards in yo
 > Congratulations! You have successfully set up Pgpool monitoring with Grafana Dashboards using KubeDB.
 
 
-We have made an in depth tutorial on Seamlessly Provision and Manage Pgpool on Kubernetes Using KubeDB. You can have a look into the video below:
+We have made an in depth tutorial on Monitor KubeDB Managed Pgpool Using Prometheus & Grafana. You can have a look into the video below:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/PLEyCstG3X4?si=HcRbA8aJax0t2oDH" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-0_2I5dR6CM?si=8U5z6WaCak9BtSpG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Support
 
