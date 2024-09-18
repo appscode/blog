@@ -248,7 +248,7 @@ NAME                    TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)          
 rabbitmq-cluster        ClusterIP   10.96.92.2   <none>        15672/TCP,5672/TCP   4m52s
 rabbitmq-cluster-pods   ClusterIP   None         <none>        4369/TCP,25672/TCP   4m52s
 ```
-Here, we are going to use `rabbitmq-cluster` Service to connect with the database. Now, let’s port-forward the `rabbitmq-cluster` Service to the port `9200` to local machine:
+Here, we are going to use `rabbitmq-cluster` Service to connect with the database. Now, let’s port-forward the `rabbitmq-cluster` Service to the port `15672` to local machine:
 
 ```bash
 $ kubectl port-forward -n demo svc/rabbitmq-cluster 15672
