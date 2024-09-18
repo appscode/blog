@@ -87,14 +87,14 @@ Let's verify the installation:
 
 ```bash
 $ kubectl get pods --all-namespaces -l "app.kubernetes.io/instance=kubedb"
-NAMESPACE   NAME                                            READY   STATUS    RESTARTS   AGE
-kubedb      kubedb-kubedb-autoscaler-6b589c5f8d-hrnkg       1/1     Running   0          3m21s
-kubedb      kubedb-kubedb-ops-manager-5f54bcfc7c-xp4lh      1/1     Running   0          3m21s
-kubedb      kubedb-kubedb-provisioner-6965bd9964-hpgx9      1/1     Running   0          3m21s
-kubedb      kubedb-kubedb-webhook-server-79648cbdc5-9fh9b   1/1     Running   0          3m21s
-kubedb      kubedb-petset-operator-77b6b9897f-b9vn2         1/1     Running   0          3m21s
-kubedb      kubedb-petset-webhook-server-766dcf476c-whpr5   2/2     Running   0          3m21s
-kubedb      kubedb-sidekick-c898cff4c-wkxft                 1/1     Running   0          3m21s
+NAMESPACE   NAME                                            READY   STATUS    RESTARTS      AGE
+kubedb      kubedb-kubedb-autoscaler-c5cdb7cfb-c5dqc        1/1     Running   0             2m10s
+kubedb      kubedb-kubedb-ops-manager-8fdf4d9f7-lm6cf       1/1     Running   0             2m11s
+kubedb      kubedb-kubedb-provisioner-7fd88564c7-lsvrt      1/1     Running   2             2m11s
+kubedb      kubedb-kubedb-webhook-server-5d78fd664c-fxbxj   1/1     Running   0             2m11s
+kubedb      kubedb-petset-operator-77b6b9897f-x8h6t         1/1     Running   0             2m12s
+kubedb      kubedb-petset-webhook-server-7545b5cfbc-948z2   2/2     Running   0             2m11s
+kubedb      kubedb-sidekick-c898cff4c-z66sm                 1/1     Running   0             2m12s
 ```
 
 We can list the CRD Groups that have been registered by the operator by running the following command:
@@ -220,23 +220,27 @@ Once these are handled correctly and the RabbitMQ object is deployed, you will s
 ```bash
 $ kubectl get all -n demo
 NAME                     READY   STATUS    RESTARTS   AGE
-pod/rabbitmq-cluster-0   1/1     Running   0          3m45s
+pod/rabbitmq-cluster-0   1/1     Running   0          3m49s
 pod/rabbitmq-cluster-1   1/1     Running   0          3m13s
-pod/rabbitmq-cluster-2   1/1     Running   0          3m35s
+pod/rabbitmq-cluster-2   1/1     Running   0          2m43s
 
-NAME                            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)              AGE
-service/rabbitmq-cluster        ClusterIP   10.128.71.135   <none>        15672/TCP,5672/TCP   3m47s
-service/rabbitmq-cluster-pods   ClusterIP   None            <none>        4369/TCP,25672/TCP   3m47s
+NAME                                 TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                           AGE
+service/rabbitmq-cluster             ClusterIP   10.128.167.88    <none>        5672/TCP,1883/TCP,61613/TCP,15675/TCP,15674/TCP   3m51s
+service/rabbitmq-cluster-dashboard   ClusterIP   10.128.245.103   <none>        15672/TCP                                         3m51s
+service/rabbitmq-cluster-pods        ClusterIP   None             <none>        4369/TCP,25672/TCP                                3m51s
 
 NAME                                                  TYPE                  VERSION   AGE
-appbinding.appcatalog.appscode.com/rabbitmq-cluster   kubedb.com/rabbitmq   3.12.12   3m46s
+appbinding.appcatalog.appscode.com/rabbitmq-cluster   kubedb.com/rabbitmq   3.12.12   3m50s
+
+NAME                                   TYPE                  VERSION   STATUS   AGE
+rabbitmq.kubedb.com/rabbitmq-cluster   kubedb.com/v1alpha2   3.12.12   Ready    3m52s
 ```
 Let’s check if the `rabbitmq-cluster` is ready to use,
 
 ```bash
 $ kubectl get rabbitmq -n demo rabbitmq-cluster
 NAME               TYPE                  VERSION   STATUS   AGE
-rabbitmq-cluster   kubedb.com/v1alpha2   3.12.12   Ready    4m11s
+rabbitmq-cluster   kubedb.com/v1alpha2   3.12.12   Ready    4m12s
 ```
 > We have successfully deployed RabbitMQ in Azure.
 
@@ -250,14 +254,15 @@ KubeDB will create few Services to connect with the RabbitMQ. Let’s check the 
 
 ```bash
 $ kubectl get service -n demo
-NAME                    TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)              AGE
-rabbitmq-cluster        ClusterIP   10.128.71.135   <none>        15672/TCP,5672/TCP   4m47s
-rabbitmq-cluster-pods   ClusterIP   None            <none>        4369/TCP,25672/TCP   4m47s
+NAME                         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                           AGE
+rabbitmq-cluster             ClusterIP   10.128.167.88    <none>        5672/TCP,1883/TCP,61613/TCP,15675/TCP,15674/TCP   4m30s
+rabbitmq-cluster-dashboard   ClusterIP   10.128.245.103   <none>        15672/TCP                                         4m30s
+rabbitmq-cluster-pods        ClusterIP   None             <none>        4369/TCP,25672/TCP                                4m30s
 ```
 Here, we are going to use `rabbitmq-cluster` Service to connect with the database. Now, let’s port-forward the `rabbitmq-cluster` Service to the port `15672` to local machine:
 
 ```bash
-$ kubectl port-forward -n demo svc/rabbitmq-cluster 15672
+$ kubectl port-forward -n demo svc/rabbitmq-cluster-dashboard 15672
 Forwarding from 127.0.0.1:15672 -> 15672
 Forwarding from [::1]:15672 -> 15672
 ```
@@ -274,9 +279,9 @@ KubeDB create some Secrets for the database. Let’s check which Secrets have be
 ```bash
 $ kubectl get secret -n demo
 NAME                             TYPE                       DATA   AGE
-rabbitmq-cluster-admin-cred      kubernetes.io/basic-auth   2      5m18s
-rabbitmq-cluster-config          Opaque                     2      5m18s
-rabbitmq-cluster-erlang-cookie   Opaque                     1      5m18s
+rabbitmq-cluster-admin-cred      kubernetes.io/basic-auth   2      7m14s
+rabbitmq-cluster-config          Opaque                     2      7m14s
+rabbitmq-cluster-erlang-cookie   Opaque                     1      7m14s
 ```
 Now, we can use `rabbitmq-cluster-admin-cred` which contains the admin level credentials to connect with the RabbitMQ. You can obtain these credentials by running the following commands:
 
@@ -284,9 +289,9 @@ Now, we can use `rabbitmq-cluster-admin-cred` which contains the admin level cre
 $ kubectl get secret -n demo rabbitmq-cluster-admin-cred -o jsonpath='{.data.username}' | base64 -d
 admin
 $ kubectl get secret -n demo rabbitmq-cluster-admin-cred -o jsonpath='{.data.password}' | base64 -d
-ysTEJ~e2vdv4rJpX
+hymFVy0aoRlNxp8X
 ```
-With the credentials in hand, open your web browser and navigate to `http://localhost:15672/`. You will see the RabbitMQ login panel. Enter the username `admin` and the password `ysTEJ~e2vdv4rJpX` to access the RabbitMQ UI.
+With the credentials in hand, open your web browser and navigate to `http://localhost:15672/`. You will see the RabbitMQ login panel. Enter the username `admin` and the password `hymFVy0aoRlNxp8X` to access the RabbitMQ UI.
 
 ![Login](login.png)
 
