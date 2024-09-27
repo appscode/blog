@@ -12,8 +12,8 @@ tags:
 - kubestash
 - manifest-backup
 - manifest-restore
-- singlestore
 - restore
+- singlestore
 ---
 
 We are very excited to announce the release of [KubeStash v2024.9.30](https://kubestash.com/docs/v2024.9.30/setup/), packed with new features and important bug fixes. You can check out the full changelog [HERE](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2024.9.30/README.md).
