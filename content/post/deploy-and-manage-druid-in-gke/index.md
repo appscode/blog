@@ -1,5 +1,5 @@
 ---
-title: Deploy and Manage Druid in Google Kubernetes Engine (GKE) Using KubeDB
+title: Deploy and Manage Druid in Kubernetes Using KubeDB
 date: "2024-08-21"
 weight: 14
 authors:
@@ -12,8 +12,6 @@ tags:
 - druid
 - druid-cluster
 - druid-database
-- gcp
-- gke
 - kubedb
 - kubernetes
 ---
@@ -21,7 +19,7 @@ tags:
 ## Overview
 
 KubeDB is the Kubernetes Native Database Management Solution which simplifies and automates routine database tasks such as Provisioning, Monitoring, Upgrading, Patching, Scaling, Volume Expansion, Backup, Recovery, Failure detection, and Repair for various popular databases on private and public clouds. The databases supported by KubeDB include MongoDB, Elasticsearch, MySQL, MariaDB, Redis, PostgreSQL, Solr, Microsoft SQL Server, Druid, FerretDB, SingleStore, Percona XtraDB, and Memcached. Additionally, KubeDB also supports ProxySQL, PgBouncer, Pgpool, ZooKeeper and the streaming platform Kafka, RabbitMQ. You can find the guides to all the supported databases in [KubeDB](https://kubedb.com/).
-In this tutorial we will deploy and manage Druid in Google Kubernetes Engine (GKE) Using KubeDB. We will cover the following steps:
+In this tutorial we will deploy and manage Druid in Kubernetes Using KubeDB. We will cover the following steps:
 
 1. Install KubeDB
 2. Create a Deep Storage
@@ -337,7 +335,7 @@ $ kubectl get druid -n demo druid-cluster
 NAME            TYPE                  VERSION   STATUS   AGE
 druid-cluster   kubedb.com/v1alpha2   30.0.0    Ready    4m37s
 ```
-> We have successfully deployed Druid in GKE. 
+> We have successfully deployed Druid in Kubernetes. 
 
 
 ## Connect with Druid Database
