@@ -16,12 +16,12 @@ tags:
 ### Overview
 
 [Stash](https://stash.run/), a cloud-native data backup and recovery solution tailored for Kubernetes workloads, has been in operation for several years. However, as our interactions with an expanding base of 
-enterprise customers have deepened, we've uncovered interesting use cases that the current Stash APIs cannot fully accommodate. To meet these challenges, we've introduced [Stash 2.0 (aka KubeStash)](https://kubestash.com/) APIs. These 
+enterprise customers have deepened, we've uncovered interesting use cases that the current Stash APIs cannot fully accommodate. To meet these challenges, we've introduced [KubeStash (aka Stash 2.0)](https://kubestash.com/) APIs. These 
 new APIs are designed to augment Stash, enhancing its capabilities, fortifying its robustness, and significantly expanding its extensibility.
 
-With the introduction of Stash 2.0 (aka KubeStash) APIs, some customers have expressed confusion between Stash and KubeStash. Therefore, we are writing this post to address the confusion and provide a clear comparison between the two.
+With the introduction of KubeStash (aka Stash 2.0) APIs, some customers have expressed confusion between Stash and KubeStash. Therefore, we are writing this post to address the confusion and provide a clear comparison between the two.
 
-To avoid confusion between Stash and Stash 2.0 due to their similar names, we have decided to use KubeStash instead of Stash 2.0 in this blog post.
+To avoid confusion between Stash and KubeStash (aka Stash 2.0) due to their similar names, we have decided to use KubeStash instead of Stash 2.0 in this blog post.
 
 ### Feature Comparison
 
