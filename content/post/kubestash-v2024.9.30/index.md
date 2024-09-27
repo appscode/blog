@@ -168,6 +168,127 @@ spec:
 #### Support for NetworkPolicy
 We've added support for [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/) in the release. Now users can pass `--set global.networkPolicy.enabled=true` while installing KubeStash. The required Network policies for operator will be created as part of the release process.
 
+
+### Support for External Databases Backup/Restore
+
+We've added backup and restore support for external PostgreSQL, MySQL, and Elasticsearch databases. You can now back up any cloud-hosted databases, including those on DigitalOcean, AWS RDS, and Google Cloud SQL, and easily restore them as needed.
+
+Below given a procedure how to backup and restore of any external database. We are going to show `MYSQL` for an example. The process is similar for other databases as well.
+
+***Secret***
+
+Here is an example of `Secret` with database authentication credentials,
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-mysql-credentials-secret
+  namespace: demo
+type: Opaque
+stringData:
+  password: <auth_password>
+  username: <auth_username>
+```
+
+***AppBinding***
+
+KubeStash uses the `AppBinding` CR to connect with the target database.
+
+Here, is an example of an AppBinding object that contains the necessary information to connect to the database.
+
+```yaml
+apiVersion: appcatalog.appscode.com/v1alpha1
+kind: AppBinding
+metadata:
+  name: db-mysql-appbinding
+  namespace: demo
+spec:
+  clientConfig:
+    url: mysql://kubestash-test-do-user-165729-0.g.db.ondigitalocean.com:25060/defaultdb?ssl-mode=require
+  secret:
+    name: db-mysql-credentials-secret
+  type: mysql
+  version: "8.0.3"
+```
+
+***BackupConfiguration***
+
+Here is an example of a `BackupConfiguration` object for backing up an externally managed `MySQL` database.
+
+```yaml
+apiVersion: core.kubestash.com/v1alpha1
+kind: BackupConfiguration
+metadata:
+  name: mysql-db-backup
+  namespace: demo
+spec:
+  target:
+    apiGroup: appcatalog.appscode.com
+    kind: AppBinding
+    name: db-mysql-appbinding
+    namespace: demo
+  backends:
+    - name: gcs-backend
+      storageRef:
+        namespace: demo
+        name: gcs-storage
+      retentionPolicy:
+        name: demo-retention
+        namespace: demo
+  sessions:
+    - name: frequent-backup
+      sessionHistoryLimit: 3
+      scheduler:
+        schedule: "*/5 * * * *"
+        successfulJobsHistoryLimit: 1
+        failedJobsHistoryLimit: 1
+        jobTemplate:
+          backoffLimit: 1
+      repositories:
+        - name: gcs-mysql-repo
+          backend: gcs-backend
+          directory: /mysql
+          encryptionSecret:
+           name: encrypt-secret
+           namespace: demo
+      addon:
+        name: mysql-addon
+        tasks:
+          - name: logical-backup
+            params:
+              args: --single-transaction --set-gtid-purged=OFF
+              databases: playground
+```
+
+***RestoreSession***
+
+Here is an example of a `RestoreSession` object for restoring an externally managed `MySQL` database.
+
+```yaml
+apiVersion: core.kubestash.com/v1alpha1
+kind: RestoreSession
+metadata:
+  name: mysql-restoresession
+  namespace: demo
+spec:
+  target:
+    apiGroup: appcatalog.appscode.com
+    kind: AppBinding
+    name: db-mysql-appbinding
+    namespace: demo
+  dataSource:
+    repository: gcs-mysql-repo
+    snapshot: latest
+    encryptionSecret:
+      name: encrypt-secret
+      namespace: demo
+  addon:
+    name: mysql-addon
+    tasks:
+      - name: logical-backup-restore
+```
+
 ### Improvements & Bug Fixes
 
 #### Updated Declarative API 
@@ -181,6 +302,8 @@ We’ve fixed a bug where the backup/restore job could remain active even after 
 #### Handle Unexpected failures for Backup Or Restore Containers
 We’ve fixed a bug that caused the `BackupSession` to remain in the running phase when the backup/restore container failed unexpectedly with an error (i.e. OOMKill).
 
+### Handle Content-Type YAML while Uploading to Object Storage
+We've fixed a bug while uploading YAML file to `S3` compatible `Dell ECS Enterprise Object Storage`. Now, we include the Content-Type when uploading any YAML file to the cloud storage. 
 
 ## What Next?
 Please try the latest release and give us your valuable feedback.
