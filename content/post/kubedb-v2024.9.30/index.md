@@ -45,9 +45,9 @@ We are thrilled to announce the release of **KubeDB v2024.9.30**. This release i
 
 - **Added New Database Support**: Added new database support Apache Cassandra, broadening our database management capabilities.
 
-- **OpsRequest Support**: Enhanced operational request capabilities for Microsoft SQL Server, PgBouncer, Solr, and ZooKeeper, providing greater management flexibility.
+- **OpsRequest Support**: Enhanced operational request capabilities for FerretDB, Microsoft SQL Server, PgBouncer, Solr, and ZooKeeper, providing greater management flexibility.
   
-- **Autoscaling**: Added autoscaling support for Microsoft SQL Server to automatically adjust resources based on workload demands.
+- **Autoscaling**: Added autoscaling support for FerretDB and Microsoft SQL Server to automatically adjust resources based on workload demands.
   
 - **Network Policies**: We have added support for [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/) in the release.Now Users can pass
 `--set global.networkPolicy.enabled=true` while installing KubeDB. The required Network policies for operators will be created as part of the release process. And the required Network policies for DB will be created by the operator when some database gets provisioned.
@@ -265,6 +265,36 @@ spec:
   updateVersion:
     targetVersion: 1.23.0
 
+```
+
+### AutoScaling
+Auto Scaling allows automating the vertical scaling of ferretdb pods. It is only capable of scaling the ferretdb container. 
+It will automatically assign enough resources based on the resource uses of the ferretdb container. Bellow is a example yaml file of `FerretDBAutoscaler` CR.
+```yaml
+apiVersion: autoscaling.kubedb.com/v1alpha1
+kind: FerretDBAutoscaler
+metadata:
+  name: fr-auto
+  namespace: demo
+spec:
+  databaseRef:
+    name: ferret
+  opsRequestOptions:
+    timeout: 3m
+    apply: IfReady
+  compute:
+    ferretdb:
+      trigger: "On"
+      podLifeTimeThreshold: 5m
+      resourceDiffPercentage: 5
+      minAllowed:
+        cpu: 400m
+        memory: 400Mi
+      maxAllowed:
+        cpu: 500m
+        memory: 500Mi
+      controlledResources: ["cpu", "memory"]
+      containerControlledValues: "RequestsAndLimits"
 ```
 
 ## Kafka
@@ -487,11 +517,11 @@ New Version support: `2022-cu14`.
 ## MongoDB
 
 ### Encryption at rest
-We have added support of MongoDB `Data Encryption at rest` [feature](https://www.mongodb.com/docs/manual/tutorial/configure-encryption/). You can use your own key management solution to encrypt the data a storage level. [`KMIP`](https://developer.hashicorp.com/vault/docs/secrets/kmip) is a very well-known & recommended approach for key-management solution.
+We have added support of MongoDB `Data Encryption at rest` [feature](https://www.mongodb.com/docs/manual/tutorial/configure-encryption/). You can use your own key management solution to encrypt the data a storage level. [`HashiCorp Vault KMIP`](https://developer.hashicorp.com/vault/docs/secrets/kmip) is a very well-known & recommended approach for key-management solution.
+You can follow [this](https://kubedb-v2-hugo--pr682-kmip-y58c25b4.web.app/docs/v2024.8.21/guides/mongodb/vault-integration/kmip-encryption/) documentation to demonstrate how to configure KubeDB MongoDB with [`HashiCorp Vault KMIP`](https://developer.hashicorp.com/vault/docs/secrets/kmip) secret engine for encryption
 
-### TODO : Need to add the link of https://github.com/kubedb/docs/pull/682
 
-
+### Bug fix
 We also have a little fix on point-in-time restoration, when the storage secret is in a different namespace other than db’s namespace.
 
 
