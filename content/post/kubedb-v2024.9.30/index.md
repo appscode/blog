@@ -54,7 +54,7 @@ We are thrilled to announce the release of **KubeDB v2024.9.30**. This release i
 
 - **Backup & Restore**: Comprehensive disaster recovery support for Druid clusters using Kubestash (Stash 2.0), and manifest backup support for SingleStore.
 
-- **Internally Managed ClickHouse Keeper**: Introduced support for Internally Managed ClickHouse Keeper and KubeDB Managed ClickHouse Keeper Server, expanding options for ClickHouse management.
+- **Managed ClickHouse Keeper**: Introduced support for Internally Managed ClickHouse Keeper and KubeDB Managed ClickHouse Keeper Server, expanding options for ClickHouse management.
 
 - **New Version Support**: Added support for MySQL version 8.4.2 and Microsoft SQL Server 2022-cu14.
 
@@ -90,7 +90,7 @@ Supported Versions: 4.1.6 & 5.0.0
 
 ## ClickHouse
 
-In this release added `InternallyManagedClickHouse Keeper`, `KubeDB Managed ClickHouseKeeper Server` support. Previously only `Externally Managed ClickHouse Keeper` was supported. This release also added Custom Configuration and Monitoring Support.
+In this release added `Internally Managed ClickHouse Keeper`, `KubeDB Managed ClickHouse Keeper Server` support. Previously only `Externally Managed ClickHouse Keeper` was supported. This release also added Custom Configuration and Monitoring Support.
 
 
 You need to set spec.clusterTopology.clickHouseKeeper.externallyManaged field as false to use KubeDB managed clickhouse keeper.
