@@ -166,6 +166,7 @@ spec:
 ```
 
 #### Support for NetworkPolicy
+
 We've added support for [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/) in the release. Now users can pass `--set global.networkPolicy.enabled=true` while installing KubeStash. The required Network policies for operator will be created as part of the release process.
 
 
