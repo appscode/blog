@@ -158,19 +158,19 @@ This release introduces support for comprehensive disaster recovery of `Druid` c
 
 You need to create the following resources to successfully take a backup and restore a `Druid` cluster.
 
-BackupStorage: refers to a cloud storage backend (like `s3`, `gcs` etc.) you prefer.
+`BackupStorage`: refers to a cloud storage backend (like `s3`, `gcs` etc.) you prefer.
 
-RetentionPolicy: allows you to set how long you’d like to retain the backup data.
+`RetentionPolicy`: allows you to set how long you’d like to retain the backup data.
 
-Secrets: hold the backend access credentials and a Restic encryption password to encrypt the backup snapshots.
+`Secrets`: hold the backend access credentials and a Restic encryption password to encrypt the backup snapshots.
 
-BackupConfiguration: specifies the target database, backend, addon etc. to use to back up the database.
+`BackupConfiguration`: specifies the target database, backend, addon etc. to use to back up the database.
 
-RestoreSession: specifies the target database, addon, datasource to use to restore the backed up data. Here is an example of BackupConfiguration
+`RestoreSession`: specifies the target database, addon, datasource to use to restore the backed up data. Here is an example of BackupConfiguration
 
 You can take both Logical and Manifest backup of druid clusters separately. Or both together which we call Application Level backup
 
-Here is an example of `BackupConfiguration` where we take Application Level backup:
+where we take Application Level backup:
 
 
 ```
