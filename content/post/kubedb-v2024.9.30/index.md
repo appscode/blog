@@ -753,9 +753,8 @@ metadata:
   namespace: demo
 spec:
   manifestOptions:
-    restoreNamespace: dev
     singlestore:
-      db: true
+      restoreNamespace: dev
   dataSource:
     repository: gcs-singlestore-repo
     snapshot: latest
