@@ -246,6 +246,27 @@ spec:
 ## Elasticsearch
 We have a bug fix from elasticsearch dashboard size. Previously more than one dashboard in the same cluster was not getting provisioned. In this release, this issue has been fixed.
 
+## FerretDB
+
+### Update version:
+
+The Version Update feature allows you to change the version of FerretDB. The necessary version details should be provided in the spec.updateVersion.targetVersion field. Here’s an example YAML configuration:
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: FerretDBOpsRequest
+metadata:
+  name: fr-ops
+  namespace: demo
+spec:
+  serverRef:
+    name: fr
+  type: UpdateVersion
+  updateVersion:
+    targetVersion: 1.23.0
+
+```
+
 ## Kafka
 This release added `SASL` authentication mechanism `SCRAM-SHA-256` support. Previously only `PLAIN` was supported. Protocol `BROKER` will support both `PLAIN` and `SCRAM-SHA-256` mechanisms by default. You can also configure `listeners` and `advertised listeners` in the config secret using the following format:
 
@@ -465,7 +486,14 @@ New Version support: `2022-cu14`.
 
 ## MongoDB
 
-TODO
+### Encryption at rest
+We have added support of MongoDB `Data Encryption at rest` [feature](https://www.mongodb.com/docs/manual/tutorial/configure-encryption/). You can use your own key management solution to encrypt the data a storage level. [`KMIP`](https://developer.hashicorp.com/vault/docs/secrets/kmip) is a very well-known & recommended approach for key-management solution.
+
+### TODO : Need to add the link of https://github.com/kubedb/docs/pull/682
+
+
+We also have a little fix on point-in-time restoration, when the storage secret is in a different namespace other than db’s namespace.
+
 
 ## MySQL
 
