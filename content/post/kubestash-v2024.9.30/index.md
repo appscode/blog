@@ -293,17 +293,14 @@ spec:
 ### Improvements & Bug Fixes
 
 #### Updated Declarative API 
-We’ve updated the declarative API for `BackupConfiguration` and `RestoreSession` in KubeStash. The `spec.sessions[*].timeout` field has been removed from `BackupConfiguration` and replaced with `spec.sessions[*].backupTimeout`, which sets the maximum duration for a backup. If the backup doesn’t finish within this time, it will be marked as failed. By default, no backup timeout is set.
+We’ve updated the declarative API for `BackupConfiguration` and `RestoreSession` in KubeStash. The `spec.sessions[*].timeout` field has been removed from `BackupConfiguration` and replaced with `spec.sessions[*].backupTimeout`, which sets the maximum duration for the backup as a deadline. KubeStash now wraps the backup command(s) with a timeout according to the deadline. If the backup doesn’t finish within this time, the `Snapshot` and `BackupSession` should be marked as `Failed`. You should also find a `deadline exceeded or signal terminated` error message in the `Snapshot` status. By default, no backup timeout is set.
 
-Similarly, the `spec.timeout` field has been removed from `RestoreSession` and replaced with `spec.restoreTimeout`. This defines how long KubeStash should wait for a restore to complete before marking it as failed.
+Similarly, the `spec.timeout` field has been removed from `RestoreSession` and replaced with `spec.restoreTimeout` which sets the maximum duration for the restore as a deadline. KubeStash now wraps the restore command(s) with a timeout according to the deadline. If the restore doesn’t finish within this time, the `RestoreSession` should be marked as `Failed`. You should also find a `deadline exceeded or signal terminated` error message in the `RestoreSession` status. By default, no restore timeout is set.
 
-#### Handle Backup Or Restore Timeout
-We’ve fixed a bug where the backup/restore job could remain active even after the deadline was exceeded (based on the timeout) with the `BackupSession` marked as failed. Now, KubeStash will wrap timeout with backup commands so the backup/restore job(s) will update `Snapshot` status with deadline exceeded error message and mark it as failed.
-
-#### Handle Unexpected failures for Backup Or Restore Containers
+#### Handling Unexpected failures for Backup Or Restore
 We’ve fixed a bug that caused the `BackupSession` to remain in the running phase when the backup/restore container failed unexpectedly with an error (i.e. OOMKill).
 
-### Handle Content-Type YAML while Uploading to Object Storage
+#### Content-Type Handling for YAML Uploads to Object Storage
 We've fixed a bug while uploading YAML file to `S3` compatible `Dell ECS Enterprise Object Storage`. Now, we include the Content-Type when uploading any YAML file to the cloud storage. 
 
 ## What Next?
