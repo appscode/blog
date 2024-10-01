@@ -3,7 +3,7 @@ title: Announcing KubeDB v2024.9.30
 date: "2024-09-30"
 weight: 14
 authors:
-- Ashraful Haque Tani
+- Ashraful Haque
 tags:
 - alert
 - archiver
