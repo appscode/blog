@@ -1,6 +1,6 @@
 ---
 title: Deploy MongoDB With HashiCorp Vault KMIP Encryption
-date: "2024-03-11"
+date: "2024-10-01"
 weight: 14
 authors:
 - Abu Sayed
