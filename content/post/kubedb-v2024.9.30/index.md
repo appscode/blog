@@ -43,7 +43,7 @@ tags:
 
 We are thrilled to announce the release of **KubeDB v2024.9.30**. This release introduces several key features, including:
 
-- **Added New Database Support**: Added new database support Apache Cassandra, broadening our database management capabilities.
+- **New Database Support**: Added new database support Apache Cassandra, broadening our database management capabilities.
 
 - **OpsRequest Support**: Enhanced operational request capabilities for FerretDB, Microsoft SQL Server, PgBouncer, Solr, and ZooKeeper, providing greater management flexibility.
   
