@@ -518,7 +518,7 @@ New Version support: `2022-cu14`.
 
 ### Encryption at rest
 We have added support of MongoDB `Data Encryption at rest` [feature](https://www.mongodb.com/docs/manual/tutorial/configure-encryption/). You can use your own key management solution to encrypt the data a storage level. [`HashiCorp Vault KMIP`](https://developer.hashicorp.com/vault/docs/secrets/kmip) is a very well-known & recommended approach for key-management solution.
-You can follow [this](https://blog-v1-hugo--pr473-kmip-n0etv5ci.web.app/blog/post/deploy-mongodb-with-vault-kmip-encryption/) blog to demonstrate how to configure KubeDB MongoDB with [`HashiCorp Vault KMIP`](https://developer.hashicorp.com/vault/docs/secrets/kmip) secret engine for encryption
+You can follow [this blog](https://appscode.com/blog/post/deploy-mongodb-with-vault-kmip-encryption/) to demonstrate how to configure KubeDB MongoDB with [`HashiCorp Vault KMIP`](https://developer.hashicorp.com/vault/docs/secrets/kmip) secret engine for encryption
 
 
 ### Bug fix
