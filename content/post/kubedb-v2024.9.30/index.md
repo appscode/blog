@@ -49,14 +49,14 @@ We are thrilled to announce the release of **KubeDB v2024.9.30**. This release i
   
 - **Autoscaling**: Added autoscaling support for FerretDB and Microsoft SQL Server to automatically adjust resources based on workload demands.
   
-- **Network Policies**: We have added support for [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/) in the release.Now Users can pass
+- **Network Policies**: We have added support for [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/) in the release. Now Users can pass
 `--set global.networkPolicy.enabled=true` while installing KubeDB. The required Network policies for operators will be created as part of the release process. And the required Network policies for DB will be created by the operator when some database gets provisioned.
 
 - **Backup & Restore**: Comprehensive disaster recovery support for Druid clusters using Kubestash (Stash 2.0), and manifest backup support for SingleStore.
 
 - **Managed ClickHouse Keeper**: Introduced support for Internally Managed ClickHouse Keeper and KubeDB Managed ClickHouse Keeper Server, expanding options for ClickHouse management.
 
-- **New Version Support**: Added support for MySQL version 8.4.2 and Microsoft SQL Server 2022-cu14.
+- **New Version Support**: Added support for MySQL version `8.4.2` and Microsoft SQL Server `2022-cu14`.
 
 For detailed changelogs, please refer to the [CHANGELOG](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.9.30/README.md). You can now explore the detailed features and updates included in this release.
 
@@ -84,8 +84,8 @@ spec:
             requests:
               storage: 1Gi
   deletionPolicy: WipeOut
- ```
-Supported Versions: 4.1.6 & 5.0.0
+```
+Supported Versions: `4.1.6` & `5.0.0`
 
 
 ## ClickHouse
@@ -93,7 +93,7 @@ Supported Versions: 4.1.6 & 5.0.0
 In this release added `Internally Managed ClickHouse Keeper`, `KubeDB Managed ClickHouse Keeper Server` support. Previously only `Externally Managed ClickHouse Keeper` was supported. This release also added Custom Configuration and Monitoring Support.
 
 
-You need to set spec.clusterTopology.clickHouseKeeper.externallyManaged field as false to use KubeDB managed clickhouse keeper.
+You need to set `spec.clusterTopology.clickHouseKeeper.externallyManaged` field as false to use KubeDB managed clickhouse keeper.
 Here is the sample yaml for KubeDB Managed ClickHouse Keeper.
 
 
@@ -173,7 +173,7 @@ You can take both Logical and Manifest backup of druid clusters separately. Or b
 where we take Application Level backup:
 
 
-```
+```yaml
 apiVersion: core.kubestash.com/v1alpha1
 kind: BackupConfiguration
 metadata:
@@ -219,7 +219,7 @@ Here, `mysql-metadata-storage-backup` needs to be replaced with `postgres-metada
 
 Here is an example `RestoreSession` YAML:
 
-```
+```yaml
 apiVersion: core.kubestash.com/v1alpha1
 kind: RestoreSession
 metadata:
@@ -250,7 +250,7 @@ We have a bug fix from elasticsearch dashboard size. Previously more than one da
 
 ### Update version:
 
-The Version Update feature allows you to change the version of FerretDB. The necessary version details should be provided in the spec.updateVersion.targetVersion field. Here’s an example YAML configuration:
+The Version Update feature allows you to change the version of FerretDB. The necessary version details should be provided in the `spec.updateVersion.targetVersion` field. Here’s an example YAML configuration:
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -264,7 +264,6 @@ spec:
   type: UpdateVersion
   updateVersion:
     targetVersion: 1.23.0
-
 ```
 
 ### AutoScaling
@@ -527,7 +526,7 @@ We also have a little fix on point-in-time restoration, when the storage secret 
 
 ## MySQL
 
-In this release, we've added support for the new MySQL version 8.4.2. Additionally, you can now perform version upgrades from 8.0.x, 8.1.x, or 8.2.x to 8.4.2 using the OpsRequest feature.
+In this release, we've added support for the new MySQL version `8.4.2`. Additionally, you can now perform version upgrades from `8.0.x`, `8.1.x`, or `8.2.x` to `8.4.2` using the OpsRequest feature.
 
 Here is the sample yaml below,
 ```yaml
