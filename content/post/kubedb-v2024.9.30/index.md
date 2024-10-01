@@ -360,8 +360,7 @@ This release also includes custom `log4j.properties` and `tools-log4j.properties
 
 ## Memcached
 
-In this release added configurable Alerting support for KubeDB Memcached. Users can configure Alertmanager to receive notifications when a metric of Memcached exceeds a given threshold. Also added an Alert dashboard to enhance the monitoring feature for KubeDB-managed Memcached by integrating Grafana dashboard. This dashboard provides users a visual representation of certain metrics exceeding predefined thresholds and makes it easier to identify and address issues promptly. To learn more, have a look here.
-
+This release added configurable alerting support for KubeDB Memcached. Users can configure Alertmanager to receive notifications when a metric of Memcached exceeds a given threshold. Also added an Alert dashboard to enhance the monitoring feature for KubeDB-managed Memcached by integrating Grafana dashboard. This dashboard provides users a visual representation of certain metrics exceeding predefined thresholds and makes it easier to identify and address issues promptly. To learn more, have a look [here](https://github.com/ops-center/alerts/tree/master/charts/memcached-alerts).
 Here’s a preview of the Alert dashboard for Memcached:
 
 ![Memcached Alerts](Memcached-alerts.png)
