@@ -49,12 +49,11 @@ We are thrilled to announce the release of **KubeDB v2024.9.30**. This release i
   
 - **Autoscaling**: Added autoscaling support for FerretDB and Microsoft SQL Server to automatically adjust resources based on workload demands.
   
-- **Network Policies**: We have added support for [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/) in the release. Now Users can pass
-`--set global.networkPolicy.enabled=true` while installing KubeDB. The required Network policies for operators will be created as part of the release process. And the required Network policies for DB will be created by the operator when some database gets provisioned.
+- **Network Policies**: We have added support for [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/) in the release. Now Users can pass `--set global.networkPolicy.enabled=true` while installing KubeDB. The required network policies for operators will be created as part of the release process. And the required network policies for DB will be created by the operator when some database gets provisioned.
 
 - **Backup & Restore**: Comprehensive disaster recovery support for Druid clusters using Kubestash (Stash 2.0), and manifest backup support for SingleStore.
 
-- **Managed ClickHouse Keeper**: Introduced support for Internally Managed ClickHouse Keeper and KubeDB Managed ClickHouse Keeper Server, expanding options for ClickHouse management.
+- **Managed ClickHouse Keeper**: Introduced support for internally managed ClickHouse Keeper and KubeDB Managed ClickHouse Keeper Server, expanding options for ClickHouse management.
 
 - **New Version Support**: Added support for MySQL version `8.4.2` and Microsoft SQL Server `2022-cu14`.
 
@@ -62,7 +61,7 @@ For detailed changelogs, please refer to the [CHANGELOG](https://github.com/kube
 
 ## Cassandra
 
-In this release, we are excited to introduce support for Apache Cassandra, a highly scalable and distributed NoSQL database designed to handle large volumes of data with no single point of failure. Known for its high availability, fault tolerance, and strong read/write performance, Cassandra is perfect for applications requiring high throughput, low latency, and seamless scalability. We've added support for provisioning Cassandra in both standalone and cluster modes, custom configuration using Kubernetes secrets, and an authentication option to enhance security.
+In this release, we are excited to introduce support for Apache Cassandra, a highly scalable and distributed NoSQL database designed to handle large volumes of data with no single point of failure. Known for its high availability, fault tolerance, and strong read/write performance, Cassandra is well-known for applications requiring high throughput, low latency, and seamless scalability. We've added support for provisioning Cassandra in both standalone and cluster modes, custom configuration using Kubernetes secrets, and an authentication option to enhance security.
 
 Here's a sample yaml for provisioning Cassandra in cluster mode consisting of a single rack with 3 replicas using KubeDB. 
 
@@ -92,10 +91,8 @@ Supported Versions: `4.1.6` & `5.0.0`
 
 In this release added `Internally Managed ClickHouse Keeper`, `KubeDB Managed ClickHouse Keeper Server` support. Previously only `Externally Managed ClickHouse Keeper` was supported. This release also added Custom Configuration and Monitoring Support.
 
-
 You need to set `spec.clusterTopology.clickHouseKeeper.externallyManaged` field as false to use KubeDB managed clickhouse keeper.
 Here is the sample yaml for KubeDB Managed ClickHouse Keeper.
-
 
 ```yaml
  apiVersion: kubedb.com/v1alpha2
@@ -131,6 +128,7 @@ spec:
 
 You need to set spec.ClusterTopology.ClickHouseKeeper field empty(nil) to use internally managed clickhouse keeper.
 Here is the yaml for Internally Managed Clickhouse Keeper.
+
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: ClickHouse
@@ -215,8 +213,6 @@ spec:
 
 Here, `mysql-metadata-storage-backup` needs to be replaced with `postgres-metadata-storage-backup` if `PostgreSQL` is used as metadata storage.
 
-
-
 Here is an example `RestoreSession` YAML:
 
 ```yaml
@@ -244,6 +240,7 @@ spec:
 ```
 
 ## Elasticsearch
+
 We have a bug fix from elasticsearch dashboard size. Previously more than one dashboard in the same cluster was not getting provisioned. In this release, this issue has been fixed.
 
 ## FerretDB
@@ -267,8 +264,10 @@ spec:
 ```
 
 ### AutoScaling
+
 Auto Scaling allows automating the vertical scaling of ferretdb pods. It is only capable of scaling the ferretdb container. 
 It will automatically assign enough resources based on the resource uses of the ferretdb container. Bellow is a example yaml file of `FerretDBAutoscaler` CR.
+
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: FerretDBAutoscaler
@@ -297,6 +296,7 @@ spec:
 ```
 
 ## Kafka
+
 This release added `SASL` authentication mechanism `SCRAM-SHA-256` support. Previously only `PLAIN` was supported. Protocol `BROKER` will support both `PLAIN` and `SCRAM-SHA-256` mechanisms by default. You can also configure `listeners` and `advertised listeners` in the config secret using the following format:
 
 ```properties
@@ -370,10 +370,13 @@ Here’s a preview of the Alert dashboard for Memcached:
 This release brings several important updates, including OpsRequest and AutoScaling support for Microsoft SQL Server, enhanced Grafana Dashboard integration for improved monitoring, and compatibility with the latest SQL Server version, 2022 CU14.
 
 ### OpsRequest
+
 Microsoft SQL Server Ops Request support has been introduced through this release. SQL Server Ops Request provides a declarative configuration for the SQL Server administrative operations like database restart, vertical scaling, volume expansion, etc. in a Kubernetes native way. Ops Requests for Restart, Vertical Scaling, Volume Expansion, Version Update, and Horizontal Scaling have been added in this release. 
 
 #### Restart
+
 Restart ops request is used to perform a smart restart of the SQL Server availability group cluster. An example YAML is provided below:
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: MSSQLServerOpsRequest
@@ -389,6 +392,7 @@ spec:
 ```
 
 #### Vertical Scaling
+
 Vertical Scaling allows you to vertically scale the SQL Server nodes (i.e. pods). The necessary information required for vertical scaling must be provided in the spec.verticalScaling field. Here’s an example yaml for vertical scaling OpsRequest:
 
 ```yaml
@@ -411,7 +415,9 @@ spec:
           memory: "2Gi"
           cpu: "800m"
 ```
+
 #### Volume Expansion
+
 Volume Expansion is used to expand the storage of the SQL Server nodes (i.e. pods). The necessary information required for volume expansion must be provided in spec.volumeExpansion field. An example yaml is provided below:
 
 ```yaml
@@ -464,11 +470,13 @@ databaseRef:
   updateVersion:
     targetVersion: 2022-cu14
 ```
+
 ### Autoscaler
 
 This release also adds Autoscaler support for Microsoft SQL Server by introducing MSSQLServerAutoscaler, a Kubernetes Custom Resource Definitions (CRD). It provides a declarative configuration for autoscaling SQL Server compute resources and storage of database components in a Kubernetes native way.
 
 Here’s a sample YAML to deploy Autoscaler for KubeDB managed SQL Server Availability Group cluster.
+
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: MSSQLServerAutoscaler
@@ -498,6 +506,7 @@ spec:
       usageThreshold: 60
       scalingThreshold: 50
 ```
+
 ### Monitoring
 
 This release enhanced monitoring features for KubeDB-managed MicroSoft SQL Server deployments by integrating more Grafana dashboards. Database dashboard for database insights and Pod dashboard for monitoring database pods specifically. The newly added pod and database dashboard provides comprehensive insights into various SQL Server metrics, and statuses, as well as visual representations of memory and CPU consumption. With these dashboards, users can effortlessly assess the overall health and performance of their SQL Server clusters, enabling more informed decision-making and efficient resource management.
@@ -515,13 +524,12 @@ New Version support: `2022-cu14`.
 ## MongoDB
 
 ### Encryption at rest
+
 We have added support of MongoDB `Data Encryption at rest` [feature](https://www.mongodb.com/docs/manual/tutorial/configure-encryption/). You can use your own key management solution to encrypt the data a storage level. [`HashiCorp Vault KMIP`](https://developer.hashicorp.com/vault/docs/secrets/kmip) is a very well-known & recommended approach for key-management solution.
 You can follow [this blog](https://appscode.com/blog/post/deploy-mongodb-with-vault-kmip-encryption/) to demonstrate how to configure KubeDB MongoDB with [`HashiCorp Vault KMIP`](https://developer.hashicorp.com/vault/docs/secrets/kmip) secret engine for encryption
 
-
 ### Bug fix
 We also have a little fix on point-in-time restoration, when the storage secret is in a different namespace other than db’s namespace.
-
 
 ## MySQL
 
@@ -570,7 +578,6 @@ spec:
   type: UpdateVersion
   updateVersion: 
     targetVersion: 1.23.1
-
 ```
 
 ### Custom-config:
@@ -599,7 +606,9 @@ spec:
 ```
 
 ### Reconfigure:
+
 #### With ConfigSecret:
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: PgBouncerOpsRequest
@@ -614,10 +623,11 @@ spec:
     pgbouncer: 
       configSecret:
         name: conf-s
-      removeCustomConfig: true
-      
+      removeCustomConfig: true      
 ```
+
 #### With ApplyConfig:
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: PgBouncerOpsRequest
@@ -636,7 +646,6 @@ spec:
           auth_type = md5
       
 ```
-
 
 ## Postgres
 
@@ -687,11 +696,12 @@ spec:
     ref:
       name: "s3-storage"
       namespace: "demo"
-
 ```
+
 > Note:  Here in `spec.fullBackup.driver` you have to use **Restic** in order to remove that external Volume Snapshotter dependency. Previously it was **VolumeSnapshotter** which was an external volume snapshotter plugin.
 
 Now apply a **Postgres** CR.
+
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: Postgres
@@ -714,6 +724,7 @@ spec:
         storage: 3Gi
   terminationPolicy: WipeOut
 ```
+
 You should see your full-backup succeeded without the need of an external snapshotter. 
 
 Now you can use another **Postgres** CR for archive recovery.
@@ -750,9 +761,7 @@ spec:
   terminationPolicy: WipeOut
 ```
 
-
 Also we have added documentation for Postgresql **Arbiter node**, **Autoscaling** and for few Ops requests  **Restart**, **Reconfigure** and **Reconfigure TLS**.
-
 
 ## SingleStore
 In this release, we have added support for manifest backups. Using Kubestash, you can able to manifest backup and restore for SingleStore.
@@ -882,7 +891,6 @@ spec:
         storageClassName: standard
 ```
 
-
 For horizontal scaling:
 
 ```yaml
@@ -921,6 +929,7 @@ spec:
 ```
 
 ### Update Version
+
 Update version allows updating the version of ZooKeeper. It can work in both ways: older version to new version and vice versa new version to older version. The necessary information for the update version must be provided in the spec.updateVersion.targetVersion field. An example YAML is provided below:
 
 ```yaml
@@ -962,6 +971,7 @@ spec:
 ```
 
 ### Horizontal Scaling
+
 Horizontal Scaling enables you to adjust the number of ZooKeeper pods by scaling horizontally, either increasing or decreasing the number of replicas. The required details for horizontal scaling should be provided in the spec.horizontalScaling.node field. Below is an example YAML configuration:
 
 ```yaml
@@ -979,10 +989,8 @@ spec:
 ```
 
 ### Volume Expansion
-Volume Expansion is used to expand the storage of the ZooKeeper nodes (i.e. pods). The necessary information required for volume expansion, must be provided in spec.volumeExpansion field.
 
-An example yaml is provided below
-
+Volume Expansion is used to expand the storage of the ZooKeeper nodes (i.e. pods). The necessary information required for volume expansion, must be provided in spec.volumeExpansion field. An example yaml is provided below:
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -1000,6 +1008,7 @@ spec:
 ```
 
 ### Reconfiguration
+
 Reconfiguration allows you to update the configuration through a new secret or apply a config. Users can also remove the custom config using RemoveCustomConfig. The spec.configuration field needs to contain the data required for reconfiguration. An example yaml is provided below:
 
 ```yaml
@@ -1020,12 +1029,11 @@ spec:
   type: Reconfigure
 ```
 
-
 ## Support
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To receive product announcements, follow us on [Twitter/X](https://twitter.com/KubeDB).
+To receive product announcements, follow us on [Twitter/X](https://x.com/KubeDB).
 
 To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
 
