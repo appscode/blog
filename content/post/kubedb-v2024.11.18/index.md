@@ -53,6 +53,8 @@ We are thrilled to announce the release of **KubeDB v2024.11.18**. This release 
 
 - **Backup & Restore**: Comprehensive disaster recovery support for Druid clusters using Kubestash (Stash 2.0), and manifest backup support for SingleStore.
 
+- **Rotate Auth**: A new Ops Request named `Rotate-Auth` has been introduced. This feature enables users to rotate the credentials of the database enhancing overall security. It is initially added for `Druid`, `Kafka`, `MongoDB`, `Postgres`. 
+
 - **New Version Support**: Added support for Druid version `30.0.1`.
 
 For detailed changelogs, please refer to the [CHANGELOG](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.11.18/README.md). You can now explore the detailed features and updates included in this release.
@@ -104,7 +106,7 @@ spec:
 
 ### Druid Ops-Requests:
 
-We are introducing four new Ops-Requests for `Druid` i.e. Horizontal Scaling, Reconfigure, Update Version, Reconfigre TLS. You can find the example manifests files to perform these operations on a druid cluster below.
+We are introducing four new Ops-Requests for `Druid` i.e. Horizontal Scaling, Reconfigure, Update Version, Reconfigre TLS, Rotate Auth. You can find the example manifests files to perform these operations on a druid cluster below.
 
 **Horizontal Scaling**
 
@@ -189,6 +191,20 @@ spec:
 ```
 This is an example showing how to add TLS to an existing druid cluster. Reconfigure-TLS also supports features like **Removing TLS**, **Rotating Certificates** or **Changing Issuer**.
 
+**Rotate Auth**
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: DruidOpsRequest
+metadata:
+  name: druid-auth-rotate
+  namespace: demo
+spec:
+  type: RotateAuth
+  databaseRef:
+    name: druid-cluster
+```
+It is also possible to provide a username and password through a custom authentication section through `spec.authentication.secretRef.name` of `DruidOpsRequest`.
+
 ### New Version Support
 
 Support for Druid Version `30.0.1` has been added in this release and `30.0.0` is marked as deprecated.
@@ -199,6 +215,54 @@ Support for Druid Version `30.0.1` has been added in this release and `30.0.0` i
 ## FerretDB
 
 ## Kafka
+
+In this release, we have introduced a new ops request type `RotateAuth`. This request type is used to rotate the authentication secret for kafka. `.spec.authSecret.name` is the referenced name of the secret that contains the authentication information for kafka to authenticate with the brokers. The secret should be of type `kubernetes.io/basic-auth`.
+Now, If a user wants to update the authentication credentials for kafka, they can create an ops request of type `RotateAuth` with or without referencing an authentication secret.
+
+If the secret is not referenced, the ops-manager operator will create a new credential and update the current secret. Here is the yaml,
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: KafkaOpsRequest
+metadata:
+  name: kfops-rotate-auth
+  namespace: demo
+spec:
+  type: RotateAuth
+  databaseRef:
+    name: kafka-prod
+  ```
+If the secret is referenced, the operator will update the .spec.authSecret.name` with the new secret name. Here is the yaml,
+
+New Secret:
+```yaml
+apiVersion: v1
+data:
+  password: enBzY3VscXl2Z3ZhcXZ4ZQ==
+  username: c3VwZXI=
+kind: Secret
+metadata:
+   name: kafka-prod-new-auth
+   namespace: demo
+type: kubernetes.io/basic-auth
+```
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: KafkaOpsRequest
+metadata:
+  name: kfops-rotate-auth
+  namespace: demo
+spec:
+  type: RotateAuth
+  databaseRef:
+    name: kafka-prod
+  secretRef:
+    name: kafka-prod-new-auth
+  ```
+
+Finally, the operator will update the kafka cluster with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`.
+
+We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from.
 
 ## Memcached
 

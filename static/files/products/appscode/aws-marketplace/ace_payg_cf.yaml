@@ -1,0 +1,370 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template for creating an EC2 instance in a new VPC
+
+Parameters:
+  InstanceType:
+    Description: "CIDR range of remote ip for ssh"
+    Type: String
+    Default: "m5.xlarge"
+    AllowedValues:
+      - "m5.xlarge"
+      - "m5.2xlarge"
+      - "m5.4xlarge"
+      - "m5.8xlarge"
+      - "m5.12xlarge"
+      - "m5.16xlarge"
+      - "m5.24xlarge"
+      - "m5d.xlarge"
+      - "m5d.2xlarge"
+      - "m5d.4xlarge"
+      - "m5d.8xlarge"
+      - "m5d.12xlarge"
+      - "m5d.16xlarge"
+      - "m5d.24xlarge"
+  SSHIpCIDR:
+    Description: "CIDR range of remote ip for ssh for debug or management purposes. Please set CIDR to x.x.x.x/32 to allow one specific IP address access, 0.0.0.0/0 to allow all IP addresses access, or another CIDR range."
+    Type: String
+    AllowedPattern: '^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\/(3[0-2]|[1-2]?[0-9])$'
+  ApplicationAccessIpCIDR:
+    Description: "CIDR range from where the application will be accessed. 0.0.0.0/0 is recommended to allow all IP addresses access. Set CIDR to x.x.x.x/32 to allow one specific IP address access or another CIDR range as needed."
+    Type: String
+    AllowedPattern: '^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\/(3[0-2]|[1-2]?[0-9])$'
+  InstallerURL:
+    Description: "Download URL of the selfhost Installer"
+    Type: String
+    AllowedPattern: "^https:\\/\\/appscode\\.com\\/links\\/installer.*$"
+  KeyPair:
+    Description: "Name of an existing EC2 KeyPair to enable SSH access to the instance."
+    Type: 'AWS::EC2::KeyPair::KeyName'
+Mappings:
+  InstanceMap:
+    us-east-1:
+      AMI: "ami-0984f4b9e98be44bf"
+    us-east-2:
+      AMI: "ami-09caa684bdee947fc"
+    us-west-1:
+      AMI: "ami-0a9271c49701613c1"
+    us-west-2:
+      AMI: "ami-04907d7291cd8e06a"
+    ap-south-1:
+      AMI: "ami-03753afda9b8ba740"
+    ap-northeast-3:
+      AMI: "ami-0f7c0a87233c91cfb"
+    ap-northeast-2:
+      AMI: "ami-0c63ba386d57a6296"
+    ap-southeast-1:
+      AMI: "ami-09fcb1e15a7d9b9f2"
+    ap-southeast-2:
+      AMI: "ami-09c380248cbc422a4"
+    ap-northeast-1:
+      AMI: "ami-0b6fe957a0eb4c1b9"
+    ca-central-1:
+      AMI: "ami-0926a49ffde4bb836"
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.5.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+  Subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.5.0.0/24
+      AvailabilityZone: !Join ['', [ !Ref AWS::Region, 'a'] ]
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+  RouteToInternet:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  SecurityGroupIngress4222:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 4222
+      ToPort: 4222
+      CidrIp: !Ref ApplicationAccessIpCIDR
+      GroupId: !GetAtt VPC.DefaultSecurityGroup
+  SecurityGroupIngress80:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      CidrIp: !Ref ApplicationAccessIpCIDR
+      GroupId: !GetAtt VPC.DefaultSecurityGroup
+  SecurityGroupIngress443:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 443
+      ToPort: 443
+      CidrIp: !Ref ApplicationAccessIpCIDR
+      GroupId: !GetAtt VPC.DefaultSecurityGroup
+  SecurityGroupIngress6443:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 6443
+      ToPort: 6443
+      CidrIp: !Ref ApplicationAccessIpCIDR
+      GroupId: !GetAtt VPC.DefaultSecurityGroup
+  SecurityGroupIngress22:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: !Ref SSHIpCIDR
+      GroupId: !GetAtt VPC.DefaultSecurityGroup
+  SubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref Subnet
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap [InstanceMap, !Ref 'AWS::Region', AMI]
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyPair
+      Tags:
+        - Key: "Name"
+          Value:
+            Ref: AWS::StackName
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          SubnetId:
+            Ref: "Subnet"
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda #/dev/sta1 root volume for ubuntu, /dev/xvda for amzn-linux
+          Ebs:
+            VolumeSize: 100 # Specify the size of the root volume in GB
+            VolumeType: gp3
+      UserData:
+        Fn::Base64:
+          !Join
+            - "\n"
+            - - |
+                #!/bin/bash
+                sudo su
+                HOME="/root"
+                cd $HOME
+                apt-get -y update
+                apt upgrade -y
+                set -xeo pipefail
+                exec >/root/userdata.log 2>&1
+              - !Sub 'INSTALLER_URL=${InstallerURL}'
+              - !Sub 'PUBLIC_IP=${ElasticIP.PublicIp}'
+              - !Sub 'REGION=${AWS::Region}'
+              - |
+                #constants (don't touch)
+                BUCKET_NAME="ace"
+                INSTALLER_ID=$(echo $INSTALLER_URL | awk -F '[/]' '{ print $8 }')
+                timestamp() {
+                  date +"%Y/%m/%d %T"
+                }
+                log() {
+                  local type="$1"
+                  local msg="$2"
+                  local script_name=${0##*/}
+                  echo "$(timestamp) [$script_name] [$type] $msg"
+                }
+                retry() {
+                  local retries="$1"
+                  shift
+                  local count=0
+                  local wait=5
+                  until "$@"; do
+                  exit="$?"
+                  if [ $count -lt $retries ]; then
+                    log "INFO" "Attempt $count/$retries. Command exited with exit_code: $exit. Retrying after $wait seconds..."
+                    sleep $wait
+                  else
+                    log "INFO" "Command failed in all $retries attempts with exit_code: $exit. Stopping trying any further...."
+                    return $exit
+                  fi
+                    count=$(($count + 1))
+                  done
+                  return 0
+                }
+                create_k3s() {
+                  echo 'fs.inotify.max_user_instances=100000' | sudo tee -a /etc/sysctl.conf
+                  echo 'fs.inotify.max_user_watches=100000' | sudo tee -a /etc/sysctl.conf
+                  sudo sysctl -p
+                  # Create k3s cluster
+                  SERVER_IP=${PUBLIC_IP}
+                  #selinux policy resolve. ref: https://github.com/k3s-io/k3s/issues/10411#issuecomment-2231879747
+                  amazon-linux-extras enable selinux-ng; sudo yum install selinux-policy-targeted -y
+                  cmd="curl -sfL https://get.k3s.io"
+                  retry 5 $cmd | INSTALL_K3S_EXEC="--disable=traefik --disable=metrics-server" sh -s - --tls-san "$SERVER_IP"
+                  echo 'alias k=kubectl' >> ${HOME}/.bashrc
+                  export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+                  # wait for 2 pods to become running
+                  cmd="kubectl wait --for=condition=ready pods --all -A --timeout=5m"
+                  retry 5 $cmd
+                  # Install helm
+                  curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+                }
+                download_values(){
+                  mkdir old
+                  cd old
+                  curl -L "${INSTALLER_URL}" -o "archive.tar.gz"
+                  tar -xvzf archive.tar.gz
+                  #soruce azure credential file from archive.tar.gz
+                  source env.sh
+                  cd ..
+                }
+                aws_cli() {
+                  BUCKET_NAME=${BUCKET_NAME}$(head /dev/urandom | tr -dc 'a-z' | head -c 6)
+                  echo "s3 bucket name: "${BUCKET_NAME}
+                  # install jq
+                  yum install jq -y
+                  # aws s3api create-bucket --bucket ${BUCKET_NAME} --region ${REGION} --object-ownership BucketOwnerEnforced
+                  aws s3api create-bucket --bucket ${BUCKET_NAME} --region ${REGION}
+                  ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
+                  CLUSTER_ID=$(kubectl get ns kube-system -o=jsonpath='{.metadata.uid}')
+                  UTC_TIME=$(date -u +"%Y-%m-%dT%H:%M:%S.%NZ")
+                  #call the webhook here
+                  resp=$(curl -X POST https://appscode.com/marketplace/api/v1/marketplaces/aws/notification/resource?secret=${API_SECRET} \
+                    -H "Content-Type: application/json" \
+                    -d '{
+                          "eventType": "BIND",
+                          "eventTime": "'${UTC_TIME}'",
+                          "accountId": "'${ACCOUNT_ID}'",
+                          "bindingInfo": {
+                            "installerID": "'${INSTALLER_ID}'",
+                            "clusterId": "'${CLUSTER_ID}'",
+                            "options": {
+                              "infra": {
+                                "dns": {
+                                  "provider": "none",
+                                  "targetIPs": ["'${PUBLIC_IP}'"]
+                                },
+                                "cloudServices": {
+                                  "objstore": {
+                                    "auth": {
+                                      "s3": {
+                                        "AWS_ACCESS_KEY_ID": "'${AWS_ACCESS_KEY_ID}'",
+                                        "AWS_SECRET_ACCESS_KEY": "'${AWS_SECRET_ACCESS_KEY}'"
+                                      }
+                                    },
+                                    "bucket": "s3://'${BUCKET_NAME}'?s3ForcePathStyle=true",
+                                    "endpoint": "s3.amazonaws.com",
+                                    "prefix": "ace",
+                                    "region": "'${REGION}'"
+                                  },
+                                  "provider": "s3"
+                                },
+                                "kubestash": {
+                                  "backend": {
+                                    "provider": "s3",
+                                    "s3": {
+                                      "bucket": "s3://'${BUCKET_NAME}'",
+                                      "endpoint": "s3.amazonaws.com",
+                                      "prefix": "ace",
+                                      "region": "'${REGION}'"
+                                    }
+                                  },
+                                  "retentionPolicy": "keep-1mo",
+                                  "schedule": "0 */2 * * *",
+                                  "storageSecret": {
+                                    "create": true
+                                  }
+                                }
+                              },
+                              "initialSetup": {
+                                "cluster": {
+                                  "region": "'${REGION}'"
+                                },
+                                "subscription": {
+                                  "aws": {
+                                    "customer-identifier": "demo-customer-identifier"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }')
+                    link=$(echo ${resp} | jq -r '.link')
+                    if [ ${link} == "null" ]; then   exit 1 ; fi
+                    mkdir new
+                    cd new
+                    curl -L "${link}" -o "archive.tar.gz"
+                    tar -xvzf archive.tar.gz
+                    cd ..
+                }
+                install_fluxcd() {
+                  helm upgrade -i flux2 \
+                  oci://ghcr.io/appscode-charts/flux2 \
+                  --version ${FLUXCD_CHART_VERSION} \
+                  --namespace flux-system --create-namespace \
+                  --set helmController.create=true \
+                  --set sourceController.create=true \
+                  --set imageAutomationController.create=false \
+                  --set imageReflectionController.create=false \
+                  --set kustomizeController.create=true \
+                  --set notificationController.create=true \
+                  --set-string helmController.labels."ace\.appscode\.com/managed=true" \
+                  --set-string sourceController.labels."ace\.appscode\.com/managed=true" \
+                  --set-string kustomizeController.labels."ace\.appscode\.com/managed=true" \
+                  --set-string notificationController.labels."ace\.appscode\.com/managed=true" \
+                  --set cli.image=ghcr.io/appscode/flux-cli \
+                  --wait --debug --burst-limit=10000
+                }
+                deploy_ace(){
+                  helm upgrade -i ace-installer \
+                  oci://ghcr.io/appscode-charts/ace-installer \
+                  --version ${ACE_INSTALLER_CHART_VERSION} \
+                  --namespace kubeops --create-namespace \
+                  --values=./new/values.yaml \
+                  --wait --debug --burst-limit=10000
+                }
+                init(){
+                  create_k3s
+                  download_values
+                  aws_cli
+                  install_fluxcd
+                  deploy_ace
+                }
+                init
+
+  IPAssoc:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      InstanceId: !Ref Instance
+      EIP: !GetAtt ElasticIP.PublicIp
