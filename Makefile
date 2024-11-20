@@ -11,6 +11,9 @@ assets: hugo-tools
 	rm -rf static/files/cluster-api-provider-aws
 	rm -rf static/files/cluster-api-provider-azure
 	rm -rf static/files/cluster-api-provider-gcp
+	rm -rf static/files/products/appscode/aws-marketplace
+	rm -rf static/files/products/appscode/azure-marketplace
+	rm -rf static/files/products/appscode/gcp-marketplace
 
 .PHONY: fmt
 fmt: hugo-tools
