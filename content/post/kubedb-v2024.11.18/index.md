@@ -43,17 +43,13 @@ tags:
 
 We are thrilled to announce the release of **KubeDB v2024.11.18**. This release introduces several key features, including:
 
-- **TLS/SSL Support**: Support for TLS/SSL has been added for Druid, Memcached.
+- **TLS/SSL Support**: Support for TLS/SSL has been added for Druid, Memcached, enhancing the security.
 
-- **OpsRequest Support**: Enhanced operational request capabilities for Druid, Memcached, Microsoft SQL Server, PgBouncer, Solr, and ZooKeeper, providing greater management flexibility.
+- **OpsRequest Support**: Enhanced operational request capabilities for Druid, Memcached, Microsoft SQL Server, and Solr, providing greater management flexibility.
 
-- **Autoscaling**: Added autoscaling support for FerretDB and Microsoft SQL Server to automatically adjust resources based on workload demands.
+- **Autoscaling**: Added autoscaling support for Apache Solr to automatically adjust resources based on workload demands.
 
-- **Network Policies**: We have added support for [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/) in the release. Now Users can pass `--set global.networkPolicy.enabled=true` while installing KubeDB. The required network policies for operators will be created as part of the release process. And the required network policies for DB will be created by the operator when some database gets provisioned.
-
-- **Backup & Restore**: Comprehensive disaster recovery support for Druid clusters using Kubestash (Stash 2.0), and manifest backup support for SingleStore.
-
-- **Rotate Auth**: A new Ops Request named `Rotate-Auth` has been introduced. This feature enables users to rotate the credentials of the database enhancing overall security. It is initially added for `Druid`, `Kafka`, `MongoDB`, `Postgres`. 
+- **Rotate Auth**: A new Ops Request named `Rotate-Auth` has been introduced. This feature enables users to rotate the credentials of the database enhancing overall security. It is initially added for `Druid`, `Kafka`, `MongoDB`, `Postgres`, and `Solr`. 
 
 - **New Version Support**: Added support for Druid version `30.0.1`.
 
@@ -61,9 +57,19 @@ For detailed changelogs, please refer to the [CHANGELOG](https://github.com/kube
 
 ## Cassandra
 
+### Monitoring
+
+This release introduces an enhanced monitoring feature for KubeDB-managed Cassandra deployments by integrating Grafana dashboards. These dashboards provide comprehensive insights into various Cassandra-specific metrics, statuses, as well as visual representations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of Cassandra, enabling more informed decision-making and efficient resource management.
+
+Have a look [here](https://github.com/ops-center/grafana-dashboards/tree/master/cassandra)  for a step-by-step guide on using the monitoring feature of Apache Cassandra.
+
+Here’s a preview of the Summary dashboard for Cassandra:
+
+![Cassandra Summary Dashboard](cassandra-summery.png)
+
 ## Druid
 
-### TLS/SSL Support
+### TLS/SSL Support:
 
 In this release, we are introducing **TLS support for Apache `Druid`**. By implementing TLS support, Druid enhances the security of client-to-server communication within the cluster environment.
 
@@ -189,6 +195,7 @@ spec:
   timeout: 5m
   apply: IfReady
 ```
+
 This is an example showing how to add TLS to an existing druid cluster. Reconfigure-TLS also supports features like **Removing TLS**, **Rotating Certificates** or **Changing Issuer**.
 
 **Rotate Auth**
@@ -300,7 +307,8 @@ spec:
 
 ```
 
-### TLS
+### TLS/SSL Support:
+
 In this release, we introduce TLS support for `Memcached`. By implementing TLS support, `Memcached` enhances the security of client-to-server communication within the environment.
 
 With TLS enabled, client applications can securely connect to the `Memcached` database, ensuring that data transmitted between clients and servers remains encrypted and protected from unauthorized access or tampering. This encryption adds an extra layer of security, particularly important for sensitive data environments where confidentiality and integrity are paramount.
@@ -339,7 +347,8 @@ spec:
 
 ```
 
-### `Memcached` Ops-Request 
+### Ops-Requests: 
+
 We are introducing new Ops-Requests for `Memcached` which is Reconfigure TLS. You can find the example manifest file to perform the ops-request operation on `Memcached` below:
 
 **Reconfigure TLS**
@@ -598,13 +607,278 @@ For a complete list of environment variables and their usage, refer to the [offi
 ## PgBouncer
 
 ## Postgres
+In this release we improved the postgres point time recovery to support seamless archiving and recovery with db pods spread out in different zones in a single region. We also improved our algorithm to calculate and find the suitable base backup for PITR.
+
+We also fixed a bug which wasn’t letting users use postgres `warm` standby mode via `db.spec.standbyMode`. Now if your `db.spec.standbyMode` is set to `warm`, then your db replicas will behave like warm standby which is it will only be used to store data, not open for read queries. If you want to send your read queries to your replicas, make sure you put `db.spec.standbyMode: Hot` which is set by default from this release.
+
+In this release, we also have introduced a new ops request type `RotateAuth`. This request type is used to rotate the authentication secret for Postgres. `.spec.authSecret.name` is the referenced name of the secret that contains the authentication information for postgres. The secret should be of type `kubernetes.io/basic-auth`.
+Now, If a user wants to update the authentication credentials for postgres, they can create an ops request of type `RotateAuth` with or without referencing an authentication secret.
+
+If the secret is not referenced, the ops-manager operator will create a new credential and update the current secret. Here is the yaml,
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: PostgresOpsRequest
+metadata:
+  name: pgops-rotate-auth
+  namespace: demo
+spec:
+  type: RotateAuth
+  databaseRef:
+    name: ha-postgres
+```
+
+If the secret is referenced, the operator will update the .spec.authSecret.name` with the new secret name. Here is the yaml,
+New Secret:
+```yaml
+apiVersion: v1
+data:
+  password: ZC4hTC5KX0kuckMpN04pSQ==
+  username: cG9zdGdyZXM=
+kind: Secret
+metadata:
+   name: ha-postgres-new-auth
+   namespace: demo
+type: kubernetes.io/basic-auth
+```
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: PostgresOpsRequest
+metadata:
+  name: pgops-rotate-with-new-auth
+  namespace: demo
+spec:
+  type: RotateAuth
+  databaseRef:
+    name: ha-postgres
+  secretRef:
+    name: ha-postgres-new-auth
+  ```
+
+Finally, the operator will update the postgres cluster with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`.
+
+We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from.
+
 
 ## SingleStore
 
 ## Solr
 
-## ZooKeeper
+Solr autoscaler support has been added in this release. Kubedb autoscaler leverages the automation of  storage and memory autoscaling with the help of metrics configuration and prometheus.
 
+***Solr Combined Mode***:
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: Solr
+metadata:
+  name: solr-combined
+  namespace: demo
+spec:
+  version: 9.6.1
+  replicas: 2
+  zookeeperRef:
+    name: zoo
+    namespace: demo
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: longhorn
+```
+
+***Solr Cluster Mode***:
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: Solr
+metadata:
+  name: solr-cluster
+  namespace: demo
+spec:
+  version: 9.4.1
+  enableSSL: true
+  zookeeperRef:
+    name: zoo
+  topology:
+    overseer:
+      replicas: 1
+      storage:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+    data:
+      replicas: 1
+      storage:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+    coordinator:
+      storage:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+```
+
+***Computer autoscaler***:
+Computer autoscaler deals with scaling cpu and memory and we need metrics configuration in our cluster for this operation.
+
+For combined cluster:
+```yaml
+apiVersion: autoscaling.kubedb.com/v1alpha1
+kind: SolrAutoscaler
+metadata:
+  name: sl-node-autoscaler
+  namespace: demo
+spec:
+  databaseRef:
+    name: solr-combined
+  opsRequestOptions:
+    timeout: 5m
+    apply: IfReady
+  compute:
+    node:
+      trigger: "On"
+      podLifeTimeThreshold: 5m
+      resourceDiffPercentage: 5
+      minAllowed:
+        cpu: 1
+        memory: 2Gi
+      maxAllowed:
+        cpu: 2
+        memory: 3Gi
+      controlledResources: ["cpu", "memory"]
+      containerControlledValues: "RequestsAndLimits"
+```
+
+For dedicated cluster:
+```yaml
+apiVersion: autoscaling.kubedb.com/v1alpha1
+kind: SolrAutoscaler
+metadata:
+  name: sl-data-autoscaler
+  namespace: demo
+spec:
+  databaseRef:
+    name: solr-cluster
+  opsRequestOptions:
+    timeout: 5m
+    apply: IfReady
+  compute:
+    data:
+      trigger: "On"
+      podLifeTimeThreshold: 5m
+      resourceDiffPercentage: 5
+      minAllowed:
+        cpu: 1
+        memory: 2.5Gi
+      maxAllowed:
+        cpu: 2
+        memory: 3Gi
+      controlledResources: ["cpu", "memory"]
+      containerControlledValues: "RequestsAndLimits"
+    overseer:
+      trigger: "On"
+      podLifeTimeThreshold: 5m
+      resourceDiffPercentage: 5
+      minAllowed:
+        cpu: 1
+        memory: 2.5Gi
+      maxAllowed:
+        cpu: 2
+        memory: 3Gi
+      controlledResources: ["cpu", "memory"]
+      containerControlledValues: "RequestsAndLimits"
+    coordinator:
+      trigger: "On"
+      podLifeTimeThreshold: 5m
+      resourceDiffPercentage: 5
+      minAllowed:
+        cpu: 1
+        memory: 2.5Gi
+      maxAllowed:
+        cpu: 2
+        memory: 3Gi
+      controlledResources: ["cpu", "memory"]
+      containerControlledValues: "RequestsAndLimits"
+```
+
+***Storage Autoscaler***:
+Storage autoscaler deal with scaling pvc storage with the help of prometheus. So, we need prometheus in the cluster for this operation
+
+For combined cluster:
+```yaml
+apiVersion: autoscaling.kubedb.com/v1alpha1
+kind: SolrAutoscaler
+metadata:
+  name: sl-storage-autoscaler-combined
+  namespace: demo
+spec:
+  databaseRef:
+    name: solr-combined
+  storage:
+    node:
+      expansionMode: "Offline"
+      trigger: "On"
+      usageThreshold: 10
+      scalingThreshold: 100
+```
+
+For dedicated cluster:
+```yaml
+apiVersion: autoscaling.kubedb.com/v1alpha1
+kind: SolrAutoscaler
+metadata:
+  name: sl-storage-autoscaler-topology
+  namespace: demo
+spec:
+  databaseRef:
+    name: solr-cluster
+  storage:
+    data:
+      expansionMode: "Offline"
+      trigger: "On"
+      usageThreshold: 60
+      scalingThreshold: 100
+    overseer:
+      expansionMode: "Offline"
+      trigger: "On"
+      usageThreshold: 60
+      scalingThreshold: 100
+```
+
+***RotateAuth OpsRequest***:
+We have also added support for RotateAuth ops request for `Solr` in this release. It will rotate the admin credential of solr. We can provide secret name in the spec.authentication.secretRef.name and ops manager with update the credential of database.
+If we don’t provide any secret anime the password of the current secret will be updated.
+
+Solr RotateAuth OpsRequest:
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: SolrOpsRequest
+metadata:
+  name: roatate-solr
+  namespace: demo
+spec:
+  databaseRef:
+    name: solr-cluster
+  type: RotateAuth
+  authentication:
+    secretRef:
+      name: new-auth
+```
+
+
+## ZooKeeper
 
 ## Support
 
