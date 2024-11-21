@@ -119,16 +119,17 @@ We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers 
 This release includes important fixes and improvements for the Recommendation Engine. The recommendation protocol for rotating TLS certificates has been updated. Now, a new rotate TLS recommendation for a particular database will be declared -
 
 1. At least one of its certificate's lifespan is more than one month and less than one month remaining till expiry
-2. At least one of its certificates has one-third of its lifespan remaining till expiry
-   Here are some of the notable changes in recommendation engine which will be available from this release forward -
+2. At least one of its certificates has one-third of its lifespan remaining till expiry.
 
-If a recommendation has `status.phase` field set as `InProgess`, it means the recommended Ops-Request is processing. The recommendation will not be marked outdated in this state even if the certificate RenewBefore duration is over.
+Here are some of the notable changes in recommendation engine which will be available from this release forward -
 
-Rotate TLS recommendation now comes with a deadline. The deadline refers to the earliest renewal time among all the certificates which are going to be expiring soon.
+- If a recommendation has `status.phase` field set as `InProgess`, it means the recommended Ops-Request is processing. The recommendation will not be marked outdated in this state even if the certificate RenewBefore duration is over.
 
-The recommendation description has been updated to express more specific information about the certificate that requires renewal.
+- Rotate TLS recommendation now comes with a deadline. The deadline refers to the earliest renewal time among all the certificates which are going to be expiring soon.
 
-The recommendation resync period has been adjusted for more frequent generation.
+- The recommendation description has been updated to express more specific information about the certificate that requires renewal.
+
+- The recommendation resync period has been adjusted for more frequent generation.
 
 Following is a generated recommendation object for a mongodb database with TLS security enabled. The recommendation had been approved and recommended ops-request got successfully applied later on.
 
