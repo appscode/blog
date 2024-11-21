@@ -1,6 +1,6 @@
 ---
 title: Announcing KubeDB v2024.11.18
-date: "2024-11-18"
+date: "2024-11-21"
 weight: 14
 authors:
 - Tapajit Chandra Paul
