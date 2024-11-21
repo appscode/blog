@@ -43,17 +43,19 @@ tags:
 
 We are thrilled to announce the release of **KubeDB v2024.11.18**. This release introduces several key features, including:
 
-- **TLS/SSL Support**: TLS/SSL support has been implemented for both Druid and Memcached, significantly improving security by enabling encrypted communication.
+- **TLS/SSL Support**: TLS/SSL support has been implemented for both Druid, Memcached, , PgBouncer, and ZooKeeper, significantly improving security by enabling encrypted communication.
 
-- **OpsRequest Support**: Enhanced operational request capabilities for Druid, Memcached, Microsoft SQL Server, and Solr, providing greater management flexibility.
+- **OpsRequest Support**: Enhanced operational request capabilities for Druid, Memcached, Microsoft SQL Server, PgBouncer, Solr, and ZooKeeper, providing greater management flexibility.
 
-- **Rotate Auth**: A new Ops Request named `RotateAuth` has been introduced. This feature enables users to rotate the credentials of the database enhancing overall security. It is initially added for `Druid`, `Kafka`, `MongoDB`, `Postgres`, and `Solr`.
+- **RotateAuth**: A new Ops Request named `RotateAuth` has been introduced. This feature enables users to rotate the credentials of the database enhancing overall security. It is initially added for `Druid`, `Elasticsearch`, `Kafka`, `MongoDB`, `Postgres`, and `Solr`.
 
 - **Autoscaling**: Added autoscaling support for Apache Solr to automatically adjust resources based on workload demands.
 
 - **Authentication**: Authentication support has been introduced for Memcached, providing an additional layer of security by verifying client identities before granting access.
 
 - **New Version Support**: Added support for Druid version `30.0.1` and MongoDB version `8.0.3`.
+
+- **Recommendation Engine**: This release includes important fixes and improvements for the Recommendation Engine.
 
 - **Performance Improvement**: This release brings enhancements to controller performance, ensuring more efficient and faster operations.
 
@@ -69,7 +71,7 @@ Have a look [here](https://github.com/ops-center/grafana-dashboards/tree/master/
 
 Here’s a preview of the Summary dashboard for Cassandra:
 
-![Cassandra Summary Dashboard](cassandra-summery.png)
+![Cassandra Summary Dashboard](cassandra-summary.png)
 
 ## Druid
 
@@ -156,7 +158,7 @@ spec:
 
 **Reconfigure**
 
-```
+```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: DruidOpsRequest
 metadata:
@@ -223,7 +225,69 @@ Support for Druid Version `30.0.1` has been added in this release and `30.0.0` i
 
 ## Elasticsearch
 
-## FerretDB
+RotateAuth OpsRequest has been added for elasticsearch. in this release. It will rotate the admin credential of elasticsearch. We can provide a secret name in the spec.authentication.secretRef.name and the ops manager will update the credential of the database.
+If we don’t provide any secret then the password of the current secret will be updated.
+
+***Elasticsearch Cluster Mode***
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: Elasticsearch
+metadata:
+  name: ess-cluster
+  namespace: demo
+spec:
+  storageType: Durable
+  enableSSL: true
+  kernelSettings:
+    disableDefaults: true
+  topology:
+    data:
+      replicas: 1
+      storage:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
+    ingest:
+      replicas: 1
+      storage:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
+    master:
+      replicas: 1
+      storage:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
+  version: xpack-8.15.0
+ ```
+
+***Elasticsearch RotateAuth OpsRequest***
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: SolrOpsRequest
+metadata:
+  name: roatate-es
+  namespace: demo
+spec:
+  databaseRef:
+    Name: es-cluster
+  type: RotateAuth
+  authentication:
+    secretRef:
+      name: new-auth
+```
 
 ## Kafka
 
@@ -241,8 +305,8 @@ spec:
   type: RotateAuth
   databaseRef:
     name: kafka-prod
-  ```
-If the secret is referenced, the operator will update the .spec.authSecret.name` with the new secret name. Here is the yaml,
+```
+If the secret is referenced, the operator will update the `.spec.authSecret.name` with the new secret name. Here is the yaml,
 
 New Secret:
 ```yaml
@@ -659,9 +723,103 @@ Finally, the operator will update the mongodb users password with the new creden
 
 We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotations `basic-auth-active-from` in currently using auth secret which refer to the active from time of this secret.
 
+## MySQL
+
+Multi-Primary support for Group Replication has been added in this release. Currently, MySQL version `8.4.2` supports Multi-Primary mode. You must specify `Multi-Primary` in the `spec.topology.group.mode` section of MySQL Group Replication's YAML configuration. By default, it operates in `Single-Primary` group mode. Below is an example YAML configuration:
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: MySQL
+metadata:
+  name: my-multi-primary
+  namespace: demo
+spec:
+  version: "8.4.2"
+  replicas: 3
+  topology:
+    mode: GroupReplication
+    group:
+      mode: Multi-Primary
+  storageType: Durable
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  terminationPolicy: WipeOut
+```
+
 ## PgBouncer
 
+In this release, we have configured TLS in PgBouncer. Also, Restart has been added.
+
+### TLS/SSL Support
+
+In this release, we have configured tls in PgBouncer. To configure TLS in PgBouncer:
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: PgBouncer
+metadata:
+  name: pb-tls
+  namespace: demo
+spec:
+  sslMode: verify-full
+  tls:
+    issuerRef:
+      apiGroup: cert-manager.io
+      name: pb-ca-issuer
+      kind: Issuer
+    certificates:
+    - alias: server
+      subject:
+        organizations:
+        - kubedb:server
+      dnsNames:
+      - localhost
+      ipAddresses:
+      - "127.0.0.1"
+  version: "1.18.0"
+  replicas: 1
+  database:
+    syncUsers: true
+    databaseName: "postgres"
+    databaseRef:
+      name: "pg-server"
+      namespace: demo
+  connectionPool:
+    port: 5432
+    reservePoolSize: 5
+    authType: md5
+  deletionPolicy: WipeOut
+  podTemplate:
+    spec:
+      containers:
+      - name: pgbouncer
+```
+
+### Ops-Requests Support:
+
+**Restart**
+
+Restart ops request is used to perform a smart restart of the PgBouncer. An example YAML is provided below:
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: PgBouncerOpsRequest
+metadata:
+  name: pb-restart
+  namespace: demo
+spec:
+  databaseRef:
+    name: pb
+  type: Restart
+```
+
+
 ## Postgres
+
 In this release we improved the postgres point time recovery to support seamless archiving and recovery with db pods spread out in different zones in a single region. We also improved our algorithm to calculate and find the suitable base backup for PITR.
 
 We also fixed a bug which wasn’t letting users use postgres `warm` standby mode via `db.spec.standbyMode`. Now if your `db.spec.standbyMode` is set to `warm`, then your db replicas will behave like warm standby which is it will only be used to store data, not open for read queries. If you want to send your read queries to your replicas, make sure you put `db.spec.standbyMode: Hot` which is set by default from this release.
@@ -784,7 +942,8 @@ spec:
             storage: 1Gi
 ```
 
-***Computer autoscaler***:
+***Computer Autoscaler***:
+
 Computer autoscaler deals with scaling cpu and memory and we need metrics configuration in our cluster for this operation.
 
 For combined cluster:
@@ -934,6 +1093,170 @@ spec:
 
 
 ## ZooKeeper
+
+### TLS/SSL Support
+
+In this release, we introduce **TLS support for ZooKeeper**. By implementing TLS support, ZooKeeper enhances the security of client-to-server communication within the environment.
+
+To configure TLS/SSL in ZooKeeper, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in ZooKeeper, ensure that cert-manager is installed in your cluster. You can follow the steps provided [here](https://cert-manager.io/docs/installation/kubernetes/) to install cert-manager in your cluster.
+
+To issue a certificate, cert-manager employs the following Custom Resource (CR):
+
+**Issuer/ClusterIssuer**: Issuers and ClusterIssuers represent certificate authorities (CAs) capable of generating signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer that is in a ready condition to attempt to fulfill the request. Further details can be found [here](https://cert-manager.io/docs/concepts/issuer/).
+
+**Certificate**: cert-manager introduces the concept of Certificates, which define the desired x509 certificate to be renewed and maintained up to date. More details on Certificates can be found [here](https://cert-manager.io/docs/concepts/certificate/).
+
+To configure tls in zookeeper:
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: ZooKeeper
+metadata:
+  name: zk-quickstart
+  namespace: demo
+spec:
+  version: "3.8.3"
+  enableSSL: true
+  tls:
+    issuerRef:
+      apiGroup: "cert-manager.io"
+      kind: Issuer
+      name: zookeeper-ca-issuer
+    certificates:
+      - alias: client
+        ipAddresses:
+        - 127.0.0.1
+        - 192.168.0.252
+  adminServerPort: 8080
+  replicas: 5
+  storage:
+    resources:
+      requests:
+        storage: "1Gi"
+    accessModes:
+      - ReadWriteOnce
+  deletionPolicy: "WipeOut"
+```
+
+### Ops-Requests Support:
+
+**Reconfigure TLS**
+
+By using Reconfigure TLS Ops-Request, we can add TLS to an existing ZooKeeper which is configured without TLS, can remove TLS configuration on existing ZooKeeper which is configured with TLS, can rotate the certificates, can change the issuer. The Yaml will be like:
+
+```yaml
+
+apiVersion: ops.kubedb.com/v1alpha1
+kind: ZooKeeperOpsRequest
+metadata:
+  name: myops-add-tls-2
+  namespace: demo
+spec:
+  type: ReconfigureTLS
+  databaseRef:
+    name: zk-quickstart
+  tls:
+    issuerRef:
+      name: zookeeper-ca-issuer
+      kind: Issuer
+      apiGroup: "cert-manager.io"
+    certificates:
+      - alias: client
+        subject:
+          organizations:
+            - zookeeper
+          organizationalUnits:
+            - client
+```
+
+This is an example showing how to add TLS to an existing ZooKeeper database. Reconfigure-TLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
+
+## Recommendation Engine
+
+This release includes important fixes and improvements for the Recommendation Engine. The recommendation protocol for rotating TLS certificates has been updated. Now, a new rotate TLS recommendation for a particular database will be declared -
+
+1. At least one of its certificate's lifespan is more than one month and less than one month remaining till expiry
+2. At least one of its certificates has one-third of its lifespan remaining till expiry
+   Here are some of the notable changes in recommendation engine which will be available from this release forward -
+
+If a recommendation has `status.phase` field set as `InProgess`, it means the recommended Ops-Request is processing. The recommendation will not be marked outdated in this state even if the certificate RenewBefore duration is over.
+
+Rotate TLS recommendation now comes with a deadline. The deadline refers to the earliest renewal time among all the certificates which are going to be expiring soon.
+
+The recommendation description has been updated to express more specific information about the certificate that requires renewal.
+
+The recommendation resync period has been adjusted for more frequent generation.
+
+Following is a generated recommendation object for a mongodb database with TLS security enabled. The recommendation had been approved and recommended ops-request got successfully applied later on.
+
+```yaml
+apiVersion: supervisor.appscode.com/v1alpha1
+kind: Recommendation
+metadata:
+  creationTimestamp: "2024-11-05T00:23:44Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: mg-tls
+    app.kubernetes.io/managed-by: kubedb.com
+    app.kubernetes.io/type: rotate-tls
+  name: mg-tls-x-mongodb-x-rotate-tls-0bz9c8
+  namespace: mg
+  resourceVersion: "2166015"
+  uid: 6b754590-122a-47d1-a84c-2ae6a880e085
+spec:
+  backoffLimit: 5
+  deadline: "2024-11-05T00:30:30Z"
+  description: Recommending TLS certificate rotation,mg-tls-client-cert Certificate is going to be expired on 2024-11-05 00:35:30 +0000 UTC
+  operation:
+    apiVersion: ops.kubedb.com/v1alpha1
+    kind: MongoDBOpsRequest
+    metadata:
+      name: rotate-tls
+      namespace: mg
+    spec:
+      databaseRef:
+        name: mg-tls
+      tls:
+        rotateCertificates: true
+      type: ReconfigureTLS
+    status: {}
+  recommender:
+    name: kubedb-ops-manager
+  rules:
+    failed: has(self.status) && has(self.status.phase) && self.status.phase == 'Failed'
+    inProgress: has(self.status) && has(self.status.phase) && self.status.phase ==
+      'Progressing'
+    success: has(self.status) && has(self.status.phase) && self.status.phase == 'Successful'
+  target:
+    apiGroup: kubedb.com
+    kind: MongoDB
+    name: mg-tls
+status:
+  approvalStatus: Approved
+  approvedWindow:
+    maintenanceWindow:
+      name: mongo-maintenance
+  conditions:
+  - lastTransitionTime: "2024-11-05T00:30:44Z"
+    message: OpsRequest is successfully created
+    reason: SuccessfullyCreatedOperation
+    status: "True"
+    type: SuccessfullyCreatedOperation
+  - lastTransitionTime: "2024-11-05T00:32:44Z"
+    message: OpsRequest is successfully executed
+    reason: SuccessfullyExecutedOperation
+    status: "True"
+    type: SuccessfullyExecutedOperation
+  createdOperationRef:
+    name: mg-tls-1730766644-rotate-tls-auto
+  failedAttempt: 0
+  observedGeneration: 1
+  outdated: true
+  parallelism: Namespace
+  phase: Succeeded
+  reason: SuccessfullyExecutedOperation
+```
+
 
 ## Support
 
