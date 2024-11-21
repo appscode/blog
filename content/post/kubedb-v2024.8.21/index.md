@@ -86,9 +86,6 @@ This release also includes features like:
 
 This post lists all the major changes done in this release since the last release. Find the detailed changelogs [HERE](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.8.21/README.md) . Now, you can proceed to the details of the features and updates included in the release.
 
-> **Note**: **If you are a KubeDB managed PostgreSQL user, then first you have to upgrade your KubeDB version
-to v2024.6.4 in order to upgrade your KubeDB to this latest release. If you are already in kubedb-v2024.6.4, then you have to update your kubedb-provisioner deployment image with `ghcr.io/kubedb/kubedb-provisioner:v0.46.2`.**
-
 
 ### Key Changes
 
