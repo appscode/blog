@@ -53,7 +53,7 @@ We are thrilled to announce the release of **KubeDB v2024.11.18**. This release 
 
 - **Authentication**: Authentication support has been introduced for Memcached, providing an additional layer of security by verifying client identities before granting access.
 
-- **New Version Support**: Added support for Druid version `30.0.1`.
+- **New Version Support**: Added support for Druid version `30.0.1` and MongoDB version `8.0.3`.
 
 - **Performance Improvement**: This release brings enhancements to controller performance, ensuring more efficient and faster operations.
 
@@ -273,7 +273,7 @@ spec:
 
 Finally, the operator will update the kafka cluster with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`.
 
-We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from.
+We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotations `basic-auth-active-from` in currently using auth secret which refer to the active from time of this secret.
 
 ## Memcached
 
@@ -608,6 +608,56 @@ For a complete list of environment variables and their usage, refer to the [offi
 
 
 ## MongoDB
+
+- We bring support for latest MongoDB release `8.0.3`
+
+- We have introduced a new ops request type `RotateAuth`. This request type is used to rotate the authentication secret for MongoDB. `.spec.authSecret.name` is the referenced name of the secret that contains the authentication information for mongodb to authenticate with the database. The secret should be of type `kubernetes.io/basic-auth`.
+Now, If a user wants to update the authentication credentials for mongodb, they can create an ops request of type `RotateAuth` with or without referencing an authentication secret.
+
+If the secret is not referenced, the ops-manager operator will create a new password for the user and update the current secret. Here is the yaml,
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: MongoDBOpsRequest
+metadata:
+  name: mgops-rotate-auth
+  namespace: demo
+spec:
+  type: RotateAuth
+  databaseRef:
+    name: mongo-prod
+  ```
+If the secret is referenced, the operator will update the .spec.authSecret.name` with the new secret name. Here is the yaml,
+
+New Secret:
+```yaml
+apiVersion: v1
+data:
+  password: enBzY3VscXl2Z3ZhcXZ4ZQ==
+  username: c3VwZXI=
+kind: Secret
+metadata:
+   name: mongo-prod-new-auth
+   namespace: demo
+type: kubernetes.io/basic-auth
+```
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: MongoDBOpsRequest
+metadata:
+  name: mgops-rotate-auth
+  namespace: demo
+spec:
+  type: RotateAuth
+  databaseRef:
+    name: mongo-prod
+  secretRef:
+    name: mongo-prod-new-auth
+  ```
+
+Finally, the operator will update the mongodb users password with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`.
+
+We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotations `basic-auth-active-from` in currently using auth secret which refer to the active from time of this secret.
 
 ## PgBouncer
 
