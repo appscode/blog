@@ -47,19 +47,19 @@ We are thrilled to announce the release of **KubeDB v2024.11.18**. This release 
 
 - **OpsRequest Support**: Enhanced operational request capabilities for Druid, Memcached, Microsoft SQL Server, PgBouncer, Solr, and ZooKeeper, providing greater management flexibility.
 
-- **Autoscaling**: Added autoscaling support for Apache Solr to automatically adjust resources based on workload demands.
+- **Autoscaling**: Apache Solr now supports autoscaling, allowing dynamic resource adjustments to meet workload requirements.
 
-- **RotateAuth**: A new Ops Request named `RotateAuth` has been introduced. This feature enables users to rotate the credentials of the database enhancing overall security. It is initially added for Druid, Elasticsearch, Kafka, MongoDB, Postgres, and Solr.
+- **RotateAuth**: A new Ops-Request named `RotateAuth` has been introduced. This feature enables users to rotate the credentials of the database, enhancing overall security. It is initially added for Druid, Elasticsearch, Kafka, MongoDB, Postgres, and Solr.
 
 - **Authentication**: Authentication support has been introduced for Memcached, providing an additional layer of security by verifying client identities before granting access.
 
-- **New Version Support**: Added support for Druid version `30.0.1` and MongoDB version `8.0.3`.
-
-- **Monitoring**: Added enhanced monitoring feature for KubeDB-managed Cassandra deployments by integrating Grafana dashboards.
+- **Monitoring**: This release brings enhanced monitoring feature for KubeDB-managed Cassandra deployments by integrating Grafana dashboards.
 
 - **Recommendation Engine**: This release includes important fixes and improvements for the Recommendation Engine.
 
 - **Performance Improvement**: This release brings enhancements to controller performance, ensuring more efficient and faster operations.
+
+- **New Version Support**: Support for Druid version `30.0.1` and MongoDB version `8.0.3` has been added.
 
 For detailed changelogs, please refer to the [CHANGELOG](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.11.18/README.md). You can now explore the detailed features and updates included in this release.
 
@@ -85,7 +85,7 @@ With TLS enabled, client applications can securely connect to the Druid cluster,
 
 In addition to securing client-to-server communication, **internal communication** among Druid nodes is also encrypted. Furthermore, **connections to external dependencies**, such as metadata storage and deep storage systems, are secured.
 
-To configure TLS/SSL in Druid, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in Druid, ensure that cert-manager is installed in your cluster. You can follow the steps provided [here](https://cert-manager.io/docs/installation/kubectl/) to install cert-manager in your cluster.
+To configure TLS/SSL in Druid, KubeDB utilizes `cert-manager` to issue certificates. Before proceeding with TLS configuration in Druid, ensure that cert-manager is installed in your cluster. You can follow the steps provided [here](https://cert-manager.io/docs/installation/kubectl/) to install cert-manager in your cluster.
 
 To issue a certificate, cert-manager employs the following Custom Resource (CR):
 
@@ -93,7 +93,7 @@ To issue a certificate, cert-manager employs the following Custom Resource (CR):
 
 **Certificate**: cert-manager introduces the concept of Certificates, which define the desired x509 certificate to be renewed and maintained up to date. More details on Certificates can be found [here](https://cert-manager.io/docs/usage/certificate/).
 
-Druid `CRD` Specifications:
+Here is the TLS enabled Druid YAML:
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -175,6 +175,7 @@ spec:
     configSecret:
       name: new-config
 ```
+
 Here, `new-config` is the name of the new custom configuration secret.
 
 **ReconfigureTLS**
@@ -208,6 +209,10 @@ spec:
 This is an example showing how to add TLS to an existing druid cluster. Reconfigure-TLS also supports features like **Removing TLS**, **Rotating Certificates** or **Changing Issuer**.
 
 **RotateAuth**
+
+In this release, we have introduced a new ops request type `RotateAuth`. This request type is used to rotate the authentication secret for druid. `.spec.authSecret.name` is the referenced name of the secret that contains the authentication information for druid to authenticate with the brokers. The secret should be of type `kubernetes.io/basic-auth`.
+Now, If a user wants to update the authentication credentials for druid, they can create an ops request of type `RotateAuth` with or without referencing an authentication secret.
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: DruidOpsRequest
@@ -219,6 +224,7 @@ spec:
   databaseRef:
     name: druid-cluster
 ```
+
 It is also possible to provide a username and password through a custom authentication section through `spec.authentication.secretRef.name` of `DruidOpsRequest`.
 
 ### New Version Support
@@ -227,7 +233,7 @@ Support for Druid Version `30.0.1` has been added in this release and `30.0.0` i
 
 ## Elasticsearch
 
-RotateAuth OpsRequest has been added for elasticsearch. in this release. It will rotate the admin credential of elasticsearch. We can provide a secret name in the spec.authentication.secretRef.name and the ops manager will update the credential of the database.
+RotateAuth OpsRequest has been added for elasticsearch in this release. It will rotate the admin credential of elasticsearch. We can provide a secret name in the `spec.authentication.secretRef.name` and the ops manager will update the credential of the database.
 If we don’t provide any secret then the password of the current secret will be updated.
 
 **Elasticsearch Cluster Mode**
@@ -345,7 +351,13 @@ We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers 
 
 ### Authentication
 
-In this release, we are adding `Memcached` authentication support. Before we were connecting to the `Memcached` database without any authentication. From now, we will need username and password to connect with the `Memcached` database. Users can set username and password using a secret or we will create a default one. The Yaml will be like bellow:
+In this release, we are introducing authentication support for Memcached. Previously, connections to the Memcached database were made without any authentication. Going forward, a username and password will be required to connect to the Memcached database.
+
+Users can provide their own username and password using a Kubernetes Secret, or the system will generate default credentials if none are provided.
+
+Below is an example of the YAML configuration:
+
+**Authentication Secret**:
 
 ```yaml
 
@@ -359,7 +371,7 @@ data:
   authData: YWxpY2U6Ym9iCg==
 ```
 
-And the `Memcached` Yaml will be look like this one:
+**Memcached YAML**:
 
 ```yaml
 
@@ -379,11 +391,11 @@ spec:
 
 ### TLS/SSL Support
 
-In this release, we introduce TLS support for `Memcached`. By implementing TLS support, `Memcached` enhances the security of client-to-server communication within the environment.
+In this release, we introduce TLS support for Memcached. By implementing TLS support, Memcached enhances the security of client-to-server communication within the environment.
 
-With TLS enabled, client applications can securely connect to the `Memcached` database, ensuring that data transmitted between clients and servers remains encrypted and protected from unauthorized access or tampering. This encryption adds an extra layer of security, particularly important for sensitive data environments where confidentiality and integrity are paramount.
+With TLS enabled, client applications can securely connect to the Memcached database, ensuring that data transmitted between clients and servers remains encrypted and protected from unauthorized access or tampering. This encryption adds an extra layer of security, particularly important for sensitive data environments where confidentiality and integrity are paramount.
 
-To configure TLS/SSL in `Memcached`, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in `Memcached`, ensure that cert-manager is installed in your cluster. You can follow the steps provided here to install cert-manager in your cluster.
+To configure TLS/SSL in Memcached, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in Memcached, ensure that cert-manager is installed in your cluster. You can follow the steps provided here to install cert-manager in your cluster.
 
 To issue a certificate, cert-manager employs the following Custom Resource (CR):
 
@@ -391,7 +403,7 @@ To issue a certificate, cert-manager employs the following Custom Resource (CR):
 
 **Certificate**: cert-manager introduces the concept of Certificates, which define the desired x509 certificate to be renewed and maintained up to date. More details on Certificates can be found here.
 
-`Memcached` CRD Specifications:
+Here is the TLS enabled Memcached YAML:
 
 ```yaml
 
@@ -419,11 +431,11 @@ spec:
 
 ### Ops-Requests
 
-We are introducing new Ops-Requests for `Memcached` which is Reconfigure TLS. You can find the example manifest file to perform the ops-request operation on `Memcached` below:
+We are introducing new Ops-Requests for Memcached which is Reconfigure TLS. You can find the example manifest file to perform the ops-request operation on Memcached below:
 
 **Reconfigure TLS**
 
-By using Reconfigure TLS Ops-Request, we can add TLS to an existing `Memcached` which is configured without TLS, can remove TLS configuration on existing `Memcached` which is configured with TLS, can rotate the certificates, can change the issuer. The Yaml will be like:
+By using Reconfigure TLS Ops-Request, we can add TLS to an existing Memcached which is configured without TLS, can remove TLS configuration on existing Memcached which is configured with TLS, can rotate the certificates, can change the issuer. The YAML will be like:
 
 ```yaml
 
@@ -449,7 +461,7 @@ spec:
           organizationalUnits:
             - client
 ```
-This is an example showing how to add TLS to an existing `Memcached` database. Reconfigure-TLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
+This is an example showing how to add TLS to an existing Memcached database. Reconfigure-TLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
 
 
 ## Microsoft SQL Server
@@ -461,6 +473,7 @@ We are excited to introduce two new Ops-Requests for managing Microsoft SQL Serv
 **Reconfigure Ops-Request**
 
 The `Reconfigure` operation enables you to update the configuration of an existing SQL Server cluster. This can be achieved using a custom configuration secret or by specifying configurations directly in the manifest.
+
 Example 1: Using a Custom Configuration Secret
 
 ```yaml
@@ -579,8 +592,7 @@ tls:
 
 **Updated Fields**:
 
-- Leader Election Configuration:
-  - The field `spec.leaderElection` is now moved under `spec.topology.availabilityGroup.leaderElection`.
+- Leader Election Configuration: The field `spec.leaderElection` is now moved under `spec.topology.availabilityGroup.leaderElection`.
 
 Below is the updated structure reflecting these changes:
 ```yaml
@@ -590,24 +602,6 @@ tls:
     kind: Issuer
     name: mssqlserver-ca-issuer
   certificates:
-    - alias: server
-      emailAddresses:
-        - dev@appscode.com
-      secretName: mssqlserver-server-cert
-      subject:
-        organizationalUnits:
-          - server
-        organizations:
-          - kubedb
-    - alias: client
-      emailAddresses:
-        - abc@appscode.com
-      secretName: mssqlserver-client-cert
-      subject:
-        organizationalUnits:
-          - client
-        organizations:
-          - kubedb
     - alias: endpoint
       secretName: mssqlserver-endpoint-cert
       subject:
@@ -630,9 +624,7 @@ topology:
   mode: AvailabilityGroup
 ```
 
-**Additional Notes:**
-- Use `spec.tls` to configure all TLS/SSL-related settings, including endpoint authentication for Availability Group replicas.
-- For leader election, adjust parameters under `spec.topology.availabilityGroup.leaderElection` as needed.
+> Note: Use `spec.tls` to configure all TLS/SSL-related settings, including endpoint authentication for Availability Group replicas.
 
 ### Configuring MSSQL Environment Variables
 
@@ -670,7 +662,7 @@ spec:
 
 In this example, the SQL Server container will run the **Enterprise Edition** of SQL Server.
 
-For a complete list of environment variables and their usage, refer to the [official Microsoft documentation](https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-configure-environment-variables?view=sql-server-2017).
+To know more about these environment variables and their usage, refer to the [official Microsoft documentation](https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-configure-environment-variables?view=sql-server-2017).
 
 
 ## MongoDB
@@ -842,6 +834,7 @@ spec:
 ```
 
 If the secret is referenced, the operator will update the .spec.authSecret.name` with the new secret name. Here is the yaml,
+
 New Secret:
 ```yaml
 apiVersion: v1
@@ -1072,7 +1065,7 @@ spec:
 **RotateAuth OpsRequest**:
 
 We have also added support for RotateAuth ops request for `Solr` in this release. It will rotate the admin credential of solr. We can provide secret name in the spec.authentication.secretRef.name and ops manager with update the credential of database.
-If we don’t provide any secret and the password of the current secret will be updated.
+If we don’t provide any secret, then the password of the current secret will be updated.
 
 Solr RotateAuth OpsRequest:
 
@@ -1177,15 +1170,16 @@ This release includes important fixes and improvements for the Recommendation En
 
 1. At least one of its certificate's lifespan is more than one month and less than one month remaining till expiry
 2. At least one of its certificates has one-third of its lifespan remaining till expiry
-   Here are some of the notable changes in recommendation engine which will be available from this release forward -
 
-If a recommendation has `status.phase` field set as `InProgess`, it means the recommended Ops-Request is processing. The recommendation will not be marked outdated in this state even if the certificate RenewBefore duration is over.
+Here are some of the notable changes in recommendation engine which will be available from this release forward.
 
-Rotate TLS recommendation now comes with a deadline. The deadline refers to the earliest renewal time among all the certificates which are going to be expiring soon.
+- If a recommendation has `status.phase` field set as `InProgess`, it means the recommended Ops-Request is processing. The recommendation will not be marked outdated in this state even if the certificate RenewBefore duration is over.
 
-The recommendation description has been updated to express more specific information about the certificate that requires renewal.
+- Rotate TLS recommendation now comes with a deadline. The deadline refers to the earliest renewal time among all the certificates which are going to be expiring soon.
 
-The recommendation resync period has been adjusted for more frequent generation.
+- The recommendation description has been updated to express more specific information about the certificate that requires renewal.
+
+- The recommendation resync period has been adjusted for more frequent generation.
 
 Following is a generated recommendation object for a mongodb database with TLS security enabled. The recommendation had been approved and recommended ops-request got successfully applied later on.
 
