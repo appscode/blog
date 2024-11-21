@@ -43,17 +43,19 @@ tags:
 
 We are thrilled to announce the release of **KubeDB v2024.11.18**. This release introduces several key features, including:
 
-- **TLS/SSL Support**: TLS/SSL support has been implemented for both Druid, Memcached, , PgBouncer, and ZooKeeper, significantly improving security by enabling encrypted communication.
+- **TLS/SSL Support**: TLS/SSL support has been implemented for Druid, Memcached, PgBouncer, and ZooKeeper significantly improving security by enabling encrypted communication.
 
 - **OpsRequest Support**: Enhanced operational request capabilities for Druid, Memcached, Microsoft SQL Server, PgBouncer, Solr, and ZooKeeper, providing greater management flexibility.
 
-- **RotateAuth**: A new Ops Request named `RotateAuth` has been introduced. This feature enables users to rotate the credentials of the database enhancing overall security. It is initially added for `Druid`, `Elasticsearch`, `Kafka`, `MongoDB`, `Postgres`, and `Solr`.
-
 - **Autoscaling**: Added autoscaling support for Apache Solr to automatically adjust resources based on workload demands.
+
+- **RotateAuth**: A new Ops Request named `RotateAuth` has been introduced. This feature enables users to rotate the credentials of the database enhancing overall security. It is initially added for Druid, Elasticsearch, Kafka, MongoDB, Postgres, and Solr.
 
 - **Authentication**: Authentication support has been introduced for Memcached, providing an additional layer of security by verifying client identities before granting access.
 
 - **New Version Support**: Added support for Druid version `30.0.1` and MongoDB version `8.0.3`.
+
+- **Monitoring**: Added enhanced monitoring feature for KubeDB-managed Cassandra deployments by integrating Grafana dashboards.
 
 - **Recommendation Engine**: This release includes important fixes and improvements for the Recommendation Engine.
 
@@ -81,11 +83,12 @@ In this release, we are introducing **TLS support for Apache Druid**. By impleme
 
 With TLS enabled, client applications can securely connect to the Druid cluster, ensuring that data transmitted between clients and servers remains encrypted and protected from unauthorized access or tampering. This encryption adds an extra layer of security, particularly important for sensitive data environments where confidentiality and integrity are paramount.
 
-In addition to securing client-to-server communication, **internal communication** between Druid nodes is also encrypted. Furthermore, **connections to external dependencies**, such as metadata storage and deep storage systems, are secured.
+In addition to securing client-to-server communication, **internal communication** among Druid nodes is also encrypted. Furthermore, **connections to external dependencies**, such as metadata storage and deep storage systems, are secured.
 
 To configure TLS/SSL in Druid, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in Druid, ensure that cert-manager is installed in your cluster. You can follow the steps provided [here](https://cert-manager.io/docs/installation/kubectl/) to install cert-manager in your cluster.
 
 To issue a certificate, cert-manager employs the following Custom Resource (CR):
+
 **Issuer/ClusterIssuer**: Issuers and ClusterIssuers represent certificate authorities (CAs) capable of generating signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer that is in a ready condition to attempt to fulfill the request. Further details can be found [here](https://cert-manager.io/docs/concepts/issuer/).
 
 **Certificate**: cert-manager introduces the concept of Certificates, which define the desired x509 certificate to be renewed and maintained up to date. More details on Certificates can be found [here](https://cert-manager.io/docs/usage/certificate/).
@@ -222,19 +225,18 @@ It is also possible to provide a username and password through a custom authenti
 
 Support for Druid Version `30.0.1` has been added in this release and `30.0.0` is marked as deprecated.
 
-
 ## Elasticsearch
 
 RotateAuth OpsRequest has been added for elasticsearch. in this release. It will rotate the admin credential of elasticsearch. We can provide a secret name in the spec.authentication.secretRef.name and the ops manager will update the credential of the database.
 If we don’t provide any secret then the password of the current secret will be updated.
 
-***Elasticsearch Cluster Mode***
+**Elasticsearch Cluster Mode**
 
 ```yaml
 apiVersion: kubedb.com/v1
 kind: Elasticsearch
 metadata:
-  name: ess-cluster
+  name: es-cluster
   namespace: demo
 spec:
   storageType: Durable
@@ -272,11 +274,11 @@ spec:
   version: xpack-8.15.0
  ```
 
-***Elasticsearch RotateAuth OpsRequest***
+**Elasticsearch RotateAuth OpsRequest**
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
-kind: SolrOpsRequest
+kind: ElasticsearchOpsRequest
 metadata:
   name: roatate-es
   namespace: demo
@@ -452,7 +454,7 @@ This is an example showing how to add TLS to an existing `Memcached` database. R
 
 ## Microsoft SQL Server
 
-### Ops-Requests: Reconfigure and Reconfigure-TLS
+### Ops-Requests
 
 We are excited to introduce two new Ops-Requests for managing Microsoft SQL Server configurations in Kubernetes: **Reconfigure**, and **Reconfigure TLS**. These allow you to easily modify SQL Server settings and TLS configurations for enhanced flexibility and security. Below, you’ll find examples demonstrating how to use these new features.
 
@@ -645,7 +647,7 @@ You have to specify the SQL Server product edition using the `MSSQL_PID` environ
 - `EnterpriseCore`: Uses the Enterprise Edition Core.
 - `<valid product id>`: Uses the edition associated with the specified product ID.
 
-- In addition, the `ACCEPT_EULA` environment variable is required to confirm your acceptance of the [End-User Licensing Agreement](https://go.microsoft.com/fwlink/?linkid=857698). It must be set to "Y" to allow the SQL Server container to run.
+- In addition, the `ACCEPT_EULA` environment variable is required to confirm your acceptance of the [End-User Licensing Agreement](https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-configure-environment-variables?view=sql-server-ver16#environment-variables:~:text=ACCEPT_EULA,SQL%20Server%20image.). It must be set to "Y" to allow the SQL Server container to run.
 
 **Example YAML Configuration**:
 
@@ -799,7 +801,7 @@ spec:
       - name: pgbouncer
 ```
 
-### Ops-Requests Support:
+### Ops-Requests Support
 
 **Restart**
 
@@ -816,7 +818,6 @@ spec:
     name: pb
   type: Restart
 ```
-
 
 ## Postgres
 
@@ -872,14 +873,11 @@ Finally, the operator will update the postgres cluster with the new credential a
 
 We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from.
 
-
-## SingleStore
-
 ## Solr
 
 Solr autoscaler support has been added in this release. Kubedb autoscaler leverages the automation of  storage and memory autoscaling with the help of metrics configuration and prometheus.
 
-***Solr Combined Mode***:
+**Solr Combined Mode**:
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: Solr
@@ -901,7 +899,7 @@ spec:
     storageClassName: longhorn
 ```
 
-***Solr Cluster Mode***:
+**Solr Cluster Mode**:
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: Solr
@@ -913,6 +911,7 @@ spec:
   enableSSL: true
   zookeeperRef:
     name: zoo
+    namespace: demo
   topology:
     overseer:
       replicas: 1
@@ -942,7 +941,7 @@ spec:
             storage: 1Gi
 ```
 
-***Computer Autoscaler***:
+**Computer Autoscaler**:
 
 Computer autoscaler deals with scaling cpu and memory and we need metrics configuration in our cluster for this operation.
 
@@ -1026,7 +1025,7 @@ spec:
       containerControlledValues: "RequestsAndLimits"
 ```
 
-***Storage Autoscaler***:
+**Storage Autoscaler**:
 Storage autoscaler deal with scaling pvc storage with the help of prometheus. So, we need prometheus in the cluster for this operation
 
 For combined cluster:
@@ -1070,9 +1069,10 @@ spec:
       scalingThreshold: 100
 ```
 
-***RotateAuth OpsRequest***:
+**RotateAuth OpsRequest**:
+
 We have also added support for RotateAuth ops request for `Solr` in this release. It will rotate the admin credential of solr. We can provide secret name in the spec.authentication.secretRef.name and ops manager with update the credential of database.
-If we don’t provide any secret anime the password of the current secret will be updated.
+If we don’t provide any secret and the password of the current secret will be updated.
 
 Solr RotateAuth OpsRequest:
 
@@ -1138,7 +1138,7 @@ spec:
   deletionPolicy: "WipeOut"
 ```
 
-### Ops-Requests Support:
+### Ops-Requests Support
 
 **Reconfigure TLS**
 
@@ -1256,7 +1256,6 @@ status:
   phase: Succeeded
   reason: SuccessfullyExecutedOperation
 ```
-
 
 ## Support
 
