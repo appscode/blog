@@ -43,15 +43,19 @@ tags:
 
 We are thrilled to announce the release of **KubeDB v2024.11.18**. This release introduces several key features, including:
 
-- **TLS/SSL Support**: Support for TLS/SSL has been added for Druid, Memcached, enhancing the security.
+- **TLS/SSL Support**: TLS/SSL support has been implemented for both Druid and Memcached, significantly improving security by enabling encrypted communication.
 
 - **OpsRequest Support**: Enhanced operational request capabilities for Druid, Memcached, Microsoft SQL Server, and Solr, providing greater management flexibility.
 
+- **Rotate Auth**: A new Ops Request named `RotateAuth` has been introduced. This feature enables users to rotate the credentials of the database enhancing overall security. It is initially added for `Druid`, `Kafka`, `MongoDB`, `Postgres`, and `Solr`.
+
 - **Autoscaling**: Added autoscaling support for Apache Solr to automatically adjust resources based on workload demands.
 
-- **Rotate Auth**: A new Ops Request named `Rotate-Auth` has been introduced. This feature enables users to rotate the credentials of the database enhancing overall security. It is initially added for `Druid`, `Kafka`, `MongoDB`, `Postgres`, and `Solr`. 
+- **Authentication**: Authentication support has been introduced for Memcached, providing an additional layer of security by verifying client identities before granting access.
 
 - **New Version Support**: Added support for Druid version `30.0.1`.
+
+- **Performance Improvement**: This release brings enhancements to controller performance, ensuring more efficient and faster operations.
 
 For detailed changelogs, please refer to the [CHANGELOG](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.11.18/README.md). You can now explore the detailed features and updates included in this release.
 
@@ -69,9 +73,9 @@ Here’s a preview of the Summary dashboard for Cassandra:
 
 ## Druid
 
-### TLS/SSL Support:
+### TLS/SSL Support
 
-In this release, we are introducing **TLS support for Apache `Druid`**. By implementing TLS support, Druid enhances the security of client-to-server communication within the cluster environment.
+In this release, we are introducing **TLS support for Apache Druid**. By implementing TLS support, Druid enhances the security of client-to-server communication within the cluster environment.
 
 With TLS enabled, client applications can securely connect to the Druid cluster, ensuring that data transmitted between clients and servers remains encrypted and protected from unauthorized access or tampering. This encryption adds an extra layer of security, particularly important for sensitive data environments where confidentiality and integrity are paramount.
 
@@ -110,11 +114,11 @@ spec:
   deletionPolicy: Delete
 ```
 
-### Druid Ops-Requests:
+### Druid Ops-Requests
 
-We are introducing four new Ops-Requests for `Druid` i.e. Horizontal Scaling, Reconfigure, Update Version, Reconfigre TLS, Rotate Auth. You can find the example manifests files to perform these operations on a druid cluster below.
+We are introducing four new Ops-Requests for `Druid` i.e. `HorizontalScaling`, `Reconfigure`, `UpdateVersion`, `ReconfigreTLS`, `RotateAuth`. You can find the example manifests files to perform these operations on a druid cluster below.
 
-**Horizontal Scaling**
+**HorizontalScaling**
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -132,7 +136,7 @@ spec:
             historicals: 2
 ```
 
-**Update Version**
+**UpdateVersion**
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -168,7 +172,7 @@ spec:
 ```
 Here, `new-config` is the name of the new custom configuration secret.
 
-**Reconfigure-TLS**
+**ReconfigureTLS**
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -198,7 +202,7 @@ spec:
 
 This is an example showing how to add TLS to an existing druid cluster. Reconfigure-TLS also supports features like **Removing TLS**, **Rotating Certificates** or **Changing Issuer**.
 
-**Rotate Auth**
+**RotateAuth**
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: DruidOpsRequest
@@ -307,7 +311,7 @@ spec:
 
 ```
 
-### TLS/SSL Support:
+### TLS/SSL Support
 
 In this release, we introduce TLS support for `Memcached`. By implementing TLS support, `Memcached` enhances the security of client-to-server communication within the environment.
 
@@ -347,7 +351,7 @@ spec:
 
 ```
 
-### Ops-Requests: 
+### Ops-Requests
 
 We are introducing new Ops-Requests for `Memcached` which is Reconfigure TLS. You can find the example manifest file to perform the ops-request operation on `Memcached` below:
 
@@ -565,6 +569,7 @@ topology:
 - For leader election, adjust parameters under `spec.topology.availabilityGroup.leaderElection` as needed.
 
 ### Configuring MSSQL Environment Variables
+
 When deploying `Microsoft SQL Server` on Linux containers, environment variables are used to configure various settings, including the product edition.
 
 You have to specify the SQL Server product edition using the `MSSQL_PID` environment variable. The acceptable values for `MSSQL_PID` are:
