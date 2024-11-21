@@ -41,33 +41,170 @@ tags:
 - zookeeper
 ---
 
-We are thrilled to announce the release of **KubeDB v2024.11.18**. This release introduces several key features, including:
+KubeDB **v2024.11.18** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on kubernetes. Here are some of the key features to mention - 
 
-- **TLS/SSL Support**: TLS/SSL support has been implemented for Druid, Memcached, PgBouncer, and ZooKeeper significantly improving security by enabling encrypted communication.
+- **TLS/SSL Support**: TLS/SSL support has been implemented for `Druid`, `Memcached`, `PgBouncer`, and `ZooKeeper`. Enabling this feature will let encrypted communication among database cluster components and database server to clients.
 
-- **OpsRequest Support**: Enhanced operational request capabilities for Druid, Memcached, Microsoft SQL Server, PgBouncer, Solr, and ZooKeeper, providing greater management flexibility.
+- **OpsRequest Support**: `OpsRequest` support for `Druid`, `Memcached`, `Microsoft SQL Server`, `PgBouncer`, `Solr`, and `ZooKeeper` have been added providing greater management flexibility in terms of database administrative operations.
 
-- **Autoscaling**: Apache Solr now supports autoscaling, allowing dynamic resource adjustments to meet workload requirements.
+- **Autoscaling**: `Autoscaling` support has been added for `Apache Solr` which will let automatically adjust resources based on workload demands.
 
-- **RotateAuth**: A new Ops-Request named `RotateAuth` has been introduced. This feature enables users to rotate the credentials of the database, enhancing overall security. It is initially added for Druid, Elasticsearch, Kafka, MongoDB, Postgres, and Solr.
+- **RotateAuth**: A new `OpsRequest` named `RotateAuth` has been introduced in this release. This feature enables users to rotate the credentials of the database, enhancing overall security. Initially added for `Druid`, `Elasticsearch`, `Kafka`, `MongoDB`, `Postgres`, and `Solr`.
 
-- **Authentication**: Authentication support has been introduced for Memcached, providing an additional layer of security by verifying client identities before granting access.
+- **Authentication**: Authentication support has been introduced for `Memcached`, providing an additional layer of security by verifying client identities before granting access.
 
-- **Monitoring**: This release brings enhanced monitoring feature for KubeDB-managed Cassandra deployments by integrating Grafana dashboards.
+- **Monitoring**: Added enhanced monitoring feature for KubeDB managed `Cassandra` deployments by integrating Grafana dashboards.
 
 - **Recommendation Engine**: This release includes important fixes and improvements for the Recommendation Engine.
 
 - **Performance Improvement**: This release brings enhancements to controller performance, ensuring more efficient and faster operations.
 
-- **New Version Support**: Support for Druid version `30.0.1` and MongoDB version `8.0.3` has been added.
+- **New Version Support**: Support for `Druid` version `30.0.1` and `MongoDB` version `8.0.3` has been added.
 
 For detailed changelogs, please refer to the [CHANGELOG](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.11.18/README.md). You can now explore the detailed features and updates included in this release.
+
+## Rotate Authentication Credentials
+
+In this release, we have introduced a new ops request type `RotateAuth`. This request type is used to rotate the authentication secret for kubedb managed databases. `.spec.authSecret.name` refers to the secret that contains the authentication information for database. The secret should be of type `kubernetes.io/basic-auth`.
+Now, If a user wants to update the authentication credentials for a particular database, they can create an OpsRequest of type `RotateAuth` with or without referencing an authentication secret.
+
+If the secret is not referenced, the ops-manager operator will create a new credential and update the current secret. Here is the yaml for rotating authentication credentials for a kafka cluster using `KafkaOpsRequest`,
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: KafkaOpsRequest
+metadata:
+  name: kfops-rotate-auth
+  namespace: demo
+spec:
+  type: RotateAuth
+  databaseRef:
+    name: kafka-prod
+```
+If the secret is referenced, the operator will update the `.spec.authSecret.name` with the new secret name. Here is the yaml,
+
+New Secret:
+```yaml
+apiVersion: v1
+data:
+  password: enBzY3VscXl2Z3ZhcXZ4ZQ==
+  username: c3VwZXI=
+kind: Secret
+metadata:
+   name: kafka-prod-new-auth
+   namespace: demo
+type: kubernetes.io/basic-auth
+```
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: KafkaOpsRequest
+metadata:
+  name: kfops-rotate-auth
+  namespace: demo
+spec:
+  type: RotateAuth
+  databaseRef:
+    name: kafka-prod
+  secretRef:
+    name: kafka-prod-new-auth
+  ```
+
+Finally, the operator will update the database cluster with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`.
+
+We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotations `basic-auth-active-from` in currently using auth secret which refer to the active from time of this secret.
+
+## Recommendation Engine Improvements
+
+This release includes important fixes and improvements for the Recommendation Engine. The recommendation protocol for rotating TLS certificates has been updated. Now, a new rotate TLS recommendation for a particular database will be declared -
+
+1. At least one of its certificate's lifespan is more than one month and less than one month remaining till expiry
+2. At least one of its certificates has one-third of its lifespan remaining till expiry
+   Here are some of the notable changes in recommendation engine which will be available from this release forward -
+
+If a recommendation has `status.phase` field set as `InProgess`, it means the recommended Ops-Request is processing. The recommendation will not be marked outdated in this state even if the certificate RenewBefore duration is over.
+
+Rotate TLS recommendation now comes with a deadline. The deadline refers to the earliest renewal time among all the certificates which are going to be expiring soon.
+
+The recommendation description has been updated to express more specific information about the certificate that requires renewal.
+
+The recommendation resync period has been adjusted for more frequent generation.
+
+Following is a generated recommendation object for a mongodb database with TLS security enabled. The recommendation had been approved and recommended ops-request got successfully applied later on.
+
+```yaml
+apiVersion: supervisor.appscode.com/v1alpha1
+kind: Recommendation
+metadata:
+  creationTimestamp: "2024-11-05T00:23:44Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: mg-tls
+    app.kubernetes.io/managed-by: kubedb.com
+    app.kubernetes.io/type: rotate-tls
+  name: mg-tls-x-mongodb-x-rotate-tls-0bz9c8
+  namespace: mg
+  resourceVersion: "2166015"
+  uid: 6b754590-122a-47d1-a84c-2ae6a880e085
+spec:
+  backoffLimit: 5
+  deadline: "2024-11-05T00:30:30Z"
+  description: Recommending TLS certificate rotation,mg-tls-client-cert Certificate is going to be expired on 2024-11-05 00:35:30 +0000 UTC
+  operation:
+    apiVersion: ops.kubedb.com/v1alpha1
+    kind: MongoDBOpsRequest
+    metadata:
+      name: rotate-tls
+      namespace: mg
+    spec:
+      databaseRef:
+        name: mg-tls
+      tls:
+        rotateCertificates: true
+      type: ReconfigureTLS
+    status: {}
+  recommender:
+    name: kubedb-ops-manager
+  rules:
+    failed: has(self.status) && has(self.status.phase) && self.status.phase == 'Failed'
+    inProgress: has(self.status) && has(self.status.phase) && self.status.phase ==
+      'Progressing'
+    success: has(self.status) && has(self.status.phase) && self.status.phase == 'Successful'
+  target:
+    apiGroup: kubedb.com
+    kind: MongoDB
+    name: mg-tls
+status:
+  approvalStatus: Approved
+  approvedWindow:
+    maintenanceWindow:
+      name: mongo-maintenance
+  conditions:
+  - lastTransitionTime: "2024-11-05T00:30:44Z"
+    message: OpsRequest is successfully created
+    reason: SuccessfullyCreatedOperation
+    status: "True"
+    type: SuccessfullyCreatedOperation
+  - lastTransitionTime: "2024-11-05T00:32:44Z"
+    message: OpsRequest is successfully executed
+    reason: SuccessfullyExecutedOperation
+    status: "True"
+    type: SuccessfullyExecutedOperation
+  createdOperationRef:
+    name: mg-tls-1730766644-rotate-tls-auto
+  failedAttempt: 0
+  observedGeneration: 1
+  outdated: true
+  parallelism: Namespace
+  phase: Succeeded
+  reason: SuccessfullyExecutedOperation
+```
 
 ## Cassandra
 
 ### Monitoring
 
-This release introduces an enhanced monitoring feature for KubeDB-managed Cassandra deployments by integrating Grafana dashboards. These dashboards provide comprehensive insights into various Cassandra-specific metrics, statuses, as well as visual representations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of Cassandra, enabling more informed decision-making and efficient resource management.
+This release introduces an enhanced monitoring feature for KubeDB managed Cassandra deployments by integrating Grafana dashboards. These dashboards provide comprehensive insights into various Cassandra specific metrics, statuses, as well as visual representations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of Cassandra, enabling more informed decision-making and efficient resource management.
 
 Have a look [here](https://github.com/ops-center/grafana-dashboards/tree/master/cassandra)  for a step-by-step guide on using the monitoring feature of Apache Cassandra.
 
@@ -175,7 +312,6 @@ spec:
     configSecret:
       name: new-config
 ```
-
 Here, `new-config` is the name of the new custom configuration secret.
 
 **ReconfigureTLS**
@@ -210,9 +346,6 @@ This is an example showing how to add TLS to an existing druid cluster. Reconfig
 
 **RotateAuth**
 
-In this release, we have introduced a new ops request type `RotateAuth`. This request type is used to rotate the authentication secret for druid. `.spec.authSecret.name` is the referenced name of the secret that contains the authentication information for druid to authenticate with the brokers. The secret should be of type `kubernetes.io/basic-auth`.
-Now, If a user wants to update the authentication credentials for druid, they can create an ops request of type `RotateAuth` with or without referencing an authentication secret.
-
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: DruidOpsRequest
@@ -233,7 +366,7 @@ Support for Druid Version `30.0.1` has been added in this release and `30.0.0` i
 
 ## Elasticsearch
 
-RotateAuth OpsRequest has been added for elasticsearch in this release. It will rotate the admin credential of elasticsearch. We can provide a secret name in the `spec.authentication.secretRef.name` and the ops manager will update the credential of the database.
+RotateAuth OpsRequest has been added for elasticsearch. in this release. It will rotate the admin credential of elasticsearch. We can provide a secret name in the spec.authentication.secretRef.name and the ops manager will update the credential of the database.
 If we don’t provide any secret then the password of the current secret will be updated.
 
 **Elasticsearch Cluster Mode**
@@ -297,56 +430,6 @@ spec:
       name: new-auth
 ```
 
-## Kafka
-
-In this release, we have introduced a new ops request type `RotateAuth`. This request type is used to rotate the authentication secret for kafka. `.spec.authSecret.name` is the referenced name of the secret that contains the authentication information for kafka to authenticate with the brokers. The secret should be of type `kubernetes.io/basic-auth`.
-Now, If a user wants to update the authentication credentials for kafka, they can create an ops request of type `RotateAuth` with or without referencing an authentication secret.
-
-If the secret is not referenced, the ops-manager operator will create a new credential and update the current secret. Here is the yaml,
-```yaml
-apiVersion: ops.kubedb.com/v1alpha1
-kind: KafkaOpsRequest
-metadata:
-  name: kfops-rotate-auth
-  namespace: demo
-spec:
-  type: RotateAuth
-  databaseRef:
-    name: kafka-prod
-```
-If the secret is referenced, the operator will update the `.spec.authSecret.name` with the new secret name. Here is the yaml,
-
-New Secret:
-```yaml
-apiVersion: v1
-data:
-  password: enBzY3VscXl2Z3ZhcXZ4ZQ==
-  username: c3VwZXI=
-kind: Secret
-metadata:
-   name: kafka-prod-new-auth
-   namespace: demo
-type: kubernetes.io/basic-auth
-```
-
-```yaml
-apiVersion: ops.kubedb.com/v1alpha1
-kind: KafkaOpsRequest
-metadata:
-  name: kfops-rotate-auth
-  namespace: demo
-spec:
-  type: RotateAuth
-  databaseRef:
-    name: kafka-prod
-  secretRef:
-    name: kafka-prod-new-auth
-  ```
-
-Finally, the operator will update the kafka cluster with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`.
-
-We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotations `basic-auth-active-from` in currently using auth secret which refer to the active from time of this secret.
-
 ## Memcached
 
 ### Authentication
@@ -371,7 +454,7 @@ data:
   authData: YWxpY2U6Ym9iCg==
 ```
 
-**Memcached YAML**:
+**`Memcached` YAML**:
 
 ```yaml
 
@@ -391,11 +474,11 @@ spec:
 
 ### TLS/SSL Support
 
-In this release, we introduce TLS support for Memcached. By implementing TLS support, Memcached enhances the security of client-to-server communication within the environment.
+In this release, we introduce TLS support for `Memcached`. By implementing TLS support, `Memcached` enhances the security of client-to-server communication within the environment.
 
-With TLS enabled, client applications can securely connect to the Memcached database, ensuring that data transmitted between clients and servers remains encrypted and protected from unauthorized access or tampering. This encryption adds an extra layer of security, particularly important for sensitive data environments where confidentiality and integrity are paramount.
+With TLS enabled, client applications can securely connect to the `Memcached` database, ensuring that data transmitted between clients and servers remains encrypted and protected from unauthorized access or tampering. This encryption adds an extra layer of security, particularly important for sensitive data environments where confidentiality and integrity are paramount.
 
-To configure TLS/SSL in Memcached, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in Memcached, ensure that cert-manager is installed in your cluster. You can follow the steps provided here to install cert-manager in your cluster.
+To configure TLS/SSL in `Memcached`, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in `Memcached`, ensure that cert-manager is installed in your cluster. You can follow the steps provided here to install cert-manager in your cluster.
 
 To issue a certificate, cert-manager employs the following Custom Resource (CR):
 
@@ -403,7 +486,7 @@ To issue a certificate, cert-manager employs the following Custom Resource (CR):
 
 **Certificate**: cert-manager introduces the concept of Certificates, which define the desired x509 certificate to be renewed and maintained up to date. More details on Certificates can be found here.
 
-Here is the TLS enabled Memcached YAML:
+Here is the TLS enabled `Memcached` YAML:
 
 ```yaml
 
@@ -431,11 +514,11 @@ spec:
 
 ### Ops-Requests
 
-We are introducing new Ops-Requests for Memcached which is Reconfigure TLS. You can find the example manifest file to perform the ops-request operation on Memcached below:
+We are introducing new Ops-Requests for `Memcached` which is Reconfigure TLS. You can find the example manifest file to perform the ops-request operation on `Memcached` below:
 
 **Reconfigure TLS**
 
-By using Reconfigure TLS Ops-Request, we can add TLS to an existing Memcached which is configured without TLS, can remove TLS configuration on existing Memcached which is configured with TLS, can rotate the certificates, can change the issuer. The YAML will be like:
+By using Reconfigure TLS Ops-Request, we can add TLS to an existing `Memcached` which is configured without TLS, can remove TLS configuration on existing `Memcached` which is configured with TLS, can rotate the certificates, can change the issuer. The YAML will be like:
 
 ```yaml
 
@@ -461,7 +544,7 @@ spec:
           organizationalUnits:
             - client
 ```
-This is an example showing how to add TLS to an existing Memcached database. Reconfigure-TLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
+This is an example showing how to add TLS to an existing `Memcached` database. Reconfigure-TLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
 
 
 ## Microsoft SQL Server
@@ -1163,93 +1246,6 @@ spec:
 ```
 
 This is an example showing how to add TLS to an existing ZooKeeper database. Reconfigure-TLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
-
-## Recommendation Engine
-
-This release includes important fixes and improvements for the Recommendation Engine. The recommendation protocol for rotating TLS certificates has been updated. Now, a new rotate TLS recommendation for a particular database will be declared -
-
-1. At least one of its certificate's lifespan is more than one month and less than one month remaining till expiry
-2. At least one of its certificates has one-third of its lifespan remaining till expiry
-
-Here are some of the notable changes in recommendation engine which will be available from this release forward.
-
-- If a recommendation has `status.phase` field set as `InProgess`, it means the recommended Ops-Request is processing. The recommendation will not be marked outdated in this state even if the certificate RenewBefore duration is over.
-
-- Rotate TLS recommendation now comes with a deadline. The deadline refers to the earliest renewal time among all the certificates which are going to be expiring soon.
-
-- The recommendation description has been updated to express more specific information about the certificate that requires renewal.
-
-- The recommendation resync period has been adjusted for more frequent generation.
-
-Following is a generated recommendation object for a mongodb database with TLS security enabled. The recommendation had been approved and recommended ops-request got successfully applied later on.
-
-```yaml
-apiVersion: supervisor.appscode.com/v1alpha1
-kind: Recommendation
-metadata:
-  creationTimestamp: "2024-11-05T00:23:44Z"
-  generation: 1
-  labels:
-    app.kubernetes.io/instance: mg-tls
-    app.kubernetes.io/managed-by: kubedb.com
-    app.kubernetes.io/type: rotate-tls
-  name: mg-tls-x-mongodb-x-rotate-tls-0bz9c8
-  namespace: mg
-  resourceVersion: "2166015"
-  uid: 6b754590-122a-47d1-a84c-2ae6a880e085
-spec:
-  backoffLimit: 5
-  deadline: "2024-11-05T00:30:30Z"
-  description: Recommending TLS certificate rotation,mg-tls-client-cert Certificate is going to be expired on 2024-11-05 00:35:30 +0000 UTC
-  operation:
-    apiVersion: ops.kubedb.com/v1alpha1
-    kind: MongoDBOpsRequest
-    metadata:
-      name: rotate-tls
-      namespace: mg
-    spec:
-      databaseRef:
-        name: mg-tls
-      tls:
-        rotateCertificates: true
-      type: ReconfigureTLS
-    status: {}
-  recommender:
-    name: kubedb-ops-manager
-  rules:
-    failed: has(self.status) && has(self.status.phase) && self.status.phase == 'Failed'
-    inProgress: has(self.status) && has(self.status.phase) && self.status.phase ==
-      'Progressing'
-    success: has(self.status) && has(self.status.phase) && self.status.phase == 'Successful'
-  target:
-    apiGroup: kubedb.com
-    kind: MongoDB
-    name: mg-tls
-status:
-  approvalStatus: Approved
-  approvedWindow:
-    maintenanceWindow:
-      name: mongo-maintenance
-  conditions:
-  - lastTransitionTime: "2024-11-05T00:30:44Z"
-    message: OpsRequest is successfully created
-    reason: SuccessfullyCreatedOperation
-    status: "True"
-    type: SuccessfullyCreatedOperation
-  - lastTransitionTime: "2024-11-05T00:32:44Z"
-    message: OpsRequest is successfully executed
-    reason: SuccessfullyExecutedOperation
-    status: "True"
-    type: SuccessfullyExecutedOperation
-  createdOperationRef:
-    name: mg-tls-1730766644-rotate-tls-auto
-  failedAttempt: 0
-  observedGeneration: 1
-  outdated: true
-  parallelism: Namespace
-  phase: Succeeded
-  reason: SuccessfullyExecutedOperation
-```
 
 ## Support
 
