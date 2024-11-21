@@ -43,9 +43,9 @@ tags:
 
 KubeDB **v2024.11.18** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on kubernetes. Here are some of the key features to mention - 
 
-- **TLS/SSL Support**: TLS/SSL support has been implemented for `Druid`, `Memcached`, `PgBouncer`, and `ZooKeeper`. Enabling this feature will let encrypted communication among database cluster components and database server to clients.
+- **TLS/SSL Support**: Support for TLS/SSL has been added for `Druid`, `Memcached`, `PgBouncer`, and `ZooKeeper`. Enabling this feature will allow encrypted communication among database cluster components and database server to clients.
 
-- **OpsRequest Support**: `OpsRequest` support for `Druid`, `Memcached`, `Microsoft SQL Server`, `PgBouncer`, `Solr`, and `ZooKeeper` have been added providing greater management flexibility in terms of database administrative operations.
+- **OpsRequest Support**: Some new `OpsRequest` support for `Druid`, `Memcached`, `Microsoft SQL Server`, `PgBouncer`, `Solr`, and `ZooKeeper` has been added, providing greater management flexibility in terms of database administrative operations.
 
 - **Autoscaling**: `Autoscaling` support has been added for `Apache Solr` which will let automatically adjust resources based on workload demands.
 
@@ -106,9 +106,10 @@ spec:
   type: RotateAuth
   databaseRef:
     name: kafka-prod
-  secretRef:
-    name: kafka-prod-new-auth
-  ```
+  authentication:
+    secretRef:
+      name: kafka-prod-new-auth
+ ```
 
 Finally, the operator will update the database cluster with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`.
 
@@ -455,7 +456,7 @@ data:
   authData: YWxpY2U6Ym9iCg==
 ```
 
-**`Memcached` YAML**:
+**Memcached YAML**:
 
 ```yaml
 
@@ -475,11 +476,11 @@ spec:
 
 ### TLS/SSL Support
 
-In this release, we introduce TLS support for `Memcached`. By implementing TLS support, `Memcached` enhances the security of client-to-server communication within the environment.
+In this release, we introduce TLS support for Memcached. By implementing TLS support, Memcached enhances the security of client-to-server communication within the environment.
 
-With TLS enabled, client applications can securely connect to the `Memcached` database, ensuring that data transmitted between clients and servers remains encrypted and protected from unauthorized access or tampering. This encryption adds an extra layer of security, particularly important for sensitive data environments where confidentiality and integrity are paramount.
+With TLS enabled, client applications can securely connect to the Memcached database, ensuring that data transmitted between clients and servers remains encrypted and protected from unauthorized access or tampering. This encryption adds an extra layer of security, particularly important for sensitive data environments where confidentiality and integrity are paramount.
 
-To configure TLS/SSL in `Memcached`, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in `Memcached`, ensure that cert-manager is installed in your cluster. You can follow the steps provided here to install cert-manager in your cluster.
+To configure TLS/SSL in Memcached, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in Memcached, ensure that cert-manager is installed in your cluster. You can follow the steps provided here to install cert-manager in your cluster.
 
 To issue a certificate, cert-manager employs the following Custom Resource (CR):
 
@@ -487,7 +488,7 @@ To issue a certificate, cert-manager employs the following Custom Resource (CR):
 
 **Certificate**: cert-manager introduces the concept of Certificates, which define the desired x509 certificate to be renewed and maintained up to date. More details on Certificates can be found here.
 
-Here is the TLS enabled `Memcached` YAML:
+Here is the TLS enabled Memcached YAML:
 
 ```yaml
 
@@ -515,11 +516,11 @@ spec:
 
 ### Ops-Requests
 
-We are introducing new Ops-Requests for `Memcached` which is Reconfigure TLS. You can find the example manifest file to perform the ops-request operation on `Memcached` below:
+We are introducing new Ops-Requests for Memcached which is Reconfigure TLS. You can find the example manifest file to perform the ops-request operation on Memcached below:
 
 **Reconfigure TLS**
 
-By using Reconfigure TLS Ops-Request, we can add TLS to an existing `Memcached` which is configured without TLS, can remove TLS configuration on existing `Memcached` which is configured with TLS, can rotate the certificates, can change the issuer. The YAML will be like:
+By using Reconfigure TLS Ops-Request, we can add TLS to an existing Memcached which is configured without TLS, can remove TLS configuration on existing Memcached which is configured with TLS, can rotate the certificates, can change the issuer. The YAML will be like:
 
 ```yaml
 
@@ -545,7 +546,7 @@ spec:
           organizationalUnits:
             - client
 ```
-This is an example showing how to add TLS to an existing `Memcached` database. Reconfigure-TLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
+This is an example showing how to add TLS to an existing Memcached database. Reconfigure-TLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
 
 
 ## Microsoft SQL Server
@@ -793,8 +794,9 @@ spec:
   type: RotateAuth
   databaseRef:
     name: mongo-prod
-  secretRef:
-    name: mongo-prod-new-auth
+  authentication:
+    secretRef:
+      name: mongo-prod-new-auth
   ```
 
 Finally, the operator will update the mongodb users password with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`.
