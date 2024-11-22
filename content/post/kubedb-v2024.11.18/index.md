@@ -41,25 +41,25 @@ tags:
 - zookeeper
 ---
 
-KubeDB **v2024.11.18** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on kubernetes. Here are some of the key features to mention - 
+KubeDB **v2024.11.18** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on Kubernetes. Here are some of the key features to mention - 
 
-- **TLS/SSL Support**: Support for TLS/SSL has been added for `Druid`, `Memcached`, `PgBouncer`, and `ZooKeeper`. Enabling this feature will allow encrypted communication among database cluster components and database server to clients.
+- **TLS/SSL Support**: TLS/SSL support has been introduced for `Druid`, `Memcached`, `PgBouncer`, and `ZooKeeper`. This enables encrypted communication between database cluster components and between the database server and clients.
 
-- **OpsRequest Support**: Some new `OpsRequest` support for `Druid`, `Memcached`, `Microsoft SQL Server`, `PgBouncer`, `Solr`, and `ZooKeeper` has been added, providing greater management flexibility in terms of database administrative operations.
+- **OpsRequest Support**: New `OpsRequest` features have been added for `Druid`, `Memcached`, `Microsoft SQL Server`, `PgBouncer`, `Solr`, and `ZooKeeper`, offering greater flexibility for managing database administrative tasks.
 
-- **Autoscaling**: `Autoscaling` support has been added for `Apache Solr` which will let automatically adjust resources based on workload demands.
+- **Autoscaling**: Autoscaling support has been added for `Solr`, enabling automatic resource adjustments based on workload demands.
 
-- **RotateAuth**: A new `OpsRequest` named `RotateAuth` has been introduced in this release. This feature enables users to rotate the credentials of the database, enhancing overall security. Initially added for `Druid`, `Elasticsearch`, `Kafka`, `MongoDB`, `Postgres`, and `Solr`.
+- **RotateAuth**: A new `OpsRequest` feature, `RotateAuth`, has been introduced in this release. It allows users to rotate database credentials, enhancing overall security. This feature is now available for `Druid`, `Elasticsearch`, `Kafka`, `MongoDB`, `Postgres`, and `Solr`.
 
-- **Authentication**: Authentication support has been introduced for `Memcached`, providing an additional layer of security by verifying client identities before granting access.
+- **Authentication**: Authentication support has been added for `Memcached`, providing an additional layer of security by verifying client identities before granting access.
 
-- **Monitoring**: Added enhanced monitoring feature for KubeDB managed `Cassandra` deployments by integrating Grafana dashboards.
+- **Monitoring**: Enhanced monitoring capabilities have been introduced for KubeDB-managed `Cassandra` deployments, including integration with Grafana dashboards.
 
-- **Recommendation Engine**: This release includes important fixes and improvements for the Recommendation Engine.
+- **Recommendation Engine**: This release includes significant fixes and improvements to the Recommendation Engine.
 
-- **Performance Improvement**: This release brings enhancements to controller performance, ensuring more efficient and faster operations.
+- **Performance Improvement**: Enhancements to controller performance in this release ensure faster and more efficient operations.
 
-- **New Version Support**: Support for `Druid` version `30.0.1` and `MongoDB` version `8.0.3` has been added.
+- **New Version Support**: Added support for `Druid` version `30.0.1` and `MongoDB` version `8.0.3`.
 
 For detailed changelogs, please refer to the [CHANGELOG](https://github.com/kubedb/CHANGELOG/blob/master/releases/v2024.11.18/README.md). You can now explore the detailed features and updates included in this release.
 
@@ -81,9 +81,11 @@ spec:
   databaseRef:
     name: kafka-prod
 ```
+
 If the secret is referenced, the operator will update the `.spec.authSecret.name` with the new secret name. Here is the yaml:
 
 New Secret:
+
 ```yaml
 apiVersion: v1
 data:
@@ -113,11 +115,11 @@ spec:
 
 Finally, the operator will update the database cluster with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`.
 
-We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotations `basic-auth-active-from` in currently using auth secret which refer to the active from time of this secret.
+We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotations `kubedb.com/auth-active-from` in currently using auth secret which refer to the active from time of this secret.
 
 ## Recommendation Engine Improvements
 
-This release includes important fixes and improvements for the Recommendation Engine. The recommendation protocol for rotating TLS certificates has been updated. Now, a new rotate TLS recommendation for a particular database will be declared -
+This release includes important fixes and improvements for the Recommendation Engine. The recommendation algorithm for rotating TLS certificates has been updated. Now, a new rotate TLS recommendation for a particular database will be created, if:
 
 1. At least one of its certificate's lifespan is more than one month and less than one month remaining till expiry
 2. At least one of its certificates has one-third of its lifespan remaining till expiry.
@@ -202,7 +204,7 @@ status:
   reason: SuccessfullyExecutedOperation
 ```
 
-Details of updates for each database is listed below:
+The updates for each database are detailed below:
 
 ## Cassandra
 
@@ -210,7 +212,7 @@ Details of updates for each database is listed below:
 
 This release introduces an enhanced monitoring feature for KubeDB managed Cassandra deployments by integrating Grafana dashboards. These dashboards provide comprehensive insights into various Cassandra specific metrics, statuses, as well as visual representations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of Cassandra, enabling more informed decision-making and efficient resource management. You can use builtin [Prometheus](https://github.com/prometheus/prometheus) scraper or [Prometheus operator](https://github.com/prometheus-operator/prometheus-operator) to monitor KubeDB-managed Cassandra.
 
-Have a look [here](https://github.com/ops-center/grafana-dashboards/tree/master/cassandra)  for a step-by-step guide on using the monitoring feature of Apache Cassandra.
+Have a look [here](https://github.com/ops-center/grafana-dashboards/tree/master/cassandra) for a step-by-step guide on using the monitoring feature of Apache Cassandra.
 
 Here’s a preview of the Summary dashboard for Cassandra:
 
@@ -350,7 +352,7 @@ This is an example showing how to add TLS to an existing druid cluster. Reconfig
 
 ### New Version Support
 
-Support for Druid Version `30.0.1` has been added in this release and `30.0.0` is marked as deprecated.
+This release adds support for Druid version `30.0.1`, while version `30.0.0` has been marked as deprecated.
 
 ## Elasticsearch
 
@@ -360,7 +362,7 @@ In this release, `RotateAuth` OpsRequest has been added for elasticsearch. Check
 
 ### Authentication
 
-In this release, we are introducing authentication support for Memcached. Previously, connections to the Memcached database were made without any authentication. Going forward, a username and password will be required to connect to the Memcached database.
+This release introduces authentication support for Memcached. Previously, connections to the Memcached database did not require authentication. Going forward, a username and password will be required to connect to a Memcached instance.
 
 Users can provide their own username and password using a Kubernetes Secret, or the system will generate default credentials if none are provided.
 
@@ -434,11 +436,11 @@ spec:
 
 ### Ops-Requests
 
-We are introducing new Ops-Requests for Memcached which is Reconfigure TLS. You can find the example manifest file to perform the ops-request operation on Memcached below:
+We are introducing new Ops-Requests for Memcached which is `ReconfigureTLS`. You can find the example manifest file to perform the ops-request operation on Memcached below:
 
 **Reconfigure TLS**
 
-By using Reconfigure TLS Ops-Request, we can add TLS to an existing Memcached which is configured without TLS, can remove TLS configuration on existing Memcached which is configured with TLS, can rotate the certificates, can change the issuer. The YAML will be like:
+By using Reconfigure TLS Ops-Request, we can add TLS to an existing Memcached which is configured without TLS, can remove TLS configuration from an existing Memcached which is configured with TLS, can rotate the certificates, can change the issuer. The YAML will be like:
 
 ```yaml
 
@@ -464,6 +466,7 @@ spec:
           organizationalUnits:
             - client
 ```
+
 This is an example showing how to add TLS to an existing Memcached database. ReconfigureTLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
 
 
@@ -586,14 +589,13 @@ tls:
     apiGroup: "cert-manager.io" 
 ```
 
-
 ### MSSQLServer Breaking Changes
 
 > - `spec.internalAuth`: The `spec.internalAuth` section has been removed. TLS/SSL configurations for internal endpoint authentication of SQL Server Availability Group replicas should now be defined under `spec.tls`.
 > - **Leader Election Configuration**: The field `spec.leaderElection` is now moved under `spec.topology.availabilityGroup.leaderElection`.
 
-
 Below is the updated structure reflecting these changes:
+
 ```yaml
 tls:
   issuerRef:
@@ -643,6 +645,7 @@ You have to specify the SQL Server product edition using the `MSSQL_PID` environ
 **Example YAML Configuration**:
 
 Here’s an example of how to configure the `MSSQL_PID` and `ACCEPT_EULA` environment variables in the KubeDB MSSQLServer CRD:
+
 ```yaml
 metadata:
   name: mssqlserver
@@ -669,7 +672,7 @@ To know more about these environment variables and their usage, refer to the [of
 
 - We have introduced a new ops request type `RotateAuth` for MongoDB. Check out [Rotate Authentication Credentials](#rotate-authentication-credentials) section for a deep dive.
 
-- Fix archiver for TLS-enabled s3-compatible storages.
+- Fix archiver for TLS-enabled s3-compatible storage.
 
 ## MySQL
 
@@ -705,8 +708,6 @@ In this release, we have configured TLS in PgBouncer. Also, Restart has been add
 ### TLS/SSL Support
 
 In this release, we have configured tls in PgBouncer.
-
-
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -771,21 +772,22 @@ spec:
 
 - In this release, we improved the postgres point time recovery to support seamless archiving and recovery with db pods spread out in different zones in a single region. We also improved our algorithm to calculate and find the suitable base backup for PITR.
 
-- We also fixed a bug which wasn’t letting users use postgres `warm` standby mode via `db.spec.standbyMode`. Now if your `db.spec.standbyMode` is set to `warm`, then your db replicas will behave like warm standby which will only be used to store data, not open for read queries. If you want to send your read queries to your replicas, make sure you put `db.spec.standbyMode: Hot` which is set by default from this release.
+- We also fixed a bug which wasn’t letting users use postgres `warm` standby mode via `db.spec.standbyMode`. Now if your `db.spec.standbyMode` is set to `Warm`, then your db replicas will behave like warm standby which will only be used to store data, not open for read queries. If you want to send your read queries to your replicas, make sure you put `db.spec.standbyMode: Hot` which is set by default from this release.
 
-- Also fixed archiver for TLS-enabled s3-compatible storages.
+- Also fixed archiver for TLS-enabled s3-compatible storage.
 
 - In this release, we also have introduced a new ops request type `RotateAuth` for Postgres. Check out [Rotate Authentication Credentials](#rotate-authentication-credentials) section for a deep dive.
 
 ## Solr
 
-Solr autoscaler support has been added in this release. Kubedb autoscaler leverages the automation of  storage and memory autoscaling with the help of metrics-server and prometheus.
+Solr autoscaler support has been added in this release. KubeDB autoscaler leverages the automation of  storage and memory autoscaling with the help of metrics-server and prometheus.
 
 **Computer Autoscaler**:
 
 Computer autoscaler deals with scaling cpu and memory, and we need metrics-server in our cluster for this operation.
 
 For combined cluster:
+
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: SolrAutoscaler
@@ -814,6 +816,7 @@ spec:
 ```
 
 For dedicated cluster:
+
 ```yaml
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: SolrAutoscaler
