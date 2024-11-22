@@ -399,6 +399,22 @@ spec:
   deletionPolicy: WipeOut
 
 ```
+User can also disable the authentication for Memcached by setting the `disableAuth` field. Here's a simple YAML example:
+
+```yaml
+
+apiVersion: kubedb.com/v1
+kind: Memcached
+metadata:
+  name: memcd-quickstart
+  namespace: demo
+spec:
+  replicas: 1
+  version: "1.6.22"
+  disableAuth: true
+  deletionPolicy: WipeOut
+
+``` 
 
 ### TLS/SSL Support
 
