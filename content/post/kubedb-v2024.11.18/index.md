@@ -49,7 +49,7 @@ KubeDB **v2024.11.18** is now available! This latest release brings significant 
 
 - **Autoscaling**: Autoscaling support has been added for `Solr`, enabling automatic resource adjustments based on workload demands.
 
-- **RotateAuth**: A new `OpsRequest` feature, `RotateAuth`, has been introduced in this release. It allows users to rotate database credentials, enhancing overall security. This feature is now available for `Druid`, `Elasticsearch`, `Kafka`, `MongoDB`, `Postgres`, and `Solr`.
+- **RotateAuth**: A new `OpsRequest` feature, `RotateAuth`, has been introduced in this release. It allows users to rotate database credentials, enhancing overall security. This feature is now available for `Druid`, `Elasticsearch`, `Kafka`, `MariaDB` `MongoDB`, `PerconaXtraDB`, `Postgres`, and `Solr`.
 
 - **Authentication**: Authentication support has been added for `Memcached`, providing an additional layer of security by verifying client identities before granting access.
 
@@ -357,6 +357,11 @@ This release adds support for Druid version `30.0.1`, while version `30.0.0` has
 ## Elasticsearch
 
 In this release, `RotateAuth` OpsRequest has been added for elasticsearch. Check out [Rotate Authentication Credentials](#rotate-authentication-credentials) section for a deep dive.
+
+## MariaDB
+**RotateAuth OpsRequest**:
+
+We have added support for RotateAuth ops request for MariaDB in this release. Check out [Rotate Authentication Credentials](#rotate-authentication-credentials) section for a deep dive.
 
 ## Memcached
 
@@ -716,6 +721,11 @@ spec:
         storage: 1Gi
   terminationPolicy: WipeOut
 ```
+
+## PerconaXtraDB
+**RotateAuth OpsRequest**:
+
+We have added support for RotateAuth ops request for PerconaXtraDB in this release. Check out [Rotate Authentication Credentials](#rotate-authentication-credentials) section for a deep dive.
 
 ## PgBouncer
 
