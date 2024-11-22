@@ -81,7 +81,7 @@ spec:
   databaseRef:
     name: kafka-prod
 ```
-If the secret is referenced, the operator will update the `.spec.authSecret.name` with the new secret name. Here is the yaml,
+If the secret is referenced, the operator will update the `.spec.authSecret.name` with the new secret name. Here is the yaml:
 
 New Secret:
 ```yaml
@@ -202,11 +202,13 @@ status:
   reason: SuccessfullyExecutedOperation
 ```
 
+Details of updates for each database is listed below:
+
 ## Cassandra
 
 ### Monitoring
 
-This release introduces an enhanced monitoring feature for KubeDB managed Cassandra deployments by integrating Grafana dashboards. These dashboards provide comprehensive insights into various Cassandra specific metrics, statuses, as well as visual representations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of Cassandra, enabling more informed decision-making and efficient resource management.
+This release introduces an enhanced monitoring feature for KubeDB managed Cassandra deployments by integrating Grafana dashboards. These dashboards provide comprehensive insights into various Cassandra specific metrics, statuses, as well as visual representations of memory and CPU consumption. With this dashboard, users can effortlessly assess the overall health and performance of Cassandra, enabling more informed decision-making and efficient resource management. You can use builtin [Prometheus](https://github.com/prometheus/prometheus) scraper or [Prometheus operator](https://github.com/prometheus-operator/prometheus-operator) to monitor KubeDB-managed Cassandra.
 
 Have a look [here](https://github.com/ops-center/grafana-dashboards/tree/master/cassandra)  for a step-by-step guide on using the monitoring feature of Apache Cassandra.
 
@@ -214,23 +216,19 @@ Here’s a preview of the Summary dashboard for Cassandra:
 
 ![Cassandra Summary Dashboard](cassandra-summary.png)
 
+Additionally, we have added configurable alerting support for KubeDB Cassandra. Users can configure Alertmanager to receive notifications when a metric of Cassandra exceeds a given threshold.
+
+To learn more, have a look here ( https://github.com/appscode/alerts/tree/master/charts )
+
 ## Druid
 
 ### TLS/SSL Support
 
-In this release, we are introducing **TLS support for Apache Druid**. By implementing TLS support, Druid enhances the security of client-to-server communication within the cluster environment.
+In this release, we are introducing **TLS support for Apache Druid**. 
 
-With TLS enabled, client applications can securely connect to the Druid cluster, ensuring that data transmitted between clients and servers remains encrypted and protected from unauthorized access or tampering. This encryption adds an extra layer of security, particularly important for sensitive data environments where confidentiality and integrity are paramount.
+To configure TLS/SSL in Druid, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in Druid, ensure that cert-manager is installed in your cluster. You can follow the steps provided [here](https://cert-manager.io/docs/installation/kubernetes/) to install cert-manager in your cluster.
 
-In addition to securing client-to-server communication, **internal communication** among Druid nodes is also encrypted. Furthermore, **connections to external dependencies**, such as metadata storage and deep storage systems, are secured.
-
-To configure TLS/SSL in Druid, KubeDB utilizes `cert-manager` to issue certificates. Before proceeding with TLS configuration in Druid, ensure that cert-manager is installed in your cluster. You can follow the steps provided [here](https://cert-manager.io/docs/installation/kubectl/) to install cert-manager in your cluster.
-
-To issue a certificate, cert-manager employs the following Custom Resource (CR):
-
-**Issuer/ClusterIssuer**: Issuers and ClusterIssuers represent certificate authorities (CAs) capable of generating signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer that is in a ready condition to attempt to fulfill the request. Further details can be found [here](https://cert-manager.io/docs/concepts/issuer/).
-
-**Certificate**: cert-manager introduces the concept of Certificates, which define the desired x509 certificate to be renewed and maintained up to date. More details on Certificates can be found [here](https://cert-manager.io/docs/usage/certificate/).
+To issue a certificate, cert-manager employs the [Issuer/ClusterIssuer](https://cert-manager.io/docs/concepts/issuer/) and [Certificate](https://cert-manager.io/docs/concepts/certificate/) Custom Resource (CR).
 
 Here is the TLS enabled Druid YAML:
 
@@ -268,16 +266,16 @@ We are introducing four new Ops-Requests for `Druid` i.e. `HorizontalScaling`, `
 apiVersion: ops.kubedb.com/v1alpha1
 kind: DruidOpsRequest
 metadata:
-    name: druid-hscale-up
-    namespace: demo
+  name: druid-hscale-up
+  namespace: demo
 spec:
-    type: HorizontalScaling
-    databaseRef:
-        name: druid-cluster
-    horizontalScaling:
-        topology:
-            coordinators: 2
-            historicals: 2
+  type: HorizontalScaling
+  databaseRef:
+    name: druid-cluster
+  horizontalScaling:
+    topology:
+      coordinators: 2
+      historicals: 2
 ```
 
 **UpdateVersion**
@@ -286,16 +284,16 @@ spec:
 apiVersion: ops.kubedb.com/v1alpha1
 kind: DruidOpsRequest
 metadata:
-    name: druid-update-version
-    namespace: demo
+  name: druid-update-version
+  namespace: demo
 spec:
-    type: UpdateVersion
-    databaseRef:
-        name: druid-cluster
-    updateVersion:
-        targetVersion: 30.0.1
-    timeout: 5m
-    apply: IfReady
+  type: UpdateVersion
+  databaseRef:
+    name: druid-cluster
+  updateVersion:
+    targetVersion: 30.0.1
+  timeout: 5m
+  apply: IfReady
 ```
 
 **Reconfigure**
@@ -344,23 +342,11 @@ spec:
   apply: IfReady
 ```
 
-This is an example showing how to add TLS to an existing druid cluster. Reconfigure-TLS also supports features like **Removing TLS**, **Rotating Certificates** or **Changing Issuer**.
+This is an example showing how to add TLS to an existing druid cluster. ReconfigureTLS also supports features like **Removing TLS**, **Rotating Certificates** or **Changing Issuer**.
 
 **RotateAuth**
 
-```yaml
-apiVersion: ops.kubedb.com/v1alpha1
-kind: DruidOpsRequest
-metadata:
-  name: druid-auth-rotate
-  namespace: demo
-spec:
-  type: RotateAuth
-  databaseRef:
-    name: druid-cluster
-```
-
-It is also possible to provide a username and password through a custom authentication section through `spec.authentication.secretRef.name` of `DruidOpsRequest`.
+`RotateAuth` ops request for Druid has been added. Check out [Rotate Authentication Credentials](#rotate-authentication-credentials) section for a deep dive.
 
 ### New Version Support
 
@@ -368,69 +354,7 @@ Support for Druid Version `30.0.1` has been added in this release and `30.0.0` i
 
 ## Elasticsearch
 
-RotateAuth OpsRequest has been added for elasticsearch. in this release. It will rotate the admin credential of elasticsearch. We can provide a secret name in the spec.authentication.secretRef.name and the ops manager will update the credential of the database.
-If we don’t provide any secret then the password of the current secret will be updated.
-
-**Elasticsearch Cluster Mode**
-
-```yaml
-apiVersion: kubedb.com/v1
-kind: Elasticsearch
-metadata:
-  name: es-cluster
-  namespace: demo
-spec:
-  storageType: Durable
-  enableSSL: true
-  kernelSettings:
-    disableDefaults: true
-  topology:
-    data:
-      replicas: 1
-      storage:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-        storageClassName: standard
-    ingest:
-      replicas: 1
-      storage:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-        storageClassName: standard
-    master:
-      replicas: 1
-      storage:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-        storageClassName: standard
-  version: xpack-8.15.0
- ```
-
-**Elasticsearch RotateAuth OpsRequest**
-
-```yaml
-apiVersion: ops.kubedb.com/v1alpha1
-kind: ElasticsearchOpsRequest
-metadata:
-  name: roatate-es
-  namespace: demo
-spec:
-  databaseRef:
-    Name: es-cluster
-  type: RotateAuth
-  authentication:
-    secretRef:
-      name: new-auth
-```
+In this release, `RotateAuth` OpsRequest has been added for elasticsearch. Check out [Rotate Authentication Credentials](#rotate-authentication-credentials) section for a deep dive.
 
 ## Memcached
 
@@ -476,17 +400,11 @@ spec:
 
 ### TLS/SSL Support
 
-In this release, we introduce TLS support for Memcached. By implementing TLS support, Memcached enhances the security of client-to-server communication within the environment.
+In this release, we introduce TLS support for Memcached.
 
-With TLS enabled, client applications can securely connect to the Memcached database, ensuring that data transmitted between clients and servers remains encrypted and protected from unauthorized access or tampering. This encryption adds an extra layer of security, particularly important for sensitive data environments where confidentiality and integrity are paramount.
+To configure TLS/SSL in Memcached, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in Memcached, ensure that cert-manager is installed in your cluster. You can follow the steps provided [here](https://cert-manager.io/docs/installation/kubernetes/) to install cert-manager in your cluster.
 
-To configure TLS/SSL in Memcached, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in Memcached, ensure that cert-manager is installed in your cluster. You can follow the steps provided here to install cert-manager in your cluster.
-
-To issue a certificate, cert-manager employs the following Custom Resource (CR):
-
-**Issuer/ClusterIssuer**: Issuers and ClusterIssuers represent certificate authorities (CAs) capable of generating signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer that is in a ready condition to attempt to fulfill the request. Further details can be found here.
-
-**Certificate**: cert-manager introduces the concept of Certificates, which define the desired x509 certificate to be renewed and maintained up to date. More details on Certificates can be found here.
+To issue a certificate, cert-manager employs the [Issuer/ClusterIssuer](https://cert-manager.io/docs/concepts/issuer/) and [Certificate](https://cert-manager.io/docs/concepts/certificate/) Custom Resource (CR).
 
 Here is the TLS enabled Memcached YAML:
 
@@ -546,7 +464,7 @@ spec:
           organizationalUnits:
             - client
 ```
-This is an example showing how to add TLS to an existing Memcached database. Reconfigure-TLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
+This is an example showing how to add TLS to an existing Memcached database. ReconfigureTLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
 
 
 ## Microsoft SQL Server
@@ -604,9 +522,9 @@ spec:
 
 In this example, the `applyConfig` field is used to specify the new configuration for the `mssql.conf` file directly in the Ops-Request manifest.
 
-**Reconfigure-TLS Ops-Request**
+**ReconfigureTLS OpsRequest**
 
-The Reconfigure-TLS operation allows you to add, remove, or modify TLS configurations for an existing SQL Server cluster. It also supports advanced use cases like **rotating certificates** or **changing the certificate issuer**.
+The ReconfigureTLS operation allows you to add, remove, or modify TLS configurations for an existing SQL Server cluster. It also supports advanced use cases like **rotating certificates** or **changing the certificate issuer**.
 
 Example 1: Adding TLS to a Cluster
 
@@ -669,15 +587,11 @@ tls:
 ```
 
 
-### Updates for MSSQLServer CRD
+### MSSQLServer Breaking Changes
 
-**Removed Fields**:
+> - `spec.internalAuth`: The `spec.internalAuth` section has been removed. TLS/SSL configurations for internal endpoint authentication of SQL Server Availability Group replicas should now be defined under `spec.tls`.
+> - **Leader Election Configuration**: The field `spec.leaderElection` is now moved under `spec.topology.availabilityGroup.leaderElection`.
 
-- `spec.internalAuth`: The `spec.internalAuth` section has been removed. TLS/SSL configurations for internal endpoint authentication of SQL Server Availability Group replicas should now be defined under `spec.tls`.
-
-**Updated Fields**:
-
-- Leader Election Configuration: The field `spec.leaderElection` is now moved under `spec.topology.availabilityGroup.leaderElection`.
 
 Below is the updated structure reflecting these changes:
 ```yaml
@@ -709,7 +623,7 @@ topology:
   mode: AvailabilityGroup
 ```
 
-> Note: Use `spec.tls` to configure all TLS/SSL-related settings, including endpoint authentication for Availability Group replicas.
+> **Note**: Use `spec.tls` to configure all TLS/SSL-related settings, including endpoint authentication for Availability Group replicas.
 
 ### Configuring MSSQL Environment Variables
 
@@ -724,7 +638,7 @@ You have to specify the SQL Server product edition using the `MSSQL_PID` environ
 - `EnterpriseCore`: Uses the Enterprise Edition Core.
 - `<valid product id>`: Uses the edition associated with the specified product ID.
 
-- In addition, the `ACCEPT_EULA` environment variable is required to confirm your acceptance of the [End-User Licensing Agreement](https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-configure-environment-variables?view=sql-server-ver16#environment-variables:~:text=ACCEPT_EULA,SQL%20Server%20image.). It must be set to "Y" to allow the SQL Server container to run.
+- In addition, the `ACCEPT_EULA` environment variable is required to confirm your acceptance of the [End-User Licensing Agreement](https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-configure-environment-variables?view=sql-server-ver16#environment-variables:~:text=ACCEPT_EULA,SQL%20Server%20image.). It must be set, to allow the SQL Server container to run.
 
 **Example YAML Configuration**:
 
@@ -747,61 +661,15 @@ spec:
 
 In this example, the SQL Server container will run the **Enterprise Edition** of SQL Server.
 
-To know more about these environment variables and their usage, refer to the [official Microsoft documentation](https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-configure-environment-variables?view=sql-server-2017).
-
+To know more about these environment variables and their usage, refer to the [official Microsoft documentation.](https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-configure-environment-variables?view=sql-server-2017)
 
 ## MongoDB
 
 - We bring support for latest MongoDB release `8.0.3`
 
-- We have introduced a new ops request type `RotateAuth`. This request type is used to rotate the authentication secret for MongoDB. `.spec.authSecret.name` is the referenced name of the secret that contains the authentication information for mongodb to authenticate with the database. The secret should be of type `kubernetes.io/basic-auth`.
-Now, If a user wants to update the authentication credentials for mongodb, they can create an ops request of type `RotateAuth` with or without referencing an authentication secret.
+- We have introduced a new ops request type `RotateAuth` for MongoDB. Check out [Rotate Authentication Credentials](#rotate-authentication-credentials) section for a deep dive.
 
-If the secret is not referenced, the ops-manager operator will create a new password for the user and update the current secret. Here is the yaml,
-```yaml
-apiVersion: ops.kubedb.com/v1alpha1
-kind: MongoDBOpsRequest
-metadata:
-  name: mgops-rotate-auth
-  namespace: demo
-spec:
-  type: RotateAuth
-  databaseRef:
-    name: mongo-prod
-  ```
-If the secret is referenced, the operator will update the .spec.authSecret.name` with the new secret name. Here is the yaml,
-
-New Secret:
-```yaml
-apiVersion: v1
-data:
-  password: enBzY3VscXl2Z3ZhcXZ4ZQ==
-  username: c3VwZXI=
-kind: Secret
-metadata:
-   name: mongo-prod-new-auth
-   namespace: demo
-type: kubernetes.io/basic-auth
-```
-
-```yaml
-apiVersion: ops.kubedb.com/v1alpha1
-kind: MongoDBOpsRequest
-metadata:
-  name: mgops-rotate-auth
-  namespace: demo
-spec:
-  type: RotateAuth
-  databaseRef:
-    name: mongo-prod
-  authentication:
-    secretRef:
-      name: mongo-prod-new-auth
-  ```
-
-Finally, the operator will update the mongodb users password with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`.
-
-We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotations `basic-auth-active-from` in currently using auth secret which refer to the active from time of this secret.
+- Fix archiver for TLS-enabled s3-compatible storages.
 
 ## MySQL
 
@@ -836,7 +704,9 @@ In this release, we have configured TLS in PgBouncer. Also, Restart has been add
 
 ### TLS/SSL Support
 
-In this release, we have configured tls in PgBouncer. To configure TLS in PgBouncer:
+In this release, we have configured tls in PgBouncer.
+
+
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -899,130 +769,21 @@ spec:
 
 ## Postgres
 
-In this release we improved the postgres point time recovery to support seamless archiving and recovery with db pods spread out in different zones in a single region. We also improved our algorithm to calculate and find the suitable base backup for PITR.
+- In this release, we improved the postgres point time recovery to support seamless archiving and recovery with db pods spread out in different zones in a single region. We also improved our algorithm to calculate and find the suitable base backup for PITR.
 
-We also fixed a bug which wasn’t letting users use postgres `warm` standby mode via `db.spec.standbyMode`. Now if your `db.spec.standbyMode` is set to `warm`, then your db replicas will behave like warm standby which is it will only be used to store data, not open for read queries. If you want to send your read queries to your replicas, make sure you put `db.spec.standbyMode: Hot` which is set by default from this release.
+- We also fixed a bug which wasn’t letting users use postgres `warm` standby mode via `db.spec.standbyMode`. Now if your `db.spec.standbyMode` is set to `warm`, then your db replicas will behave like warm standby which will only be used to store data, not open for read queries. If you want to send your read queries to your replicas, make sure you put `db.spec.standbyMode: Hot` which is set by default from this release.
 
-In this release, we also have introduced a new ops request type `RotateAuth`. This request type is used to rotate the authentication secret for Postgres. `.spec.authSecret.name` is the referenced name of the secret that contains the authentication information for postgres. The secret should be of type `kubernetes.io/basic-auth`.
-Now, If a user wants to update the authentication credentials for postgres, they can create an ops request of type `RotateAuth` with or without referencing an authentication secret.
+- Also fixed archiver for TLS-enabled s3-compatible storages.
 
-If the secret is not referenced, the ops-manager operator will create a new credential and update the current secret. Here is the yaml,
-```yaml
-apiVersion: ops.kubedb.com/v1alpha1
-kind: PostgresOpsRequest
-metadata:
-  name: pgops-rotate-auth
-  namespace: demo
-spec:
-  type: RotateAuth
-  databaseRef:
-    name: ha-postgres
-```
-
-If the secret is referenced, the operator will update the .spec.authSecret.name` with the new secret name. Here is the yaml,
-
-New Secret:
-```yaml
-apiVersion: v1
-data:
-  password: ZC4hTC5KX0kuckMpN04pSQ==
-  username: cG9zdGdyZXM=
-kind: Secret
-metadata:
-   name: ha-postgres-new-auth
-   namespace: demo
-type: kubernetes.io/basic-auth
-```
-
-```yaml
-apiVersion: ops.kubedb.com/v1alpha1
-kind: PostgresOpsRequest
-metadata:
-  name: pgops-rotate-with-new-auth
-  namespace: demo
-spec:
-  type: RotateAuth
-  databaseRef:
-    name: ha-postgres
-  secretRef:
-    name: ha-postgres-new-auth
-  ```
-
-Finally, the operator will update the postgres cluster with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`.
-
-We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from.
+- In this release, we also have introduced a new ops request type `RotateAuth` for Postgres. Check out [Rotate Authentication Credentials](#rotate-authentication-credentials) section for a deep dive.
 
 ## Solr
 
-Solr autoscaler support has been added in this release. Kubedb autoscaler leverages the automation of  storage and memory autoscaling with the help of metrics configuration and prometheus.
-
-**Solr Combined Mode**:
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: Solr
-metadata:
-  name: solr-combined
-  namespace: demo
-spec:
-  version: 9.6.1
-  replicas: 2
-  zookeeperRef:
-    name: zoo
-    namespace: demo
-  storage:
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 1Gi
-    storageClassName: longhorn
-```
-
-**Solr Cluster Mode**:
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: Solr
-metadata:
-  name: solr-cluster
-  namespace: demo
-spec:
-  version: 9.4.1
-  enableSSL: true
-  zookeeperRef:
-    name: zoo
-    namespace: demo
-  topology:
-    overseer:
-      replicas: 1
-      storage:
-        storageClassName: longhorn
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-    data:
-      replicas: 1
-      storage:
-        storageClassName: longhorn
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-    coordinator:
-      storage:
-        storageClassName: longhorn
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-```
+Solr autoscaler support has been added in this release. Kubedb autoscaler leverages the automation of  storage and memory autoscaling with the help of metrics-server and prometheus.
 
 **Computer Autoscaler**:
 
-Computer autoscaler deals with scaling cpu and memory and we need metrics configuration in our cluster for this operation.
+Computer autoscaler deals with scaling cpu and memory, and we need metrics-server in our cluster for this operation.
 
 For combined cluster:
 ```yaml
@@ -1150,40 +911,18 @@ spec:
 
 **RotateAuth OpsRequest**:
 
-We have also added support for RotateAuth ops request for `Solr` in this release. It will rotate the admin credential of solr. We can provide secret name in the spec.authentication.secretRef.name and ops manager with update the credential of database.
-If we don’t provide any secret, then the password of the current secret will be updated.
-
-Solr RotateAuth OpsRequest:
-
-```yaml
-apiVersion: ops.kubedb.com/v1alpha1
-kind: SolrOpsRequest
-metadata:
-  name: roatate-solr
-  namespace: demo
-spec:
-  databaseRef:
-    name: solr-cluster
-  type: RotateAuth
-  authentication:
-    secretRef:
-      name: new-auth
-```
+We have also added support for RotateAuth ops request for `Solr` in this release. Check out [Rotate Authentication Credentials](#rotate-authentication-credentials) section for a deep dive.
 
 
 ## ZooKeeper
 
 ### TLS/SSL Support
 
-In this release, we introduce **TLS support for ZooKeeper**. By implementing TLS support, ZooKeeper enhances the security of client-to-server communication within the environment.
+In this release, we introduce **TLS support for ZooKeeper**.
 
 To configure TLS/SSL in ZooKeeper, KubeDB utilizes cert-manager to issue certificates. Before proceeding with TLS configuration in ZooKeeper, ensure that cert-manager is installed in your cluster. You can follow the steps provided [here](https://cert-manager.io/docs/installation/kubernetes/) to install cert-manager in your cluster.
 
-To issue a certificate, cert-manager employs the following Custom Resource (CR):
-
-**Issuer/ClusterIssuer**: Issuers and ClusterIssuers represent certificate authorities (CAs) capable of generating signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer that is in a ready condition to attempt to fulfill the request. Further details can be found [here](https://cert-manager.io/docs/concepts/issuer/).
-
-**Certificate**: cert-manager introduces the concept of Certificates, which define the desired x509 certificate to be renewed and maintained up to date. More details on Certificates can be found [here](https://cert-manager.io/docs/concepts/certificate/).
+To issue a certificate, cert-manager employs the [Issuer/ClusterIssuer](https://cert-manager.io/docs/concepts/issuer/) and [Certificate](https://cert-manager.io/docs/concepts/certificate/) Custom Resource (CR).
 
 To configure tls in zookeeper:
 
@@ -1248,7 +987,7 @@ spec:
             - client
 ```
 
-This is an example showing how to add TLS to an existing ZooKeeper database. Reconfigure-TLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
+This is an example showing how to add TLS to an existing ZooKeeper database. ReconfigureTLS also supports features like Removing TLS, Rotating Certificates or Changing Issuer.
 
 ## Support
 
