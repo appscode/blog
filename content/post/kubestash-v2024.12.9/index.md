@@ -6,10 +6,10 @@ authors:
 - Md Ishtiaq Islam
 tags:
 - backup
+- backup-verification
 - disaster-recovery
 - kubernetes
 - kubestash
-- backup-verification
 - restore
 ---
 
@@ -36,7 +36,7 @@ $ kubectl get functions | grep -i `kubedbverifier`
 kubedbverifier            19h
 ```
 
-Assuming that a KubeDB managed `MySQL` instance with a configured backup already exists. Now, we need to create a `MySQL` instance for verification in our preferred namespace (i.e. `verify`). Here is an example of `MySQL` instance for verification:
+To verify the backup of a `MySQL` database, a separate `MySQL` instance is required to run the verification process for the original database. Here is an example of a `MySQL` instance for verification:
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -56,7 +56,7 @@ spec:
         storage: 50Mi
 ```
 
-Here, the configuration for the verification application should be similar to the backup application as we are going to restore the backup data in the verification application.
+It should have a similar configuration to the original backup application (e.g., the database version should match), as we are going to restore the original application's backup data into it.
 
 Here is the example of `BackupVerifier` that verifies the `MySQL`:
 
@@ -95,7 +95,7 @@ spec:
   sessionHistoryLimit: 2
 ```
 
-Now we need to update `BackupConfiguration` to refer the `BackupVerifier`. 
+Here is the `BackupConfiguration` configured for the original database, which refers to the `BackupVerifier`. 
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -168,7 +168,7 @@ spec:
       - -H
       - "Content-Type: application/json"
       - -d
-      - `{"text":":x: Name: {{ .Name }} Namespace: {{.Namespace}} Phase: {{.Status.Phase}}"}`
+      - `{"text":"Name: {{ .Name }} Namespace: {{.Namespace}} Phase: {{.Status.Phase}}"}`
       - https://slack-webhook.url/kubestash
   executor:
     type: Pod
@@ -179,8 +179,8 @@ spec:
 
 ### Improvements & Bug Fixes
 
-- We've fixed an issue for external databases backup. The database version was not resolved during backup which is fixed within this release.
-- We've fixed an issue where addon job template was not resolved in the `BackupConfiguration`. That has been fixed in this release.
+- We’ve fixed an issue with external database backups where the database version was not resolved during the backup process. This has now been fixed in this release.
+- We have also fixed an issue where the addon job template specified in the `BackupConfiguration` was not applied. It has been fixed in this release.
 
 ## What Next?
 Please try the latest release and give us your valuable feedback.
