@@ -1,6 +1,6 @@
 ---
 title: Read/Write Operations Splitting from Envoy Filter
-date: "2024-12-13"
+date: "2024-12-12"
 weight: 29
 authors:
 - Tauhedul Islam
