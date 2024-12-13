@@ -1,5 +1,18 @@
-## MySQL Filter
+---
+title: MySQL Filter in Envoy
+date: "2024-12-12"
+weight: 15
+authors:
+- Tauhedul Islam
+tags:
+- envoy
+- mysql-filter
+- mysql
+- proxy
+---
 
+
+## Overview
 
 The MySQL proxy filter decodes the wire protocol between the MySQL client and server. While using MySQL filter, all data
 passes through this filter. We may decode, track and change communication packets from MySQL filter.

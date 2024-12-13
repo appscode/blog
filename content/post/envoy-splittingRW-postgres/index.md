@@ -1,4 +1,17 @@
-## Read/Write Operation Splitting 
+---
+title: Read/Write Operations Splitting from Envoy PostgreSQL Filter
+date: "2024-12-12"
+weight: 16
+authors:
+- Tauhedul Islam
+tags:
+- envoy
+- postgresql-filters
+- postgresql
+- read_write-splitting
+---
+
+## Overview
 In this blog, we'll discuss the read write operation splitting technique from Envoy PostgresQL filter.
 \
 In read-write splitting, we implement a mechanism where the read operations are sent to an upstream and the write operations are sent to a different upstream. This helps us balance the load on servers.
