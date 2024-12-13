@@ -1,5 +1,5 @@
 ---
-title: AppsCode at the First-Ever Kubernetes Community Days Dhaka-Highlighting KubeDB and Sharing Expertise
+title: KubeConNA Digest - Top Trends and Key Takeaways from This Year’s Event by AppsCode
 date: "2024-12-12"
 weight: 14
 authors:
@@ -91,6 +91,17 @@ Visitors were delighted to receive our exclusive KubeDB swag as a token of our a
 ## Next Stop: London for KubeCon Europe 2025!
 After an incredible experience at KubeCon North America 2024, AppsCode is excited to head to London for [KubeCon Europe 2025](https://events.linuxfoundation.org/kubecon-cloudnativecon-europe/)! We look forward to connecting with the global Kubernetes community once again, showcasing our latest innovations, and sharing insights on how KubeDB continues to transform database management in cloud-native environments. Stay tuned for more updates as we gear up for another exciting chapter in the KubeCon journey!
 If you’re planning to attend, be sure to follow our social media channels and blog for the latest updates on our sessions, events, and exclusive chances to connect with the AppsCode team. Don’t miss out—register for KubeCon Europe 2025 and join the conversation that’s driving the future of cloud-native technology!
+
+## Support
+
+To speak with us, please leave a message on [our website](https://appscode.com/contact/).
+
+To receive product announcements, follow us on [X](https://twitter.com/KubeDB).
+
+To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
+
+If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
+
 
 
 
