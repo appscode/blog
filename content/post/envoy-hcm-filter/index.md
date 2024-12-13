@@ -1,3 +1,16 @@
+---
+title: HTTP Filter Creation in Envoy
+date: "2024-12-13"
+weight: 30
+authors:
+- Tauhedul Islam
+tags:
+- envoy
+- http-filters
+- http
+- proxy
+---
+
 ## Envoy HTTP Filter Creation
 In Envoy, we may use HTTP Connection Manager(HCM) for the HTTP based communication. In this filter, we can add some extra sub-filters, which
 are called HTTP filters.\

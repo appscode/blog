@@ -1,3 +1,16 @@
+---
+title: Read/Write Operations Splitting from Envoy Filter
+date: "2024-12-13"
+weight: 29
+authors:
+- Tauhedul Islam
+tags:
+- envoy
+- postgresql-filters
+- postgresql
+- read_write-splitting
+---
+
 ## Read/Write Operation Splitting 
 In this blog, we'll discuss the read write operation splitting technique from Envoy PostgresQL filter.
 \
