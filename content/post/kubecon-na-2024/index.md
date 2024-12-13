@@ -1,5 +1,5 @@
 ---
-title: KubeCon North America Digest-Top Trends and Key Takeaways from This Year’s Event by AppsCode
+title: AppsCode at the First-Ever Kubernetes Community Days Dhaka-Highlighting KubeDB and Sharing Expertise
 date: "2024-12-12"
 weight: 14
 authors:
@@ -10,7 +10,9 @@ tags:
 - kubedb
 - kubernetes
 ---
+
 ## Overview
+
 KubeCon is the premier global conference for the Kubernetes and cloud-native community, hosted by the Cloud Native Computing Foundation (CNCF). Held this year from November 12–15, 2024, in Salt Lake City, Utah, it brought together developers, IT professionals, and industry leaders to explore the latest advancements in container orchestration and cloud-native technologies.
 
 This event is more than just a conference—it is the beating heart of innovation in the Kubernetes ecosystem. With thousands of attendees, hundreds of sessions, and a dynamic expo floor, KubeCon sets the stage for shaping the future of cloud-native infrastructure. From groundbreaking announcements to hands-on workshops, it offers an unmatched opportunity to connect with like-minded professionals and stay ahead in the rapidly evolving cloud-native landscape.
