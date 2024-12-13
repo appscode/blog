@@ -1,6 +1,5 @@
 ---
 title: KubeCon North America Digest-Top Trends and Key Takeaways from This Year’s Event by AppsCode
-
 date: "2024-12-12"
 weight: 14
 authors:
