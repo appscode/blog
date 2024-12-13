@@ -68,8 +68,8 @@ If the upstream is SSL secured, then after receiving the `SSL Response` packet w
 After receiving the `Server Hello` packet, we generate the Authentication packet using the `username`, `password`, and the `Salt` value, and send this to additional connection. Note that, we've implemented MD5 based authentication method for now, other methods can be added in the samy way.\
 After that receive the final response from the server and complete the connection process.\
 In this handshake and authentication process with the additional connection, we don't send any response packet to downstream. As the downstream client has already completed these phase with the Envoy's default upstream server. We handle this process from the filter, send the packets from the filter and receive the packets from the filter.\
-To implement this splitting from other filters, we also need to do the same.\
-\
+To implement this splitting from other filters, we also need to do the same.
+
 ### Query Handling
 During the query phase, we determine if the query is of write type. If yes, we send the query request to the additional connection using `additional_connection.sendDataToUpstream()` method.
 And return `FilterStatus::StopIteration` from the `onData` method of the PostgreSQL proxy filter, so that the data packed doesn't get send to the default upstream.\
