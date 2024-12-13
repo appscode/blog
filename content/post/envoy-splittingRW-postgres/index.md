@@ -6,8 +6,8 @@ authors:
 - Tauhedul Islam
 tags:
 - envoy
-- postgresql-filters
 - postgresql
+- postgresql-filters
 - read_write-splitting
 ---
 
