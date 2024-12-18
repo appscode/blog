@@ -47,6 +47,28 @@ KubeDB **v2024.12.19** is now available! This latest release brings significant 
 - **New Version Support**: New versions have been added for `Elasticsearch`, `MySQL`, `Redis`, `Solr`, `Singlestore`.
 - **Archiver**: `MySQL` archiver and point-in-time-recovery within `KubeDB` has been enhanced.
 
+## Druid
+
+### New version
+We have added support for `Druid` versions `31.0.0`.
+Here is yaml for druid version `31.0.0`
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: Druid
+metadata:
+  name: druid
+  namespace: demo
+spec:
+  deepStorage:
+    configSecret:
+      name: deep-storage-config
+    type: s3
+  topology:
+    routers:
+      replicas: 1
+  version: 31.0.0
+```
 
 ## Elasticsearch
 
@@ -193,7 +215,28 @@ spec:
 ## Kafka
 
 ### New Versions
-We have added support for Kafka versions `3.7.2`, `3.8.1`and `3.9.0`.
+We have added support for `Kafka` versions `3.7.2`, `3.8.1`and `3.9.0`.
+Here is a simple yaml for kafka version `3.9.0`
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: Kafka
+metadata:
+  name: kafka
+  namespace: demo
+spec:
+  deletionPolicy: Delete
+  replicas: 3
+  storage:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: standard
+  storageType: Durable
+  version: 3.9.0
+```
 
 ## Memcached
 
