@@ -58,6 +58,8 @@ You can find full spec [here](https://github.com/kubedb/apimachinery/blob/master
 
 So Incremental snapshots status field will store successful and failed log history according to these extra two fields. This will make easier our debugging process.
 
+We update start time and end time of continuous `oplog/wal/log` push in incremental snapshot status. From now on new fields in snapshot’s status field have been introduced. So the maximum `successfulLogHistoryLimit` successful oplog/wal/log/binlog push and maximum `failedLogHistoryLimit` failed `oplog/wal/log/binlog` push information will be stored in our incremental snapshot’s status.
+
 Here is a sample yaml for `MongoDBArchiver`. Changes in the field `.spec.logBackup` will be same for other archivers as well.
 ```yaml
 apiVersion: archiver.kubedb.com/v1alpha1
@@ -458,7 +460,8 @@ Here you can mention the mode of group replication single or Multi primary, requ
 ## Redis
 
 ### New Versions
-This release adds support for redis version `6.2.16`, `7.2.6` and `7.4.1`. Here is the sample YAML file of the Redis cluster using the 7.4.1 version
+This release adds support for redis version `6.2.16`, `7.2.6` and `7.4.1`. 
+Here is the sample YAML file of the `Redis` cluster using version `7.4.1`.
 
 ```yaml
 apiVersion: kubedb.com/v1
