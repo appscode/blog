@@ -1,5 +1,5 @@
 ---
-title: Announcing KubeDB v2024.11.18
+title: Announcing KubeDB v2024.12.19
 date: "2024-12-18"
 weight: 16
 authors:
@@ -121,7 +121,7 @@ spec:
 ## Opensearch
 
 ## New Versions
-We have added support for `Elasticsearch` versions `opensearch-1.3.19`.
+We have added support for `Elasticsearch` version `opensearch-1.3.19`.
 Here is yaml for elasticsearch version `opensearch-1.3.19`
 
 ```yaml
