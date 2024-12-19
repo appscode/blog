@@ -519,6 +519,27 @@ spec:
 ```
 Here you can mention the mode of group replication single or Multi primary, requireSSL and issuerRef for TLS secure connection on group replication mode.
 
+## Postgres
+
+### Point-in-Time Recovery (PITR) Enhancements:
+Our PITR algorithm has been significantly improved. We now support the latest point-in-time recovery for PostgreSQL.
+In order to find latest point  in time a user can recover, they need to follow the below the approach.
+- Run `kubectl get snapshots.storage.kubestash.com -n <ns> <db-name>-incremental-snapshot`
+    ```yaml
+    status:
+      components:
+        wal:
+          logStats:
+            end: "2024-12-19T15:36:50.432136Z"
+            lsn: 0/1C000468
+    ```
+- Use the time mentioned in `components.wal.logStats.end` as your recoveryTimeStamp.
+### Bug Fixes and Improvements:
+#### PostgreSQL Failover:
+- Improved failover algorithms ensure almost instant failover to a healthy standby pod.
+- Fixed several bugs that prevented failover when the old primary was not available in the cluster.
+#### PostgreSQL Version Upgrade:
+- Resolved timing issues in the PostgreSQL version upgrade operations request.
 
 
 
