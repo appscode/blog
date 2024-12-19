@@ -58,7 +58,7 @@ You can find full spec [here](https://github.com/kubedb/apimachinery/blob/master
 
 We update start time and end time of continuous oplog/wal/log/binlog push in incremental snapshot status. From now on new fields in snapshot’s status field have been introduced.  So the maximum `successfulLogHistoryLimit` successful oplog/wal/log/binlog push and maximum `failedLogHistoryLimit` failed oplog/wal/log/binlog push information will be stored in our incremental snapshot’s status.
 
-Here is a sample yaml for `MongoDBArchiver`. Changes in the field `.spec.logBackup` will be same for other archivers as well.
+Here is the sample YAML for `MongoDBArchiver`. Changes in the field `.spec.logBackup` will be same for other archivers as well.
 ```yaml
 apiVersion: archiver.kubedb.com/v1alpha1
 kind: MongoDBArchiver
@@ -98,34 +98,11 @@ spec:
       namespace: demo
 ```
 
-## Druid
-
-### New version
-We have added support for `Druid` versions `31.0.0`.
-Here is a sample yaml for druid version `31.0.0`
-
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: Druid
-metadata:
-  name: druid
-  namespace: demo
-spec:
-  deepStorage:
-    configSecret:
-      name: deep-storage-config
-    type: s3
-  topology:
-    routers:
-      replicas: 1
-  version: 31.0.0
-```
-
 ## Elasticsearch
 
 ### New Versions
 We have added support for `Elasticsearch` versions `xpack-7.17.25`, `xpack-8.15.4`, `xpack-8.16.0` and `opensearch-1.3.19`.
-Here is a sample yaml for `Elasticsearch` version `xpack-8.16.0`
+Here is the sample YAML for `Elasticsearch` version `xpack-8.16.0`
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -216,59 +193,6 @@ spec:
       name: new-auth
 ```
 
-## FerretDB
-
-### New Versions
-We have added support for `FerretDB` version `1.24.0`.
-Here is a sample yaml for `FerretDB` version `1.24.0`
-
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: FerretDB
-metadata:
-  name: ferretdb
-  namespace: demo
-spec:
-  authSecret:
-    externallyManaged: false
-  backend:
-    externallyManaged: false
-  storage:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 500Mi
-  version: 1.24.0
-```
-
-
-## Kafka
-
-### New Versions
-We have added support for `Kafka` versions `3.7.2`, `3.8.1`and `3.9.0`.
-Here is a sample yaml for `Kafka` version `3.9.0`
-
-```yaml
-apiVersion: kubedb.com/v1
-kind: Kafka
-metadata:
-  name: kafka
-  namespace: demo
-spec:
-  deletionPolicy: Delete
-  replicas: 3
-  storage:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 1Gi
-    storageClassName: standard
-  storageType: Durable
-  version: 3.9.0
-```
-
 ## Memcached
 
 ### Memcached OpsRequest
@@ -346,7 +270,7 @@ A new replication strategy feature has been introduced, supporting four distinct
 
 Please note that `fscopy` does not support cross-zone operations.
 
-Below is a sample YAML configuration for setting up a `MySQLArchiver` in KubeDB:
+Here is the sample YAML configuration for setting up a `MySQLArchiver` in KubeDB:
 ```yaml
 apiVersion: archiver.kubedb.com/v1alpha1
 kind: MySQLArchiver
@@ -389,7 +313,7 @@ spec:
       namespace: "demo"
 ```
 
-Here’s a sample YAML configuration for restoring MySQL from a backup using the new features:
+Here’s the sample YAML configuration for restoring MySQL from a backup using the new features:
 ```yaml
 apiVersion: kubedb.com/v1
 kind: MySQL
@@ -454,6 +378,108 @@ spec:
   apply: Always
 ```
 Here you can mention the mode of group replication single or Multi primary, requireSSL and issuerRef for TLS secure connection on group replication mode.
+
+
+## Druid
+
+### New version
+We have added support for `Druid` versions `31.0.0`.
+Here is the sample YAML for druid version `31.0.0`
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: Druid
+metadata:
+  name: druid
+  namespace: demo
+spec:
+  deepStorage:
+    configSecret:
+      name: deep-storage-config
+    type: s3
+  topology:
+    routers:
+      replicas: 1
+  version: 31.0.0
+```
+
+## MariaDB
+
+### New version
+We have added support for `MariaDB` versions `11.6.2`.
+Here is the sample YAML for `MariaDB` version `11.6.2`
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: MariaDB
+metadata:
+  name: mariadb-demo
+  namespace: demo
+spec:
+  deletionPolicy: Delete
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: standard
+  storageType: Durable
+  version: 11.6.2
+```
+
+## FerretDB
+
+### New Versions
+We have added support for `FerretDB` version `1.24.0`.
+Here is the sample YAML for `FerretDB` version `1.24.0`
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: FerretDB
+metadata:
+  name: ferretdb
+  namespace: demo
+spec:
+  authSecret:
+    externallyManaged: false
+  backend:
+    externallyManaged: false
+  storage:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 500Mi
+  version: 1.24.0
+```
+
+
+## Kafka
+
+### New Versions
+We have added support for `Kafka` versions `3.7.2`, `3.8.1`and `3.9.0`.
+Here is the sample YAML for `Kafka` version `3.9.0`
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: Kafka
+metadata:
+  name: kafka
+  namespace: demo
+spec:
+  deletionPolicy: Delete
+  replicas: 3
+  storage:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: standard
+  storageType: Durable
+  version: 3.9.0
+```
 
 ## Redis
 
@@ -522,7 +548,7 @@ spec:
 
 ### New Versions
 We have added new `Solr` versions `8.11.4`, `9.7.0` within `KubeDB`.
-Here is a sample yaml of solr cluster for version `9.7.0`.
+Here is the sample YAML of solr cluster for version `9.7.0`.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
