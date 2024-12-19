@@ -335,7 +335,7 @@ spec:
 
 ## Memcached
 
-### Memcached OpsRequest
+### OpsRequest
 
 `RotateAuth` OpsRequest for `Memcached` has been added. If a user wants to update the authentication credentials for a particular database, they can create an `OpsRequest` of type `RotateAuth` with or without referencing an authentication secret.
 If the secret is not referenced, the ops-manager operator will create a new credential and update the current secret. Here is the Yaml for rotating authentication credentials for a `Memcached` cluster using `MemcachedOpsRequest`.
@@ -389,10 +389,10 @@ We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers 
 ## MySQL
 In this release, we added support for new `MySQL` version, improved `MySQL` continuous archiving and `PITR` within `KubeDB`, and `MySQL` replication mode change(remote replica to group replication) ops-request.
 
-### MySQL New Version
+### New Version
 Support for MySQL version `9.0.1` has been added in the new release.
 
-### MySQL Archiver
+### Archiver
 We now support the `Restic` driver for MySQL continuous archiving and recovery. Previously, only the `VolumeSnapshotter` driver was available.
 To use the `Restic` driver, configure the `MySQLArchiver` Custom Resource (CR) by setting `.spec.fullBackup.Driver` to "Restic"
 
@@ -485,7 +485,7 @@ spec:
   deletionPolicy: WipeOut
 ```
 
-### MySQL OpsRequest
+### OpsRequest
 In this release, we have added the MySQL replication mode change, which is currently supported for remote replication to group replication and version `8.4.2` or above. Here is the YAML file of ops-request.
 
 ```yaml
