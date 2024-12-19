@@ -539,7 +539,7 @@ In order to find latest point  in time a user can recover, they need to follow t
 - Improved failover algorithms ensure almost instant failover to a healthy standby pod.
 - Fixed several bugs that prevented failover when the old primary was not available in the cluster.
 #### PostgreSQL Version Upgrade:
-- Resolved timing issues in the PostgreSQL version upgrade operations request.
+- Resolved timing issues in the PostgreSQL version upgrade ops-request.
 
 
 
