@@ -98,6 +98,11 @@ spec:
       namespace: demo
 ```
 
+## Recommendation Engine
+
+In this Release, we are introducing `Recommendation` support for KubeDB managed Kafka instances. KubeDB ops-manager generates three types of recommendations for Kafka - Version Update Recommendation, TLS Certificates Rotation Recommendation and Authentication Secret Rotation Recommendation.
+
+
 ## Druid
 
 ### New version
@@ -626,7 +631,3 @@ spec:
           requests:
             storage: 1Gi
 ```
-
-## Recommendation Engine
-
-In this Release, we are introducing `Recommendation` support for KubeDB managed Kafka instances. KubeDB ops-manager generates three types of recommendations for Kafka - Version Update Recommendation, TLS Certificates Rotation Recommendation and Authentication Secret Rotation Recommendation.
