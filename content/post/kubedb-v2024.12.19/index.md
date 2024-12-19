@@ -265,7 +265,7 @@ spec:
 
 ### New Versions
 We have added support for `FerretDB` version `1.24.0`.
-Here is a simple yaml for `FerretDB version `1.24.0`
+Here is a simple yaml for `FerretDB` version `1.24.0`
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
