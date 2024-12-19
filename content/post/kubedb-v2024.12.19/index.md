@@ -128,7 +128,7 @@ spec:
 
 ## Opensearch
 
-## New Versions
+### New Versions
 We have added support for `Elasticsearch` version `opensearch-1.3.19`.
 Here is yaml for elasticsearch version `opensearch-1.3.19`
 
@@ -220,7 +220,7 @@ spec:
 
 ## FerretDB
 
-## New Versions
+### New Versions
 We have added support for `FerretDB` version `1.24.0`.
 Here is a simple yaml for `FerretDB version `1.24.0`
 
@@ -557,6 +557,7 @@ spec:
           requests:
             storage: 1Gi
     coordinator:
+      replicas: 2
       storage:
         storageClassName: standard
         accessModes:
