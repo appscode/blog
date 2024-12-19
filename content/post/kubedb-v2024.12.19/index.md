@@ -58,7 +58,8 @@ You can find full spec [here](https://github.com/kubedb/apimachinery/blob/master
 
 So Incremental snapshots status field will store successful and failed log history according to these extra two fields. This will make easier our debugging process.
 
-We update start time and end time of continuous `oplog/wal/log` push in incremental snapshot status. From now on new fields in snapshot’s status field have been introduced. So the maximum `successfulLogHistoryLimit` successful oplog/wal/log/binlog push and maximum `failedLogHistoryLimit` failed `oplog/wal/log/binlog` push information will be stored in our incremental snapshot’s status.
+We update start time and end time of continuous `oplog/wal/log` push in incremental snapshot status. From now on new fields in snapshot’s status field have been introduced.
+So the maximum `successfulLogHistoryLimit` successful `oplog/wal/log/binlog` push and maximum `failedLogHistoryLimit` failed `oplog/wal/log/binlog` push information will be stored in our incremental snapshot’s status.
 
 Here is a sample yaml for `MongoDBArchiver`. Changes in the field `.spec.logBackup` will be same for other archivers as well.
 ```yaml
