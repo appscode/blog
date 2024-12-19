@@ -125,7 +125,7 @@ spec:
 
 ### New Versions
 We have added support for `Elasticsearch` versions `xpack-7.17.25`, `xpack-8.15.4`, `xpack-8.16.0` and `opensearch-1.3.19`.
-Here is a yaml for elasticsearch version `xpack-8.16.0`
+Here is a sample yaml for `Elasticsearch` version `xpack-8.16.0`
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -170,50 +170,6 @@ spec:
 ```
 
 ## Opensearch
-
-### New Versions
-We have added support for `Elasticsearch` version `opensearch-1.3.19`.
-Here is a sample yaml for elasticsearch version `opensearch-1.3.19`
-
-```yaml
-apiVersion: kubedb.com/v1
-kind: Elasticsearch
-metadata:
-  name: es-cluster
-  namespace: demo
-spec:
-  storageType: Durable
-  enableSSL: true
-  topology:
-    data:
-      replicas: 2
-      storage:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-        storageClassName: standard
-    ingest:
-      replicas: 2
-      storage:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-        storageClassName: standard
-    master:
-      replicas: 2
-      storage:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-        storageClassName: standard
-  version: opensearch-1.3.19
-```
 
 ### Bug Fix
 We have fixed `RotateAuth` OpsRequest issue for `Opensearch` in this release.
