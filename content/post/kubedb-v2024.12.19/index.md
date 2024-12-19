@@ -102,7 +102,7 @@ spec:
 
 ### New version
 We have added support for `Druid` versions `31.0.0`.
-Here is yaml for druid version `31.0.0`
+Here is a sample yaml for druid version `31.0.0`
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -125,7 +125,7 @@ spec:
 
 ### New Versions
 We have added support for `Elasticsearch` versions `xpack-7.17.25`, `xpack-8.15.4`, `xpack-8.16.0` and `opensearch-1.3.19`.
-Here is yaml for elasticsearch version `xpack-8.16.0`
+Here is a yaml for elasticsearch version `xpack-8.16.0`
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -173,7 +173,7 @@ spec:
 
 ### New Versions
 We have added support for `Elasticsearch` version `opensearch-1.3.19`.
-Here is yaml for elasticsearch version `opensearch-1.3.19`
+Here is a sample yaml for elasticsearch version `opensearch-1.3.19`
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -230,8 +230,7 @@ spec:
   type: RotateAuth
 ```
 
-If the secret is referenced, the operator will update the `.spec.authSecret.name` with the new secret name. Here is the Yaml:
-New Secret:
+If the secret is referenced, the operator will update the `.spec.authSecret.name` with the new secret name. Here is the yaml of new Secret:
 ```yaml
 apiVersion: v1
 data:
@@ -265,7 +264,7 @@ spec:
 
 ### New Versions
 We have added support for `FerretDB` version `1.24.0`.
-Here is a simple yaml for `FerretDB` version `1.24.0`
+Here is a sample yaml for `FerretDB` version `1.24.0`
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -292,7 +291,7 @@ spec:
 
 ### New Versions
 We have added support for `Kafka` versions `3.7.2`, `3.8.1`and `3.9.0`.
-Here is a simple yaml for `Kafka` version `3.9.0`
+Here is a sample yaml for `Kafka` version `3.9.0`
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -319,7 +318,7 @@ spec:
 ### Memcached OpsRequest
 
 `RotateAuth` OpsRequest for `Memcached` has been added. If a user wants to update the authentication credentials for a particular database, they can create an `OpsRequest` of type `RotateAuth` with or without referencing an authentication secret.
-If the secret is not referenced, the ops-manager operator will create a new credential and update the current secret. Here is the Yaml for rotating authentication credentials for a Memcached cluster using MemcachedOpsRequest.
+If the secret is not referenced, the ops-manager operator will create a new credential and update the current secret. Here is the Yaml for rotating authentication credentials for a `Memcached` cluster using `MemcachedOpsRequest`.
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -333,8 +332,7 @@ spec:
     name: memcd-quickstart
 ```
 
-If the secret is referenced, the operator will update the .spec.authSecret.name with the new secret name. Here is the Yaml:
-New Secret:
+If the secret is referenced, the operator will update the .spec.authSecret.name with the new secret name. Here is the yaml of new Secret:
 
 ```yaml
 apiVersion: v1
@@ -567,7 +565,7 @@ spec:
 
 ### New Versions
 We have added new `Solr` versions `8.11.4`, `9.7.0` within `KubeDB`.
-Here is a yaml of solr cluster for version `9.7.0`.
+Here is a sample yaml of solr cluster for version `9.7.0`.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
