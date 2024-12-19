@@ -1,6 +1,6 @@
 ---
 title: Announcing KubeDB v2024.12.19
-date: "2024-12-18"
+date: "2024-12-19"
 weight: 16
 authors:
 - Pritam Das
@@ -45,7 +45,13 @@ KubeDB **v2024.12.19** is now available! This latest release brings significant 
 - **OpsRequest Support**: New `OpsRequest` features have been added for `Memcached`, `MySQL`, offering greater flexibility for managing database administrative tasks. Moreover, a new `OpsRequest` feature named `ReplicationModeTransformation` has been introduced in this release.
 - **Recommendation Engine**: Recommendation support for `KubeDB` managed kafka has been added.
 - **New Version Support**: New versions have been added for `Elasticsearch`, `MySQL`, `Redis`, `Solr`, `Singlestore`.
-- **Archiver**: `MySQL` archiver and point-in-time-recovery within `KubeDB` has been enhanced.
+- **Archiver**: Archiver and point-in-time-recovery within `KubeDB` has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `MySQLArchiver`, `PostgressArchiver`, `MSSQLArchiver`.
+
+## Archiver
+Archiver support has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `MySQLArchiver`, `PostgressArchiver` and `MSSQLArchiver`. We have replaced the field `spec.walBackup` in spec with `spec.logBackup` with some enhancement. Besides two existing field `RuntimeSettings` and `ConfigSecret`, two more fields have been added. They are:
+**SuccessfulLogHistoryLimit**: `SuccessfulLogHistoryLimit` defines the number of successful Logs backup status that the incremental snapshot will retain. It's default value is 5.
+**FailedLogHistoryLimit**: FailedLogHistoryLimit defines the number of failed Logs backup that the incremental snapshot will retain for debugging purposes. It's default value is 5
+So Incremental snapshots status field will store successful and failed log history according to these extra two fields. This will make easier our debugging process.
 
 ## Druid
 
@@ -164,8 +170,6 @@ spec:
   version: opensearch-1.3.19
 ```
 
-
-
 ### Bug Fix
 We have fixed `RotateAuth` OpsRequest issue for `Opensearch` in this release.
 ```yaml
@@ -212,11 +216,38 @@ spec:
       name: new-auth
 ```
 
+## FerretDB
+
+## New Versions
+We have added support for `FerretDB` version `1.24.0`.
+Here is a simple yaml for `FerretDB version `1.24.0`
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: FerretDB
+metadata:
+  name: ferretdb
+  namespace: demo
+spec:
+  authSecret:
+    externallyManaged: false
+  backend:
+    externallyManaged: false
+  storage:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 500Mi
+  version: 1.24.0
+```
+
+
 ## Kafka
 
 ### New Versions
 We have added support for `Kafka` versions `3.7.2`, `3.8.1`and `3.9.0`.
-Here is a simple yaml for kafka version `3.9.0`
+Here is a simple yaml for `Kafka` version `3.9.0`
 
 ```yaml
 apiVersion: kubedb.com/v1
