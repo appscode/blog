@@ -122,6 +122,66 @@ spec:
   version: 31.0.0
 ```
 
+## Kafka
+
+We have deprecated some versions of `Kafka` and added new versions in this release.
+
+**Deprecated Versions**: `3.3.2`,`3.4.1`,`3.5.1` and `3.6.0`.
+
+**Added Versions**: `3.7.2`, `3.8.1` and `3.9.0`.
+
+Here is the sample YAML for `Kafka` version `3.9.0`
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: Kafka
+metadata:
+  name: kafka
+  namespace: demo
+spec:
+  deletionPolicy: Delete
+  replicas: 3
+  storage:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: standard
+  storageType: Durable
+  version: 3.9.0
+```
+
+### Kafka ConnectCluster
+
+We have deprecated some connector versions of `postgres`, `mysql`, `mongodb` and added new versions in this release.
+
+**Deprecated Versions**: `mongodb-1.11.0`, `mysql-2.4.2.final` and `postgres-2.4.2.final`.
+
+**Added Versions**: `mongodb-1.13.1`, `mongodb-1.14.1`, `postgres-2.7.4.final`, `postgres-3.0.5.final`, `mysql-2.7.4.final`, `mysql-3.0.5.final`, `jdbc-2.7.4.final` and `jdbc-3.0.5.final`.
+
+Here is the sample YAML for `Kafka ConnectCluster` with some new versions of connectors.
+
+```yaml
+apiVersion: kafka.kubedb.com/v1alpha1
+kind: ConnectCluster
+metadata:
+  name: connect-cluster
+  namespace: demo
+spec:
+  version: 3.9.0
+  replicas: 2
+  connectorPlugins:
+  - mongodb-1.14.1
+  - mysql-3.0.5.final
+  - postgres-3.0.5.final
+  - jdbc-3.0.5.final
+  kafkaRef:
+    name: kafka-prod
+    namespace: demo
+  deletionPolicy: WipeOut
+```
+
 ## Elasticsearch
 
 ### New Versions
@@ -215,6 +275,57 @@ spec:
   authentication:
     secretRef:
       name: new-auth
+```
+
+## FerretDB
+
+### New Versions
+We have added support for `FerretDB` version `1.24.0`.
+Here is the sample YAML for `FerretDB` version `1.24.0`
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: FerretDB
+metadata:
+  name: ferretdb
+  namespace: demo
+spec:
+  authSecret:
+    externallyManaged: false
+  backend:
+    externallyManaged: false
+  storage:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 500Mi
+  version: 1.24.0
+```
+
+## MariaDB
+
+### New version
+We have added support for `MariaDB` versions `11.6.2`.
+Here is the sample YAML for `MariaDB` version `11.6.2`
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: MariaDB
+metadata:
+  name: mariadb-demo
+  namespace: demo
+spec:
+  deletionPolicy: Delete
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: standard
+  storageType: Durable
+  version: 11.6.2
 ```
 
 ## Memcached
@@ -403,117 +514,8 @@ spec:
 ```
 Here you can mention the mode of group replication single or Multi primary, requireSSL and issuerRef for TLS secure connection on group replication mode.
 
-## MariaDB
-
-### New version
-We have added support for `MariaDB` versions `11.6.2`.
-Here is the sample YAML for `MariaDB` version `11.6.2`
-
-```yaml
-apiVersion: kubedb.com/v1
-kind: MariaDB
-metadata:
-  name: mariadb-demo
-  namespace: demo
-spec:
-  deletionPolicy: Delete
-  storage:
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 1Gi
-    storageClassName: standard
-  storageType: Durable
-  version: 11.6.2
-```
-
-## FerretDB
-
-### New Versions
-We have added support for `FerretDB` version `1.24.0`.
-Here is the sample YAML for `FerretDB` version `1.24.0`
-
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: FerretDB
-metadata:
-  name: ferretdb
-  namespace: demo
-spec:
-  authSecret:
-    externallyManaged: false
-  backend:
-    externallyManaged: false
-  storage:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 500Mi
-  version: 1.24.0
-```
 
 
-## Kafka
-
-We have deprecated some versions of `Kafka` and added new versions in this release.
-
-**Deprecated Versions**: `3.3.2`,`3.4.1`,`3.5.1` and `3.6.0`.
-
-**Added Versions**: `3.7.2`, `3.8.1` and `3.9.0`.
-
-Here is the sample YAML for `Kafka` version `3.9.0`
-
-```yaml
-apiVersion: kubedb.com/v1
-kind: Kafka
-metadata:
-  name: kafka
-  namespace: demo
-spec:
-  deletionPolicy: Delete
-  replicas: 3
-  storage:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 1Gi
-    storageClassName: standard
-  storageType: Durable
-  version: 3.9.0
-```
-
-### Kafka ConnectCluster
-
-We have deprecated some connector versions of `postgres`, `mysql`, `mongodb` and added new versions in this release.
-
-**Deprecated Versions**: `mongodb-1.11.0`, `mysql-2.4.2.final` and `postgres-2.4.2.final`.
-
-**Added Versions**: `mongodb-1.13.1`, `mongodb-1.14.1`, `postgres-2.7.4.final`, `postgres-3.0.5.final`, `mysql-2.7.4.final`, `mysql-3.0.5.final`, `jdbc-2.7.4.final` and `jdbc-3.0.5.final`.
-
-Here is the sample YAML for `Kafka ConnectCluster` with some new versions of connectors.
-
-```yaml
-apiVersion: kafka.kubedb.com/v1alpha1
-kind: ConnectCluster
-metadata:
-  name: connect-cluster
-  namespace: demo
-spec:
-  version: 3.9.0
-  replicas: 2
-  connectorPlugins:
-  - mongodb-1.14.1
-  - mysql-3.0.5.final
-  - postgres-3.0.5.final
-  - jdbc-3.0.5.final
-  kafkaRef:
-    name: kafka-prod
-    namespace: demo
-  deletionPolicy: WipeOut
-```
 
 ## Redis
 
