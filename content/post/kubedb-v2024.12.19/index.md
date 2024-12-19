@@ -52,7 +52,8 @@ Archiver support has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `My
 
 **SuccessfulLogHistoryLimit**: `SuccessfulLogHistoryLimit` defines the number of successful Logs backup status that the incremental snapshot will retain. It's default value is 5.
 
-**FailedLogHistoryLimit**: FailedLogHistoryLimit defines the number of failed Logs backup that the incremental snapshot will retain for debugging purposes. It's default value is 5
+**FailedLogHistoryLimit**: FailedLogHistoryLimit defines the number of failed Logs backup that the incremental snapshot will retain for debugging purposes. It's default value is 5.
+
 You can find full spec [here](https://github.com/kubedb/apimachinery/blob/master/apis/archiver/v1alpha1/types.go#L74C1-L92C2)
 
 So Incremental snapshots status field will store successful and failed log history according to these extra two fields. This will make easier our debugging process.
