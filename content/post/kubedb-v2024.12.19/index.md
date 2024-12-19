@@ -98,6 +98,30 @@ spec:
       namespace: demo
 ```
 
+## Druid
+
+### New version
+Support for `Druid` latest version `31.0.0` has been added in this release.
+
+Here is a sample druid YAML using version `31.0.0`,
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: Druid
+metadata:
+  name: druid
+  namespace: demo
+spec:
+  deepStorage:
+    configSecret:
+      name: deep-storage-config
+    type: s3
+  topology:
+    routers:
+      replicas: 1
+  version: 31.0.0
+```
+
 ## Elasticsearch
 
 ### New Versions
@@ -378,30 +402,6 @@ spec:
   apply: Always
 ```
 Here you can mention the mode of group replication single or Multi primary, requireSSL and issuerRef for TLS secure connection on group replication mode.
-
-
-## Druid
-
-### New version
-We have added support for `Druid` versions `31.0.0`.
-Here is the sample YAML for druid version `31.0.0`
-
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: Druid
-metadata:
-  name: druid
-  namespace: demo
-spec:
-  deepStorage:
-    configSecret:
-      name: deep-storage-config
-    type: s3
-  topology:
-    routers:
-      replicas: 1
-  version: 31.0.0
-```
 
 ## MariaDB
 
