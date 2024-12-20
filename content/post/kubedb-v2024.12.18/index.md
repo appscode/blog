@@ -468,32 +468,72 @@ spec:
 Finally, the operator will update the database cluster with the new credential and the old credentials will be stored in the secret with keys username.prev and password.prev.
 We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation kubedb.com/auth-active-from in currently using auth secret which refer to the active from time of this secret.
 
-## MSSQLServer
+## Microsoft SQL Server
 
-### New version
-Support for `MSSQLServer` latest version `2022-cu12` has been added in this release.
+### New Feature: Rotate Authentication Credentials (`RotateAuth`)
 
-Here is a sample YAML file to try out the latest version.
+A new `OpsRequest` has been introduced to simplify updating authentication credentials for SQL Server deployments. If users want to update the authentication credentials, they can create an `OpsRequest` of type `RotateAuth` with or without referencing an authentication secret.
 
+
+#### Rotate Authentication Without Referencing a Secret
+
+If no secret is referenced, the `ops-manager` operator will generate new credentials and updates the existing secret with the new credentials.
+
+**Example YAML:**
 ```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: MSSQLServer
+apiVersion: ops.kubedb.com/v1alpha1
+kind: MSSQLServerOpsRequest
 metadata:
-  name: mssqlserver
+  name: msops-rotate-auth
   namespace: demo
 spec:
-  deletionPolicy: Delete
-  replicas: 1
-  storage:
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 1Gi
-    storageClassName: standard
-  storageType: Durable
-  version: 2022-cu12
+  type: RotateAuth
+  databaseRef:
+    name: mssql-ag-cluster
+  timeout: 5m
+  apply: IfReady
 ```
+
+#### Rotate Authentication With a Referenced Secret
+
+If a secret is referenced, the operator will update the `.spec.authSecret.name` field with the new secret name. Archives the old credentials in the existing secret under the keys `username.prev` and `password.prev`.
+
+
+**New Secret Example:**
+```yaml
+apiVersion: v1
+data:
+  password: dDh5Nmh1WTdoamczR3NZZQ==
+  username: c2E=
+kind: Secret
+metadata:
+  name: mssql-ag-cluster-new-auth
+  namespace: demo
+type: kubernetes.io/basic-auth
+```
+**Example YAML with Secret Reference:**
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: MSSQLServerOpsRequest
+metadata:
+  name: msops-rotate-auth
+  namespace: demo
+spec:
+  type: RotateAuth
+  databaseRef:
+    name: mssql-ag-cluster
+  authentication:
+    secretRef:
+      name: mssql-ag-cluster-new-auth
+```
+
+**Enhancements for Credential Activation Tracking**
+- Added `.spec.authSecret.activeFrom` in the database YAML to specify the activation timestamp of new credentials.
+- Added `kubedb.com/auth-active-from` annotation in the current authentication secret, indicating when it became active.
+
+  
+### New version Support
+Added support for SQL Server version `2022-CU16-ubuntu-22.04`, providing compatibility with the latest SQL Server features and updates.
 
 
 ## MySQL
