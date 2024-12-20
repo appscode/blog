@@ -16,7 +16,7 @@ tags:
 - stash
 ---
 
-We are pleased to announce the release of [Stash v2024.8.27](https://stash.run/docs/v2024.8.27/setup/), packed with new features. You can check out the full changelog [HERE](https://github.com/stashed/CHANGELOG/blob/master/releases/v2024.4.8/README.md). In this post, we'll highlight the changes done in this release.
+We are pleased to announce the release of [Stash v2024.12.18](https://stash.run/docs/v2024.12.18/setup/), packed with new features. You can check out the full changelog [HERE](https://github.com/stashed/CHANGELOG/blob/master/releases/v2024.12.18/README.md). In this post, we'll highlight the changes done in this release.
 
 ### New Features
 
@@ -26,7 +26,7 @@ We are excited to introduce the `multiDumpArgs` parameter, which is available fo
 
 **What is `multiDumpArgs`?**
 
-The `multiDumpArgs` parameter can be specified under the `spec.task.params` section in the `BackupConfiguration`. It allows you to define multiple dump commands, which will be executed sequentially and separated by the Bash `&&` operator.
+The `multiDumpArgs` parameter can be specified under the `spec.task.params` section in the `BackupConfiguration`. It allows you to provide arguments for multiple dump commands, which will be executed sequentially.
 
 **Why Use `multiDumpArgs`?**
 
@@ -48,7 +48,6 @@ task:
         $args= <arguments for the first dump command>  
         $args= <arguments for the second dump command>  
         $args= <arguments for the third dump command>  
-
 ```
 
 **Example Configuration:**
@@ -115,7 +114,6 @@ Please try the latest release and give us your valuable feedback.
 
 - If you want to install Stash in a clean cluster, please follow the installation instruction from [HERE](https://stash.run/docs/latest/setup/).
 - If you want to upgrade Stash from a previous version, please follow the upgrade instruction from [HERE](https://stash.run/docs/latest/setup/upgrade/).
-
 
 ### Support
 
