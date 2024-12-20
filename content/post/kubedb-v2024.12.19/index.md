@@ -31,6 +31,7 @@ tags:
 - postgresql
 - prometheus
 - rabbitmq
+- recommendation
 - redis
 - restore
 - s3
@@ -100,8 +101,58 @@ spec:
 
 ## Recommendation Engine
 
-In this Release, we are introducing `Recommendation` support for KubeDB managed Kafka instances. KubeDB ops-manager generates three types of recommendations for Kafka - Version Update Recommendation, TLS Certificates Rotation Recommendation and Authentication Secret Rotation Recommendation.
+In this Release, we are introducing `Recommendation` support for KubeDB managed Kafka instances. KubeDB ops-manager generates three types of recommendations for Kafka - Version Update Recommendation, TLS Certificates Rotation Recommendation and Authentication Secret Rotation Recommendation. Authentication Secret rotation is a new type of recommendation supported by kubedb. It recommends to rotate authentication secret of a particular db if only one month remaining for rotating or two third of it's lifespan has been completed. 
+Here's a sample rotate authSecret recommendation for a Kafka instance.
 
+```yaml
+apiVersion: supervisor.appscode.com/v1alpha1
+kind: Recommendation
+metadata:
+  creationTimestamp: "2024-12-19T18:40:02Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: kafka-prod-tls
+    app.kubernetes.io/managed-by: kubedb.com
+    app.kubernetes.io/type: rotate-auth
+  name: kafka-prod-tls-x-kafka-x-rotate-auth-4ikl43
+  namespace: demo
+  resourceVersion: "551880"
+  uid: 450e1000-6db8-430b-9931-1218c0fa9f01
+spec:
+  backoffLimit: 5
+  deadline: "2024-12-19T18:22:03Z"
+  description: Recommending AuthSecret rotation,kafka-prod-tls-auth AuthSecret
+    needs to be rotated before 2024-12-19 18:32:03 +0000 UTC
+  operation:
+    apiVersion: ops.kubedb.com/v1alpha1
+    kind: KafkaOpsRequest
+    metadata:
+      name: rotate-auth
+      namespace: demo
+    spec:
+      databaseRef:
+        name: kafka-prod-tls
+      type: RotateAuth
+    status: {}
+  recommender:
+    name: kubedb-ops-manager
+  rules:
+    failed: has(self.status) && has(self.status.phase) && self.status.phase == 'Failed'
+    inProgress: has(self.status) && has(self.status.phase) && self.status.phase ==
+      'Progressing'
+    success: has(self.status) && has(self.status.phase) && self.status.phase == 'Successful'
+  target:
+    apiGroup: kubedb.com
+    kind: Kafka
+    name: kafka-prod-tls
+status:
+  approvalStatus: Pending
+  failedAttempt: 0
+  outdated: false
+  parallelism: Namespace
+  phase: Pending
+  reason: WaitingForApproval
+```
 
 ## Druid
 
@@ -541,7 +592,41 @@ In order to find latest point  in time a user can recover, they need to follow t
 #### PostgreSQL Version Upgrade:
 - Resolved timing issues in the PostgreSQL version upgrade ops-request.
 
+## RabbitMQ
 
+### New Versions
+This release adds support for RabbitMQ version `4.0.4`. Here is a sample YAML file to try out the latest version.
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: RabbitMQ
+metadata:
+  name: rabbitmq
+  namespace: demo
+spec:
+  version: "4.0.4"
+  replicas: 3
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: standard
+  storageType: Durable
+  deletionPolicy: WipeOut
+  podTemplate:
+    spec:
+      containers:
+        - name: rabbitmq
+          resources:
+            requests:
+              cpu: "800m"
+              memory: "1Gi"
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+```
 
 ## Redis
 
