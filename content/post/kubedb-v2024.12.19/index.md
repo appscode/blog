@@ -59,7 +59,7 @@ You can find full spec [here](https://github.com/kubedb/apimachinery/blob/master
 
 We update start time and end time of continuous oplog/wal/log/binlog push in incremental snapshot status. From now on new fields in snapshot’s status field have been introduced.  So the maximum `successfulLogHistoryLimit` successful oplog/wal/log/binlog push and maximum `failedLogHistoryLimit` failed oplog/wal/log/binlog push information will be stored in our incremental snapshot’s status.
 
-Here is the sample YAML for `MongoDBArchiver`. Changes in the field `.spec.logBackup` will be same for other archivers as well.
+Here is a sample YAML for `MongoDBArchiver`. Changes in the field `.spec.logBackup` will be same for other archivers as well.
 ```yaml
 apiVersion: archiver.kubedb.com/v1alpha1
 kind: MongoDBArchiver
@@ -186,7 +186,7 @@ We have deprecated some versions of `Kafka` and added new versions in this relea
 
 **Added Versions**: `3.7.2`, `3.8.1` and `3.9.0`.
 
-Here is the sample YAML for `Kafka` version `3.9.0`
+Here is a sample YAML for `Kafka` version `3.9.0`
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -216,7 +216,7 @@ We have deprecated some connector versions of `postgres`, `mysql`, `mongodb` and
 
 **Added Versions**: `mongodb-1.13.1`, `mongodb-1.14.1`, `postgres-2.7.4.final`, `postgres-3.0.5.final`, `mysql-2.7.4.final`, `mysql-3.0.5.final`, `jdbc-2.7.4.final` and `jdbc-3.0.5.final`.
 
-Here is the sample YAML for `Kafka ConnectCluster` with some new versions of connectors.
+Here is a sample YAML for `Kafka ConnectCluster` with some new versions of connectors.
 
 ```yaml
 apiVersion: kafka.kubedb.com/v1alpha1
@@ -242,7 +242,7 @@ spec:
 
 ### New Versions
 We have added support for `Elasticsearch` versions `xpack-7.17.25`, `xpack-8.15.4`, `xpack-8.16.0` and `opensearch-1.3.19`.
-Here is the sample YAML for `Elasticsearch` version `xpack-8.16.0`
+Here is a sample YAML for `Elasticsearch` version `xpack-8.16.0`
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -336,8 +336,9 @@ spec:
 ## FerretDB
 
 ### New Versions
-We have added support for `FerretDB` version `1.24.0`.
-Here is the sample YAML for `FerretDB` version `1.24.0`
+Support for `FerretDB` latest version `1.24.0` has been added in this release.
+
+Here is a sample YAML for `FerretDB` version `1.24.0`
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -359,11 +360,13 @@ spec:
   version: 1.24.0
 ```
 
+
 ## MariaDB
 
 ### New version
-We have added support for `MariaDB` versions `11.6.2`.
-Here is the sample YAML for `MariaDB` version `11.6.2`
+Support for `MariaDB` latest version `11.6.2` has been added in this release.
+
+Here is a sample YAML for `MariaDB` version `11.6.2`
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -384,7 +387,35 @@ spec:
   version: 11.6.2
 ```
 
+
 ## Memcached
+
+### New version
+Support for `Memcached` latest version `1.6.33` has been added in this release.
+
+Here is a sample YAML using `Memcached` version `1.6.33`,
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: Memcached
+metadata:
+  name: memcd-demo
+  namespace: demo
+spec:
+  deletionPolicy: Delete
+  podTemplate:
+    spec:
+      resources:
+        limits:
+          cpu: 500m
+          memory: 128Mi
+        requests:
+          cpu: 250m
+          memory: 64Mi
+  replicas: 3
+  version: 1.6.33
+```
+
 
 ### OpsRequest
 
@@ -435,13 +466,61 @@ spec:
 Finally, the operator will update the database cluster with the new credential and the old credentials will be stored in the secret with keys username.prev and password.prev.
 We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation kubedb.com/auth-active-from in currently using auth secret which refer to the active from time of this secret.
 
+## MSSQLSERVER
+
+### New version
+Support for `MSSQLServer` latest version `2022-cu12` has been added in this release.
+
+Here is a sample YAML using `MSSQLServer` version `2022-cu12`.
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: MSSQLServer
+metadata:
+  name: mssqlserver
+  namespace: demo
+spec:
+  deletionPolicy: Delete
+  replicas: 1
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: standard
+  storageType: Durable
+  version: 2022-cu12
+```
 
 
 ## MySQL
 In this release, we added support for new `MySQL` version, improved `MySQL` continuous archiving and `PITR` within `KubeDB`, and `MySQL` replication mode change(remote replica to group replication) ops-request.
 
 ### New Version
-Support for MySQL version `9.0.1` has been added in the new release.
+Support for MySQL version `9.0.1`, `9.1.0`, `8.4.3` has been added in the new release.
+
+Here is the sample YAML for `MySql` version `9.1.0`
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: MySQL
+metadata:
+  name: mysql-demo
+  namespace: demo
+spec:
+  deletionPolicy: Delete
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: standard
+  storageType: Durable
+  version: 9.1.0
+```
+
 
 ### Archiver
 We now support the `Restic` driver for MySQL continuous archiving and recovery. Previously, only the `VolumeSnapshotter` driver was available.
@@ -461,7 +540,7 @@ A new replication strategy feature has been introduced, supporting four distinct
 
 Please note that `fscopy` does not support cross-zone operations.
 
-Here is the sample YAML configuration for setting up a `MySQLArchiver` in KubeDB:
+Here is a sample YAML configuration for setting up a `MySQLArchiver` in KubeDB:
 ```yaml
 apiVersion: archiver.kubedb.com/v1alpha1
 kind: MySQLArchiver
@@ -631,8 +710,9 @@ spec:
 ## Redis
 
 ### New Versions
-This release adds support for redis version `6.2.16`, `7.2.6` and `7.4.1`. 
-Here is the sample YAML file of the `Redis` cluster using version `7.4.1`.
+Support for `Redis` latest versions `6.2.16`, `7.2.6` and `7.4.1` has been added in this release.
+
+Here is a sample YAML for `Redis` version `7.4.1`
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -656,7 +736,9 @@ spec:
 ## Singlestore
 
 ### New Versions
-In this release, we have added support for `SingleStore` versions `8.7.21` and `8.9.3`. Here is the sample YAML file of the SingleStore cluster using the 8.9.3 version,
+Support for `Singlestore` latest versions `8.7.21` and `8.9.3` has been added in this release.
+
+Here is a sample YAML for `Singlestore` version `8.9.3`
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -694,8 +776,9 @@ spec:
 ## Solr
 
 ### New Versions
-We have added new `Solr` versions `8.11.4`, `9.7.0` within `KubeDB`.
-Here is the sample YAML of solr cluster for version `9.7.0`.
+Support for `Solr` latest versions `8.11.4`, `9.7.0` has been added in this release.
+
+Here is a sample YAML for `Solr` version `9.7.0`
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
