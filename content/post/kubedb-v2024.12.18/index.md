@@ -468,7 +468,7 @@ spec:
 Finally, the operator will update the database cluster with the new credential and the old credentials will be stored in the secret with keys username.prev and password.prev.
 We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation kubedb.com/auth-active-from in currently using auth secret which refer to the active from time of this secret.
 
-## MSSQLSERVER
+## MSSQLServer
 
 ### New version
 Support for `MSSQLServer` latest version `2022-cu12` has been added in this release.
