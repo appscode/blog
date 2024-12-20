@@ -42,14 +42,14 @@ tags:
 - zookeeper
 ---
 
-KubeDB **v2024.12.19** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on Kubernetes. Here are some of the key features to mention
-- **OpsRequest Support**: New `OpsRequest` features have been added for `Memcached`, `MySQL`, offering greater flexibility for managing database administrative tasks. Moreover, a new `OpsRequest` feature named `ReplicationModeTransformation` has been introduced in this release.
+KubeDB **v2024.12.18** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on Kubernetes. Here are some of the key features to mention
+- **OpsRequest Support**: New `OpsRequest` features have been added for `Memcached`, `Microsoft SQL Server`, `MySQL`, offering greater flexibility for managing database administrative tasks. Moreover, a new `OpsRequest` feature named `ReplicationModeTransformation` has been introduced in this release.
 - **Recommendation Engine**: Recommendation support for `KubeDB` managed kafka has been added.
-- **New Version Support**: New versions have been added for `Druid`, `Elasticsearch`, `FerretDB`, `Kafka`, `MariaDB`, `Memcached`, `MSSQLServer`, `MySQL`, `RabbitMQ`, `Redis`, `Solr`, `Singlestore`.
-- **Archiver**: Archiver and point-in-time-recovery within `KubeDB` has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `MySQLArchiver`, `PostgressArchiver`, `MSSQLArchiver`.
+- **New Version Support**: New versions have been added for `Druid`, `Elasticsearch`, `FerretDB`, `Kafka`, `MariaDB`, `Memcached`, `Microsoft SQL Server`, `MySQL`, `RabbitMQ`, `Redis`, `Solr`, `Singlestore`.
+- **Archiver**: Archiver and point-in-time-recovery within `KubeDB` has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `MySQLArchiver`, `PostgressArchiver`, `MSSQLServerArchiver`.
 
 ## Archiver
-Archiver support has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `MySQLArchiver`, `PostgressArchiver` and `MSSQLArchiver`. We have replaced the field `spec.walBackup` in spec with `spec.logBackup` with some enhancement. Besides two existing field `RuntimeSettings` and `ConfigSecret`, two more fields have been added and those are:
+Archiver support has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `MySQLArchiver`, `PostgressArchiver` and `MSSQLServerArchiver`. We have replaced the field `spec.walBackup` in spec with `spec.logBackup` with some enhancement. Besides two existing field `RuntimeSettings` and `ConfigSecret`, two more fields have been added and those are:
 
 **SuccessfulLogHistoryLimit**: `SuccessfulLogHistoryLimit` defines the number of successful Logs backup status that the incremental snapshot will retain. It's default value is 5.
 
