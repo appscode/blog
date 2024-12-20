@@ -1,6 +1,6 @@
 ---
-title: Announcing KubeDB v2024.12.19
-date: "2024-12-19"
+title: Announcing KubeDB v2024.12.18
+date: "2024-12-18"
 weight: 16
 authors:
 - Pritam Das
@@ -159,7 +159,7 @@ status:
 ### New version
 Support for `Druid` latest version `31.0.0` has been added in this release.
 
-Here is a sample druid YAML using version `31.0.0`,
+Here is a sample YAML file to try out the latest version.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -178,6 +178,103 @@ spec:
   version: 31.0.0
 ```
 
+## Elasticsearch
+
+### New Versions
+We have added support for `Elasticsearch` versions `xpack-7.17.25`, `xpack-8.15.4`, `xpack-8.16.0` and `opensearch-1.3.19`.
+
+Here is a sample YAML file to try out the latest version.
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: Elasticsearch
+metadata:
+  name: es-cluster
+  namespace: demo
+spec:
+  storageType: Durable
+  enableSSL: true
+  topology:
+    data:
+      replicas: 2
+      storage:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
+    ingest:
+      replicas: 2
+      storage:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
+    master:
+      replicas: 2
+      storage:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
+  version: xpack-8.16.0
+  
+
+```
+
+## Opensearch
+
+### Bug Fix
+We have fixed `RotateAuth` OpsRequest issue for `Opensearch` in this release.
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: ElasticsearchOpsRequest
+metadata:
+  name: roatate-os
+  namespace: demo
+spec:
+  apply: Always
+  databaseRef:
+    name: os-cluster
+  type: RotateAuth
+```
+
+If the secret is referenced, the operator will update the `.spec.authSecret.name` with the new secret name. Here is the yaml of new Secret:
+```yaml
+apiVersion: v1
+data:
+  password: T0thOSlfKmo1TUgyd2ZzQg==
+  username: YWRtaW4=
+kind: Secret
+metadata:
+  name: new-auth
+  namespace: demo
+type: Opaque
+```
+
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: ElasticsearchOpsRequest
+metadata:
+  name: roatate-os
+  namespace: demo
+spec:
+  apply: Always
+  databaseRef:
+    name: os-cluster
+  type: RotateAuth
+  authentication:
+    secretRef:
+      name: new-auth
+```
+
 ## Kafka
 
 We have deprecated some versions of `Kafka` and added new versions in this release.
@@ -186,7 +283,7 @@ We have deprecated some versions of `Kafka` and added new versions in this relea
 
 **Added Versions**: `3.7.2`, `3.8.1` and `3.9.0`.
 
-Here is a sample YAML for `Kafka` version `3.9.0`
+Here is a sample YAML file to try out the latest version.
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -238,107 +335,12 @@ spec:
   deletionPolicy: WipeOut
 ```
 
-## Elasticsearch
-
-### New Versions
-We have added support for `Elasticsearch` versions `xpack-7.17.25`, `xpack-8.15.4`, `xpack-8.16.0` and `opensearch-1.3.19`.
-Here is a sample YAML for `Elasticsearch` version `xpack-8.16.0`
-
-```yaml
-apiVersion: kubedb.com/v1
-kind: Elasticsearch
-metadata:
-  name: es-cluster
-  namespace: demo
-spec:
-  storageType: Durable
-  enableSSL: true
-  topology:
-    data:
-      replicas: 2
-      storage:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-        storageClassName: standard
-    ingest:
-      replicas: 2
-      storage:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-        storageClassName: standard
-    master:
-      replicas: 2
-      storage:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-        storageClassName: standard
-  version: xpack-8.16.0
-  
-
-```
-
-## Opensearch
-
-### Bug Fix
-We have fixed `RotateAuth` OpsRequest issue for `Opensearch` in this release.
-```yaml
-apiVersion: ops.kubedb.com/v1alpha1
-kind: ElasticsearchOpsRequest
-metadata:
-  name: roatate-os
-  namespace: demo
-spec:
-  apply: Always
-  databaseRef:
-    name: os-cluster
-  type: RotateAuth
-```
-
-If the secret is referenced, the operator will update the `.spec.authSecret.name` with the new secret name. Here is the yaml of new Secret:
-```yaml
-apiVersion: v1
-data:
-  password: T0thOSlfKmo1TUgyd2ZzQg==
-  username: YWRtaW4=
-kind: Secret
-metadata:
-  name: new-auth
-  namespace: demo
-type: Opaque
-```
-
-
-```yaml
-apiVersion: ops.kubedb.com/v1alpha1
-kind: ElasticsearchOpsRequest
-metadata:
-  name: roatate-os
-  namespace: demo
-spec:
-  apply: Always
-  databaseRef:
-    name: os-cluster
-  type: RotateAuth
-  authentication:
-    secretRef:
-      name: new-auth
-```
-
 ## FerretDB
 
 ### New Versions
 Support for `FerretDB` latest version `1.24.0` has been added in this release.
 
-Here is a sample YAML for `FerretDB` version `1.24.0`
+Here is a sample YAML file to try out the latest version.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -366,7 +368,7 @@ spec:
 ### New version
 Support for `MariaDB` latest version `11.6.2` has been added in this release.
 
-Here is a sample YAML for `MariaDB` version `11.6.2`
+Here is a sample YAML file to try out the latest version.
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -393,7 +395,7 @@ spec:
 ### New version
 Support for `Memcached` latest version `1.6.33` has been added in this release.
 
-Here is a sample YAML using `Memcached` version `1.6.33`,
+Here is a sample YAML file to try out the latest version.
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -471,7 +473,7 @@ We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers 
 ### New version
 Support for `MSSQLServer` latest version `2022-cu12` has been added in this release.
 
-Here is a sample YAML using `MSSQLServer` version `2022-cu12`.
+Here is a sample YAML file to try out the latest version.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -498,9 +500,9 @@ spec:
 In this release, we added support for new `MySQL` version, improved `MySQL` continuous archiving and `PITR` within `KubeDB`, and `MySQL` replication mode change(remote replica to group replication) ops-request.
 
 ### New Version
-Support for MySQL version `9.0.1`, `9.1.0`, `8.4.3` has been added in the new release.
+Support for MySQL version `8.4.3`, `9.0.1`, `9.1.0` has been added in the new release.
 
-Here is the sample YAML for `MySql` version `9.1.0`
+Here is a sample YAML file to try out the latest version.
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -712,7 +714,7 @@ spec:
 ### New Versions
 Support for `Redis` latest versions `6.2.16`, `7.2.6` and `7.4.1` has been added in this release.
 
-Here is a sample YAML for `Redis` version `7.4.1`
+Here is a sample YAML file to try out the latest version.
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -738,7 +740,7 @@ spec:
 ### New Versions
 Support for `Singlestore` latest versions `8.7.21` and `8.9.3` has been added in this release.
 
-Here is a sample YAML for `Singlestore` version `8.9.3`
+Here is a sample YAML file to try out the latest version.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -778,7 +780,7 @@ spec:
 ### New Versions
 Support for `Solr` latest versions `8.11.4`, `9.7.0` has been added in this release.
 
-Here is a sample YAML for `Solr` version `9.7.0`
+Here is a sample YAML file to try out the latest version.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
