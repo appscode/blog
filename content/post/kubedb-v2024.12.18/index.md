@@ -525,8 +525,7 @@ spec:
 
 
 ### Archiver
-We now support the `Restic` driver for MySQL continuous archiving and recovery. Previously, only the `VolumeSnapshotter` driver was available.
-To use the `Restic` driver, configure the `MySQLArchiver` Custom Resource (CR) by setting `.spec.fullBackup.Driver` to "Restic"
+In this release, we’ve introduced several enhancements to improve MySQL continuous archiving and point-in-time recovery within KubeDB. Below is an overview of the key updates:
 
 ***Restic Driver for Base Backup Support***:
 We now support the `Restic` driver for MySQL continuous archiving and recovery. Previously, only the `VolumeSnapshotter` driver was available.
