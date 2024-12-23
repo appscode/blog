@@ -538,7 +538,7 @@ Added support for SQL Server version `2022-CU16-ubuntu-22.04`, providing compati
 
 
 ## MySQL
-In this release, we added support for new `MySQL` version, improved `MySQL` continuous archiving and `PITR` within `KubeDB`, and `MySQL` replication mode change(remote replica to group replication) ops-request.
+In this release, we added support for new `MySQL` version, improved `MySQL` continuous archiving and `PITR` within `KubeDB`, `Multi-Primary` support in group replication mode  and `MySQL` replication mode change(remote replica to group replication) ops-request. 
 
 ### New Version
 Support for MySQL version `8.4.3`, `9.0.1`, `9.1.0` has been added in the new release.
@@ -692,18 +692,21 @@ spec:
   apply: Always
 ```
 
-### Multi Master Support
+Here you can mention the mode of group replication single or Multi primary, requireSSL and issuerRef for TLS secure connection on group replication mode.
+
+
+### Multi Primary Support
 Multi-Primary support for Group Replication has been added in this release. MySQL version `8.4.2` or above supports Multi-Primary mode. You must specify `Multi-Primary` in the `.spec.topology.group.mode` section of MySQL Group Replication’s YAML configuration. By default, it operates in `Single-Primary` group mode.
 Below is an example YAML configuration:
 
 ```yaml
-apiVersion: kubedb.com/v1alpha2
+apiVersion: kubedb.com/v1
 kind: MySQL
 metadata:
   name: my-multi-primary
   namespace: demo
 spec:
-  version: "8.4.2"
+  version: "9.1.0"
   replicas: 3
   topology:
     mode: GroupReplication
@@ -716,10 +719,8 @@ spec:
     resources:
       requests:
         storage: 1Gi
-  terminationPolicy: WipeOut
+  deletionPolicy: WipeOut
 ```
-
-Here you can mention the mode of group replication single or Multi primary, requireSSL and issuerRef for TLS secure connection on group replication mode.
 
 ## Postgres
 
