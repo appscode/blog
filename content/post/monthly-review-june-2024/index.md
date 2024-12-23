@@ -96,4 +96,4 @@ To receive product announcements, follow us on [X](https://twitter.com/AppsCodeH
 
 Follow our Linkedin for more [AppsCode Inc](https://www.linkedin.com/company/appscode/).
 
-To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
+To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://youtube.com/@appscode) channel.

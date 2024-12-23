@@ -415,7 +415,7 @@ To speak with us, please leave a message on [our website](https://appscode.com/c
 
 To receive product announcements, follow us on [X](https://twitter.com/KubeDB).
 
-To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
+To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://youtube.com/@appscode) channel.
 
 More about [SingleStore on Kubernetes](https://kubedb.com/kubernetes/databases/run-and-manage-singlestore-on-kubernetes/)
 

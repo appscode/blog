@@ -597,7 +597,7 @@ To speak with us, please leave a message on [our website](https://appscode.com/c
 
 To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
 
-To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
+To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://youtube.com/@appscode) channel.
 
 More about [PostgreSQL in Kubernetes](https://kubedb.com/kubernetes/databases/run-and-manage-postgres-on-kubernetes/)
 

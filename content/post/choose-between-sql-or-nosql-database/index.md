@@ -68,7 +68,7 @@ Choosing the best database for your system is dependent on a number of aspects, 
 
 > ## KubeDB Can Assist
 > It takes an extensive understanding and consistent practice to manage your organization's database operations, whether they are on-premises or in the cloud. Your application performance may be impacted by the kind of open-source database you choose. You must determine which open-source database will best match for your apps and services, your infrastructure, and your clients before making your selection. 
-> To ensure your DBA expertise with the necessary performance and uptime criteria, KubeDB provides a complete support solution. We have a 24x7 support system and maintain SLA to provide 100% reliability to our clients. No matter if your database infrastructure is hosted on-site, geographically localized, or if you use cloud services or database-as-a-service vendors, KubeDB will assist you to manage this whole process in a production-grade environment. Learn more by watching tutorials about [different popular databases](https://www.youtube.com/c/AppsCodeInc/)
+> To ensure your DBA expertise with the necessary performance and uptime criteria, KubeDB provides a complete support solution. We have a 24x7 support system and maintain SLA to provide 100% reliability to our clients. No matter if your database infrastructure is hosted on-site, geographically localized, or if you use cloud services or database-as-a-service vendors, KubeDB will assist you to manage this whole process in a production-grade environment. Learn more by watching tutorials about [different popular databases](https://youtube.com/@appscode)
 
 
 
@@ -81,7 +81,7 @@ To speak with us, please leave a message on [our website](https://appscode.com/c
 
 To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
 
-To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
+To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://youtube.com/@appscode) channel.
 
 More about [Production-Grade Databases in Kubernetes](https://kubedb.com/)
 

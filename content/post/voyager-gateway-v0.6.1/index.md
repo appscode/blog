@@ -87,4 +87,4 @@ spec:
 
 To speak with us, please leave a message on [our website](https://appscode.com/contact/).
 
-To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
+To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://youtube.com/@appscode) channel.
