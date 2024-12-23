@@ -1,6 +1,6 @@
 ---
 title: Announcing KubeDB v2024.12.18
-date: "2024-12-18"
+date: "2024-12-23"
 weight: 16
 authors:
 - Pritam Das
