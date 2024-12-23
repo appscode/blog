@@ -42,7 +42,7 @@ tags:
 - zookeeper
 ---
 
-KubeDB **v2024.12.18** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on Kubernetes. Here are some of the key features to mention
+KubeDB **v2024.12.18** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on Kubernetes. Here are some of the key features to mention -
 - **OpsRequest Support**: New `OpsRequest` features have been added for `Memcached`, `Microsoft SQL Server`, `MySQL`, offering greater flexibility for managing database administrative tasks. Moreover, a new `OpsRequest` feature named `ReplicationModeTransformation` has been introduced in this release.
 - **Recommendation Engine**: Recommendation support for `KubeDB` managed kafka has been added.
 - **New Version Support**: New versions have been added for `Druid`, `Elasticsearch`, `FerretDB`, `Kafka`, `MariaDB`, `Memcached`, `Microsoft SQL Server`, `MySQL`, `RabbitMQ`, `Redis`, `Solr`, `Singlestore`.
