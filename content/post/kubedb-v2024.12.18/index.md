@@ -692,6 +692,33 @@ spec:
   apply: Always
 ```
 
+### Multi Master Support
+Multi-Primary support for Group Replication has been added in this release. MySQL version `8.4.2` or above supports Multi-Primary mode. You must specify `Multi-Primary` in the `.spec.topology.group.mode` section of MySQL Group Replication’s YAML configuration. By default, it operates in `Single-Primary` group mode.
+Below is an example YAML configuration:
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: MySQL
+metadata:
+  name: my-multi-primary
+  namespace: demo
+spec:
+  version: "8.4.2"
+  replicas: 3
+  topology:
+    mode: GroupReplication
+    group:
+      mode: Multi-Primary
+  storageType: Durable
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  terminationPolicy: WipeOut
+```
+
 Here you can mention the mode of group replication single or Multi primary, requireSSL and issuerRef for TLS secure connection on group replication mode.
 
 ## Postgres
