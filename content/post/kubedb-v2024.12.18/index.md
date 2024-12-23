@@ -46,10 +46,10 @@ KubeDB **v2024.12.18** is now available! This latest release brings significant 
 - **OpsRequest Support**: New `OpsRequest` features have been added for `Memcached`, `Microsoft SQL Server`, `MySQL`, offering greater flexibility for managing database administrative tasks. Moreover, a new `OpsRequest` feature named `ReplicationModeTransformation` has been introduced in this release.
 - **Recommendation Engine**: Recommendation support for `KubeDB` managed kafka has been added.
 - **New Version Support**: New versions have been added for `Druid`, `Elasticsearch`, `FerretDB`, `Kafka`, `MariaDB`, `Memcached`, `Microsoft SQL Server`, `MySQL`, `RabbitMQ`, `Redis`, `Solr`, `Singlestore`.
-- **Archiver**: Archiver and point-in-time-recovery within `KubeDB` has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `MySQLArchiver`, `PostgressArchiver`, `MSSQLServerArchiver`.
+- **Archiver**: Archiver and point-in-time-recovery within `KubeDB` has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `MySQLArchiver`, `PostgresArchiver`, `MSSQLServerArchiver`.
 
 ## Archiver
-Archiver support has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `MySQLArchiver`, `PostgressArchiver` and `MSSQLServerArchiver`. We have replaced the field `spec.walBackup` in spec with `spec.logBackup` with some enhancement. Besides two existing field `RuntimeSettings` and `ConfigSecret`, two more fields have been added and those are:
+Archiver support has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `MySQLArchiver`, `PostgresArchiver` and `MSSQLServerArchiver`. We have replaced the field `spec.walBackup` in spec with `spec.logBackup` with some enhancement. Besides two existing field `RuntimeSettings` and `ConfigSecret`, two more fields have been added and those are:
 
 **SuccessfulLogHistoryLimit**: It defines the number of successful Logs backup status that the incremental snapshot will retain. The default value is 5.
 
@@ -60,6 +60,7 @@ You can find full spec [here](https://github.com/kubedb/apimachinery/blob/master
 We update start time and end time of continuous oplog/wal/log/binlog push in incremental snapshot status. From now on new fields in snapshot’s status field have been introduced.  So the maximum `successfulLogHistoryLimit` successful oplog/wal/log/binlog push and maximum `failedLogHistoryLimit` failed oplog/wal/log/binlog push information will be stored in our incremental snapshot’s status.
 
 Here is a sample YAML for `MongoDBArchiver`. Changes in the field `.spec.logBackup` will be same for other archivers as well.
+
 ```yaml
 apiVersion: archiver.kubedb.com/v1alpha1
 kind: MongoDBArchiver
@@ -101,7 +102,7 @@ spec:
 
 ## Recommendation Engine
 
-In this Release, we are introducing `Recommendation` support for KubeDB managed Kafka instances. KubeDB ops-manager generates three types of recommendations for Kafka - Version Update Recommendation, TLS Certificates Rotation Recommendation and Authentication Secret Rotation Recommendation. Authentication Secret rotation is a new type of recommendation supported by kubedb. It recommends to rotate authentication secret of a particular db if only one month remaining for rotating or two third of it's lifespan has been completed. 
+In this Release, we are introducing `Recommendation` support for KubeDB managed Kafka instances. KubeDB ops-manager generates three types of recommendations for Kafka - Version Update Recommendation, TLS Certificates Rotation Recommendation and Authentication Secret Rotation Recommendation. Authentication Secret rotation is a new type of recommendation supported by KubeDB. It recommends to rotate authentication secret of a particular db if only one month remaining for rotating or two third of it's lifespan has been completed. 
 Here's a sample rotate authSecret recommendation for a Kafka instance.
 
 ```yaml
@@ -223,8 +224,6 @@ spec:
             storage: 1Gi
         storageClassName: standard
   version: xpack-8.16.0
-  
-
 ```
 
 ## Opensearch
@@ -584,6 +583,7 @@ A new replication strategy feature has been introduced, supporting four distinct
 Please note that `fscopy` does not support cross-zone operations.
 
 Here is a sample YAML configuration for setting up a `MySQLArchiver` in KubeDB:
+
 ```yaml
 apiVersion: archiver.kubedb.com/v1alpha1
 kind: MySQLArchiver
@@ -627,6 +627,7 @@ spec:
 ```
 
 Here’s the sample YAML configuration for restoring MySQL from a backup using the new features:
+
 ```yaml
 apiVersion: kubedb.com/v1
 kind: MySQL
@@ -690,6 +691,7 @@ spec:
   timeout: 10m
   apply: Always
 ```
+
 Here you can mention the mode of group replication single or Multi primary, requireSSL and issuerRef for TLS secure connection on group replication mode.
 
 ## Postgres
@@ -852,3 +854,15 @@ spec:
           requests:
             storage: 1Gi
 ```
+
+## Support
+
+To speak with us, please leave a message on [our website](https://appscode.com/contact/).
+
+To receive product announcements, follow us on [Twitter/X](https://x.com/KubeDB).
+
+To watch tutorials of various Production-Grade Kubernetes Tools Subscribe our [YouTube](https://www.youtube.com/c/AppsCodeInc/) channel.
+
+Learn More about [Production-Grade Databases in Kubernetes](https://kubedb.com/)
+
+If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
