@@ -22,19 +22,17 @@ We are pleased to announce the release of [Stash v2024.12.18](https://stash.run/
 
 #### Introducing the `multiDumpArgs` Parameter for MySQL Backups
 
-We are excited to introduce the `multiDumpArgs` parameter, which is available for all MySQL versions during the backup process. The `multiDumpArgs` parameter can be specified under the `spec.task.params` section in the `BackupConfiguration`
-
-**What is `multiDumpArgs`?**
+We are excited to introduce the `multiDumpArgs` parameter, which is available for all MySQL versions during the backup process.
 
 The `multiDumpArgs` parameter can be specified under the `spec.task.params` section in the `BackupConfiguration`. It allows you to provide arguments for multiple dump commands, which will be executed sequentially.
 
-**Why Use `multiDumpArgs`?**
+#### Why Use `multiDumpArgs`?
 
 The `multiDumpArgs` has been introduced for MySQL backup scenarios where you need to separate different types of data within a single dump file. For example, you can dump only database schemas without including table data, and in a separate operation, dump only the table data for specific databases. Using `multiDumpArgs`, these operations can be executed separately but stored in a single dump file, ensuring they are restored in the correct sequence.
 
 You can specify dump arguments for mutiple `mysqldump` commands by separating each with `$args` using the `multiDumpArgs` parameter. Here is an example:
 
-**Format Configuration:**
+#### Format:
 
 ```YAML
 task:
@@ -45,7 +43,8 @@ task:
         $args= <arguments for the second dump command>  
         $args= <arguments for the third dump command>  
 ```
-**Example Configuration:**
+
+#### Example:
 ```YAML
 task:
   params:
