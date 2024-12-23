@@ -51,9 +51,9 @@ KubeDB **v2024.12.18** is now available! This latest release brings significant 
 ## Archiver
 Archiver support has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `MySQLArchiver`, `PostgressArchiver` and `MSSQLServerArchiver`. We have replaced the field `spec.walBackup` in spec with `spec.logBackup` with some enhancement. Besides two existing field `RuntimeSettings` and `ConfigSecret`, two more fields have been added and those are:
 
-**SuccessfulLogHistoryLimit**: `SuccessfulLogHistoryLimit` defines the number of successful Logs backup status that the incremental snapshot will retain. It's default value is 5.
+**SuccessfulLogHistoryLimit**: It defines the number of successful Logs backup status that the incremental snapshot will retain. The default value is 5.
 
-**FailedLogHistoryLimit**: FailedLogHistoryLimit defines the number of failed Logs backup that the incremental snapshot will retain for debugging purposes. It's default value is 5.
+**FailedLogHistoryLimit**: It defines the number of failed Logs backup that the incremental snapshot will retain for debugging purposes. The default value is 5.
 
 You can find full spec [here](https://github.com/kubedb/apimachinery/blob/master/apis/archiver/v1alpha1/types.go#L74C1-L92C2).
 
