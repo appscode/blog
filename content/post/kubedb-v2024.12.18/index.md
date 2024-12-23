@@ -180,7 +180,7 @@ spec:
 
 ## Elasticsearch
 
-### New Versions
+### New Version
 We have added support for `Elasticsearch` versions `xpack-7.17.25`, `xpack-8.15.4`, `xpack-8.16.0` and `opensearch-1.3.19`.
 
 Here is a sample YAML file to try out the latest version.
@@ -230,7 +230,9 @@ spec:
 ## Opensearch
 
 ### Bug Fix
-We have fixed `RotateAuth` OpsRequest issue for `Opensearch` in this release.
+The previous release added rotateAuth `OpsRequest` for KubeDB managed `Opensearch` clusters. The authentication secret was getting rotated successfully upon applying the `OpsRequest` manifest. However, the `Opensearch` configuration must be reloaded if its security feature is modified or updated. Hence, the Database was not ready internally. In this release, we have fixed this issue. RotateAuth OpsRequest for `Opensearch` ensures that database authentication secrets are rotated, configurations are reloaded to the cluster, and a new pair of credentials are accepted by `Opensearch` clients.
+
+Here is the sample YAML for Opensearch RotateAuth OpsRequest.
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -277,7 +279,7 @@ spec:
 
 ## Kafka
 
-We have deprecated some versions of `Kafka` and added new versions in this release.
+We have deprecated some versions of `Kafka` and added new versions in this release. Deprecated versions either contain major bugs or they have latest fix patches which are recommended to use.
 
 **Deprecated Versions**: `3.3.2`,`3.4.1`,`3.5.1` and `3.6.0`.
 
@@ -337,7 +339,7 @@ spec:
 
 ## FerretDB
 
-### New Versions
+### New Version
 Support for `FerretDB` latest version `1.24.0` has been added in this release.
 
 Here is a sample YAML file to try out the latest version.
@@ -436,7 +438,7 @@ spec:
     name: memcd-quickstart
 ```
 
-If the secret is referenced, the operator will update the .spec.authSecret.name with the new secret name. Here is the yaml of new Secret:
+If the secret is referenced, the operator will update the `.spec.authSecret.name` with the new secret name. Here is the yaml of new Secret:
 
 ```yaml
 apiVersion: v1
@@ -466,7 +468,7 @@ spec:
 ```
 
 Finally, the operator will update the database cluster with the new credential and the old credentials will be stored in the secret with keys username.prev and password.prev.
-We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation kubedb.com/auth-active-from in currently using auth secret which refer to the active from time of this secret.
+We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation `kubedb.com/auth-active-from` in currently using auth secret which refer to the active from time of this secret.
 
 ## Microsoft SQL Server
 
@@ -569,7 +571,7 @@ In this release, we’ve introduced several enhancements to improve MySQL contin
 
 ***Restic Driver for Base Backup Support***:
 We now support the `Restic` driver for MySQL continuous archiving and recovery. Previously, only the `VolumeSnapshotter` driver was available.
-To use the Restic driver, configure the `MySQLArchiver` Custom Resource (CR) by setting .spec.fullBackup.Driver to "Restic"
+To use the Restic driver, configure the `MySQLArchiver` Custom Resource (CR) by setting `.spec.fullBackup.Driver` to "Restic"
 
 ***Replication Strategies for MySQL Archiver Restore***:
 A new replication strategy feature has been introduced, supporting four distinct approaches to restoring MySQL replicas. The available strategies are as follows:
@@ -714,7 +716,7 @@ In order to find latest point  in time a user can recover, they need to follow t
 
 ## RabbitMQ
 
-### New Versions
+### New Version
 This release adds support for RabbitMQ version `4.0.4`. Here is a sample YAML file to try out the latest version.
 
 ```yaml
@@ -735,22 +737,11 @@ spec:
     storageClassName: standard
   storageType: Durable
   deletionPolicy: WipeOut
-  podTemplate:
-    spec:
-      containers:
-        - name: rabbitmq
-          resources:
-            requests:
-              cpu: "800m"
-              memory: "1Gi"
-            limits:
-              cpu: "1"
-              memory: "2Gi"
 ```
 
 ## Redis
 
-### New Versions
+### New Version
 Support for `Redis` latest versions `6.2.16`, `7.2.6` and `7.4.1` has been added in this release.
 
 Here is a sample YAML file to try out the latest version.
@@ -776,7 +767,7 @@ spec:
 
 ## Singlestore
 
-### New Versions
+### New Version
 Support for `Singlestore` latest versions `8.7.21` and `8.9.3` has been added in this release.
 
 Here is a sample YAML file to try out the latest version.
@@ -816,7 +807,7 @@ spec:
 
 ## Solr
 
-### New Versions
+### New Version
 Support for `Solr` latest versions `8.11.4`, `9.7.0` has been added in this release.
 
 Here is a sample YAML file to try out the latest version.
