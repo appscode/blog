@@ -1,5 +1,5 @@
 ---
-title: AppsCode's Stellar 2024 - A Journey Across the Global Events of the Kubernetes World
+title: AppsCode at the First-Ever Kubernetes Community Days Dhaka-Highlighting KubeDB and Sharing Expertise
 date: "2024-12-24"
 weight: 14
 authors:
@@ -9,7 +9,6 @@ tags:
 - database
 - kubedb
 - kubernetes
-- kubecon
 ---
 
 ## Overview
@@ -116,43 +115,6 @@ The importance of feedback cannot be overstated. Every conversation, every sugge
 As 2024 comes to a close, we’re already looking ahead to 2025, and we couldn’t be more excited about what’s to come. We have some incredible new features and updates lined up for KubeDB that will make it even more powerful, intuitive, and user-friendly. We can’t wait to share these with you in the upcoming months.
 
 Along with these updates, we are also preparing for another year of exciting events, collaborations, and innovations. Stay tuned as we continue to build on the momentum of 2024 and take KubeDB to new heights in 2025.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ## Support
