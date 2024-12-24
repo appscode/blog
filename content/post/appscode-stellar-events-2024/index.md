@@ -1,5 +1,5 @@
 ---
-title: AppsCode at the First-Ever Kubernetes Community Days Dhaka-Highlighting KubeDB and Sharing Expertise
+title: AppsCode's Stellar 2024 - A Journey Across the Events of Kubenetes World
 date: "2024-12-24"
 weight: 14
 authors:
