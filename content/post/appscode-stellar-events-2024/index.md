@@ -1,5 +1,5 @@
 ---
-title: AppsCode's Stellar 2024 - A Journey Across the Events of Kubenetes World
+title: AppsCode's Stellar 2024 - A Journey Across the Events of Kubernetes World
 date: "2024-12-24"
 weight: 14
 authors:
