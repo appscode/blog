@@ -45,7 +45,7 @@ tags:
 KubeDB **v2024.12.18** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on Kubernetes. Here are some of the key features to mention -
 - **OpsRequest Support**: New `OpsRequest` features have been added for `Memcached`, `Microsoft SQL Server`, `MySQL`, offering greater flexibility for managing database administrative tasks. Moreover, a new `OpsRequest` feature named `ReplicationModeTransformation` has been introduced in this release.
 - **Recommendation Engine**: Recommendation support for `KubeDB` managed kafka has been added.
-- **New Version Support**: New versions have been added for `Druid`, `Elasticsearch`, `FerretDB`, `Kafka`, `MariaDB`, `Memcached`, `Microsoft SQL Server`, `MySQL`, `RabbitMQ`, `Redis`, `Solr`, `Singlestore`.
+- **New Version Support**: New versions have been added for `Druid`, `Elasticsearch`, `FerretDB`, `Kafka`, `MariaDB`, `Memcached`, `Microsoft SQL Server`, `MySQL`, `Postgres`, `RabbitMQ`, `Redis`, `Solr`, `Singlestore`.
 - **Archiver**: Archiver and point-in-time-recovery within `KubeDB` has been enhanced for `MongoDBArchiver`, `MariaDBArchiver`, `MySQLArchiver`, `PostgresArchiver`, `MSSQLServerArchiver`.
 
 ## Archiver
@@ -723,6 +723,10 @@ spec:
 ```
 
 ## Postgres
+
+### New version
+Support for `Postgres` latest versions `12.22`, `13.18`, `14.15`, `15.10`, `16.6`, `17.2` has been added in this release.
+
 
 ### Point-in-Time Recovery (PITR) Enhancements:
 Our PITR algorithm has been significantly improved. We now support the latest point-in-time recovery for PostgreSQL.
