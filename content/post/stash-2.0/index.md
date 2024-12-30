@@ -1,6 +1,6 @@
 ---
 title: Introducing KubeStash (aka Stash 2.0)
-date: "2024-04-08"
+date: "2024-12-30"
 weight: 10
 authors:
 - Md Ishtiaq Islam
@@ -16,16 +16,14 @@ tags:
 ### Overview
 
 [Stash](https://stash.run/), a cloud-native data backup and recovery solution tailored for Kubernetes workloads, has been in operation for several years. However, as our interactions with an expanding base of 
-enterprise customers have deepened, we've uncovered interesting use cases that the current Stash APIs cannot fully accommodate. To meet these challenges, we've introduced [KubeStash (aka Stash 2.0)](https://kubestash.com/) APIs. These 
+enterprise customers have deepened, we've uncovered interesting use cases that the current Stash APIs cannot fully accommodate. To meet these challenges, we've introduced [KubeStash (aka Stash 2.0)](https://kubestash.com/). These 
 new APIs are designed to augment Stash, enhancing its capabilities, fortifying its robustness, and significantly expanding its extensibility.
 
-With the introduction of KubeStash (aka Stash 2.0) APIs, some customers have expressed confusion between Stash and KubeStash. Therefore, we are writing this post to address the confusion and provide a clear comparison between the two.
-
-To avoid confusion between Stash and KubeStash (aka Stash 2.0) due to their similar names, we have decided to use KubeStash instead of Stash 2.0 in this blog post.
+To avoid confusion between Stash and KubeStash (aka Stash 2.0) due to their similar names, we use KubeStash to refer to Stash 2.0.
 
 ### Feature Comparison
 
-Many noticeable changes have been made in KubeStash compared to Stash. The declarative APIs have undergone drastic changes. You may find that some Custom Resource Definitions (CRDs) have similar names, but their use cases have changed in most instances. To learn about the KubeStash declarative api visit [HERE](https://kubestash.com/docs/v2024.3.16/concepts/#declarative-api). Let's discuss the comparison in below table:
+Many noticeable changes have been made in KubeStash compared to Stash. The declarative APIs have undergone drastic changes. The api groups for KubeStash live under `kubestash.com` domain. You may find that some Custom Resource Definitions (CRDs) have similar names, but their use cases have changed in most instances. To learn about the KubeStash declarative api visit [here](https://kubestash.com/docs/latest/concepts/#declarative-api). Let's discuss the comparison in below table:
 
 | Description                                                                                                                                                       | Stash    | KubeStash (aka Stash 2.0) |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|---------------------------|
@@ -51,22 +49,15 @@ While the above highlights some of the key features and improvements of KubeStas
 ### Migrate from Stash to KubeStash
 
 If you are already using Stash and want to migrate to KubeStash, then follow the following steps. 
-- [Install KubeStash](https://kubestash.com/docs/v2024.3.16/setup/install/kubestash/) and run Stash and KubeStash backup simultaneously for all target applications.
-- [Uninstall Stash](https://stash.run/docs/v2024.4.8/setup/uninstall/stash/) once the KubeStash backup for all target applications has run to the length of the retention policy.
+- [Install KubeStash](https://kubestash.com/docs/latest/setup/install/kubestash/) and run Stash and KubeStash backup simultaneously for all target applications.
+- [Uninstall Stash](https://stash.run/docs/latest/setup/uninstall/stash/) once the KubeStash backup for all target applications has run to the length of the retention policy.
 - Clean up the backend data that was taken backup using Stash.
 
 Now, you are ready to go with only KubeStash.
 
-If you are not using Stash, then just [install KubeStash](https://kubestash.com/docs/v2024.3.16/setup/install/kubestash/).
+If you are not using Stash, then just [install KubeStash](https://kubestash.com/docs/latest/setup/install/kubestash/).
 
 > It is recommended to use `KubeStash` if you are looking for a cloud-native data backup and recovery solution for Kubernetes workloads.
-
-### Upcoming Features in KubeStash
-
-The following features are planned to incorporate into KubeStash in future releases.
-- **Backup Verification:** No backup is admissible until you can successfully restore your application from it. So, it is necessary to ensure that your application is recoverable from the backed up data. Support for automatic verification of your backed up data will be added where it automatically spins up a temporary instance of your application, restore data into it, run some checks, and then removes the temporary instance.
-- **Application Level Backup:** If you deploy, your application using any package manager like Helm or an operator, backing up only the application manifest and the data is not enough. You can not just re-create your application from the backed up manifest. Instead, your restored application should be managed by the same package manager or operator you deployed originally. Support for taking backup of the relative resources based on application manager will be added so that it can restore in the same way as you deployed originally.
-- **New Addons:** Support backup and restore for new databases (i.e. MS SQL, RabbitMQ, etc.) will be added.
 
 ### Support
 
