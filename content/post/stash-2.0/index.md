@@ -48,16 +48,19 @@ While the above highlights some of the key features and improvements of KubeStas
 
 ### Migrate from Stash to KubeStash
 
-If you are already using Stash and want to migrate to KubeStash, then follow the following steps. 
+Stash is hte most widely deployed backup/restore solution offered by AppsCode. We intend to offer support for it for 3 more years (till Dec 31, 2027). We plan to perform on going releases to go with the Kubernetes release and bug fixes as necessary. We also plan to update restic version used by Stash.
+
+Given the api groups are different for CRDs, the recommended migration process from Stash 1.0 to KubeStash is to install both of them side-by-side. Once you have sufficient backup data using KubeStash, remove the backup data from Stash and uninstall it from the cluster. So, if you are already using Stash and want to migrate to KubeStash, then follow the following steps:
+
 - [Install KubeStash](https://kubestash.com/docs/latest/setup/install/kubestash/) and run Stash and KubeStash backup simultaneously for all target applications.
 - [Uninstall Stash](https://stash.run/docs/latest/setup/uninstall/stash/) once the KubeStash backup for all target applications has run to the length of the retention policy.
 - Clean up the backend data that was taken backup using Stash.
 
-Now, you are ready to go with only KubeStash.
+Now, you are ready to go with only KubeStash. This might not be ok for those who have very large existing backups using Stash. Please reach out to support@appscode.com or directly if that is your use-case.
 
 If you are not using Stash, then just [install KubeStash](https://kubestash.com/docs/latest/setup/install/kubestash/).
 
-> It is recommended to use `KubeStash` if you are looking for a cloud-native data backup and recovery solution for Kubernetes workloads.
+> It is recommended to use `KubeStash` for new projects and cluster, if possible.
 
 ### Support
 
