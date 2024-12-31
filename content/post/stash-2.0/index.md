@@ -25,18 +25,19 @@ To avoid confusion between Stash and KubeStash (aka Stash 2.0) due to their simi
 
 Many noticeable changes have been made in KubeStash compared to Stash. The declarative APIs have undergone drastic changes. The api groups for KubeStash live under `kubestash.com` domain. You may find that some Custom Resource Definitions (CRDs) have similar names, but their use cases have changed in most instances. To learn about the KubeStash declarative api visit [here](https://kubestash.com/docs/latest/concepts/#declarative-api). Let's discuss the comparison in below table:
 
-| Description                                                                                                                                                       | Stash    | KubeStash (aka Stash 2.0) |
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|---------------------------|
-| **Backup & Restore Kubernetes Volumes:** You can backup & restore Kubernetes volumes mounted inside workloads as well as the standalone PVCs.                     | &#10003; | &#10003;                  |
-| **Backup & Restore Databases running inside Kubernetes:** You can backup & restore the databases running inside Kubernetes cluster.                               | &#10003; | &#10003;                  |
-| **Point-In-Time Recovery:** You can provide a timestamp during databases restore up-to where you want to restore.                                                 | &#10007; | &#10003;                  |
-| **Multiple Schedules:** You can specify multiple schedules for a single backup process.                                                                           | &#10007; | &#10003;                  |
-| **Multiple Repository:** You can provide multiple `Repository` reference in a single `BackupConfiguration`                                                        | &#10007; | &#10003;                  |
-| **Reusable Backend:** You can store storage info in a `BackupStorage` object and refer it into multiple Repositories.                                             | &#10007; | &#10003;                  |
-| **Automatic Repository synchronization:** The system can sync your Repositories between your storage backend and your cluster.                                    | &#10007; | &#10003;                  |
-| **Custom Variable in Auto-backup:** You can use custom variable in the `BackupBlueprint` to gain better control over backup process.                              | &#10007; | &#10003;                  |
-| **Reusable Hook:** You can provide `HookTemplate` that let you re-use the hooks across different backup process.                                                  | &#10007; | &#10003;                  |
-| **Reusable Retention Policy** You can provide `RetentionPolicy` that let you re-use the retention policies for your cluster and across different backup processes | &#10007; | &#10003;                  |
+| Description                                                                                                                                                         | Stash    | KubeStash (aka Stash 2.0) |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|---------------------------|
+| **Backup & Restore Kubernetes Volumes:** You can backup & restore Kubernetes volumes mounted inside workloads as well as the standalone PVCs.                       | &#10003; | &#10003;                  |
+| **Backup & Restore Databases running inside Kubernetes:** You can backup & restore the databases running inside Kubernetes cluster.                                 | &#10003; | &#10003;                  |
+| **Point-In-Time Recovery:** You can provide a timestamp during databases restore up-to where you want to restore.                                                   | &#10007; | &#10003;                  |
+| **Multiple Schedules:** You can specify multiple schedules for a single backup process.                                                                             | &#10007; | &#10003;                  |
+| **Multiple Repository:** You can provide multiple `Repository` reference in a single `BackupConfiguration`                                                          | &#10007; | &#10003;                  |
+| **Reusable Backend:** You can store storage info in a `BackupStorage` object and refer it into multiple Repositories.                                               | &#10007; | &#10003;                  |
+| **Automatic Repository synchronization:** The system can sync your Repositories between your storage backend and your cluster.                                      | &#10007; | &#10003;                  |
+| **Custom Variable in Auto-backup:** You can use custom variable in the `BackupBlueprint` to gain better control over backup process.                                | &#10007; | &#10003;                  |
+| **Reusable Hook:** You can provide `HookTemplate` that let you re-use the hooks across different backup process.                                                    | &#10007; | &#10003;                  |
+| **Reusable Retention Policy:** You can provide `RetentionPolicy` that let you re-use the retention policies for your cluster and across different backup processes. | &#10007; | &#10003;                  |
+| **Backup Verification:** You can refer a `BackupVerifier` for each repository in a `BackupConfiguration` which contains the configuration for backup verification.  | &#10007; | &#10003;                  |
 
 ### Improvements
 
