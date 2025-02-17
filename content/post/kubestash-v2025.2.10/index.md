@@ -3,7 +3,7 @@ title: Introducing KubeStash v2025.2.10
 date: "2025-02-10"
 weight: 10
 authors:
-- Anisur Rahman
+- Md Anisur Rahman
 tags:
 - backup
 - backup-verification
