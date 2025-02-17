@@ -23,7 +23,7 @@ Here, we are going to highlight the new features that have been introduced in th
 
 We've introduced functionality to back up and restore the KubeDB `Archiver` resource. By default, KubeStash backs up the `Archiver` YAML during the manifest backup of any KubeDB-managed databases.
 
-Below is an example of a `RestoreSession` for restoring an `Archiver` YAML:
+Below is an example of a `RestoreSession` for restoring an `Archiver` YAML for `MySQL` database:
 
 ```yaml
 spec:
