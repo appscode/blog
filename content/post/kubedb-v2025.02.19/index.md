@@ -6,6 +6,9 @@ authors:
 - Saurov Chandra Biswas
 tags:
 - alert
+- archiver
+- autoscaler
+- backup
 - cassandra
 - clickhouse
 - cloud-native
@@ -25,7 +28,6 @@ tags:
 - pgbouncer
 - pgpool
 - postgres
-- postgresopsrequest
 - postgresql
 - prometheus
 - rabbitmq
@@ -40,37 +42,24 @@ tags:
 - zookeeper
 ---
 
-KubeDB **v2025.02.19** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on Kubernetes. Here are some of the key features to mention -
-- **OpsRequest Support**: New `OpsRequest` features have been added for `Postgres`, offering greater flexibility for managing database administrative tasks.
+KubeDB **v2025.02.19** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on Kubernetes. 
+- **OpsRequest Support**: New `OpsRequest` support have been added for  `Pgbouncer`, `Pgpool` and `Postgres`, offering greater flexibility for managing database administrative tasks.
+- **New Version Support**: New versions have been added for `Pgbouncer` and `PerconaXtraDB`.
 
-## Druid
+## MongoDB
 
+In this release we fixed the permission issue of Point in Time Recovery with MongoDBArchiver for Shard cluster.
 
-## Elasticsearch
+## PerconaXtraDB
 
-## Opensearch
-
-## Kafka
-
-### Kafka ConnectCluster
-
-## FerretDB
-
-## MariaDB
-
-## Memcached
-
-
-## Microsoft SQL Server
-
-
-## MySQL
+### New Version
+In this release new version 8.0.40 and 8.4.3 added.
 
 ## Pgbouncer
 
-### Security-Context
+### SecurityContext
 
-In this release we fixed the security-context issue. You can deploy pgbouncer in kubedb using this yaml:
+In this release we fixed the security-context issue. You can deploy **pgbouncer** in kubedb using this yaml:
 ```yaml
 apiVersion: kubedb.com/v1
 kind: PgBouncer
@@ -103,9 +92,9 @@ spec:
   sslMode: disable
   version: 1.23.1
 ```
-### Reconfigure-TLS
+### ReconfigureTLS
 
-To configure TLS with an ops-request in PGBouncer we have added Reconfigure-TLS. To add TLS in pgbouncer you can simply deploy a yaml.
+To configure TLS with an opsrequest in **pgbouncer** we have added **ReconfigureTLS**. To add TLS in **pgbouncer** you can simply deploy a yaml.
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: PgBouncerOpsRequest
@@ -133,8 +122,8 @@ spec:
   apply: Always
 ```
 
-### Rotate-Auth
-To modify the admin_user in pgbouncer you can use Rotate-Auth. This Ops-request will update the admin user name or password.
+### RotateAuth
+To modify the `admin_user` in **pgbouncer** you can use **RotateAuth**. This **OpsRequest** will update the admin user name or password.
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -154,7 +143,7 @@ spec:
 
 ### New version
 
-Pgbouncer version 1.24.0 is now available in kubedb. To deploy PGBouncer with version 1.24.0 you can simply use this yaml:
+**PgBouncer** version 1.24.0 is now available in kubedb. To deploy **PgBouncer** with version 1.24.0 you can simply use this yaml:
 
 
 ```yaml
@@ -177,13 +166,14 @@ spec:
     reservePoolSize: 5
 ```
 
-Or, if you have a pgbouncer instance running, you can use Update-Version ops-request to change the version.
+Or, if you have a pgbouncer instance running, you can use UpdateVersion opsrequest to change the version.
 
 
 ## Pgpool
+In this Release we have added a **PgpoolOpsRequest**
 
-### Rotate-Auth
-To update the pcp user in pgpool you can use Rotate-Auth. This Ops-request will update the pcp user name or password.
+### RotateAuth
+To update the pcp user in **pgpool** you can use **RotateAuth**. This Opsrequest will update the pcp user name or password.
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: PgpoolOpsRequest
@@ -199,13 +189,11 @@ spec:
       name: new-authsecret
 ```
 
-bug fix and improvements:
+### bug-fix
+- Fixes RemoveCustomConfig and configuration merging order.
 
-Reconfiguration: 
-Fixes RemoveCustomConfig and configuration merging order.
-
-Reload instead of restart:
-Introduced PGBouncer reload instead of pod restart while performing reconfiguration.
+### Feature Improvements 
+- Introduced Pgpool reload instead of pod restart while performing reconfiguration.
 
 
 ## Postgres
@@ -216,9 +204,9 @@ In this Release we have added 3 new **PostgresOpsRequest**s
 ### ReconnectStandby
 
 If your database is in **Critical** Phase, then applying this OpsRequest will bring your database in **Ready** state. It will try to make your database ready by following steps:
-Try Restarting the standby databases
-If not ready, do some internal processing and take base backup from primary
-Restart again so that standby can join with the primary
+- Try Restarting the standby databases.
+- If not ready, do some internal processing and take base backup from primary.
+- Restart again so that standby can join with the primary.
 
 A sample yaml for `ReconnectStandby` `PostgresOpsRequest` is Given below:
 
@@ -242,7 +230,7 @@ Here you just need to provide the `.spec.type: ReconnectStandby` and the databas
  
 ### ForceFailOver
 
-We try to guarantee no data loss, so if a scenario arises where a lost primary(maybe node crashed or pod unschedule able) has the data that standby replicas don’t have, we will not do that failover automatically as this will clearly result in data loss. However from your end if you value the availability most and you can incur few data loss, then you can run a **ForceFailOver** **PostgresOpsRequest** to promote one of the standby’s as primary.
+For kubedb managed **Postgres**, We try to guarantee no data loss. So, if a scenario arise, where a primary replica got disconnected (maybe node crashed or pod unschedule able) from the cluster and it has the data that standby replicas don’t have, we will not do that failover automatically as this will clearly result in data loss. However from your end if you value the availability most and you can incur few data loss, then you can run a **ForceFailOver** **PostgresOpsRequest** to promote one of the standby’s as primary.
 
 A sample yaml for this `PostgresOpsRequest` is given below considering you had 3 replicas and replica 0 was the primary:
 
@@ -288,23 +276,17 @@ spec:
 ```
 
 ## Bug fix 
-WAL accumulating on the standby instance has been fixed.
+- WAL accumulating on the standby instance has been fixed.
 ## Improvements 
-Don’t allow failover if previous primary is running
+- Don’t allow failover if previous primary is already running
 
-
-## RabbitMQ
-
-
-## Redis
-
-
-## Singlestore
 
 ## Solr
 
 Internal zookeeper has been configured for solr. Now, we don’t need to mention zookeeper reference to deploy solr.
-```apiVersion: kubedb.com/v1alpha2
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
 kind: Solr
 metadata:
   name: solr-cluster
@@ -343,7 +325,6 @@ spec:
             storage: 1Gi
         storageClassName: standard
 ```
-
 
 ## Support
 
