@@ -46,6 +46,86 @@ KubeDB **v2025.02.19** is now available! This latest release brings significant 
 - **OpsRequest Support**: New `OpsRequest` support have been added for  `Pgbouncer`, `Pgpool` and `Postgres`, offering greater flexibility for managing database administrative tasks.
 - **New Version Support**: New versions have been added for `Pgbouncer` and `PerconaXtraDB`.
 
+## Microsoft SQL Server 
+### Arbiter
+When using a SQL Server Availability Group cluster, we employ the Raft consensus algorithm for selecting the primary node. Raft relies on a quorum-based voting system, which ideally requires an odd number of nodes to avoid split votes. However, many users prefer a two-replica setup for cost efficiency, a primary for write/read operations and a secondary for read queries. 
+
+To resolve the potential split vote issue in a two-node deployment, we introduce an extra node known as an `Arbiter`. This lightweight node participates solely in leader election (voting) and does not store any database data.
+
+### Key Points:
+**Voting-Only Role:** The Arbiter participates solely in the leader election process. It casts a vote to help achieve quorum but does not store or process any database data.   
+**Lightweight & Cost-Effective:** The Arbiter is deployed in its own PetSet with a dedicated PVC using minimal storage (default 2GB). This allows you to run a two-node cluster (one primary and one secondary) without extra expense.   
+**Automatic Inclusion:** When you deploy a SQL Server Availability Group cluster with an even number of replicas (e.g., two), KubeDB automatically adds the Arbiter node. This extra vote ensures that a clear primary is elected.
+
+
+
+Example YAML for a Two-Node Cluster (with Arbiter):
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: MSSQLServer
+metadata:
+  name: ms-even-cluster
+  namespace: demo
+spec:
+  version: "2022-cu16"
+  replicas: 2
+  topology:
+    mode: AvailabilityGroup
+    availabilityGroup:
+      databases:
+        - agdb1
+        - agdb2
+  tls:
+    issuerRef:
+      name: mssqlserver-ca-issuer
+      kind: Issuer
+      apiGroup: "cert-manager.io"
+    clientTLS: false
+  podTemplate:
+    spec:
+      containers:
+        - name: mssql
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_PID
+              value: Evaluation
+  storageType: Durable
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  deletionPolicy: WipeOut
+```
+**What Happens on Deployment**  
+After applying the YAML:   
+- Two Replica Pods (e.g., ms-even-cluster-0 and ms-even-cluster-1) are created as the primary and secondary SQL Server nodes.  
+- A separate PetSet is automatically created for the arbiter node (e.g., ms-even-cluster-arbiter). The arbiter pod runs a single container that participates only in leader election.
+
+You might see the resources are created like this:
+```
+￼kubectl get ms,petset,pods,secrets,issuer,pvc -n demo    
+
+￼NAME                                     VERSION     STATUS   AGE
+￼mssqlserver.kubedb.com/ms-even-cluster   2022-cu16   Ready    33m
+￼
+￼NAME                                                   AGE
+￼petset.apps.k8s.appscode.com/ms-even-cluster           30m
+￼petset.apps.k8s.appscode.com/ms-even-cluster-arbiter   29m
+￼
+￼NAME                            READY   STATUS    RESTARTS   AGE
+￼pod/ms-even-cluster-0           2/2     Running   0          30m
+￼pod/ms-even-cluster-1           2/2     Running   0          30m
+￼pod/ms-even-cluster-arbiter-0   1/1     Running   0          29m
+￼
+￼NAME                                                   STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+￼persistentvolumeclaim/data-ms-even-cluster-0           Bound    pvc-cf684a28-6840-4996-aecb-ac3f9d7b0961   1Gi        RWO            standard       <unset>                 31m
+￼persistentvolumeclaim/data-ms-even-cluster-1           Bound    pvc-6d9948e8-5e12-4409-90cc-57f6429037d9   1Gi        RWO            standard       <unset>                 31m
+￼persistentvolumeclaim/data-ms-even-cluster-arbiter-0   Bound    pvc-24f3a40f-ab24-4483-87d7-3d74010aaf75   2Gi        RWO            standard       <unset>                 30m
+```
+
 ## MongoDB
 
 In this release we fixed the permission issue of Point in Time Recovery with MongoDBArchiver for Shard cluster.
@@ -280,6 +360,17 @@ spec:
 ## Improvements 
 - Don’t allow failover if previous primary is already running
 
+
+## Redis
+
+### Improvements 
+Enhanced Health Checks in Cluster Mode: 
+- Resolved issues with write/read verification, ensuring that each node’s role and responsiveness are accurately determined. 
+- Added robust connectivity checks between cluster nodes, improving overall cluster stability and early detection of node failure issues.
+
+Replica Role Labeling:
+- Introduced clear labeling on Redis Cluster pods that indicates the role of each node (e.g., `master` or `slave`).
+- This enhancement simplifies monitoring and troubleshooting by allowing administrators to quickly identify each replica’s status directly from pod labels.
 
 ## Solr
 
