@@ -44,7 +44,7 @@ tags:
 
 KubeDB **v2025.02.19** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to the database management experience on Kubernetes. 
 - **OpsRequest Support**: New `OpsRequest` support have been added for  `Pgbouncer`, `Pgpool` and `Postgres`, offering greater flexibility for managing database administrative tasks.
-- **New Version Support**: New versions has been added for `PerconaXtraDB`, `Pgbouncer` and `Postgres`.
+- **New Version Support**: New versions has been added for `PerconaXtraDB` and `Pgbouncer`.
 
 ## Microsoft SQL Server 
 ### Arbiter
@@ -316,10 +316,6 @@ spec:
 - Introduced Pgpool reload instead of pod restart while performing reconfiguration.
 
 ## Postgres
-
-### New Version
-
-In this release we have added new **PostgresVersion** `13.20`, `14.17`, `15.12`, `16.8` and `17.4`.
 
 ## PostgresOpsRequest
 In this Release we have added 3 new **PostgresOpsRequest**s.
