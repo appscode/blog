@@ -106,24 +106,67 @@ After applying the YAML:
 
 You might see the resources are created like this:
 ```bash
-￼kubectl get ms,petset,pods,secrets,issuer,pvc -n demo    
+kubectl get ms,petset,pods,secrets,issuer,pvc -n demo
 
-￼NAME                                     VERSION     STATUS   AGE
-￼mssqlserver.kubedb.com/ms-even-cluster   2022-cu16   Ready    33m
-￼
-￼NAME                                                   AGE
-￼petset.apps.k8s.appscode.com/ms-even-cluster           30m
-￼petset.apps.k8s.appscode.com/ms-even-cluster-arbiter   29m
-￼
-￼NAME                            READY   STATUS    RESTARTS   AGE
-￼pod/ms-even-cluster-0           2/2     Running   0          30m
-￼pod/ms-even-cluster-1           2/2     Running   0          30m
-￼pod/ms-even-cluster-arbiter-0   1/1     Running   0          29m
-￼
-￼NAME                                                   STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
-￼persistentvolumeclaim/data-ms-even-cluster-0           Bound    pvc-cf684a28-6840-4996-aecb-ac3f9d7b0961   1Gi        RWO            standard       <unset>                 31m
-￼persistentvolumeclaim/data-ms-even-cluster-1           Bound    pvc-6d9948e8-5e12-4409-90cc-57f6429037d9   1Gi        RWO            standard       <unset>                 31m
-￼persistentvolumeclaim/data-ms-even-cluster-arbiter-0   Bound    pvc-24f3a40f-ab24-4483-87d7-3d74010aaf75   2Gi        RWO            standard       <unset>                 30m
+NAME                                     VERSION     STATUS   AGE
+mssqlserver.kubedb.com/ms-even-cluster   2022-cu16   Ready    33m
+
+NAME                                                   AGE
+petset.apps.k8s.appscode.com/ms-even-cluster           30m
+petset.apps.k8s.appscode.com/ms-even-cluster-arbiter   29m
+
+NAME                            READY   STATUS    RESTARTS   AGE
+pod/ms-even-cluster-0           2/2     Running   0          30m
+pod/ms-even-cluster-1           2/2     Running   0          30m
+pod/ms-even-cluster-arbiter-0   1/1     Running   0          29m
+
+NAME                                                   STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/data-ms-even-cluster-0           Bound    pvc-cf684a28-6840-4996-aecb-ac3f9d7b0961   1Gi        RWO            standard       <unset>                 31m
+persistentvolumeclaim/data-ms-even-cluster-1           Bound    pvc-6d9948e8-5e12-4409-90cc-57f6429037d9   1Gi        RWO            standard       <unset>                 31m
+persistentvolumeclaim/data-ms-even-cluster-arbiter-0   Bound    pvc-24f3a40f-ab24-4483-87d7-3d74010aaf75   2Gi        RWO            standard       <unset>                 30m
+```
+
+## Kafka
+### Kafka RestProxy
+
+From now, you can use SchemaRegistry with Kafka RestProxy. To bootstrap the Kafka RestProxy with SchemaRegistry, you can use either `internal` or `external`.
+To use `internal` SchemaRegistry, you have to enable `.spec.schemaRegistryRef.internallyManaged` in the Kafka RestProxy CR.
+
+```yaml
+apiVersion: kafka.kubedb.com/v1alpha1
+kind: RestProxy
+metadata:
+  name: rest-proxy
+  namespace: demo
+spec:
+  version: 3.15.0
+  replicas: 1
+  schemaRegistryRef:
+    internallyManaged: true
+  kafkaRef:
+    name: kafka-prod
+    namespace: demo
+  deletionPolicy: WipeOut
+```
+
+To use `external` SchemaRegistry, you have to provide the SchemaRegistry AppBinding Reference in the Kafka RestProxy CR as follows:
+
+```yaml
+apiVersion: kafka.kubedb.com/v1alpha1
+kind: RestProxy
+metadata:
+  name: rest-proxy
+  namespace: demo
+spec:
+  version: 3.15.0
+  replicas: 1
+  schemaRegistryRef:
+    name: schema-registry
+    namespace: demo
+  kafkaRef:
+    name: kafka-prod
+    namespace: demo
+  deletionPolicy: WipeOut
 ```
 
 ## MongoDB
@@ -220,11 +263,9 @@ spec:
       name: new-authsecret
 ```
 
-
 ### New version
 
 **PgBouncer** version 1.24.0 is now available in kubedb. To deploy **PgBouncer** with version 1.24.0 you can simply use this yaml:
-
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -247,7 +288,6 @@ spec:
 ```
 
 Or, if you have a `Pgbouncer` instance running, you can use `UpdateVersion` `PgBouncerOpsRequest` to change the version.
-
 
 ## Pgpool
 In this Release we have added a **PgpoolOpsRequest**.
@@ -274,7 +314,6 @@ spec:
 
 ### Feature Improvements 
 - Introduced Pgpool reload instead of pod restart while performing reconfiguration.
-
 
 ## Postgres
 
