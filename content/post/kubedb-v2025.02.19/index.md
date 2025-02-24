@@ -44,7 +44,7 @@ tags:
 
 KubeDB **v2025.02.19** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on Kubernetes. 
 - **OpsRequest Support**: New `OpsRequest` support have been added for  `Pgbouncer`, `Pgpool` and `Postgres`, offering greater flexibility for managing database administrative tasks.
-- **New Version Support**: New versions have been added for `Pgbouncer` and `PerconaXtraDB`.
+- **New Version Support**: New versions have been added for `PerconaXtraDB`, `Pgbouncer` and `Postgres`.
 
 ## Microsoft SQL Server 
 ### Arbiter
@@ -105,7 +105,7 @@ After applying the YAML:
 - A separate PetSet is automatically created for the arbiter node (e.g., ms-even-cluster-arbiter). The arbiter pod runs a single container that participates only in leader election.
 
 You might see the resources are created like this:
-```
+```bash
 ￼kubectl get ms,petset,pods,secrets,issuer,pvc -n demo    
 
 ￼NAME                                     VERSION     STATUS   AGE
@@ -277,6 +277,10 @@ spec:
 
 
 ## Postgres
+
+### New Version
+
+In this release we have added new **PostgresVersion** `13.20`, `14.17`, `15.12`, `16.8` and `17.4`.
 
 ## PostgresOpsRequest
 In this Release we have added 3 new **PostgresOpsRequest**s
