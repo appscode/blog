@@ -42,9 +42,9 @@ tags:
 - zookeeper
 ---
 
-KubeDB **v2025.02.19** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to database management experience on Kubernetes. 
+KubeDB **v2025.02.19** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to the database management experience on Kubernetes. 
 - **OpsRequest Support**: New `OpsRequest` support have been added for  `Pgbouncer`, `Pgpool` and `Postgres`, offering greater flexibility for managing database administrative tasks.
-- **New Version Support**: New versions have been added for `PerconaXtraDB`, `Pgbouncer` and `Postgres`.
+- **New Version Support**: New versions has been added for `PerconaXtraDB`, `Pgbouncer` and `Postgres`.
 
 ## Microsoft SQL Server 
 ### Arbiter
@@ -139,7 +139,7 @@ In this release new version 8.0.40 and 8.4.3 added.
 
 ### SecurityContext
 
-In this release we fixed the security-context issue. You can deploy **pgbouncer** in kubedb using this yaml:
+In this release we fixed the security-context issue. You can deploy **Pgbouncer** in kubedb using this yaml:
 ```yaml
 apiVersion: kubedb.com/v1
 kind: PgBouncer
@@ -174,7 +174,7 @@ spec:
 ```
 ### ReconfigureTLS
 
-To configure TLS with an opsrequest in **pgbouncer** we have added **ReconfigureTLS**. To add TLS in **pgbouncer** you can simply deploy a yaml.
+To configure TLS in **PgBouncer** using a **PgBouncerOpsRequest**, we have introduced **ReconfigureTLS**. You can enable TLS in PgBouncer by simply deploying a YAML configuration.
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: PgBouncerOpsRequest
@@ -203,7 +203,7 @@ spec:
 ```
 
 ### RotateAuth
-To modify the `admin_user` in **pgbouncer** you can use **RotateAuth**. This **OpsRequest** will update the admin user name or password.
+To modify the `admin_user` in **Pgbouncer** you can use **RotateAuth**. This **PgBouncerOpsRequest** will update the admin user name or password.
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -246,14 +246,14 @@ spec:
     reservePoolSize: 5
 ```
 
-Or, if you have a pgbouncer instance running, you can use UpdateVersion opsrequest to change the version.
+Or, if you have a `Pgbouncer` instance running, you can use `UpdateVersion` `PgBouncerOpsRequest` to change the version.
 
 
 ## Pgpool
-In this Release we have added a **PgpoolOpsRequest**
+In this Release we have added a **PgpoolOpsRequest**.
 
 ### RotateAuth
-To update the pcp user in **pgpool** you can use **RotateAuth**. This Opsrequest will update the pcp user name or password.
+To update the `pcp` user in **Pgpool** you can use **RotateAuth**. This **PgpoolOpsRequest** will update the pcp user name or password.
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: PgpoolOpsRequest
@@ -269,8 +269,8 @@ spec:
       name: new-authsecret
 ```
 
-### bug-fix
-- Fixes RemoveCustomConfig and configuration merging order.
+### Bug Fix
+- Fixes removeCustomConfig and configuration merging order.
 
 ### Feature Improvements 
 - Introduced Pgpool reload instead of pod restart while performing reconfiguration.
@@ -283,7 +283,7 @@ spec:
 In this release we have added new **PostgresVersion** `13.20`, `14.17`, `15.12`, `16.8` and `17.4`.
 
 ## PostgresOpsRequest
-In this Release we have added 3 new **PostgresOpsRequest**s
+In this Release we have added 3 new **PostgresOpsRequest**s.
 
 ### ReconnectStandby
 
@@ -380,7 +380,7 @@ Replica Role Labeling:
 
 ## Solr
 
-Internal zookeeper has been configured for solr. Now, we don’t need to mention zookeeper reference to deploy solr.
+Internal **Zookeeper** has been configured for **Solr**. Now, we don’t need to mention **Zookeeper** reference to deploy solr.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
