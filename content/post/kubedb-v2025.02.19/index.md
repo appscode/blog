@@ -310,9 +310,11 @@ Here you just need to provide the `.spec.type: ReconnectStandby` and the databas
  
 ### ForceFailOver
 
-For kubedb managed **Postgres**, We try to guarantee no data loss. So, if a scenario arise, where a primary replica got disconnected (maybe node crashed or pod unschedule able) from the cluster and it has the data that standby replicas don’t have, we will not do that failover automatically as this will clearly result in data loss. However from your end if you value the availability most and you can incur few data loss, then you can run a **ForceFailOver** **PostgresOpsRequest** to promote one of the standby’s as primary.
+For KubeDB-managed **PostgreSQL**, we prioritize data integrity and aim to prevent data loss. If the primary node becomes unreachable (due to a node crash or unschedulable pod) and has data not replicated to the standbys, we **do not** trigger automatic failover to avoid data loss.  
 
-A sample yaml for this `PostgresOpsRequest` is given below considering you had 3 replicas and replica 0 was the primary:
+However, if you prioritize availability over data integrity and can tolerate some data loss, you can manually run a **ForceFailOver** `PostgresOpsRequest` to promote a standby to primary.
+
+A sample yaml for this `PostgresOpsRequest` is given below considering you had 3 replicas and replica-0 was the primary:
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -356,7 +358,7 @@ spec:
 ```
 
 ## Bug fix 
-- WAL accumulating on the standby instance has been fixed.
+- WAL accumulating on the standby instance during archiving has been fixed.
 ## Improvements 
 - Don’t allow failover if previous primary is already running
 
