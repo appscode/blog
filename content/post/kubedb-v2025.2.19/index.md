@@ -43,8 +43,8 @@ tags:
 ---
 
 KubeDB **v2025.2.19** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to the database management experience on Kubernetes. 
-- **OpsRequest Support**: New `OpsRequest` support have been added for  `Pgbouncer`, `Pgpool` and `Postgres`, offering greater flexibility for managing database administrative tasks.
-- **New Version Support**: New versions has been added for `PerconaXtraDB` and `Pgbouncer`.
+- **OpsRequest Support**: New `OpsRequest` support have been added for  `PgBouncer`, `Pgpool` and `Postgres`, offering greater flexibility for managing database administrative tasks.
+- **New Version Support**: New versions has been added for `PerconaXtraDB` and `PgBouncer`.
 
 ## Microsoft SQL Server 
 ### Arbiter
@@ -178,11 +178,12 @@ In this release we fixed the permission issue of Point in Time Recovery with Mon
 ### New Version
 In this release new version 8.0.40 and 8.4.3 added.
 
-## Pgbouncer
+## PgBouncer
 
 ### SecurityContext
 
-In this release we fixed the security-context issue. You can deploy **Pgbouncer** in kubedb using this yaml:
+In this release we fixed security context issue so it can be used to provision PgBouncer on OpenShift. You can deploy **PgBouncer** in kubedb using this yaml:
+
 ```yaml
 apiVersion: kubedb.com/v1
 kind: PgBouncer
@@ -246,7 +247,7 @@ spec:
 ```
 
 ### RotateAuth
-To modify the `admin_user` in **Pgbouncer** you can use **RotateAuth**. This **PgBouncerOpsRequest** will update the admin user name or password.
+To modify the `admin_user` in **PgBouncer** you can use **RotateAuth**. This **PgBouncerOpsRequest** will update the admin user name or password.
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -287,7 +288,7 @@ spec:
     reservePoolSize: 5
 ```
 
-Or, if you have a `Pgbouncer` instance running, you can use `UpdateVersion` `PgBouncerOpsRequest` to change the version.
+Or, if you have a `PgBouncer` instance running, you can use `UpdateVersion` `PgBouncerOpsRequest` to change the version.
 
 ## Pgpool
 In this Release we have added a **PgpoolOpsRequest**.
