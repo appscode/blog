@@ -1,5 +1,5 @@
 ---
-title: Announcing KubeDB v2025.02.19
+title: Announcing KubeDB v2025.2.19
 date: "2025-02-20"
 weight: 16
 authors:
@@ -42,7 +42,7 @@ tags:
 - zookeeper
 ---
 
-KubeDB **v2025.02.19** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to the database management experience on Kubernetes. 
+KubeDB **v2025.2.19** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to the database management experience on Kubernetes. 
 - **OpsRequest Support**: New `OpsRequest` support have been added for  `Pgbouncer`, `Pgpool` and `Postgres`, offering greater flexibility for managing database administrative tasks.
 - **New Version Support**: New versions has been added for `PerconaXtraDB` and `Pgbouncer`.
 
