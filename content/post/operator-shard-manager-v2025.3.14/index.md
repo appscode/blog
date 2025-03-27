@@ -1,5 +1,5 @@
 ---
-title: Announcing Operator-Shard-Manager v2025.03.14
+title: Announcing Operator Shard Manager v2025.03.14
 date: "2025-03-27"
 weight: 14
 authors:
@@ -166,12 +166,11 @@ As you can see, KubeDB has created multiple resources such as **services, PVCs, 
 
 ## **Why Do We Need Operator Sharding?**
 
-Everything works fine when you have a **reasonable number of custom resources** in your cluster. Like 5 or 10 `Postgres` CR.
+Everything works fine when you have a **reasonable number of custom resources** in your cluster. Like a few hundred `Postgres` CRs.
 
 ### **But what happens when you have thousands of custom resources?**
 
-This is where **Operator Sharding** becomes essential! Because managing these much resources might be troublesome for a 
-single operator. Also it makes debugging harder if you have this much resources processed by a single operator.
+This is where **Operator Sharding** becomes essential! Because managing this many resources might be troublesome for a single operator. Also it makes debugging harder if you have this much resources processed by a single operator.
 
 
 ### **How Operator Sharding Works**
@@ -409,4 +408,12 @@ Here you can see, `kubedb-kubedb-provisioner-0` is processing `ha-postgres` key 
 - Use sharding only for **stateless controllers**.
 - Avoid sharding for **stateful controllers** that require stable pod assignments.
 
-Need more details? Let me know at `sourav.cse4.bu@gmail.com`.
+## Support
+
+To speak with us, please leave a message on [our website](https://appscode.com/contact/).
+
+To receive product announcements, follow us on [Twitter/X](https://x.com/KubeDB).
+
+Learn More about [Production-Grade Databases in Kubernetes](https://kubedb.com/)
+
+If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
