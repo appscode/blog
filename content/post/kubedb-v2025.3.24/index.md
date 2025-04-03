@@ -49,7 +49,7 @@ KubeDB **v2025.3.24** is now available! This latest release brings significant p
 - **Virtual Secret** Support has been added.
 
 ## Operator-Shard-Manager
-Detailed blog on Operator Shard Manger has been written [here]().
+Detailed blog on Operator Shard Manger has been written [here](https://appscode.com/blog/post/operator-shard-manager-v2025.3.14/).
  
 ## Virtual Secrets
 In this release, Virtual Secrets support has been integrated into KubeDB, with initial support for PostgreSQL. Virtual Secrets allows you to store database auth secret data securely in an central external secret manager while maintaining the same functionality as native Kubernetes secrets for a user point of view.
