@@ -45,8 +45,7 @@ tags:
 KubeDB **v2025.3.24** is now available! This latest release brings significant performance enhancements, improved reliability, and new features to the database management experience on Kubernetes. 
 - We have switched to using StatefulSet for operators and removed all the APIServices for webhooks.
 - **New Version Support**: New versions has been added for `Elasticsearch`, `FerretDB`, `Postgres` and `Solr`.
-- **Operator Sharding Support** has been added to this release.
-- **Virtual Secret** Support has been added.
+- **Operator Sharding**, **Virtual Secret**, and **GitOps** support  has been added to this release.
 
 ## GitOps Support
 
