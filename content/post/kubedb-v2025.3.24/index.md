@@ -48,6 +48,50 @@ KubeDB **v2025.3.24** is now available! This latest release brings significant p
 - **Operator Sharding Support** has been added to this release.
 - **Virtual Secret** Support has been added.
 
+## GitOps Support
+
+We’re thrilled to unveil GitOps support for database management across multiple databases, including `PostgreSQL`, `MongoDB`, and `Kafka`, with plans to expand further. This release introduces a new Custom Resource Definition (CRD) under the `gitops.kubedb.com/v1alpha1` API group, mirroring the familiar kinds and specs of existing database CRs while enabling seamless GitOps workflows. Here’s what this update delivers.
+
+### Feature Overview
+
+- **Dedicated GitOps CRD**: A new CRD under `gitops.kubedb.com/v1alpha1` replicates the same CR kinds (e.g., `PostgreSQL`, `MongoDB`, `Kafka`) and specs as those in the core KubeDB API group, purpose-built for GitOps-driven management.
+- **Automated Database Provisioning**: When a CR from `gitops.kubedb.com/v1alpha1` is applied through a GitOps pipeline (e.g., ArgoCD, Flux), the GitOps Operator generates a matching database CR in the core KubeDB API group, provisioning the database and aligning it with your Git-defined desired state.
+- **Intelligent Reconciliation**: The GitOps controller continuously monitors for differences between the desired state in `gitops.kubedb.com/v1alpha1` CRs (e.g., `spec.version`, `resources`, or `configurations`) and the actual database state, automatically triggering ops requests to reconcile them.
+
+### Supported Ops Requests
+
+The GitOps controller streamlines database lifecycle management with these automated ops requests:
+
+- **Version Updates**: Generates an UpdateVersion ops request to sync the database with the specified version.
+- **Resource Adjustments**: Triggers a resource update ops request to modify compute or storage as required.
+- **Horizontal Scaling**: Initiates a scaling ops request to adjust the number of replicas, enabling scale-up or scale-down based on the desired state.
+- **TLS Configuration**: Creates an ops request to add, update, or remove TLS settings.
+- **Authentication Changes**: Launches an ops request to apply or modify authentication configurations.
+- **Configuration Adjustments**: Generates an ops request to update database configurations, ensuring alignment with the desired state.
+
+This automation ensures your databases remain fully aligned with the desired state in Git, minimizing manual effort and enhancing operational reliability and scalability.
+
+Sample Yaml:
+```yaml
+apiVersion: gitops.kubedb.com/v1alpha1
+kind: Postgres
+metadata:
+  name: ha-postgres
+  namespace: demo
+spec:
+  replicas: 3
+  version: "16.6"
+  storageType: Durable
+  storage:
+    storageClassName: "local-path"
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  deletionPolicy: WipeOut
+```
+
 ## Operator-Shard-Manager
 Detailed blog on Operator Shard Manger has been written [here](https://appscode.com/blog/post/operator-shard-manager-v2025.3.14/).
  
