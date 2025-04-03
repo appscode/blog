@@ -1,6 +1,6 @@
 ---
 title: Announcing KubeDB v2025.3.24
-date: "2025-03-27"
+date: "2025-04-3"
 weight: 16
 authors:
 - Saurov Chandra Biswas
