@@ -74,45 +74,46 @@ Here is the yaml example,
 apiVersion: kubedb.com/v1alpha2
 kind: FerretDB
 metadata:
-  name: ferret
+  name: fr
   namespace: demo
 spec:
   version: "2.0.0"
   storage:
-	accessModes:
-  	- ReadWriteOnce
-	resources:
-  	requests:
-    	storage: 500Mi
-  deletionPolicy: WipeOut
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 500Mi
+  deletionPolicy: Delete
   server:
-	primary:
-  	replicas: 2
-  	podTemplate:
-    	spec:
-      	containers:
-        	- name: ferretdb
-          	resources:
-            	requests:
-              	cpu: "200m"
-              	memory: "300Mi"
-            	limits:
-              	cpu: "200m"
-              	memory: "300Mi"  
-	secondary:
-  	replicas: 2
-  	podTemplate:
-    	spec:
-      	containers:
-        	- name: ferretdb
-          	resources:
-            	requests:
-              	cpu: "200m"
-              	memory: "300Mi"
-            	limits:
-              	cpu: "200m"
-              	memory: "300Mi"
+    primary:
+      replicas: 2
+      podTemplate:
+        spec:
+          containers:
+            - name: ferretdb
+              resources:
+                requests:
+                  cpu: "200m"
+                  memory: "300Mi"
+                limits:
+                  cpu: "200m"
+                  memory: "300Mi"    
+    secondary:
+      replicas: 2
+      podTemplate:
+        spec:
+          containers:
+            - name: ferretdb
+              resources:
+                requests:
+                  cpu: "200m"
+                  memory: "300Mi"
+                limits:
+                  cpu: "200m"
+                  memory: "300Mi"
 ```
+
 
 
 ## MariaDB
