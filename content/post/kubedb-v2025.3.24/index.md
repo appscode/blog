@@ -209,6 +209,121 @@ In this release we have updated the raft library version that we were using for 
 ### Bug fix
 We have fixed a bug that prevented the standby from joining back to the cluster.
 
+
+## ProxySQL
+We’re excited to announce that KubeDB ProxySQL now supports MariaDB Galera Clusters. This addition extends ProxySQL's capabilities beyond standard MySQL setups, enabling robust high-availability query routing and load balancing for Galera-based deployments.
+
+### Key Highlights
+
+- Galera Cluster Integration: ProxySQL can now be seamlessly deployed alongside MariaDB Galera clusters to manage traffic routing, load balancing, and failover handling across multiple database nodes.
+- Automatic Hostgroup Assignment: ProxySQL detects read/write roles automatically and assigns nodes to appropriate hostgroups.
+- Built-in Health Checks: Faulty nodes are automatically removed from the routing table, with graceful failover handling that keeps workloads running smoothly.
+
+This release makes it easier to run production-grade, fault-tolerant MariaDB Galera clusters with intelligent traffic management and enhanced observability.
+
+#### Sample YAMLs for Galera Setup with ProxySQL
+Deploy MariaDB Galera with KubeDB:
+```yaml
+apiVersion: kubedb.com/v1
+kind: MariaDB
+metadata:
+  name: mariadb-galera-cluster
+  namespace: demo
+spec:
+  version: "10.6.16"
+  replicas: 3
+  storageType: Durable
+  storage:
+    storageClassName: "standard"
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  deletionPolicy: WipeOut
+```
+
+Deploy ProxySQL for Galera Cluster:
+```yaml
+apiVersion: kubedb.com/v1
+kind: ProxySQL
+metadata:
+  name: mariadb-galera-proxy
+  namespace: demo
+spec:
+  version: "2.6.3-debian"
+  replicas: 3
+  syncUsers: true
+  backend:
+    name: mariadb-galera-cluster
+  deletionPolicy: WipeOut
+```
+
+Internal ProxySQL Configuration for MariaDB Galera:   
+Galera Hostgroup Mapping:
+```sql
+SELECT * FROM mysql_galera_hostgroups;
++------------------+-------------------------+------------------+-------------------+--------+-------------+-----------------------+-------------------------+---------+
+| writer_hostgroup | backup_writer_hostgroup | reader_hostgroup | offline_hostgroup | active | max_writers | writer_is_also_reader | max_transactions_behind | comment |
++------------------+-------------------------+------------------+-------------------+--------+-------------+-----------------------+-------------------------+---------+
+| 2                | 4                       | 3                | 1                 | 1      | 1           | 1                     | 0                       |         |
++------------------+-------------------------+------------------+-------------------+--------+-------------+-----------------------+-------------------------+---------+
+```
+   
+Registered Nodes in runtime_mysql_servers
+```sql
+SELECT * FROM runtime_mysql_servers;
+
++--------------+-----------------------------------------------+------+-----------+---------+--------+-------------+-----------------+---------------------+---------+----------------+---------+
+| hostgroup_id | hostname                                      | port | gtid_port | status  | weight | compression | max_connections | max_replication_lag | use_ssl | max_latency_ms | comment |
++--------------+-----------------------------------------------+------+-----------+---------+--------+-------------+-----------------+---------------------+---------+----------------+---------+
+| 2            | mariadb-galera-cluster-0.mariadb-galera-cluster-pods.demo.svc | 3306 | 0         | SHUNNED | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+| 2            | mariadb-galera-cluster-1.mariadb-galera-cluster-pods.demo.svc | 3306 | 0         | SHUNNED | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+| 2            | mariadb-galera-cluster-2.mariadb-galera-cluster-pods.demo.svc | 3306 | 0         | ONLINE  | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+| 3            | mariadb-galera-cluster-0.mariadb-galera-cluster-pods.demo.svc | 3306 | 0         | ONLINE  | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+| 3            | mariadb-galera-cluster-1.mariadb-galera-cluster-pods.demo.svc | 3306 | 0         | ONLINE  | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+| 3            | mariadb-galera-cluster-2.mariadb-galera-cluster-pods.demo.svc | 3306 | 0         | ONLINE  | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+| 4            | mariadb-galera-cluster-0.mariadb-galera-cluster-pods.demo.svc | 3306 | 0         | ONLINE  | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+| 4            | mariadb-galera-cluster-1.mariadb-galera-cluster-pods.demo.svc | 3306 | 0         | ONLINE  | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
++--------------+-----------------------------------------------+------+-----------+---------+--------+-------------+-----------------+---------------------+---------+----------------+---------+
+```
+
+### MySQL Configuration Enhancement: From Service DNS to Pod DNS
+In this release, we’ve improved ProxySQL’s integration with MySQL by switching from Kubernetes Service DNS names to individual Pod DNS names (via headless services).   
+#### Previous Setup (Service-based DNS):
+```sql
+SELECT * FROM mysql_servers;
++--------------+-------------------------------+------+-----------+--------+--------+-------------+-----------------+---------------------+---------+----------------+---------+
+| hostgroup_id | hostname                      | port | gtid_port | status | weight | compression | max_connections | max_replication_lag | use_ssl | max_latency_ms | comment |
+| 2            | mysql-server.demo.svc         | 3306 | 0         | ONLINE | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+| 3            | mysql-server-standby.demo.svc | 3306 | 0         | ONLINE | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+```
+This configuration routed traffic to the Kubernetes service endpoint, which load-balanced connections across all pods, limiting observability and fine-grained control.
+
+#### Current Setup (Pod-level DNS): 
+```sql
+SELECT * FROM mysql_servers;
++--------------+-------------------------------------------+------+-----------+--------+--------+-------------+-----------------+---------------------+---------+----------------+---------+
+| hostgroup_id | hostname                                  | port | gtid_port | status | weight | compression | max_connections | max_replication_lag | use_ssl | max_latency_ms | comment |
+| 2            | mysql-server-0.mysql-server-pods.demo.svc | 3306 | 0         | ONLINE | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+| 3            | mysql-server-0.mysql-server-pods.demo.svc | 3306 | 0         | ONLINE | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+| 3            | mysql-server-1.mysql-server-pods.demo.svc | 3306 | 0         | ONLINE | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+| 3            | mysql-server-2.mysql-server-pods.demo.svc | 3306 | 0         | ONLINE | 1      | 0           | 1000            | 0                   | 0       | 0              |         |
+```
+
+####  Benefits of Pod-Level Configuration
+- Direct Routing to Pods – Enables custom read/write distribution and replica lag handling.
+
+- Fine-Grained Failover – Traffic can be redirected on a per-pod basis in case of failures.
+
+- Improved Query Routing – Based on hostgroup roles, replication metrics, or pod health.
+
+- Better Observability – Monitor status per pod (e.g., ONLINE, SHUNNED, OFFLINE_SOFT).
+
+- Higher Resilience – Reduces reliance on service-level load balancing.
+
+
+
 ## Solr
 
 ### New Version
