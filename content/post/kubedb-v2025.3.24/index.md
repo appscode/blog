@@ -290,6 +290,7 @@ SELECT * FROM runtime_mysql_servers;
 
 ### MySQL Configuration Enhancement: From Service DNS to Pod DNS
 In this release, we’ve improved ProxySQL’s integration with MySQL by switching from Kubernetes Service DNS names to individual Pod DNS names (via headless services).   
+
 #### Previous Setup (Service-based DNS):
 ```sql
 SELECT * FROM mysql_servers;
