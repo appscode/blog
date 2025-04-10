@@ -1,6 +1,6 @@
 ---
 title: Announcing KubeDB v2025.3.24
-date: "2025-04-3"
+date: "2025.3.24"
 weight: 16
 authors:
 - Saurov Chandra Biswas
@@ -92,24 +92,29 @@ spec:
 ```
 
 ## Operator-Shard-Manager
+The Operator Shard Manager is designed using Consistent Hashing with bounded loads algorithm to efficiently distribute workloads among multiple controller instances.
+
 Detailed blog on Operator Shard Manger has been written [here](https://appscode.com/blog/post/operator-shard-manager-v2025.3.14/).
  
 ## Virtual Secrets
-In this release, Virtual Secrets support has been integrated into KubeDB, with initial support for PostgreSQL. Virtual Secrets allows you to store database auth secret data securely in an central external secret manager while maintaining the same functionality as native Kubernetes secrets for a user point of view.
+In this release, Virtual Secrets support has been integrated into KubeDB, with initial support for PostgreSQL. Virtual Secrets allows you to store database auth secret data securely in an external secret manager while maintaining the same functionality as native Kubernetes secrets for a user point of view.
 - Learn more about Virtual Secrets [here](https://appscode.com/blog/post/virtual-secrets-v2025.3.14/).
 - Follow the step-by-step guide to use Virtual Secrets with KubeDB [here](https://appscode.com/blog/post/virtual-secrets-v2025.3.14/#use-virtual-secrets-with-kubedb).
 
+## IRSA Annotation Key
+
+Added IRSA annotation key to the `ServiceAccount` to enable credential-less mode for archiver-enabled databases, including `MariaDB`, `MongoDB`, `MSSQLServer`, `MySQL`, and `Postgres`.
 ## Elasticsearch
 
 ### New Version
-In this release we have added `7.17.27-xpack`,`8.17.1-xpack`,`2.19.0-opensearch` new `ElasticsearchVersion`.
+In this release, we have added the following new `ElasticsearchVersion`s: `7.17.27-xpack`, `8.17.1-xpack`, and `2.19.0-opensearch`.
 
 ## FerretDB
 We are thrilled to announce that from this release KubeDB supports general availability (GA) of FerretDB v2.0, a groundbreaking release that delivers a high-performance, fully open-source alternative to MongoDB, ready for production workloads. Version 2.0 introduces Over 20x faster performance powered by Microsoft DocumentDB, Replication support for high-availability, Vector search support for AI-driven use cases and many more.
 
 We remove `spec.podTemplate` and `spec.replicas` sections from KubeDB FerretDB. Add `spec.server.primary` and `spec.server.secondary` field to provide information about primary and secondary servers about their replica count and podTemplate specification.
 
-We also removed the `spec.backend` part from KubeDB FerretDB. We are no longer supporting externally managed postgres backend. The whole backend stuff will also be maintained by KubeDB. In `FerretDBVersion` we introduce a field `spec.postgres` which will hold the information about which postgres backend will be used for this FerretDB version.
+We also removed the `spec.backend` part from KubeDB FerretDB. We are no longer supporting externally managed postgres backend. The whole backend stuff will also be maintained by KubeDB. In `FerretDBVersion`, we introduce a field `spec.postgres` which will hold the information about which postgres backend will be used for this FerretDB version.
 
 Here is the yaml example,
 
@@ -201,10 +206,10 @@ spec:
 ## Postgres
 
 ### New Version
-In this release we have added `13.20`, `14.17`, `15.12`, `16.8`, and `17.4` new `PostgresVersion`.
+In this release, we have added `13.20`, `14.17`, `15.12`, `16.8`, and `17.4` new `PostgresVersion`.
 
 ### Improvements
-In this release we have updated the raft library version that we were using for leader election to select the Postgres cluster primary
+In this release, we have updated the raft library version that we were using for leader election to select the Postgres cluster primary
 
 ### Bug fix
 We have fixed a bug that prevented the standby from joining back to the cluster.
@@ -328,7 +333,7 @@ SELECT * FROM mysql_servers;
 ## Solr
 
 ### New Version
-In this release we have added `9.8.0` new `SolrVersion`.
+In this release, we have added `9.8.0` new `SolrVersion`.
 
 
 ## Support
