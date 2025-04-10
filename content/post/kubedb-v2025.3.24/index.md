@@ -59,14 +59,14 @@ We’re thrilled to unveil GitOps support for database management across multipl
 
 ### Supported Ops Requests
 
-The GitOps controller streamlines database lifecycle management with these automated ops requests:
+The GitOps controller streamlines database lifecycle management with these automated ops requests in the following orders:
 
-- **Version Updates**: Generates an UpdateVersion ops request to sync the database with the specified version.
 - **Resource Adjustments**: Triggers a resource update ops request to modify compute or storage as required.
 - **Horizontal Scaling**: Initiates a scaling ops request to adjust the number of replicas, enabling scale-up or scale-down based on the desired state.
-- **TLS Configuration**: Creates an ops request to add, update, or remove TLS settings.
-- **Authentication Changes**: Launches an ops request to apply or modify authentication configurations.
 - **Configuration Adjustments**: Generates an ops request to update database configurations, ensuring alignment with the desired state.
+- **Authentication Changes**: Launches an ops request to apply or modify authentication configurations.
+- **TLS Configuration**: Creates an ops request to add, update, or remove TLS settings.
+- **Version Updates**: Generates an UpdateVersion ops request to sync the database with the specified version.
 
 This automation ensures your databases remain fully aligned with the desired state in Git, minimizing manual effort and enhancing operational reliability and scalability.
 
