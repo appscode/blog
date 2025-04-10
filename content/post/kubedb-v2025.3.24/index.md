@@ -212,8 +212,7 @@ In this release, we have added `13.20`, `14.17`, `15.12`, `16.8`, and `17.4` new
 In this release, we have updated the raft library version that we were using for leader election to select the Postgres cluster primary
 
 ### Bug fix
-We have fixed a bug that prevented the standby from joining back to the cluster.
-
+In this release, we fixed a bug that prevented a standby from rejoining the cluster if the pg-coordinator container in the standby pod failed without triggering a full pod restart.
 
 ## ProxySQL
 We’re excited to announce that KubeDB ProxySQL now supports MariaDB Galera Clusters. This addition extends ProxySQL's capabilities beyond standard MySQL setups, enabling robust high-availability query routing and load balancing for Galera-based deployments.
