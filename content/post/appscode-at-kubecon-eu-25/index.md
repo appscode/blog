@@ -1,6 +1,6 @@
 ---
-title: AppsCode at the First-Ever Kubernetes Community Days Dhaka-Highlighting KubeDB and Sharing Expertise
-date: "2024-05-15"
+title: KubeCon Europe 2025 | Kubernetes Grows Up and So Does the Data Layer | A Wrap-Up from AppsCode
+date: "2025-04-18"
 weight: 14
 authors:
 - Dipta Brata Das
