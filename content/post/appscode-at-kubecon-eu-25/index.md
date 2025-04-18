@@ -1,6 +1,6 @@
 ---
-title: "KubeCon Europe 2025: Kubernetes Grows Up and So Does the Data Layer | A Wrap-Up from AppsCode"
-date: "2025-04-18"
+title: AppsCode at the First-Ever Kubernetes Community Days Dhaka-Highlighting KubeDB and Sharing Expertise
+date: "2024-05-15"
 weight: 14
 authors:
 - Dipta Brata Das
@@ -11,120 +11,83 @@ tags:
 - kubernetes
 ---
 
-## What We Heard, Shared, and Learned at KubeCon London 2025
+## Overview
+The first-ever Kubernetes Community Days Dhaka brought together Kubernetes enthusiasts, developers, and experts from all over Bangladesh to discuss and share insights about Kubernetes and its ecosystem. The event featured keynote speeches, technical sessions, and networking opportunities, creating a vibrant platform for learning and collaboration.
 
+This landmark event marked a significant milestone for the local tech community in Dhaka, providing a unique opportunity to connect with global leaders in the Kubernetes space. It fostered knowledge exchange and showcased innovative solutions, reinforcing Dhaka's position on the global Kubernetes map. For the global community, it was a chance to witness the growing adoption and innovation of Kubernetes in new regions.
 
-There’s always a special vibe at KubeCon—rooms full of sessions, quick whiteboard sketches turning into big ideas, and random hallway chats that stick with you. But this year in London, the energy felt different. It wasn’t just bigger—it was more focused.
+We Team AppsCode, a leading player in the Kubernetes ecosystem, participated in the event as an event sponsor. Our participation included showcasing our managed database solution KubeDB, keynote by our Founder and CEO, two insightful talks by our engineers. AppsCode's involvement underscored our commitment to advancing Kubernetes technology and supporting the community.
 
-With over 12,500 people attending, the event was buzzing. It felt like the Kubernetes community has entered a new stage. Instead of just trying to prove that things can run on Kubernetes, people are now focused on doing it better. Less experimenting, more real-world solutions.
+## AppsCode's Participation
 
-At the AppsCode booth, we noticed a common theme in our conversations: how to run stateful workloads like databases in a world that’s all about scale, security, and AI. Whether it was engineers tackling complex migrations or platform teams looking for better resilience, one thing was clear—databases aren’t just a background task anymore. They’re becoming a key part of how Kubernetes is being used today.
+### Booth and Activities
+AppsCode's booth was a hub of activity at Kubernetes Community Days Dhaka, attracting a steady stream of attendees eager to learn about KubeDB. The booth featured live demonstrations, interactive Q&A sessions, and hands-on experiences with KubeDB, allowing visitors to see its capabilities in action. 
 
-## Kubernetes Is Entering a More Mature Phase
-In the early days, KubeCon felt like a big playground—lots of excitement, experiments, and people asking, “Can we run this on Kubernetes?” But this year in London, things felt more serious in a good way.
+### Overview of the Keynote by the Founder
+Tamal Saha, Founder & CEO of AppsCode, delivered a compelling keynote speech on the Challenges of Managing Stateful Applications in Kubernetes. His presentation delved into the complexities and nuances of managing databases and other stateful applications within the Kubernetes environment.
 
-Now, the main question is “How do we do this the right way?” People are focusing more on best practices, real-world use cases, and making their platforms strong and reliable.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/qY-l2DR9y1I?si=_2q0Y65VwSY24ol_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-Kubernetes isn’t just for running containers anymore. It’s becoming the main control system for everything—from managing security and compliance to running AI and data-heavy apps. It’s clear that Kubernetes has grown up, and so have the expectations.
+#### Key Points Discussed
+* Intrinsic challenges of stateful applications in a dynamic Kubernetes environment
+* Strategies for maintaining data consistency and reliability
+* Best practices for deploying and managing stateful applications
 
-![banner](kubecon25_1.jpeg)
+#### Highlights of the Founder’s Insights on Kubernetes and KubeDB
+Tamal emphasized the importance of robust solutions like KubeDB in addressing these challenges. He highlighted how KubeDB simplifies the management of stateful applications, ensuring high availability, automated backups, and seamless scaling. His insights reinforced KubeDB's role as an essential tool for any Kubernetes-based infrastructure.
 
-## What Everyone’s Talking About
+![Talks](talks.png)
 
-Certain topics kept coming up again and again throughout the event:
+### Summary of the Two Important Talks by AppsCode Engineers
+#### Event-Driven Communication with Kafka on Kubernetes by Raihan Khan Raka
+Raihan Khan Raka, Senior Software Engineer at AppsCode, presented an engaging talk on event-driven communication using Kafka on Kubernetes. He explored how Kafka, a distributed event streaming platform, can be effectively deployed and managed within a Kubernetes cluster.
 
-* AI and data pipelines: As more companies use AI, they’re looking at Kubernetes to manage those workloads. But AI needs a lot of data, so now people are paying close attention to how data is stored and handled.
-* Better internal platforms: Teams want easier, more organized ways for developers to work. They’re building internal tools (platforms) that make it faster and safer to build apps.
-* Security and compliance: Protecting workloads is now a top priority. Things like identity, access control, and runtime security were hot topics.
-* Managing real data: People are dealing with real databases on Kubernetes now. So they’re asking, “How do we back this up? How do we recover fast if something breaks?”
-* Declarative and UI based setups: Many are moving toward a UI based or a "declarative" style—writing down exactly how everything should run, so it's easier to repeat, check, and fix if needed.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/iwyk7uyl2i8?si=QRx53IuDPTtfoEGG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-All these conversations point to one clear trend: the Kubernetes community is growing up. It’s not just about experimenting anymore—it’s about building systems that are reliable, secure, and ready for production at scale.
+#### Key Takeaways for the Audience
+* Practical insights into setting up and managing Kafka on Kubernetes
+* Understanding the benefits of event-driven communication in a microservices architecture
+* Tips for optimizing Kafka performance and reliability in a Kubernetes environment
 
-From AI to security to stateful workloads, teams are looking for smarter ways to run real-world applications. And that’s exactly where AppsCode comes in—helping organizations tackle these challenges head-on with powerful, Kubernetes-native tools built for the next generation of platforms.
+#### Dedicated Cluster Management Using Cluster API and Kube-Bind by Rasel Hossain
+Rasel Hossain, Software Engineer at AppsCode, delivered a talk on managing dedicated Kubernetes clusters using Cluster API and Kube-Bind. His presentation focused on simplifying cluster lifecycle management and enhancing operational efficiency.
 
-## The AppsCode Booth: Real Conversations, Real Use Cases 
-At KubeCon EU 2025, the __AppsCode booth__ was shining with interest—especially around __KubeDB__. We had the opportunity to give over __100+ live demos__ to engineers, platform teams, SREs, and architects, all eager to explore how they could manage databases more easily on Kubernetes.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KFHk0K1wRAM?si=9fXZl8S1ZazdOtul" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
+#### Key Takeaways for the Audience
+* Effective strategies for managing cluster lifecycle with Cluster API
+* Benefits of using Kube-Bind for dedicated cluster management
+* Enhanced techniques for operational efficiency and scalability in multi-cluster environments
 
-![banner](finalbooth.jpg)
+## Showcasing KubeDB
+During Kubernetes Community Days Dhaka, AppsCode conducted live demonstrations of KubeDB, showcasing its features and real-world applications. Attendees witnessed firsthand how KubeDB simplifies database management and enhances operational efficiency. Specific use cases highlighted included automated failover scenarios, scaling databases in response to traffic spikes, and setting up scheduled backups.
 
-Our demos highlighted how KubeDB simplifies running production-grade databases like PostgreSQL, MySQL, MongoDB, and others—right inside Kubernetes clusters. What stood out for many visitors was __the fully-featured KubeDB UI__, which gives teams a clear, visual way to manage, monitor, and scale their databases without digging through YAML or CLI commands. From seeing cluster health at a glance to setting up backups and failovers with just a few clicks, the UI experience truly made database operations feel modern and accessible.
+#### Audience Reactions and Feedback
+The audience's response to KubeDB was quite positive. Many attendees expressed appreciation for the simplicity and robustness of KubeDB's features. Feedback highlighted the platform's ease of use, particularly in automating complex database operations. Attendees were excited about the potential to integrate KubeDB into their existing Kubernetes workflows, citing its comprehensive support for various databases and the significant reduction in manual management effort as key benefits.
 
+#### Questions and Discussions from Attendees
+Throughout the event, attendees actively participated in discussions and posed insightful questions about KubeDB and its capabilities. These discussions covered a wide range of topics, including best practices for database management on Kubernetes, strategies for optimizing performance, and practical use cases for KubeDB in real-world scenarios.
 
-We had deep conversations around real-world use cases like:
+## Community Engagement and Event Highlights
+The event featured a diverse lineup of speakers, each sharing valuable insights and expertise on different aspects of Kubernetes. Attendees had the opportunity to learn from industry leaders and practitioners who discussed topics ranging from best practices in Kubernetes deployment to advanced use cases and strategies for optimizing Kubernetes infrastructure.
 
-* Running highly available PostgreSQL clusters across multiple zones
+A highlight of the event was a panel discussion focused on the direction of Kubernetes in Bangladesh. The panel brought together experts and thought leaders from across the country to explore the current state of Kubernetes adoption, challenges faced by local organizations, and opportunities for growth and innovation. 
 
-* Setting up scheduled, secure backups to S3 compatible storages
+#### Nationwide Representation and Networking Opportunities
+The event drew participants from all corners of the country, providing a unique opportunity for networking and collaboration. To add excitement and engagement to the event, a raffle draw was held for visitors, offering the chance to win exciting prizes. 
 
-* Managing automated version upgrades with minimal downtime
+## Reflections and Future Directions
+Kubernetes Community Days Dhaka was an exceptional gathering of industry leaders, experts, and enthusiasts, all united by a shared passion for Kubernetes and its ecosystem. The event provided a platform for rich discussions, insightful presentations, and valuable networking opportunities. Attendees had the chance to deepen their understanding of Kubernetes, exchange ideas, and forge new connections, making the event a memorable and enriching experience for all involved.
+Building on the success of Kubernetes Community Days Dhaka, we are committed to continued participation and contributions to the Kubernetes community. We plan to actively engage in future events, conferences, and meetups, both locally and globally, to share our knowledge, expertise, and experiences with the community. Additionally, we aim to organize workshops, webinars, and training sessions to empower developers and operators with the skills and tools needed to succeed in a Kubernetes-driven world
 
-* Integrating monitoring and alerting directly into their platform stack and many more
-
-
-## Why Stateful Workloads Are the New Frontier
-Kubernetes has evolved. It’s no longer just about deploying stateless web apps—it’s about running real workloads, including stateful ones like databases. And with that shift, __the data layer has become one of the most critical components in modern platforms.__
-
-As more organizations move to cloud-native infrastructure, they’re demanding Kubernetes-native solutions for traditionally complex tasks like:
-
-* Backup and disaster recovery
-
-* Zero-downtime upgrades
-
-* Monitoring performance and availability
-
-* Managing secure access and scaling on demand
-
-This is exactly where __KubeDB shines__. It brings these capabilities to life in a Kubernetes-native way, letting platform teams manage their databases just like any other Kubernetes resource—with __declarative configuration, GitOps integration, and full automation and evem with clickable UI!__
-
-More importantly, KubeDB is designed for resilience and scalability. Whether it’s handling replication across zones, self-healing in case of node failures, or automatically resizing storage, KubeDB makes sure your data is always safe, available, and performant.
-
-As teams move from experimentation to production, they need solutions that don’t just work—they need solutions they can trust at scale. Stateful workloads are the new frontier of Kubernetes, and KubeDB is helping teams cross that frontier with confidence.
-
-## Meeting Customers & Partners: From Email Threads to Handshakes
-
-One of the most rewarding parts of KubeCon EU 2025 was getting to meet many of our existing customers and partners in person. These are people we’ve chatted with over Slack, supported through tickets, or collaborated with on projects—and now we got to finally shake hands, grab a coffee, and talk face-to-face.
-
-![customer](customerbooth.jpg)
-
-We heard stories from teams running KubeDB in production across multiple regions, managing dozens of clusters, and even pushing the limits of AI data infrastructure using our tools. Their feedback was both encouraging and insightful—and it’s helping us shape what’s next on the roadmap.
-
-We also had productive discussions with potential partners looking to integrate KubeDB into their platform offerings, MSPs building Kubernetes-native services, and enterprise teams building long-term data strategies. These connections are what keep our ecosystem thriving—and we’re excited to deepen these collaborations moving forward.
+## The End
+Kubernetes Community Days Dhaka was a landmark event that underscored the growing importance and relevance of Kubernetes in the region. For AppsCode and KubeDB, the event was an opportunity to connect with the vibrant Kubernetes community, showcase our latest innovations, and contribute to the collective knowledge and expertise of the ecosystem. The event reaffirmed our commitment to empowering developers and operators with powerful, reliable solutions like KubeDB and furthering the adoption and advancement of Kubernetes technology.
+We encourage members of the Kubernetes community to explore KubeDB and discover how it can simplify and streamline database management on Kubernetes. Whether you're running PostgreSQL, MySQL, MongoDB, or other databases, KubeDB provides a comprehensive solution for automating backups, scaling, and more, allowing you to focus on building and deploying applications with confidence. Try KubeDB today and experience the power of simplified database management on Kubernetes.
 
 
 
 
 
-
-
-##  A Word from Our Founder & CEO, Tamal Saha
-
-
-
-> **"KubeCon EU 2025 was a great conference indeed—it was a clear sign that Kubernetes is ready for the data layer. Teams aren’t just experimenting anymore; they’re running stateful workloads in production and expecting the same level of automation and reliability as they do with stateless apps. KubeDB is here to meet that moment. We’re proud to be building tools that simplify complexity and help teams focus on what matters—shipping great software."**  
-> — *Tamal Saha, Founder and CEO of AppsCode*
-
-His words reflect the mission behind KubeDB : make data infrastructure as seamless and resilient as the rest of your Kubernetes stack.
-
-
-
-
-
-## Wrapping Up: A Heartfelt Thank You
-KubeCon + CloudNativeCon Europe 2025 was a rollercoaster of ideas, connections, and cloud-native passion. From the moment the doors opened, the energy was electric—conversations sparked, whiteboards filled up, and the community came alive in a way only KubeCon can deliver.
-
-![Front](boothstanding.jpg)
-
-To the CNCF, our booth visitors, and the entire global Kubernetes community: thank you for making it truly unforgettable. Whether you stopped by to grab a tshirt, got hands-on with a KubeDB demo, asked deep technical questions, or simply shared your own Kubernetes story—we appreciated every moment.
-
-Each interaction reminded us why we do what we do. It's not just about building powerful tools—it's about empowering people to solve real-world challenges with confidence, creativity, and collaboration.
-
-From all of us at AppsCode, thank you, London. We can’t wait to see where the Kubernetes journey takes us next. 💙
-
-## Next Stop: Hong Kong & Tokyo for KubeCon China & Japan 2025!
-After an incredible experience at KubeCon Europe 2025, AppsCode is excited to head to Hong Kong for [KubeCon China](https://events.linuxfoundation.org/kubecon-cloudnativecon-china/) and [KubeCon Japan](https://events.linuxfoundation.org/kubecon-cloudnativecon-japan/)! We look forward to connecting with the global Kubernetes community once again, showcasing our latest innovations, and sharing insights on how KubeDB continues to transform database management in cloud-native environments. Stay tuned for more updates as we gear up for another exciting chapter in the KubeCon journey!
-If you’re planning to attend, be sure to follow our social media channels and blog for the latest updates on our sessions, events, and exclusive chances to connect with the AppsCode team. Don’t miss out—register for KubeCon Europe 2025 and join the conversation that’s driving the future of cloud-native technology!
 
 ## Support
 
