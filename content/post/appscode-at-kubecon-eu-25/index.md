@@ -1,5 +1,5 @@
 ---
-title: KubeCon Europe 2025: Kubernetes Grows Up and So Does the Data Layer | A Wrap-Up from AppsCode
+title: "KubeCon Europe 2025: Kubernetes Grows Up and So Does the Data Layer | A Wrap-Up from AppsCode"
 date: "2025-04-17"
 weight: 14
 authors:
