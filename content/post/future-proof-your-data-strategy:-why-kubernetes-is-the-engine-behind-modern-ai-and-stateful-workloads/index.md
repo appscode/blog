@@ -21,14 +21,17 @@ In today’s rapidly evolving tech landscape, managing stateful applications eff
 
 # The Growing Adoption of Databases on Kubernetes
 
-The Google Cloud Next session kicked off with a compelling `statistic from a survey conducted by the Data on Kubernetes organization`. In a poll of 150 IT leaders of organization size 1000–50,000+, databases emerged as the most common workload running on Kubernetes today.
+The Google Cloud Next session kicked off with a compelling `statistic from a survey conducted by the Data on Kubernetes organization`. In a poll of 150 IT leaders of organization size 1000–50,000+, databases emerged as one of the most common workloads running on Kubernetes today.
 
 ![Diagram of the survey conducted by the Data on Kubernetes organization, 2024 Survey of 150 Technology Leaders of Org Size 1,0000-50,0000+](databases-on-kubernetes.png "2024 Survey of 150 Technology Leaders of Org Size 1,0000-50,0000+")
 
-This is a significant shift, as Kubernetes was historically viewed as a platform for stateless applications. However, advancements in storage solutions and orchestration capabilities have made it a robust choice for stateful workloads like databases.
+So, database workloads remain the most prevalent use case for the third consecutive year, with over 100 out of 150 organizations running their databases on Kubernetes in production by 2024.
+
+This trend reflects a significant shift from Kubernetes being primarily used for stateless applications to now confidently handling stateful workloads like databases. Advancements in storage solutions and orchestration capabilities have made it a robust choice for stateful workloads like databases. The adoption of Kubernetes Operators has played a crucial role in this transition by automating tasks such as backups, scaling, and updates, thereby simplifying the management of database instances on Kubernetes.
 
 
-The session’s audience vibe check further reinforced this trend. When asked how many attendees were running databases on Kubernetes, a notable portion raised their hands. Hands went up for those running ETL pipelines, analytical workloads, and AI applications. These real-world use cases demonstrate that Kubernetes is no longer just a theoretical fit for stateful apps—it’s a proven solution adopted by organizations worldwide.
+
+The session’s audience vibe check further reinforced this trend. When asked how many attendees were running databases on Kubernetes, a notable portion raised their hands. These real-world use cases demonstrate that Kubernetes is no longer just a theoretical fit for stateful apps—it’s a proven solution adopted by organizations worldwide.
 
 At AppsCode, we’ve seen this trend firsthand. Even Google’s customers, who have access to managed database services on Google Cloud, are increasingly turning to Kubernetes to run stateful applications. Why? Kubernetes offers unparalleled flexibility, cost savings, high availability, and scalability. With KubeDB for running production-grade databases on Kubernetes, organizations can simplify database management while leveraging the same orchestration power that makes Kubernetes so effective for stateless workloads.
 
