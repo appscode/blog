@@ -5,15 +5,15 @@ weight: 14
 authors:
 - Neaj Morshad
 tags:
-- kubedb
-- kubernetes
+- ai
+- appscode
+- cloud-native
 - databases
 - dbaas
-- appscode
-- gke
 - gcp
-- cloud-native
-- ai
+- gke
+- kubedb
+- kubernetes
 ---
 
 # Why do Enterprises Choose Kubernetes for Stateful Apps?
