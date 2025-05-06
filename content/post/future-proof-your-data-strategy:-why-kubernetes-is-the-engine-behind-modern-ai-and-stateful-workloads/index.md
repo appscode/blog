@@ -57,11 +57,35 @@ Inference Workloads: Inference requires rapid startup times to handle fluctuatin
 
 These advancements make Kubernetes a future-proof platform for AI workloads. As AI models grow in size and complexity, Kubernetes’ ability to scale dynamically, manage diverse storage needs, and integrate with accelerators like GPUs positions it as the go-to solution. KubeDB complements this by simplifying the management of databases that often serve as the backbone for AI data pipelines, ensuring reliability and performance at scale.
 
+## AI-Optimized Data Stores in KubeDB
+
+### SingleStore
+SingleStore’s native vector data type and indexed ANN (HNSW, IVF) deliver high-throughput vector search alongside real-time analytics and SQL compatibility.
+
+### Apache Druid
+Druid is a real-time OLAP datastore providing sub-second analytical queries and plug-in support for ML-driven dashboards and anomaly detection.
+
+### Milvus
+Milvus is an open-source, AI-native vector database designed for high-performance approximate nearest neighbor (ANN) search over massive, high-dimensional embeddings.
+
+### Elasticsearch & OpenSearch
+Both Elasticsearch and OpenSearch provide `dense_vector` fields and k-NN search (e.g., HNSW graphs) for fast semantic and hybrid keyword/vector queries.
+
+### Redis (with Redis Vector)
+Redis includes a `vector` data type and modules that let you perform in-memory vector similarity searches, making it ideal for feature stores and low-latency inference caches.
+
+### Apache Kafka
+While not a database, Kafka is the de facto platform for real-time streaming pipelines in AI/ML workflows—ingesting, buffering, and distributing data and feature updates at scale.
+
+### PostgreSQL + pgvector
+The `pgvector` extension adds embedding storage and nearest-neighbor search capabilities to PostgreSQL, combining ACID transactions with vector similarity.
+
+
 # Real-World Success Stories: Qdrant and Codeway
 
-The session featured two Google customers—Qdrant and Codeway—who showcased how they leverage GKE to power their AI and database workloads:
+The session featured two Google customers—Qdrant and Codeway—who showcased how they leverage Kubernetes to power their AI and database workloads:
 
-Qdrant: A vector database company, Qdrant uses GKE to deliver high-speed search and recommendation capabilities for clients like Johnson & Johnson and Disney. By combining GKE’s persistent disks with data caching, Qdrant achieves 10x faster search speeds compared to standard disks, even in worst-case scenarios without RAM caching. This performance is critical for handling billions of vectors at scale.
+Qdrant: A vector database company, Qdrant uses GKE to deliver high-speed search and recommendation capabilities for clients like Johnson & Johnson and Disney. By combining GKE’s persistent disks with data caching, Qdrant achieves 10x faster search speeds compared to standard disks, even in worst-case scenarios without RAM caching. This performance is critical for handling billions of vectors at scale.   
 Codeway: Codeway’s AI-driven talking head platform, integrated into their language learning app `Learner`, relies on GKE for real-time video generation. Using Gaussian splitting and optimized GPU workloads, Codeway delivers lifelike avatars with synchronized lip movements. Their in-house AI model development hub, built on GKE, abstracts infrastructure complexity, allowing researchers to focus on innovation.
 
 These success stories highlight Kubernetes’ versatility in supporting diverse workloads, from vector databases to real-time AI applications. With KubeDB, AppsCode enables similar outcomes by providing a robust framework for managing stateful workloads, making it easier for organizations to replicate Qdrant and Codeway’s successes.
