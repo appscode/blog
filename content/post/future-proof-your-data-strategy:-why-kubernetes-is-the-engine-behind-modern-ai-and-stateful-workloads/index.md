@@ -85,8 +85,8 @@ Kubernetes is a more than appropriate compute fabric to run your stateful applic
 
 The insights from Google Cloud Next underscore a critical truth: Kubernetes is the future for stateful applications and AI workloads. With statistics showing widespread adoption of databases and AI on Kubernetes, now is the time to embrace this powerful platform. If you’re running stateful applications like databases, Kubernetes—paired with KubeDB from AppsCode—offers the tools and flexibility to succeed.
 
-**Kubernetes is a more than appropriate compute fabric to run your stateful applications**
-`Brian Kaufman`, AI Infrastructure and Data @ Google
+> **“Kubernetes is a more than appropriate compute fabric to run your stateful applications.”**  
+> — `Brian Kaufman`, Senior Product Manager, AI Infrastructure and Data @ Google Cloud
 
 Ready to take the next step? Explore KubeDB and see how AppsCode can help you unlock the full potential of Kubernetes for your stateful and AI workloads. Visit AppsCode.com to learn more and start your journey today.
 
