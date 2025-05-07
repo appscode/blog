@@ -32,7 +32,7 @@
              <!-- author start  -->
                {{ range $authorName := $p.Params.authors }}
                 {{ range site.Data.authors }}
-                  {{ if eq .name $authorName}}
+                  {{ if eq (lower .name) (lower $authorName) }}
                       <div class="author">
                         <a href="{{$.Site.Params.basePath}}authors/{{ .name | urlize }}" class="author-image"><img
                             src="{{$.Site.Params.basePath}}{{ .profile }}"
