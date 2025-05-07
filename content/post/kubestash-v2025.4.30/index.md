@@ -102,9 +102,55 @@ spec:
 
 KubeStash now supports backup and restore of Kubernetes `workload manifests`, including `RBAC` resources. This feature allows users to back up and restore not only the data but also the entire configuration of their workloads, ensuring a complete disaster recovery solution.
 
+Here is an example of `BackupConfiguration`:
 
+```yaml
+apiVersion: core.kubestash.com/v1alpha1
+kind: BackupConfiguration
+metadata:
+  name: sample-backupconfig
+  namespace: demo
+spec:
+  target:
+    apiGroup: apps
+    kind: StatefulSet
+    name: my-sts
+    namespace: demo
+  sessions:
+    - name: workload-backup
+      addon:
+        name: workload-addon
+        tasks:
+          - name: manifest-backup
+            params:
+              includeRBACResources: "true"
+        jobTemplate:
+          spec:
+           serviceAccountName: cluster-resource-reader
+```
 
-    
+Here is an example of `RestoreSession`:
+
+```yaml
+apiVersion: core.kubestash.com/v1alpha1
+kind: RestoreSession
+metadata:
+  name: sample-restoresession
+  namespace: demo
+spec:
+  manifestOptions:
+    workload:
+      restoreNamespace: demo
+  addon:
+    name: workload-addon
+    tasks:
+      - name: manifest-restore
+        params:
+          includeRBACResources: "true"
+          overrideResources: "true"
+```
+
+Note that you've to set `includeRBACResources` flag to `true` if you want to backup and restore `RBAC` resources like Role, RoleBinding, ClusterRole, ClusterRoleBinding which are being used by your `workload`. Also you've to set `overrideResources` flag to `true` if you want to override the resources while restoring. Both of the flags are by default set to `false`.
 
 ### Improvements & Bug Fixes
 
