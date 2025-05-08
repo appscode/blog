@@ -24,10 +24,12 @@ tags:
 - mongodb
 - mssqlserver
 - network
+- percona-xtradb
 - pgbouncer
 - postgres
 - postgresql
 - prometheus
+- proxysql
 - redis
 - restore
 - s3
