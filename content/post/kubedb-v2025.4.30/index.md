@@ -43,7 +43,7 @@ tags:
 - zookeeper
 ---
 
-KubeDB **v2025.4.30** is here, delivering enhanced performance, expanded database support, and streamlined management for Kubernetes-based database deployments. This release introduces new features, improved reliability, and broader GitOps integration, making database operations more efficient and production-ready.
+KubeDB **v2025.4.30** is here, bringing enhanced performance, expanded database support, and streamlined management for Kubernetes-based database deployments. This release introduces new features, improved reliability, and broader GitOps integration, making database operations more efficient and production-ready.
 
 ## Key Changes
 - **New Database Support**: Added support for **Apache Ignite**, a powerful in-memory computing platform for high-performance, low-latency workloads.
@@ -213,7 +213,7 @@ spec:
 
 ## MongoDB
 ### `mongodb+srv` style connection url support
-From this release, users can connect to the mongodb using `mongosh "mongodb+srv://<user>:<pass>@<host>/<database>?tls=true&tlsCAFile=./db-ca.crt"` connection uri. We have added `db.spec.replicaSet.horizons` field to specify the server dns & pod CNAME records. Here is a sample:
+This release enables users to connect to MongoDB using the `mongosh "mongodb+srv://<user>:<pass>@<host>/<database>?tls=true&tlsCAFile=./db-ca.crt"` connection uri. We have added `db.spec.replicaSet.horizons` field to specify the server dns & pod CNAME records. Here is a sample:
 
 ```yaml
 ...
@@ -341,7 +341,7 @@ spec:
 ```
 
 ### Valkey Support
-KubeDB now supports **Valkey**, a high-performance Redis fork, with new images for versions **8.1.1**, **8.0.3**, **7.2.9**, and **7.2.5**. Valkey is provisioned under the `Redis` CRD for consistency.
+KubeDB now supports **Valkey**, a high-performance Redis fork, with new images for versions **8.1.1**, **8.0.3**, **7.2.9**, and **7.2.5**. Valkey is provisioned under the existing `Redis` CRD for consistency.
 
 ```yaml
 apiVersion: catalog.kubedb.com/v1alpha1
@@ -400,7 +400,7 @@ GitOps support now extends to **Redis**, **Redis Sentinel**, and **MariaDB**, in
 - **Automated Provisioning**: GitOps pipelines create corresponding KubeDB CRs to provision databases based on Git-defined states.
 - **Smart Reconciliation**: The GitOps controller detects and resolves discrepancies in database configurations, replicas, or versions.
 
-We have also changed the way to enable gitops feature. Pass `--set kubedb-crd-manager.installGitOpsCRDs=true` in the kubedb installation process to enable this.
+The method for enabling the GitOps feature has also been updated. Pass `--set kubedb-crd-manager.installGitOpsCRDs=true` during the KubeDB installation process to enable this.
 
 ```yaml
 apiVersion: gitops.kubedb.com/v1alpha1
