@@ -57,7 +57,7 @@ In this release, we have introduced `Restart`,` VerticalScaling` and `UpdateVers
 
 ### Restart:
 
-```
+```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: CassandraOpsRequest
 metadata:
@@ -74,7 +74,7 @@ spec:
 
 ### Vertical Scaling:
 
-```
+```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: CassandraOpsRequest
 metadata:
@@ -100,7 +100,7 @@ spec:
 
 ### Update Version:
 
-```
+```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: CassandraOpsRequest
 metadata:
@@ -120,6 +120,7 @@ spec:
 
 In this release, we've enhanced the ClickHouse client with support for TLS-enabled external disks using self-signed certificates. You can now specify your CA certificate in the spec.tls.clientCaCertificateRefs field, which will be used to establish secure connections with external storage system.
 Example configuration:
+
 ```yaml
 spec:
   tls:
@@ -151,8 +152,6 @@ spec:
 
 ### For Standalone Mode
 
-
-
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: ClickHouseOpsRequest
@@ -173,7 +172,6 @@ spec:
           memory: "3Gi"
           cpu: "1"
 ```
-
 
 ### For Cluster Mode
 
@@ -209,7 +207,6 @@ spec:
              memory: "1Gi"
              cpu: "1"
 ```
-
 
 ## Hazelcast
 
@@ -254,6 +251,7 @@ hazelcast-standalone   5.5.2     Ready    2m39s
 ### Deploy a `Replicaset` Instance with multiple replicas
 
 Save and apply this yaml.
+
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: Hazelcast
@@ -491,6 +489,7 @@ spec:
     secretRef:
       name: my-secret
 ```
+
 Finally, the operator will update the database cluster with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`. We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation `kubedb.com/auth-active-from` in currently using auth secret which refers to the active from time of this secret.
 
 
@@ -502,6 +501,7 @@ Finally, the operator will update the database cluster with the new credential a
 If the secret is not referenced, the `ops-manager` operator will create new credentials and update the existing secret with the new credentials, keeping previous credentials under the keys `username.prev` and `password.prev`.
 
 Example YAML:
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: RedisOpsRequest
@@ -518,6 +518,7 @@ spec:
 If a secret is referenced, the operator will update the `.spec.authSecret.name` field with the new secret name. Archives the old credentials in the newly created secret under the keys `username.prev` and `password.prev`.
 
 New Secret Example:
+
 ```yaml
 apiVersion: v1
 data:
@@ -531,6 +532,7 @@ type: kubernetes.io/basic-auth
 ```
 
 Example YAML with Secret Reference:
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: RedisOpsRequest
@@ -545,6 +547,7 @@ spec:
     secretRef:
       name: my-auth
 ```
+
 We have also added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation `kubedb.com/auth-active-from` in currently using auth secret which refers to the active from time of this secret.
 
 ## RedisSentinel
@@ -553,6 +556,7 @@ We have also added a field `.spec.authSecret.activeFrom` to the db yaml which re
 `RotateAuth` OpsRequest for `RedisSentinel` has been added as well. If a user wants to update the authentication credentials for `RedisSentinel`, they can create an `OpsRequest` of type `RotateAuth` with or without referencing an authentication secret in the same way as mentioned for `Redis`.
 
 Example YAML with Secret Reference:
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: RedisSentinelOpsRequest
@@ -578,6 +582,7 @@ In this release, we have addressed a bug related to the SingleStore Backup proce
 GitOps support now extends to Elasticsearch, MSSQLServer, and MySQL, in addition to the previous databases. The `gitops.kubedb.com/v1alpha1` CRD enables seamless integration with GitOps tools like ArgoCD and Flux, automating database provisioning and reconciliation.
 
 Here is the sample YAML:
+
 ```yaml
 apiVersion: gitops.kubedb.com/v1alpha1
 kind: MySQL
@@ -609,7 +614,6 @@ spec:
         storage: 1Gi
   deletionPolicy: WipeOut
 ```
-
 
 ## Support
 - **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
