@@ -451,7 +451,7 @@ We have added a new ProxySQL version `3.0.1`.
 ## RabbitMQ
 
 OpsRequest
-RotateAuth OpsRequest for rabbitmq has been added. If a user wants to update the authentication credentials for a particular database, they can create an OpsRequest of type `RotateAuth` with or without referencing an authentication secret.If the secret is not referenced, the ops-manager operator will create a new credential and update the current secret. Here is the Yaml for rotating authentication credentials for a Rabbitmq cluster using  RabbitMQOpsRequest.
+RotateAuth OpsRequest for rabbitmq has been added. If a user wants to update the authentication credentials for a particular database, they can create an OpsRequest of type `RotateAuth` with or without referencing an authentication secret. If the secret is not referenced, the ops-manager operator will create a new credential and update the current secret. Here is the Yaml for rotating authentication credentials for a Rabbitmq cluster using  RabbitMQOpsRequest.
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: RabbitMQOpsRequest
@@ -470,7 +470,7 @@ If the secret is referenced, the operator will update the `.spec.authSecret.name
 apiVersion: v1
 kind: Secret
 metadata:
-  name: custom-auth-secret
+  name: my-secret
   namespace: demo
 type: kubernetes.io/basic-auth
 stringData:
@@ -478,15 +478,18 @@ stringData:
   password: custompass
 ```
 ```yaml
-apiVersion: v1
-kind: Secret
+apiVersion: ops.kubedb.com/v1alpha1
+kind: RabbitMQOpsRequest
 metadata:
-  name: custom-auth-secret
+  name: user-credential-change
   namespace: demo
-type: kubernetes.io/basic-auth
-stringData:
-  username: admin
-  password: custompass
+spec:
+  type: RotateAuth
+  databaseRef:
+    name: rm-quickstart
+  authentication:
+    secretRef:
+      name: my-secret
 ```
 Finally, the operator will update the database cluster with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`. We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation `kubedb.com/auth-active-from` in currently using auth secret which refers to the active from time of this secret.
 
