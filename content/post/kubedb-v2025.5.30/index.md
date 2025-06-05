@@ -247,7 +247,7 @@ spec:
 ```bash
 ➤ kubectl get hazelcast -n demo hazelcast-standalone 
 NAME                              VERSION         STATUS   AGE
-hazelcast-standalone       5.5.2                 Ready      2m39s
+hazelcast-standalone               5.5.2          Ready   2m39s
 ```
 
 ### Deploy a `Replicaset` Instance with multiple replicas
@@ -492,11 +492,14 @@ Finally, the operator will update the database cluster with the new credential a
 
 
 ## Redis
-New Feature: Rotate Authentication Credentials for Redis
+### New Feature: Rotate Authentication Credentials for Redis
 `RotateAuth` OpsRequest for `Redis` has been added. If a user wants to update the authentication credentials for a particular database, they can create an `OpsRequest` of type `RotateAuth` with or without referencing an authentication secret.
-Rotate Authentication Without Referencing a Secret
+
+#### Rotate Authentication Without Referencing a Secret
 If the secret is not referenced, the `ops-manager` operator will create new credentials and update the existing secret with the new credentials.
+
 Example YAML:
+
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: RedisOpsRequest
@@ -509,7 +512,7 @@ spec:
     name: rd-demo
 ```
 
-Rotate Authentication With a Referenced Secret
+#### Rotate Authentication With a Referenced Secret
 If a secret is referenced, the operator will update the `.spec.authSecret.name` field with the new secret name. Archives the old credentials in the newly created secret under the keys `username.prev` and `password.prev`.
 
 New Secret Example:
@@ -542,12 +545,15 @@ spec:
 ```
 Finally, the operator will update the database  with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`. We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation `kubedb.com/auth-active-from` in currently using auth secret which refers to the active from time of this secret.
 
+**Note:**  The `RotateAuth` OpsRequest can be applied to **Valkey** in the same way as it is for **Redis**.
+
 ## RedisSentinel
 
 ### Rotate Authentication Credentials for RedisSentinel
 `RotateAuth` OpsRequest for `RedisSentinel` has been added. If a user wants to update the authentication credentials for `RedisSentinel`, they can create an `OpsRequest` of type `RotateAuth` with or without referencing an authentication secret.
-Rotate Authentication Without Referencing a Secret
+#### Rotate Authentication Without Referencing a Secret
 If the secret is not referenced, the `ops-manager` operator will create new credentials and update the existing secret with the new credentials.
+
 Example YAML:
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
@@ -561,8 +567,9 @@ spec:
     name: sen-demo
 ```
 
-### Rotate Authentication With a Referenced Secret
+#### Rotate Authentication With a Referenced Secret
 If a secret is referenced, the operator will update the `.spec.authSecret.name` field with the new secret name. Archives the old credentials in the newly created secret under the keys `username.prev` and `password.prev`.
+
 New Secret Example:
 ```yaml
 apiVersion: v1
@@ -593,7 +600,7 @@ spec:
 ```
 Finally, the operator will update the sentinel with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`. We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation `kubedb.com/auth-active-from` in currently using auth secret which refers to the active from time of this secret.
 
-
+**Note:**  The `RotateAuth` OpsRequest can be applied to **Valkeysentinel** in the same way as it is for **Redissentinel**.
 ## SingleStore
 
 In this release, we have addressed a bug related to the SingleStore Backup process. Previously the `databases` flag was not functioning properly, which occasionally caused issues during backup. This issue has been fixed in this release.
