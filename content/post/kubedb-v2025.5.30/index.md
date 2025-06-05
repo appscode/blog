@@ -48,6 +48,7 @@ KubeDB **v2025.5.30** is here, bringing enhanced performance, expanded database 
 ## Key Changes
 - **New Database Support**: Added support for **Oracle Database**, a robust and scalable enterprise-grade relational database system designed for high-performance transactions, analytics, and mission-critical workloads.
 - **Expanded GitOps Support**: Extended GitOps capabilities to include Elasticsearch, MSSQLServer, and MySQL.
+- **Expanded OpsRequest Support**: Added new Ops Requests support for various DBs.
 - **New Versions**: Added support for new versions of various DBs.
 
 ## Cassandra
@@ -245,7 +246,7 @@ spec:
 ```
 
 ```bash
-➤ kubectl get hazelcast -n demo hazelcast-standalone 
+$ kubectl get hazelcast -n demo hazelcast-standalone 
 NAME                              VERSION         STATUS   AGE
 hazelcast-standalone               5.5.2          Ready   2m39s
 ```
@@ -576,7 +577,7 @@ In this release, we have addressed a bug related to the SingleStore Backup proce
 ## GitOps Enhancements
 GitOps support now extends to Elasticsearch, MSSQLServer, and MySQL, in addition to the previous databases. The `gitops.kubedb.com/v1alpha1` CRD enables seamless integration with GitOps tools like ArgoCD and Flux, automating database provisioning and reconciliation.
 
-Here is the sample yaml,
+Here is the sample YAML:
 ```yaml
 apiVersion: gitops.kubedb.com/v1alpha1
 kind: MySQL
