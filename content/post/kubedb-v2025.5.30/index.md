@@ -247,8 +247,8 @@ spec:
 
 ```bash
 $ kubectl get hazelcast -n demo hazelcast-standalone 
-NAME                              VERSION         STATUS   AGE
-hazelcast-standalone               5.5.2          Ready   2m39s
+NAME                   VERSION   STATUS   AGE
+hazelcast-standalone   5.5.2     Ready    2m39s
 ```
 
 ### Deploy a `Replicaset` Instance with multiple replicas
@@ -277,8 +277,8 @@ spec:
 
 ```bash
 ➤ kubectl get hazelcast -n demo hazelcast-sample
-NAME                    VERSION   STATUS   AGE
-hazelcast-sample   5.5.2           Ready      4m
+NAME               VERSION   STATUS   AGE
+hazelcast-sample   5.5.2     Ready    4m
 ➤ kubectl get pods -n demo
 NAME                       READY   STATUS    RESTARTS   AGE
 hazelcast-sample-0         1/1     Running   0          4m
