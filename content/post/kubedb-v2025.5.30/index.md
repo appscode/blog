@@ -52,7 +52,7 @@ KubeDB **v2025.5.30** is here, bringing enhanced performance, expanded database 
 
 ## Cassandra
 
-In this release, we have introduced `Restart`,` VerticalScaling` and `UpdateVersion` OpsRequests for KubeDB managed Cassandra. Users can easily manage Cassandra instances by using these opsRequest. Currently a user can only update versions from version 4.1.8 to version 5.0.3 .
+In this release, we have introduced `Restart`,` VerticalScaling` and `UpdateVersion` OpsRequests for KubeDB managed Cassandra. Users can easily manage Cassandra instances by using these OpsRequests. Currently, a user can only update versions from version 4.1.8 to version 5.0.3 .
 
 ### Restart:
 
@@ -221,7 +221,7 @@ secret demo/hz-license-key created
 ```
 
 ### Deploy a `Standalone` Hazelcast Instance
-Save and apply this yaml.
+Save and apply this YAML.
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -258,7 +258,7 @@ apiVersion: kubedb.com/v1alpha2
 kind: Hazelcast
 metadata:
   name: hazelcast-sample
-  Namespace: demo
+  namespace: demo
 spec:
   deletionPolicy: WipeOut
   licenseSecret:
@@ -314,12 +314,12 @@ Here’s a preview of the Alert dashboard for Ignite:
 ## MariaDB
 
 In this release, we are excited to introduce TLS support for MariaDB Replication Topology. This enhancement ensures secure data transmission across the replication topology, providing encrypted communication between nodes to safeguard sensitive data and enhance overall security. By enabling TLS, users can now confidently deploy MariaDB replication in environments requiring stringent data protection, ensuring compliance with security best practices while maintaining the reliability and performance of the replication process.
-we have addressed a bug affecting the MariaDB archiver. Previously, the TLS-enabled MinIO S3 bucket was not functioning correctly, particularly with Sidekick, which failed to push the binlog file. This issue has been identified and resolved in the current release.
+we have addressed a bug affecting the MariaDB archiver. Previously, the TLS-enabled MinIO S3 bucket was not functioning correctly, particularly with Sidekick, which failed to push the binlog file. We identified and resolved this issue in the current release.
 
 
 ## MySQL 
 
-In this release, we have addressed a bug affecting the MySQL archiver. Previously, the TLS-enabled MinIO S3 bucket was not functioning correctly, particularly with Sidekick, which failed to push the binlog file. This issue has been identified and resolved in the current release.
+In this release, we have addressed a bug affecting the MySQL archiver. Previously, the TLS-enabled MinIO S3 bucket was not functioning correctly, particularly with Sidekick, which failed to push the binlog file. We identified and resolved this issue in the current release.
 
 ## Oracle
 
@@ -332,7 +332,7 @@ Save and apply this yaml.
 apiVersion: kubedb.com/v1alpha2
 kind: Oracle
 metadata:
-  name: oracle-sample
+  name: oracle-standalone
   namespace: demo
 spec:
   version: "oracle-21.3.0"
