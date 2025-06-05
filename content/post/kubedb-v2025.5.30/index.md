@@ -46,7 +46,8 @@ tags:
 KubeDB **v2025.5.30** is here, bringing enhanced performance, expanded database support, and streamlined management for Kubernetes-based database deployments. This release introduces new features, improved reliability, and broader GitOps integration, making database operations more efficient and production-ready.
 
 ## Key Changes
-- **New Database Support**: Added support for **Oracle Database**, a robust and scalable enterprise-grade relational database system designed for high-performance transactions, analytics, and mission-critical workloads.
+
+- **New Database Support**: Added support for **Oracle Database**, a robust and scalable enterprise-grade relational database system designed for high-performance transactions, analytics, and mission-critical workloads. We have also added initial support for **Hazelcast**, a unified real-time data platform that combines a fast data store with stream processing.
 - **Expanded GitOps Support**: Extended GitOps capabilities to include Elasticsearch, MSSQLServer, and MySQL.
 - **Expanded OpsRequest Support**: Added new Ops Requests support for various DBs.
 - **New Versions**: Added support for new versions of various DBs.
