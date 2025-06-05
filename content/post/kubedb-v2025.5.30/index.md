@@ -449,9 +449,8 @@ This update ensures that KubeDB ProxySQL remains compatible with modern MySQL au
 We have added a new ProxySQL version `3.0.1`.
 
 ## RabbitMQ
-
-OpsRequest
-RotateAuth OpsRequest for rabbitmq has been added. If a user wants to update the authentication credentials for a particular database, they can create an OpsRequest of type `RotateAuth` with or without referencing an authentication secret. If the secret is not referenced, the ops-manager operator will create a new credential and update the current secret. Here is the Yaml for rotating authentication credentials for a Rabbitmq cluster using  RabbitMQOpsRequest.
+### New OpsRequest Support
+`RotateAuth` OpsRequest for `RabbitMQ` has been added. If a user wants to update the authentication credentials for a particular database, they can create an OpsRequest of type `RotateAuth` with or without referencing an authentication secret. If the secret is not referenced, the ops-manager operator will create a new credential and update the current secret. Here is the Yaml for rotating authentication credentials for a Rabbitmq cluster using  RabbitMQOpsRequest.
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: RabbitMQOpsRequest
@@ -499,10 +498,9 @@ Finally, the operator will update the database cluster with the new credential a
 `RotateAuth` OpsRequest for `Redis` has been added. If a user wants to update the authentication credentials for a particular database, they can create an `OpsRequest` of type `RotateAuth` with or without referencing an authentication secret.
 
 #### Rotate Authentication Without Referencing a Secret
-If the secret is not referenced, the `ops-manager` operator will create new credentials and update the existing secret with the new credentials.
+If the secret is not referenced, the `ops-manager` operator will create new credentials and update the existing secret with the new credentials, keeping previous credentials under the keys `username.prev` and `password.prev`.
 
 Example YAML:
-
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
 kind: RedisOpsRequest
@@ -546,45 +544,12 @@ spec:
     secretRef:
       name: my-auth
 ```
-Finally, the operator will update the database  with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`. We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation `kubedb.com/auth-active-from` in currently using auth secret which refers to the active from time of this secret.
-
-**Note:**  The `RotateAuth` OpsRequest can be applied to **Valkey** in the same way as it is for **Redis**.
+We have also added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation `kubedb.com/auth-active-from` in currently using auth secret which refers to the active from time of this secret.
 
 ## RedisSentinel
 
 ### Rotate Authentication Credentials for RedisSentinel
-`RotateAuth` OpsRequest for `RedisSentinel` has been added. If a user wants to update the authentication credentials for `RedisSentinel`, they can create an `OpsRequest` of type `RotateAuth` with or without referencing an authentication secret.
-#### Rotate Authentication Without Referencing a Secret
-If the secret is not referenced, the `ops-manager` operator will create new credentials and update the existing secret with the new credentials.
-
-Example YAML:
-```yaml
-apiVersion: ops.kubedb.com/v1alpha1
-kind: RedisSentinelOpsRequest
-metadata:
-  name: redis-sentinel-rotate
-  namespace: demo
-spec:
-  type: RotateAuth
-  databaseRef:
-    name: sen-demo
-```
-
-#### Rotate Authentication With a Referenced Secret
-If a secret is referenced, the operator will update the `.spec.authSecret.name` field with the new secret name. Archives the old credentials in the newly created secret under the keys `username.prev` and `password.prev`.
-
-New Secret Example:
-```yaml
-apiVersion: v1
-data:
-  password: bXlQYXNzd29yZA==
-  username: ZGVmYXVsdA==
-kind: Secret
-metadata:
-  name: my-auth
-  namespace: demo
-type: kubernetes.io/basic-auth
-```
+`RotateAuth` OpsRequest for `RedisSentinel` has been added as well. If a user wants to update the authentication credentials for `RedisSentinel`, they can create an `OpsRequest` of type `RotateAuth` with or without referencing an authentication secret in the same way as mentioned for `Redis`.
 
 Example YAML with Secret Reference:
 ```yaml
@@ -601,9 +566,9 @@ spec:
     secretRef:
       name: my-auth
 ```
-Finally, the operator will update the sentinel with the new credential and the old credentials will be stored in the secret with keys `username.prev` and `password.prev`. We have added a field `.spec.authSecret.activeFrom` to the db yaml which refers to the timestamp of the credential is active from. We also add an annotation `kubedb.com/auth-active-from` in currently using auth secret which refers to the active from time of this secret.
 
-**Note:**  The `RotateAuth` OpsRequest can be applied to **Valkeysentinel** in the same way as it is for **Redissentinel**.
+**Note:**  The `RotateAuth` OpsRequest can also be applied for the `Valkey` database as well in the same way shown above for Redis. 
+
 ## SingleStore
 
 In this release, we have addressed a bug related to the SingleStore Backup process. Previously the `databases` flag was not functioning properly, which occasionally caused issues during backup. This issue has been fixed in this release.
