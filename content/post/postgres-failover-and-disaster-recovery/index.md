@@ -395,15 +395,18 @@ Full Demo: [link](https://www.youtube.com/watch?v=KAl3rdd8i6k)
 kubectl delete pg -n demo pg-ha-demo
 ```
 
+## What Next?
 
-## Next Steps
+Please try the latest release and give us your valuable feedback.
 
-- Learn about [backup and restore](/docs/guides/postgres/backup/stash/overview/index.md) PostgreSQL database using Stash.
-- Learn about initializing [PostgreSQL with Script](/docs/guides/postgres/initialization/script_source.md).
-- Learn about [custom PostgresVersions](/docs/guides/postgres/custom-versions/setup.md).
-- Want to setup PostgreSQL cluster? Check how to [configure Highly Available PostgreSQL Cluster](/docs/guides/postgres/clustering/ha_cluster.md)
-- Monitor your PostgreSQL database with KubeDB using [built-in Prometheus](/docs/guides/postgres/monitoring/using-builtin-prometheus.md).
-- Monitor your PostgreSQL database with KubeDB using [Prometheus operator](/docs/guides/postgres/monitoring/using-prometheus-operator.md).
-- Detail concepts of [Postgres object](/docs/guides/postgres/concepts/postgres.md).
-- Use [private Docker registry](/docs/guides/postgres/private-registry/using-private-registry.md) to deploy PostgreSQL with KubeDB.
-- Want to hack on KubeDB? Check our [contribution guidelines](/docs/CONTRIBUTING.md).
+* If you want to install KubeDB, please follow the installation instruction from [here](https://kubedb.com/docs/v2021.06.23/setup).
+
+* If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](https://kubedb.com/docs/v2021.06.23/setup/upgrade/).
+
+## Support
+
+To speak with us, please leave a message on [our website](https://appscode.com/contact/).
+
+To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
+
+If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
