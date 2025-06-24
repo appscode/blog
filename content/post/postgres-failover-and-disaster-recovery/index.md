@@ -421,7 +421,7 @@ To set up and configure, visit [here](https://kubedb.com/docs/v2025.5.30/guides/
 
 ### VolumeExpansion of Postgresql Database
 
-It is often possible that your database storage become full and your database has stopped working. We have got you covered. You just apply a VolumeExpansion `PostgresOpsRequest` and your your database storage will be increased, and the database will be ready to use again.
+It is often possible that your database storage become full and your database has stopped working. We have got you covered. You just apply a VolumeExpansion `PostgresOpsRequest` and your database storage will be increased, and the database will be ready to use again.
 
 For more details, please check the full section [here](https://kubedb.com/docs/v2025.5.30/guides/postgres/volume-expansion/overview/overview/).
 
