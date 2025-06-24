@@ -1,5 +1,5 @@
 ---
-title: Postgres Failover And Disaster Recovery Scenarios
+title: Automating PostgreSQL Operations In Kubernetes Using KubeDB
 date: "2025-06-22"
 weight: 25
 authors:
