@@ -387,6 +387,45 @@ Basic Demo: [link](https://www.youtube.com/watch?v=BdMSVjNQtCA)
 Full Demo: [link](https://www.youtube.com/watch?v=KAl3rdd8i6k)
 
 
+## A Guide to Handling Postgres Storage
+
+It is often possible that your database storage become full and your database has stopped working. We have got you covered. You just apply a VolumeExpansion `PostgresOpsRequest` and your database storage will be increased, and the database will be ready to use again.
+
+### Disaster Scenario and Recovery
+
+#### Scenario
+
+You deploy a `PostgreSQL` database. The database was running fine. Someday, your database storage becomes full. As your postgres process can't write to the filesystem,
+clients won't be able to connect to the database. Your database status will be `Not Ready`.
+
+#### Recovery
+
+In order to recover from this, you can create a `VolumeExpansion` `PostgresOpsRequest` with expanded resource requests.
+As soon as you create this, KubeDB will trigger the necessary steps to expand your volume based on your specifications on the `PostgresOpsRequest` manifest. A sample `PostgresOpsRequest` manifest for `VolumeExpansion` is given below:
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: PostgresOpsRequest
+metadata:
+  name: pgops-vol-exp-ha-demo
+  namespace: demo
+spec:
+  apply: Always
+  databaseRef:
+    name: pg-ha-demo
+  type: VolumeExpansion
+  volumeExpansion:
+    mode: Online # see the notes, your storageclass must support this mode
+    postgres: 20Gi # expanded resource
+```
+
+
+For more details, please check the full section [here](https://kubedb.com/docs/v2025.5.30/guides/postgres/volume-expansion/overview/overview/).
+
+> **Note**: There are two ways to update your volume: 1.Online 2.Offline. Which Mode to choose?
+> It depends on your `StorageClass`. If your storageclass supports online volume expansion, you can go with it. Otherwise, you can go with `Ofline` Volume Expansion.
+
+
 ## A Guide to Postgres Ops Requests
 
 A `PostgresOpsRequest` lets you manage various database operational and day-2 features. For example, managing Database TLS, custom configuration, version upgrade, scaling, and so on.
@@ -421,12 +460,9 @@ To set up and configure, visit [here](https://kubedb.com/docs/v2025.5.30/guides/
 
 ### VolumeExpansion of Postgresql Database
 
-It is often possible that your database storage become full and your database has stopped working. We have got you covered. You just apply a VolumeExpansion `PostgresOpsRequest` and your database storage will be increased, and the database will be ready to use again.
+If you need to increase your database storage, you can use `VolumeExpansion` `PostgresOpsRequest`.
 
 For more details, please check the full section [here](https://kubedb.com/docs/v2025.5.30/guides/postgres/volume-expansion/overview/overview/).
-
-> **Note**: There are two ways to update your volume: 1.Online 2.Offline. Which Mode to choose?
-> It depends on your `StorageClass`. If your `StorageClass` supports online volume expansion, you can go with it. Otherwise, you can go with `Ofline` Volume Expansion.
 
 
 ### Re-configure Postgresql configuration parameters
