@@ -7,12 +7,11 @@ authors:
 tags:
 - cloud-native
 - database
-- failover
 - disaster-recovery
+- failover
+- high-availability
 - kubedb
 - kubernetes
-- postgresql
-- high-availability
 ---
 
 
