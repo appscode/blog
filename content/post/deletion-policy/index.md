@@ -1,15 +1,17 @@
 ---
-title: DeletionPolicy
-menu:
-  docs_{{ .version }}:
-    identifier: pg-deletion-policy-concepts
-    name: DeletionPolicy
-    parent: pg-concepts-postgres
-    weight: 20
-menu_name: docs_{{ .version }}
-section_menu_id: guides
+title: Deletion Policy for all DB
+date: "2025-07-02"
+weight: 26
+authors:
+- Bonusree Datta
+tags:
+- Kubernetes
+- KubeDB
+- PostgreSQL
+
 ---
-> New to KubeDB? Please start [here](/docs/README.md).
+
+> New to KubeDB? Please start [here](https://kubedb.com/docs/v2025.5.30/welcome/).
 
 > 💡 **Note:** The deletion policy is the same for all supported databases. Here, an example for PostgreSQL is included to show how users can use this feature.
 # Using Database Deletion Policy
@@ -19,7 +21,7 @@ KubeDB supports setting a deletion policy for PostgreSQL databases. This tutoria
 
 - At first, you need to have a Kubernetes cluster, and the kubectl command-line tool must be configured to communicate with your cluster. If you do not already have a cluster, you can create one by using [kind](https://kind.sigs.k8s.io/docs/user/quick-start/).
 
-- Now, install KubeDB cli on your workstation and KubeDB operator in your cluster following the steps [here](/docs/setup/README.md).
+- Now, install KubeDB cli on your workstation and KubeDB operator in your cluster following the steps [here](https://kubedb.com/docs/v2025.5.30/setup/).
 
 - To keep things isolated, this tutorial uses a separate namespace called `demo` throughout this tutorial.
   ```shell
@@ -252,7 +254,10 @@ No resources found in demo namespace.
 
 From the above output, you can see that all postgres resources are deleted. there is no option to recreate/reinitialize your database if `deletionPolicy` is set to `WipeOut`.
 
-## Next Steps
 
-- Learn about Postgres crd [here](/docs/guides/postgres/concepts/postgres.md).
-- Deploy your first PostgreSQL database with KubeDB by following the guide [here](/docs/guides/postgres/quickstart/quickstart.md).
+## Support
+- **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
+- **Stay Updated**: Follow us on [Twitter/X](https://x.com/KubeDB) for product announcements.
+- **Tutorials**: Subscribe to our [YouTube channel](https://youtube.com/@appscode) for tutorials on production-grade Kubernetes tools.
+- **Learn More**: Explore [Production-Grade Databases in Kubernetes](https://kubedb.com/).
+- **Report Issues**: File bugs or feature requests on [GitHub](https://github.com/kubedb/project/issues/new).
