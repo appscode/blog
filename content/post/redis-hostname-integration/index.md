@@ -20,24 +20,23 @@ tags:
 - Redis-for-DNS-resolution
 - Hostname-resolution-with-Redis
 - DNS-server-with-Redis-database
+- Redis-Announce
+- Redis-Cluster-Announce
 
 ---
 
 
-
 > New to KubeDB? Please start [here](/docs/README.md).
 
-# Redis External Connections Outside Kubernetes using Redis Horizons
+# Redis External Connections Outside Kubernetes using Redis Announce
 
-Redis Horizons is a feature in Redis that enables external connections to Redis replica sets deployed within Kubernetes. It allows applications or clients outside the Kubernetes cluster to connect to individual replica set members by mapping internal Kubernetes DNS names to externally accessible hostnames or IP addresses. This is useful for scenarios where external access is needed, such as hybrid deployments or connecting from outside the cluster.
+Redis Announce is a feature in Redis that enables external connections to Redis replica sets deployed within Kubernetes. It allows applications or clients outside the Kubernetes cluster to connect to individual replica set members by mapping internal Kubernetes DNS names to externally accessible hostnames or IP addresses. This is useful for scenarios where external access is needed, such as hybrid deployments or connecting from outside the cluster.
 
 ## Before You Begin
 
 At first, you need to have a Kubernetes cluster, and the kubectl command-line tool must be configured to communicate with your cluster. If you do not already have a cluster, you can create one by using [kind](https://kind.sigs.k8s.io/docs/user/quick-start/).
 
 Now, install KubeDB cli on your workstation and KubeDB operator in your cluster following the steps [here](/docs/setup/README.md).
-
-- Install [`cert-manger`](https://cert-manager.io/docs/installation/) v1.0.0 or later to your cluster to manage your SSL/TLS certificates.
 
 To keep things isolated, this tutorial uses a separate namespace called `demo` throughout this tutorial.
 
@@ -119,7 +118,7 @@ spec:
 > If you want to use `NodePort` service. Update `.spec.provider.kubernetes.envoyService.type` to `NodePort` in the above YAML.
 
 ```bash
-$ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/horizons/envoyproxy.yaml
+$ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/envoyproxy.yaml
 envoyproxy.gateway.envoyproxy.io/ace created
 ```
 
@@ -152,7 +151,7 @@ spec:
 ```
 
 ```bash
-$ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/horizons/gatewayclass.yaml
+$ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/gatewayclass.yaml
 gatewayclass.gateway.networking.k8s.io/ace created
 ```
 
@@ -180,10 +179,10 @@ Install `Keda` in your cluster using the following command:
 $ kubectl create ns kubeops
 namespace/kubeops created
 
-$ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/horizons/helmrepo.yaml
+$ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/helmrepo.yaml
 helmrepository.source.toolkit.fluxcd.io/appscode-charts-oci created
 
-$ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/horizons/keda.yaml
+$ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/keda.yaml
 helmrelease.helm.toolkit.fluxcd.io/keda created
 helmrelease.helm.toolkit.fluxcd.io/keda-add-ons-http created
 ```
@@ -202,7 +201,7 @@ helm install catalog-manager oci://ghcr.io/appscode-charts/catalog-manager \
 
 ## Overview
 
-KubeDB uses following crd fields to enable Redis Horizons:
+KubeDB uses following crd fields to enable Redis Announce:
 
 - `spec:`
     - `announce:`
@@ -212,18 +211,14 @@ KubeDB uses following crd fields to enable Redis Horizons:
 
 Read about the fields in details in [redis concept](/docs/guides/redis/concepts/redis.md)
 
-
-
-
-
-## Redis Replicaset with Horizons
+## Redis Cluster with Announce
 
 ### Create DNS Records
-Create dns `A`/`CNAME` records for redis replicaset pods, let's say, `Redis` has `2` replicas and `3` shards.
+Create dns `A`/`CNAME` records for redis cluster pods, let's say, `Redis` has `2` replicas and `3` shards.
 
 Example:
 - `DNS`: `kubedb.appscode`, this will be used to connect to the Redis replica set using `redis+srv`.
-- `A/CNAME Record` for each Redis replicas with exposed Envoy Gateway `LoadBalancer/NodePort` IP/Host: 
+- `A/CNAME Record` for each Redis replicas with exposed Envoy Gateway `LoadBalancer/NodePort` IP/Host:
     - "rd0-0.kubedb.appscode"
     - "rd0-1.kubedb.appscode"
     - "rd1-0.kubedb.appscode"
@@ -232,13 +227,13 @@ Example:
     - "rd2-1.kubedb.appscode"
 
 
-Below is the YAML for Redis Replicaset Horizons. Here, [`spec.replicaSet.horizons`](/docs/guides/mongodb/concepts/redis.md#specreplicaset) specifies `horizons` for `replicaset`.
+Below is the YAML for Redis Announce.
 
 ```yaml
 apiVersion: kubedb.com/v1
 kind: Redis
 metadata:
-  name: redis-horizon
+  name: redis-announce
   namespace: demo
 spec:
   version: 7.4.0
@@ -276,20 +271,20 @@ Here,
 
 >> **Note**: If you don't want to use `redis+srv` connection string, you can connect to the Redis replica set using the individual pod DNS names (e.g., `rd0-0.kubedb.appscode:10000`, `rd0-1.kubedb.appscode:10001`, etc.).
 
-### Deploy Redis Replicaset Horizons
+### Deploy Redis Cluster Announce
 
 ```bash
-$ kubectl create -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/horizons/redis.yaml
-redis.kubedb.com/redis-horizon created
+$ kubectl create -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/redis.yaml
+redis.kubedb.com/redis-announce created
 ```
 
-Now, wait until `redis-horizon` has status `Ready`. i.e,
+Now, wait until `redis-announce` has status `Ready`. i.e,
 
 ```bash
 $ watch kubectl get rd -n demo
 Every 2.0s: kubectl get rd -n demo
 NAME            VERSION   STATUS   AGE
-redis-horizon   7.4.0     Ready    6m56s
+redis-announce   7.4.0     Ready    6m56s
 ```
 
 
@@ -302,12 +297,69 @@ metadata:
   namespace: demo                                                                                                                 
 spec:                                                                                                                             
   sourceRef:                                                                                                                      
-    name: redis-horizon                                                                                                        
+    name: redis-announce                                                                                                        
     namespace: demo                                                                                                               
 ```                                                                                                                               
 
 ```bash                                                                                                                           
-$ kubectl create -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/horizons/binding.yaml 
+$ kubectl create -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/binding.yaml 
 redisbinding.catalog.appscode.com/redis-bind created                                                                          
 ```                                                                                                                               
+Now, check the status of `redisbinding` objects and ops requests.
 
+```bash
+$ kubectl get redisbinding,rdopsrequest -n demo
+NAME                                               SRC_NS   SRC_NAME           STATUS   AGE
+redisbinding.catalog.appscode.com/redis-bind       demo     redis-announce      Current  3m28s
+
+NAME                                                       TYPE       STATUS       AGE
+redisopsrequest.ops.kubedb.com/redis-announce-jddiql        Announce   Successful   2m58s
+```
+
+### Connect to Redis as Cluster
+
+To connect to the Redis replica set, you can use the following command:
+
+Collect the replicas from the `redis-announce` object:
+```bash
+$ kubectl get redis -n demo redis-announce -ojson | jq .spec.cluster.announce.shards[0]
+{
+  "endpoints": [
+    "rd0-0.kubedb.appscode",
+    "rd0-1.kubedb.appscode"
+  ]
+}
+
+Connect with the database:
+
+$ redis-cli -h rd0-0.kubedb.appscode -p 10050 -a <password> -c ping
+PONG
+```
+
+## Cleaning up
+
+To cleanup the Kubernetes resources created by this tutorial, run:
+
+```bash
+kubectl delete redisbinding -n demo redis-bind
+kubectl delete rd -n demo redis-announce
+
+kubectl delete gatewayclass ace
+kubectl delete -n ace-gw envoyproxy ace
+
+helm uninstall -n ace catalog-manager
+```
+
+
+If you would like to uninstall the KubeDB operator, please follow the steps [here](/docs/setup/README.md).
+
+## Next Steps
+
+- [Backup and Restore](/docs/guides/redis/backup/kubestash/overview/index.md) Redis databases using KubeStash.
+- Initialize [Redis with Script](/docs/guides/redis/initialization/using-script.md).
+- Monitor your Redis database with KubeDB using [out-of-the-box Prometheus operator](/docs/guides/redis/monitoring/using-prometheus-operator.md).
+- Monitor your Redis database with KubeDB using [out-of-the-box builtin-Prometheus](/docs/guides/redis/monitoring/using-builtin-prometheus.md).
+- Use [private Docker registry](/docs/guides/redis/private-registry/using-private-registry.md) to deploy Redis with KubeDB.
+- Detail concepts of [Redis object](/docs/guides/redis/concepts/redis.md).
+- Detail concepts of [redisVersion object](/docs/guides/redis/concepts/catalog.md).
+- Want to hack on KubeDB? Check our [contribution guidelines](/docs/CONTRIBUTING.md).
