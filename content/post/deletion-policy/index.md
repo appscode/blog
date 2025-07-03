@@ -5,10 +5,9 @@ weight: 26
 authors:
 - Bonusree Datta
 tags:
-- Kubernetes
-- KubeDB
-- PostgreSQL
-
+- kubedb
+- kubernetes
+- postgresql
 ---
 
 > New to KubeDB? Please start [here](https://kubedb.com/docs/v2025.5.30/welcome/).
