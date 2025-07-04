@@ -17,15 +17,15 @@ assets: hugo-tools
 
 .PHONY: fmt
 fmt: hugo-tools
-	hugo-tools fmt-frontmatter ./content
+	$(HUGO_TOOLS) fmt-frontmatter ./content
 
 .PHONY: tags
 tags: hugo-tools
-	hugo-tools tag-stats ./content
+	$(HUGO_TOOLS) tag-stats ./content
 
 .PHONY: verify
 verify: fmt
-	hugo-tools tag-stats ./content --invalid-only
+	$(HUGO_TOOLS) tag-stats ./content --invalid-only
 	@if !(git diff --exit-code HEAD); then \
 		echo "files are out of date, run make fmt"; exit 1; \
 	fi
