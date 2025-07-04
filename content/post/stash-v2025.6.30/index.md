@@ -9,10 +9,10 @@ tags:
 - cli
 - disaster-recovery
 - kubernetes
-- pendingTask
+- pendingtask
 - restore
 - stash
-- taskQueue
+- taskqueue
 ---
 
 We are pleased to announce the release of [Stash v2025.6.30](https://stash.run/docs/v2025.6.30/setup/), packed with major improvement. You can check out the full changelog [HERE](https://github.com/stashed/CHANGELOG/blob/master/releases/v2025.6.30/README.md). In this post, we'll highlight the changes done in this release.
