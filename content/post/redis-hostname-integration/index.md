@@ -27,7 +27,7 @@ tags:
 
 > New to KubeDB? Please start [here](/docs/README.md).
 
-# Redis External Connections Outside Kubernetes using Redis Announce
+# Connecting to Redis from Outside Kubernetes using Redis Announce
 
 Redis Announce is a feature in Redis that enables external connections to Redis replica sets deployed within Kubernetes. It allows applications or clients outside the Kubernetes cluster to connect to individual replica set members by mapping internal Kubernetes DNS names to externally accessible hostnames or IP addresses. This is useful for scenarios where external access is needed, such as hybrid deployments or connecting from outside the cluster.
 
@@ -47,7 +47,7 @@ namespace/demo created
 
 ## Prerequisites
 
-We need to have the following prerequisites to run this tutorial:
+Ensure the following components are installed before proceeding:
 
 ### Install Voyager Gateway
 
@@ -61,9 +61,9 @@ helm install ace oci://ghcr.io/appscode-charts/voyager-gateway \
 ```
 
 ### Create EnvoyProxy and GatewayClass
-We need to setup `EnvoyProxy` and `GatewayClass` to use voyager gateway.
 
-Create `EnvoyProxy` using the following command:
+Deploy `EnvoyProxy` with the following configuration:
+
 ```yaml
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: EnvoyProxy
@@ -116,12 +116,14 @@ spec:
 
 > If you want to use `NodePort` service. Update `.spec.provider.kubernetes.envoyService.type` to `NodePort` in the above YAML.
 
+Apply the configuration:
+
 ```bash
 $ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/envoyproxy.yaml
 envoyproxy.gateway.envoyproxy.io/ace created
 ```
 
-Create `GatewayClass` using the following command:
+Deploy the `GatewayClass`:
 ```yaml
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
@@ -148,6 +150,7 @@ spec:
     name: ace
     namespace: ace-gw
 ```
+Apply it:
 
 ```bash
 $ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/gatewayclass.yaml
@@ -213,7 +216,7 @@ Read about the fields in details in [redis concept](/docs/guides/redis/concepts/
 ## Redis Cluster with Announce
 
 ### Create DNS Records
-Create dns `A`/`CNAME` records for redis cluster pods, let's say, `Redis` has `2` replicas and `3` shards.
+You need to create `A` or `CNAME` records for each `Redis` pod that will be externally accessible. For example, with `3` shards and `2` replicas per shard, the DNS entries would be:
 
 Example:
 - `A/CNAME Record` for each Redis replicas with exposed Envoy Gateway `LoadBalancer/NodePort` IP/Host:
