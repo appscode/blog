@@ -696,7 +696,7 @@ spec:
    ```
 4. Update `spec.topology.distributedAG.self.role` in both resources.
 
-For detailed setup, see [Distributed Availability Group documentation](https://kubedb.com/docs/v2025.6.30/guides/mssqlserver/clustering/dag_cluster/).
+For detailed setup, see [Distributed Availability Group documentation](https://kubedb.com/docs/latest/guides/mssqlserver/clustering/dag_cluster/).
 
 ## MongoDB
 
@@ -800,7 +800,7 @@ spec:
 
 > **Note**: This OpsRequest may flush existing data. Use backup and restore to prevent data loss.
 
-To achieve this feature, there are multiple other operators needed. Specially the [voyager-gateway](https://github.com/voyagermesh/installer/tree/v2025.6.30/charts/voyager-gateway) & [catalog-manager](https://github.com/appscode-cloud/installer/tree/release-v2025.6.30/charts/catalog-manager). Catalog-manager will act as the co-ordinator here among these various components. Attaching a [blog](https://gist.github.com/ArnobKumarSaha/affc2d5113442e19e516111c41338c51) here which describes the steps & commands.
+To achieve this feature, there are multiple other operators needed. Specially the [voyager-gateway](https://github.com/voyagermesh/installer/tree/v2025.6.30/charts/voyager-gateway) & [catalog-manager](https://github.com/appscode-cloud/installer/tree/release-v2025.6.30/charts/catalog-manager). Catalog-manager will act as the co-ordinator here among these various components. You can find detailed documentation [here](https://kubedb.com/docs/latest/guides/redis/external-connections/initialization/).
 
 ## Support
 - **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
