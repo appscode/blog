@@ -3,7 +3,7 @@ title: Introducing KubeStash v2025.6.30
 date: "2025-06-30"
 weight: 10
 authors:
-- Not specified 
+- Arnab Baishnab Nipun
 tags:
 - backup
 - backup-verification
@@ -26,7 +26,7 @@ KubeStash now supports backing up and restoring **manifests of all cluster resou
 
 > You can now filter resources more specifically during backup using include/exclude flags and label selectors.
 > - By default, include flags are set to *, meaning all resources are considered.
-> - Exclude flags and label selectors are empty by default, which means no filtering is applied. 
+> - Exclude flags and label selectors are empty by default.
 
 Here is an example of `BackupConfiguration`:
 
