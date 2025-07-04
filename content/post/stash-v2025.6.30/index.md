@@ -42,13 +42,16 @@ By enforcing a controlled execution flow, `TaskQueue` ensures:
 To enable `TaskQueue`, you can use the `--enable-task-queue` flag during the installation or upgrade of Stash. Here is an example:
 
 ```bash
-$ helm upgrade stash oci://ghcr.io/appscode-charts/stash \
-      --- \
-      --set features.enterprise=true \
-      -- set global.taskQueue.enabled=true \
-      -- set global.taskQueue.maxConcurrentSessions=<max_concurrent_sessions> \
-      --- 
+$ helm install stash oci://ghcr.io/appscode-charts/stash \
+  --version v2025.6.30 \
+  --namespace stash --create-namespace \
+  --set features.enterprise=true \
+  --set global.taskQueue.enabled=true \
+  --set global.taskQueue.maxConcurrentSessions=<max_concurrent_sessions> \
+  --set-file global.license=/path/to/the/license.txt \
+  --wait --burst-limit=10000 --debug
 ```
+
 Here, 
 - `global.taskQueue.enabled` is set to `true` to enable the `TaskQueue` feature.
 - `global.taskQueue.maxConcurrentSessions` is set to define the maximum number of concurrent `BackupSessions` that can be executed at a time.
