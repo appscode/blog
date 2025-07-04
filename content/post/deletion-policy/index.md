@@ -13,7 +13,6 @@ tags:
 - kubernetes
 - mariadb
 - memcached
-- microsoft sql server
 - mongodb
 - mysql
 - opensearch
@@ -26,6 +25,7 @@ tags:
 - redis
 - singlestore
 - solr
+- sqlserver
 - zookeeper
 ---
 
@@ -334,7 +334,7 @@ From the above output, you can see that all postgres resources are deleted. ther
 
 ## Support
 - **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
-- **Release Updates**: Join our [google group](https://groups.google.com/a/appscode.com/g/releases?pli=1) for release updates.
+- **Release Updates**: Join our [google group](https://groups.google.com/a/appscode.com/g/releases) for release updates.
 - **Stay Updated**: Follow us on [Twitter/X](https://x.com/KubeDB) for product announcements.
 - **Tutorials**: Subscribe to our [YouTube channel](https://youtube.com/@appscode) for tutorials on production-grade Kubernetes tools.
 - **Learn More**: Explore [Production-Grade Databases in Kubernetes](https://kubedb.com/).
