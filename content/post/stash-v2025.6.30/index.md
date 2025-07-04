@@ -17,10 +17,6 @@ tags:
 
 We are pleased to announce the release of [Stash v2025.6.30](https://stash.run/docs/v2025.6.30/setup/), packed with major improvement. You can check out the full changelog [HERE](https://github.com/stashed/CHANGELOG/blob/master/releases/v2025.6.30/README.md). In this post, we'll highlight the changes done in this release.
 
-### New Features
-
-In this release, we've introduced a new feature `TaskQueue`. It can be enabled while installing or upgrading Stash. The `TaskQueue` feature maintains all triggered `BackupSessions` and executes them one by one based one maximum concurrency limit in your cluster. It's act as a queue, ensuring that `BackupSessions` are executed in the order they are received.
-
 ### New Feature: `TaskQueue`
 
 We're excited to introduce a new feature in this release. This feature can be enabled during the installation or upgrade of `Stash`.
