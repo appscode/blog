@@ -5,24 +5,13 @@ weight: 25
 authors:
 - Hiranmoy Das Chowdhury
 tags:
+- announce
+- cluster
 - database
-- split-horizon-dns
-- external-client-connection
-- high-availability
+- horizondns
 - kubedb
 - kubernetes
 - redis
-- Split-Horizon-DNS-with-Redis
-- Redis-as-DNS-backend
-- Dynamic-DNS-with-Redis
-- CoreDNS-Redis-backend
-- Split-View-DNS-Redis
-- Redis-for-DNS-resolution
-- Hostname-resolution-with-Redis
-- DNS-server-with-Redis-database
-- Redis-Announce
-- Redis-Cluster-Announce
-
 ---
 
 > New to KubeDB? Please start [here](/docs/README.md).
