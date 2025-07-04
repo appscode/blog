@@ -44,6 +44,7 @@ To enable `TaskQueue`, you can use the `--enable-task-queue` flag during the ins
 ```bash
 $ helm upgrade stash oci://ghcr.io/appscode-charts/stash \
       --- \
+      --set features.enterprise=true \
       -- set global.taskQueue.enabled=true \
       -- set global.taskQueue.maxConcurrentSessions=<max_concurrent_sessions> \
       --- 
@@ -52,6 +53,8 @@ Here,
 - `global.taskQueue.enabled` is set to `true` to enable the `TaskQueue` feature.
 - `global.taskQueue.maxConcurrentSessions` is set to define the maximum number of concurrent `BackupSessions` that can be executed at a time.
 
+> Note: The `TaskQueue` feature is available **only in the Enterprise Edition** of Stash. To use this feature, make sure you install the Enterprise Edition.
+> Installation instructions can be found [here](https://stash.run/docs/latest/setup/).
 
 #### How Stash utilize `TaskQueue`?
 
