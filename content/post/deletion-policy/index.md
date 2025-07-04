@@ -5,29 +5,28 @@ weight: 26
 authors:
 - Bonusree Datta
 tags:
-- Kubernetes
-- KubeDB
-- Druid
-- Kafka 
-- Microsoft SQL Server
-- OpenSearch
-- Pgpool
-- RabbitMQ
-- Solr
-- Elasticsearch 
-- MariaDB
-- MongoDB
-- PerconaXtraDB
-- PostgreSQL
-- Redis
-- Zookeeper
-- FerretDB
-- Memcached 
-- MySql
-- PgBouncer
-- ProxySQL
-- SingleStore
-
+- druid
+- elasticsearch
+- ferretdb
+- kafka
+- kubedb
+- kubernetes
+- mariadb
+- memcached
+- microsoft sql server
+- mongodb
+- mysql
+- opensearch
+- perconaxtradb
+- pgbouncer
+- pgpool
+- postgresql
+- proxysql
+- rabbitmq
+- redis
+- singlestore
+- solr
+- zookeeper
 ---
 
 > New to KubeDB? Please start [here](https://kubedb.com/docs/v2025.5.30/welcome/).
