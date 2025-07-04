@@ -43,7 +43,7 @@ To keep things isolated, this tutorial uses a separate namespace called `demo` t
 $ kubectl create ns demo
 namespace/demo created
 ```
-> Note: YAML files used in this tutorial are stored in [docs/examples/redis](https://github.com/kubedb/docs/tree/{{< param "info.version" >}}/docs/examples/redis) folder in GitHub repository [kubedb/docs](https://github.com/kubedb/docs).
+> Note: YAML files used in this tutorial are stored in [docs/examples/redis](https://github.com/kubedb/docs/tree/master/docs/examples/redis) folder in GitHub repository [kubedb/docs](https://github.com/kubedb/docs).
 
 ## Prerequisites
 
@@ -119,7 +119,7 @@ spec:
 Apply the configuration:
 
 ```bash
-$ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/envoyproxy.yaml
+$ kubectl apply -f https://github.com/kubedb/docs/raw/master/docs/examples/redis/announce/envoyproxy.yaml
 envoyproxy.gateway.envoyproxy.io/ace created
 ```
 
@@ -153,7 +153,7 @@ spec:
 Apply it:
 
 ```bash
-$ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/gatewayclass.yaml
+$ kubectl apply -f https://github.com/kubedb/docs/raw/master/docs/examples/redis/announce/gatewayclass.yaml
 gatewayclass.gateway.networking.k8s.io/ace created
 ```
 
@@ -181,10 +181,10 @@ Install `Keda` in your cluster using the following command:
 $ kubectl create ns kubeops
 namespace/kubeops created
 
-$ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/helmrepo.yaml
+$ kubectl apply -f https://github.com/kubedb/docs/raw/master/docs/examples/redis/announce/helmrepo.yaml
 helmrepository.source.toolkit.fluxcd.io/appscode-charts-oci created
 
-$ kubectl apply -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/keda.yaml
+$ kubectl apply -f https://github.com/kubedb/docs/raw/master/docs/examples/redis/announce/keda.yaml
 helmrelease.helm.toolkit.fluxcd.io/keda created
 helmrelease.helm.toolkit.fluxcd.io/keda-add-ons-http created
 ```
@@ -273,7 +273,7 @@ Here,
 ### Deploy Redis Cluster Announce
 
 ```bash
-$ kubectl create -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/redis.yaml
+$ kubectl create -f https://github.com/kubedb/docs/raw/master/docs/examples/redis/announce/redis.yaml
 redis.kubedb.com/redis-announce created
 ```
 
@@ -301,7 +301,7 @@ spec:
 ```                                                                                                                               
 
 ```bash                                                                                                                           
-$ kubectl create -f https://github.com/kubedb/docs/raw/{{< param "info.version" >}}/docs/examples/redis/announce/binding.yaml 
+$ kubectl create -f https://github.com/kubedb/docs/raw/master/docs/examples/redis/announce/binding.yaml 
 redisbinding.catalog.appscode.com/redis-bind created                                                                          
 ```                                                                                                                               
 Now, check the status of `redisbinding` objects and ops requests.
