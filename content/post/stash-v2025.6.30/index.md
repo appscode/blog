@@ -1,5 +1,5 @@
 ---
-title: Introducing Stash v2025.2.10
+title: Introducing Stash v2025.6.30
 date: "2025-06-30"
 weight: 10
 authors:
@@ -9,8 +9,10 @@ tags:
 - cli
 - disaster-recovery
 - kubernetes
+- pendingTask
 - restore
 - stash
+- taskQueue
 ---
 
 We are pleased to announce the release of [Stash v2025.6.30](https://stash.run/docs/v2025.6.30/setup/), packed with major improvement. You can check out the full changelog [HERE](https://github.com/stashed/CHANGELOG/blob/master/releases/v2025.6.30/README.md). In this post, we'll highlight the changes done in this release.
@@ -21,7 +23,7 @@ In this release, we've introduced a new feature `TaskQueue`. It can be enabled w
 
 ### New Feature: `TaskQueue`
 
-We're excited to introduce a new feature in this release **`TaskQueue`**. This feature can be enabled during the installation or upgrade of Stash.
+We're excited to introduce a new feature in this release. This feature can be enabled during the installation or upgrade of `Stash`.
 
 `TaskQueue` acts as a centralized controller that manages the execution of `BackupSessions` based on a defined **Maximum Concurrency Limit**. It queues incoming `BackupSessions` and ensures they are processed one at a time (or concurrently, up to the configured limit), maintaining their original order of arrival.
 
@@ -50,11 +52,76 @@ $ helm upgrade stash oci://ghcr.io/appscode-charts/stash \
       -- set global.taskQueue.maxConcurrentSessions=<max_concurrent_sessions> \
       --- 
 ```
-
 Here, 
 - `global.taskQueue.enabled` is set to `true` to enable the `TaskQueue` feature.
 - `global.taskQueue.maxConcurrentSessions` is set to define the maximum number of concurrent `BackupSessions` that can be executed at a time.
 
+
+#### How Stash utilize `TaskQueue`?
+
+When this feature enabled, `Stash` uses a separate controller called `TaskQueueController`,
+
+**It works as follows:**
+
+1. Instead of triggering `BackupSessions` directly, the `Stash` operator creates a resource called `PendingTask` for each `BackupSession`.
+2. Each PendingTask contains the actual `BackupSession` and is monitored by the `TaskQueueController`.
+3. The `TaskQueueController` processes these `PendingTask` resources based on the defined maximum concurrency limit.
+
+**Example of `TaskQueue` YAML**
+
+```yaml
+apiVersion: batch.k8s.appscode.com/v1alpha1
+kind: TaskQueue
+metadata:
+  name: appscode-stash-task-queue
+spec:
+  maxConcurrentTasks: 10
+  tasks:
+  - rules:
+      failed: has(self.status.phase) && self.status.phase == 'Failed'
+      inProgress: has(self.status.phase) && self.status.phase == 'Running'
+      success: has(self.status.phase) && self.status.phase == 'Succeeded'
+    type:
+      group: stash.appscode.com
+      kind: BackupSession
+```
+
+Here,
+- `maxConcurrentTasks` is set to `10`, meaning a maximum of 10 `BackupSessions` can be executed concurrently.
+- If you need to reconfigure the `TaskQueue` after enabling it, you can modify the `maxConcurrentTasks` value according to your cluster's capacity.
+
+
+**Example of `PendingTask` YAML**
+
+```yaml
+apiVersion: batch.k8s.appscode.com/v1alpha1
+kind: PendingTask
+metadata:
+  name: backupconfiguration-demo-s3-pvc-backup
+spec:
+  resource:
+    metadata:
+      name: s3-pvc-backup-2-1751630401
+      namespace: demo
+      ownerReferences:
+      - apiVersion: stash.appscode.com/v1beta1
+        blockOwnerDeletion: true
+        controller: true
+        kind: BackupConfiguration
+        name: s3-pvc-backup-2
+        uid: c00376b7-1baf-4b7a-98df-c55f848e936c
+    spec:
+      invoker:
+        apiGroup: stash.appscode.com
+        kind: BackupConfiguration
+        name: s3-pvc-backup
+    status: {}
+  taskType:
+    group: stash.appscode.com
+    kind: BackupSession
+status:
+  taskQueueName: appscode-stash-task-queue
+```
 
 ## What Next?
 Please try the latest release and give us your valuable feedback.
