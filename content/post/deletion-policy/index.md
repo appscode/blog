@@ -1,20 +1,42 @@
 ---
-title: Deletion Policy for all DB
+title: Protecting KubeDB managed Databases from Accidental Deletion
 date: "2025-07-02"
 weight: 26
 authors:
 - Bonusree Datta
 tags:
-- kubedb
-- kubernetes
-- postgresql
+- Kubernetes
+- KubeDB
+- Druid
+- Kafka 
+- Microsoft SQL Server
+- OpenSearch
+- Pgpool
+- RabbitMQ
+- Solr
+- Elasticsearch 
+- MariaDB
+- MongoDB
+- PerconaXtraDB
+- PostgreSQL
+- Redis
+- Zookeeper
+- FerretDB
+- Memcached 
+- MySql
+- PgBouncer
+- ProxySQL
+- SingleStore
+
 ---
 
 > New to KubeDB? Please start [here](https://kubedb.com/docs/v2025.5.30/welcome/).
 
-> 💡 **Note:** The deletion policy is the same for all supported databases. Here, an example for PostgreSQL is included to show how users can use this feature.
+> 💡 **Note:** The deletion policy is the same for all kubedb supported databases. Here, an example for PostgreSQL is included to show how users can use this feature.
+
 # Using Database Deletion Policy
-KubeDB supports setting a deletion policy for PostgreSQL databases. This tutorial will help you choose the right deletion policy to manage your PostgreSQL workloads safely, while meeting your organization’s data retention and disaster recovery needs.
+
+KubeDB supports setting a deletion policy for all supported databases. This guide will help you choose the appropriate deletion policy to manage your database workloads safely, while aligning with your organization’s data retention and disaster recovery requirements.
 
 ## Prerequisite
 
@@ -27,7 +49,7 @@ KubeDB supports setting a deletion policy for PostgreSQL databases. This tutoria
     $ kubectl create ns demo
     namespace/demo created
   ```
-- **Create a PostgreSQL database**
+- **Create a PostgreSQL database (or your chosen database)**
 
   Below is the Postgres object created in this tutorial.
 
@@ -50,14 +72,35 @@ KubeDB supports setting a deletion policy for PostgreSQL databases. This tutoria
       deletionPolicy: Delete
     ```
     
-    Create above Postgres object with following command
+  Create above Postgres object with following command
 
     ```bash
     $ kubectl create -f https://github.com/kubedb/docs/raw/v2025.5.30/docs/examples/postgres/quickstart/quick-postgres-v1.yaml
     postgres.kubedb.com/quick-postgres created
     ```
+  Once you’ve created the Postgres object, use the following command to check the resources:
+  
+  ```shell
+  $ kubectl get petsets,pods,svc,pvc,secrets -n demo -l 'app.kubernetes.io/instance=quick-postgres'
+  ```
+    
+ You'll see:
 
-
+   ```bash
+   NAME                   READY   STATUS    RESTARTS   AGE
+    pod/quick-postgres-0   1/1     Running   0          8m50s
+    
+    NAME                          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+    service/quick-postgres        ClusterIP   10.96.59.115   <none>        5432/TCP,2379/TCP            8m53s
+    service/quick-postgres-pods   ClusterIP   None           <none>        5432/TCP,2380/TCP,2379/TCP   8m53s
+    
+    NAME                                          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+    persistentvolumeclaim/data-quick-postgres-0   Bound    pvc-1f94b385-59ce-4b0f-ac25-c4c8d16aa21f   1Gi        RWO            standard       8m50s
+    
+    NAME                         TYPE                       DATA   AGE
+    secret/quick-postgres-auth   kubernetes.io/basic-auth   2      8m53s
+    
+   ```
 Let's see what KubeDB operator has created for additional RBAC permission
 
 
@@ -69,6 +112,20 @@ KubeDB supports four types of termination policies:
 2. Halt
 3. Delete (Default)
 4. WipeOut
+
+➡️  The following table shows what KubeDB does when users delete any KubeDB CRD with different termination policies:
+
+| Behavior                            | DoNotTerminate |  Halt   |  Delete  | WipeOut  |
+| ----------------------------------- | :------------: | :------: | :------: | :------: |
+| 1. Block Delete operation           |    &#10003;    | &#10007; | &#10007; | &#10007; |
+| 2. Delete PetSet               |    &#10007;    | &#10003; | &#10003; | &#10003; |
+| 3. Delete Services                  |    &#10007;    | &#10003; | &#10003; | &#10003; |
+| 4. Delete PVCs                      |    &#10007;    | &#10007; | &#10003; | &#10003; |
+| 5. Delete Secrets                   |    &#10007;    | &#10007; | &#10007; | &#10003; |
+| 6. Delete Snapshots                 |    &#10007;    | &#10007; | &#10007; | &#10003; |
+| 7. Delete Snapshot data from bucket |    &#10007;    | &#10007; | &#10007; | &#10003; |
+
+
 
 The use cases for each policy are described below.
 
@@ -108,7 +165,29 @@ You'll see:
 ```bash
 Error from server (Forbidden): admission webhook "postgreswebhook.validators.kubedb.com" denied the request: postgres "demo/quick-postgres" can't be terminated. To delete, change spec.deletionPolicy
 ```
+Check resources:
+You can now see the same resources as at the initial stage.
+```bash
+$ kubectl get petsets,pods,svc,pvc,secrets -n demo -l 'app.kubernetes.io/instance=quick-postgres'
+```
+You'll see:
+```bash
 
+NAME                   READY   STATUS    RESTARTS   AGE
+pod/quick-postgres-0   1/1     Running   0          8m50s
+
+NAME                          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+service/quick-postgres        ClusterIP   10.96.59.115   <none>        5432/TCP,2379/TCP            8m53s
+service/quick-postgres-pods   ClusterIP   None           <none>        5432/TCP,2380/TCP,2379/TCP   8m53s
+
+NAME                                          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+persistentvolumeclaim/data-quick-postgres-0   Bound    pvc-1f94b385-59ce-4b0f-ac25-c4c8d16aa21f   1Gi        RWO            standard       8m50s
+
+NAME                         TYPE                       DATA   AGE
+secret/quick-postgres-auth   kubernetes.io/basic-auth   2      8m53s
+
+
+```
 #### Halt
 
 Suppose you want to reuse your PostgreSQL data volumes and credentials to redeploy the database in the future with the same configuration. But right now, you want to delete the database while keeping the data volumes and credentials intact. In this scenario, you should set the PostgreSQL object's `deletionPolicy` to `Halt`.
@@ -143,7 +222,7 @@ postgres.kubedb.com "quick-postgres" deleted
 
 Check resources:
 ```bash
-$ kubectl get all,secret,pvc -n demo -l 'app.kubernetes.io/instance=quick-postgres'
+$ kubectl get petsets,pods,svc,pvc,secrets -n demo -l 'app.kubernetes.io/instance=quick-postgres'
 ```
 You'll see:
 ```bash
@@ -195,7 +274,7 @@ postgres.kubedb.com "quick-postgres" deleted
 
 Check resources:
 ```bash
-$ kubectl get all,secret -n demo -l 'app.kubernetes.io/instance=quick-postgres'
+$ kubectl get petsets,pods,svc,pvc,secrets -n demo -l 'app.kubernetes.io/instance=quick-postgres'
 ```
 You'll see:
 ```bash
@@ -244,7 +323,7 @@ postgres.kubedb.com "quick-postgres" deleted
 
 Check resources:
 ```bash
-$ kubectl get sts,svc,pvc,secret -n demo -l 'app.kubernetes.io/instance=quick-postgres'
+$ kubectl get petsets,pods,svc,pvc,secrets -n demo -l 'app.kubernetes.io/instance=quick-postgres'
 ```
 You'll see:
 ```bash
@@ -256,6 +335,7 @@ From the above output, you can see that all postgres resources are deleted. ther
 
 ## Support
 - **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
+- **Release Updates**: Join our [google group](https://groups.google.com/a/appscode.com/g/releases?pli=1) for release updates.
 - **Stay Updated**: Follow us on [Twitter/X](https://x.com/KubeDB) for product announcements.
 - **Tutorials**: Subscribe to our [YouTube channel](https://youtube.com/@appscode) for tutorials on production-grade Kubernetes tools.
 - **Learn More**: Explore [Production-Grade Databases in Kubernetes](https://kubedb.com/).
