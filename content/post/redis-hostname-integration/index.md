@@ -18,7 +18,7 @@ tags:
 
 # Connecting to Redis from Outside Kubernetes using Redis Announce
 
-Redis Announce is a feature in Redis that enables external connections to Redis replica sets deployed within Kubernetes. It allows applications or clients outside the Kubernetes cluster to connect to individual replica set members by mapping internal Kubernetes DNS names to externally accessible hostnames or IP addresses. This is useful for scenarios where external access is needed, such as hybrid deployments or connecting from outside the cluster.
+Redis Announce is a feature in Redis that enables external connections to Redis cluster deployed within Kubernetes. It allows applications or clients outside the Kubernetes cluster to connect to different shards of redis cluster by mapping internal Kubernetes DNS names to externally accessible hostnames or IP addresses. This is useful for scenarios where external access is needed, such as hybrid deployments or connecting from outside the cluster.
 
 ## Before You Begin
 
@@ -365,14 +365,3 @@ helm uninstall -n ace catalog-manager
 
 
 If you would like to uninstall the KubeDB operator, please follow the steps [here](/docs/setup/README.md).
-
-## Next Steps
-
-- [Backup and Restore](/docs/guides/redis/backup/kubestash/overview/index.md) Redis databases using KubeStash.
-- Initialize [Redis with Script](/docs/guides/redis/initialization/using-script.md).
-- Monitor your Redis database with KubeDB using [out-of-the-box Prometheus operator](/docs/guides/redis/monitoring/using-prometheus-operator.md).
-- Monitor your Redis database with KubeDB using [out-of-the-box builtin-Prometheus](/docs/guides/redis/monitoring/using-builtin-prometheus.md).
-- Use [private Docker registry](/docs/guides/redis/private-registry/using-private-registry.md) to deploy Redis with KubeDB.
-- Detail concepts of [Redis object](/docs/guides/redis/concepts/redis.md).
-- Detail concepts of [redisVersion object](/docs/guides/redis/concepts/catalog.md).
-- Want to hack on KubeDB? Check our [contribution guidelines](/docs/CONTRIBUTING.md).
