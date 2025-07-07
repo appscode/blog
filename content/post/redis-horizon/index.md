@@ -1,5 +1,5 @@
 ---
-title: Configure Redis Hostname In Kubernetes Using KubeDB
+title: Expose Redis Clusters outside Kubernetes using Horizon DNS
 date: "2025-07-01"
 weight: 25
 authors:
@@ -16,7 +16,7 @@ tags:
 
 > New to KubeDB? Please start [here](https://kubedb.com/).
 
-# Connecting to Redis from Outside Kubernetes using Redis Announce
+# Expose Redis Clusters outside Kubernetes using Horizon DNS
 
 Redis Announce is a feature in Redis that enables external connections to Redis cluster deployed within Kubernetes. It allows applications or clients outside the Kubernetes cluster to connect to different shards of redis cluster by mapping internal Kubernetes DNS names to externally accessible hostnames or IP addresses. This is useful for scenarios where external access is needed, such as hybrid deployments or connecting from outside the cluster.
 
