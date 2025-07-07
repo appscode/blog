@@ -363,5 +363,14 @@ kubectl delete -n ace-gw envoyproxy ace
 helm uninstall -n ace catalog-manager
 ```
 
-
 If you would like to uninstall the KubeDB operator, please follow the steps [here](https://kubedb.com/docs/v2025.6.30/setup/).
+
+## Support
+
+To speak with us, please leave a message on [our website](https://appscode.com/contact/).
+
+To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
+
+To watch tutorials of various Production-Grade Kubernetes Tools Subscribe to our [YouTube](https://youtube.com/@appscode) channel.
+
+If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
