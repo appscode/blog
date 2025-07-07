@@ -33,37 +33,40 @@ This feature helps you optimize storage usage, reduce restore noise, and back up
 
 ``` yaml 
 - ANDedLabelSelectors
-  Usage: A set of labels, all of which need to be matched to filter the resources
+  Usage: A set of labels, all of which need to be matched
+  to filter the resources.
   Default: ""
   Required: false
   Example: "app:my-app,tier:frontend"
 
 - ORedLabelSelectors
-  Usage: A set of labels, at least one of which need to be matched to filter the resources
+  Usage: A set of labels, at least one of which need to 
+  be matched to filter the resources.
   Default: ""
   Required: false
   Example: "app:nginx,app:redis"
 
 - IncludeClusterResources
-  Usage: Specify whether to restore cluster scoped resources
+  Usage: Specify whether to restore
+  cluster scoped resources.
   Default: "false"
   Required: false
   Example: "true" 
   
 - IncludeNamespaces
-  Usage: Namespaces to include in backup
+  Usage: Namespaces to include in backup.
   Default: "*"
   Required: false
   Example: "demo,kubedb,kubestash"
 
 - ExcludeNamespaces
-  Usage: Namespaces to exclude from backup
+  Usage: Namespaces to exclude from backup.
   Default: ""
   Required: false
   Example: "default,kube-system"
 
 - IncludeResources
-  Usage: Resource types to include in backup
+  Usage: Resource types to include in backup.
   Default: "*"
   Required: false
   Example: "secrets,configmaps,deployments"
