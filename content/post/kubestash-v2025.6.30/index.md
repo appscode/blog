@@ -17,54 +17,56 @@ We are pleased to announce the release of [KubeStash v2025.6.30](https://kubesta
 
 ### New Features
 
-Here, we are going to highlight the new features that have been introduced in this release.
-
-
-# Introducing Manifest Restore Support in `kubedump-addon`
-
-We're excited to introduce an important new feature in the `kubedump-addon` — **`kubedump-restore`**, that brings full manifest-based restore support to KubeStash.
-
-## Why `kubedump-restore`?
-
-Disaster can strike at any time — whether due to accidental deletion or infrastructure failure. The new `kubedump-restore` task can **bring your Kubernetes cluster back to its previous state**, using the manifests captured in the backup snapshots.
+We’re excited to introduce some new features in this release. Some features can be enabled during the `installation` or `upgrade` of KubeStash & some will comes default, we’ll discuss each of this feature below.
 
 ---
 
-### Enhanced Filtering in Backup Task
+# Enhanced Filtering in Backup Task
 
 The `manifest-backup` task in the `kubedump-addon` now supports fine-grained filtering, providing precise control over which Kubernetes resources are included in a backup.
 
 This feature helps you optimize storage usage, reduce restore noise, and back up only the components that matter most to your application.
 
-#### Newly Supported Parameters
+---
 
-- **`IncludeNamespaces`**  
-  A comma-separated list of namespaces to include in the backup.  
-  _Example: `demo,kubedb,kubestash`_
+### Newly Introduced Parameters
 
-- **`ExcludeNamespaces`**  
-  A comma-separated list of namespaces to exclude from the backup.  
-  _Example: `default,kube-system`_
+- **`ANDedLabelSelectors`**
+  - **Usage:** A set of labels, all of which need to be matched to filter the resources (comma-separated, e.g., `key1:value1,key2:value2`)
+  - **Default:** `""`
+  - **Required:** `false`
 
-- **`IncludeResources`**  
-  Specify resource types to include in the backup.  
-  _Example: `secrets,configmaps,deployments`_
+- **`ORedLabelSelectors`**
+  - **Usage:** A set of labels, at least one of which need to be matched to filter the resources (comma-separated, e.g., `key1:value1,key2:value2`)
+  - **Default:** `""`
+  - **Required:** `false`
 
-- **`ExcludeResources`**  
-  Specify resource types to exclude from the backup.  
-  _Example: `persistentvolumeclaims,persistentvolumes`_
+- **`IncludeClusterResources`**
+  - **Usage:** Specify whether to restore cluster scoped resources
+  - **Default:** `"false"`
+  - **Required:** `false`
 
-- **`ANDedLabelSelectors`**  
-  All specified labels must match for a resource to be selected.  
-  _Example: `app:my-app,tier:frontend`_
+- **`IncludeNamespaces`**
+  - **Usage:** Namespaces to include in backup (comma-separated, e.g., `demo,kubedb,kubestash`)
+  - **Default:** `""`
+  - **Required:** `false`
 
-- **`ORedLabelSelectors`**  
-  At least one of the specified labels must match.  
-  _Example: `app1:my-app1,app2:my-app2`_
+- **`ExcludeNamespaces`**
+  - **Usage:** Namespaces to exclude from backup (comma-separated, e.g., `default,kube-system`)
+  - **Default:** `""`
+  - **Required:** `false`
 
-- **`IncludeClusterResources`**  
-  A boolean flag to indicate whether to include cluster-scoped resources such as CRDs, ClusterRoles, and StorageClasses.  
-  _Default: `true`_
+- **`IncludeResources`**
+  - **Usage:** Resource types to include in backup (comma-separated, e.g., `pods,deployments`)
+  - **Default:** `""`
+  - **Required:** `false`
+
+- **`ExcludeResources`**
+  - **Usage:** Resource types to exclude from backup (comma-separated, e.g., `secrets,configmaps`)
+  - **Default:** `""`
+  - **Required:** `false`
+
+---
 
 #### Example `BackupConfiguration`:
 
@@ -79,7 +81,7 @@ addon:
       params:
         IncludeNamespaces: "demo,kubedb,kubestash"
         IncludeResources: "secrets,configmaps,deployments"
-        ORedLabelSelectors: "app1:my-app1,app2:my-app2"
+        ORedLabelSelectors: "environment:prod,tier:db"
   jobTemplate:
     spec:
       serviceAccountName: cluster-resource-reader-writter
@@ -87,24 +89,44 @@ addon:
 
 ---
 
-### Restore Task
+# Introducing Manifest Restore Support in `kubedump-addon`
+
+We're excited to introduce the `manifest-restore` feature in the `kubedump-addon`, which brings full manifest-based restore support to KubeStash.
+
+---
+
+## Why `manifest-restore`?
+
+Disaster can strike at any time — whether due to accidental deletion or infrastructure failure. The new `manifest-restore` task can **bring your Kubernetes cluster back to its previous state**, using the manifests captured in the backup snapshots.
+
+---
+
+# Restore Task
 
 The newly introduced `manifest-restore` task in the `kubedump-addon` brings powerful restore capabilities to KubeStash. It allows you to restore previously backed-up Kubernetes manifests and apply them with fine-grained control over which resources to restore.
 
 This feature is especially valuable in disaster recovery scenarios, where restoring cluster state accurately and efficiently is critical.
 
-#### Supported Parameters
+---
 
-- **`OverrideResources`**  
-  If `true`, existing resources will be replaced by the ones from the backup.
+### Supported Parameters
 
-- **`RestorePVs`**  
-  Determines whether PersistentVolumes should be restored alongside PVCs.
+- **`OverrideResources`**
+  - **Usage:** Specify whether to override resources while restoring
+  - **Default:** `"false"`
+  - **Required:** `false`
 
-- **`StorageClassMappings`**  
-  A comma-separated mapping from old storage classes to new ones. This is useful when restoring with a different storage setup.  
-  _Example: `gp2=ebs-sc,standard=fast-storage`_
+- **`RestorePVs`**
+  - **Usage:** Specify whether to restore PersistentVolumes
+  - **Default:** `"false"`
+  - **Required:** `false`
 
+- **`StorageClassMappings`**
+  - **Usage:** Mapping of old to new storage classes (e.g., `old1=new1,old2=new2`)
+  - **Default:** `""`
+  - **Required:** `false`
+  
+--- 
 
 #### Example `RestoreSession`:
 
@@ -118,7 +140,7 @@ addon:
     - name: manifest-restore
       params:
         IncludeNamespaces: "*"
-        ExcludeNamespaces: "kube-system"
+        ExcludeNamespaces: "kube-system,default"
         RestorePVs: "true"
         StorageClassMappings: "longhorn=openebs-hostpath"
   jobTemplate:
@@ -222,7 +244,7 @@ spec:
       name: s3-pvc-backup-2-1751630401
       namespace: demo
       ownerReferences:
-      - apiVersion: core.kubestash.appscode.com/v1apha1
+      - apiVersion: core.kubestash.appscode.com/v1alpha1
         blockOwnerDeletion: true
         controller: true
         kind: BackupConfiguration
