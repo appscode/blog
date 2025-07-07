@@ -21,7 +21,7 @@ We’re excited to introduce some new features in this release. Some features ca
 
 ---
 
-# Enhanced Filtering in Backup Task
+## Enhanced Filtering in Backup Task
 
 The `manifest-backup` task in the `kubedump-addon` now supports fine-grained filtering, providing precise control over which Kubernetes resources are included in a backup.
 
@@ -101,7 +101,7 @@ addon:
 
 ---
 
-# Introducing Manifest Restore Support in `kubedump-addon`
+# Introducing KubeDump `manifest-restore`
 
 We're excited to introduce the `manifest-restore` feature in the `kubedump-addon`, which brings full manifest-based restore support to KubeStash.
 
@@ -113,7 +113,7 @@ Disaster can strike at any time — whether due to accidental deletion or infras
 
 ---
 
-# Restore Task
+## Restore Task
 
 The newly introduced `manifest-restore` task in the `kubedump-addon` brings powerful restore capabilities to KubeStash. It allows you to restore previously backed-up Kubernetes manifests and apply them with fine-grained control over which resources to restore.
 
@@ -124,6 +124,51 @@ This feature is especially valuable in disaster recovery scenarios, where restor
 ### Supported Parameters
 
 ``` yaml
+- ANDedLabelSelectors
+  Usage: A set of labels, all of which need to be matched
+  to filter the resources.
+  Default: ""
+  Required: false
+  Example: "app:my-app,tier:frontend"
+
+- ORedLabelSelectors
+  Usage: A set of labels, at least one of which need to 
+  be matched to filter the resources.
+  Default: ""
+  Required: false
+  Example: "app:nginx,app:redis"
+
+- IncludeClusterResources
+  Usage: Specify whether to restore
+  cluster scoped resources.
+  Default: "false"
+  Required: false
+  Example: "true" 
+  
+- IncludeNamespaces
+  Usage: Namespaces to include in backup.
+  Default: "*"
+  Required: false
+  Example: "demo,kubedb,kubestash"
+
+- ExcludeNamespaces
+  Usage: Namespaces to exclude from backup.
+  Default: ""
+  Required: false
+  Example: "default,kube-system"
+
+- IncludeResources
+  Usage: Resource types to include in backup.
+  Default: "*"
+  Required: false
+  Example: "secrets,configmaps,deployments"
+  
+- ExcludeResources
+  Usage: Resource types to exclude from backup
+  Default: ""
+  Required: false
+  Example: "persistentvolumeclaims,persistentvolumes"
+  
 - OverrideResources
   Usage: Specify whether to override resources while restoring
   Default: "false"
@@ -164,7 +209,6 @@ addon:
     spec:
       serviceAccountName: cluster-resource-reader-writter
 ```
-> Note that include/exclude flags and label selectors are common for both backup and restore tasks. 
 
 --- 
 
@@ -198,17 +242,19 @@ By enforcing a controlled execution flow, **TaskQueue** ensures:
 
 ## How to Enable TaskQueue?
 
-You can enable TaskQueue during installation or upgrade of **KubeStash** using the following Helm flags:
+You can enable TaskQueue during `installation` or `upgrade` of **KubeStash** using the following Helm flags:
 
 ### Example:
 
 ```bash
-helm upgrade kubestash oci://ghcr.io/appscode-charts/kubestash \
-  --install \
-  --create-namespace \
-  --namespace kubestash \
-  --set global.taskQueue.enabled=true \
-  --set global.taskQueue.maxConcurrentSessions=<max_concurrent_sessions>
+helm upgrade kubestash oci://ghcr.io/appscode-charts/kubestash
+--version v2025.6.30 \
+--namespace stash --create-namespace \
+--set features.enterprise=true \
+--set global.taskQueue.enabled=true \
+--set global.taskQueue.maxConcurrentSessions=<max_concurrent_sessions> \
+--set-file global.license=/path/to/the/license.txt \
+--wait --burst-limit=10000 --debug
 ```
 Here, 
 - `global.taskQueue.enabled` is set to `true` to enable the `TaskQueue` feature.
