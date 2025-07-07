@@ -31,40 +31,42 @@ This feature helps you optimize storage usage, reduce restore noise, and back up
 
 ### Newly Introduced Parameters
 
-- **`ANDedLabelSelectors`**
-  - **Usage:** A set of labels, all of which need to be matched to filter the resources (comma-separated, e.g., `key1:value1,key2:value2`)
-  - **Default:** `""`
-  - **Required:** `false`
+``` yaml 
+- `ANDedLabelSelectors`
+  - Usage: A set of labels, all of which need to be matched to filter the resources (comma-separated, e.g., `key1:value1,key2:value2`)
+  - Default: ""
+  - Required: false
 
-- **`ORedLabelSelectors`**
-  - **Usage:** A set of labels, at least one of which need to be matched to filter the resources (comma-separated, e.g., `key1:value1,key2:value2`)
-  - **Default:** `""`
-  - **Required:** `false`
+- `ORedLabelSelectors`
+  - Usage: A set of labels, at least one of which need to be matched to filter the resources (comma-separated, e.g., `key1:value1,key2:value2`)
+  - Default: ""
+  - Required: false
 
-- **`IncludeClusterResources`**
-  - **Usage:** Specify whether to restore cluster scoped resources
-  - **Default:** `"false"`
-  - **Required:** `false`
+- `IncludeClusterResources`
+  - Usage: Specify whether to restore cluster scoped resources
+  - Default: "false"
+  - Required: false
 
-- **`IncludeNamespaces`**
-  - **Usage:** Namespaces to include in backup (comma-separated, e.g., `demo,kubedb,kubestash`)
-  - **Default:** `""`
-  - **Required:** `false`
+- `IncludeNamespaces`
+  - Usage: Namespaces to include in backup (comma-separated, e.g., `demo,kubedb,kubestash`)
+  - Default: "*"
+  - Required: false
 
-- **`ExcludeNamespaces`**
-  - **Usage:** Namespaces to exclude from backup (comma-separated, e.g., `default,kube-system`)
-  - **Default:** `""`
-  - **Required:** `false`
+- `ExcludeNamespaces`
+  - Usage: Namespaces to exclude from backup (comma-separated, e.g., `default,kube-system`)
+  - Default: ""
+  - Required: false
 
-- **`IncludeResources`**
-  - **Usage:** Resource types to include in backup (comma-separated, e.g., `pods,deployments`)
-  - **Default:** `""`
-  - **Required:** `false`
+- `IncludeResources`
+  - Usage: Resource types to include in backup (comma-separated, e.g., `pods,deployments`)
+  - Default: "*"
+  - Required: false
 
-- **`ExcludeResources`**
-  - **Usage:** Resource types to exclude from backup (comma-separated, e.g., `secrets,configmaps`)
-  - **Default:** `""`
-  - **Required:** `false`
+- `ExcludeResources`
+  - Usage: Resource types to exclude from backup (comma-separated, e.g., `secrets,configmaps`)
+  - Default: ""
+  - Required: false
+```
 
 ---
 
@@ -111,21 +113,24 @@ This feature is especially valuable in disaster recovery scenarios, where restor
 
 ### Supported Parameters
 
-- **`OverrideResources`**
-  - **Usage:** Specify whether to override resources while restoring
-  - **Default:** `"false"`
-  - **Required:** `false`
+``` yaml
+- `OverrideResources`
+  - Usage: Specify whether to override resources while restoring
+  - Default: "false"
+  - Required: false
 
-- **`RestorePVs`**
-  - **Usage:** Specify whether to restore PersistentVolumes
-  - **Default:** `"false"`
-  - **Required:** `false`
+- `RestorePVs`
+  - Usage: Specify whether to restore PersistentVolumes
+  - Default: "false"
+  - Required: false
 
-- **`StorageClassMappings`**
-  - **Usage:** Mapping of old to new storage classes (e.g., `old1=new1,old2=new2`)
-  - **Default:** `""`
-  - **Required:** `false`
-  
+- `StorageClassMappings`
+  - Usage: Mapping of old to new storage classes (e.g., `old1=new1,old2=new2`)
+  - Default: ""
+  - Required: false
+
+```  
+
 --- 
 
 #### Example `RestoreSession`:
