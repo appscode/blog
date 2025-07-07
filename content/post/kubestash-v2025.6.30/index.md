@@ -32,40 +32,47 @@ This feature helps you optimize storage usage, reduce restore noise, and back up
 ### Newly Introduced Parameters
 
 ``` yaml 
-- `ANDedLabelSelectors`
-  - Usage: A set of labels, all of which need to be matched to filter the resources (comma-separated, e.g., `key1:value1,key2:value2`)
-  - Default: ""
-  - Required: false
+- ANDedLabelSelectors
+  Usage: A set of labels, all of which need to be matched to filter the resources
+  Default: ""
+  Required: false
+  Example: "app:my-app,tier:frontend"
 
-- `ORedLabelSelectors`
-  - Usage: A set of labels, at least one of which need to be matched to filter the resources (comma-separated, e.g., `key1:value1,key2:value2`)
-  - Default: ""
-  - Required: false
+- ORedLabelSelectors
+  Usage: A set of labels, at least one of which need to be matched to filter the resources
+  Default: ""
+  Required: false
+  Example: "app:nginx,app:redis"
 
-- `IncludeClusterResources`
-  - Usage: Specify whether to restore cluster scoped resources
-  - Default: "false"
-  - Required: false
+- IncludeClusterResources`
+  Usage: Specify whether to restore cluster scoped resources
+  Default: "false"
+  Required: false
+  Example: "true" 
+  
+- IncludeNamespaces
+  Usage: Namespaces to include in backup
+  Default: "*"
+  Required: false
+  Example: "demo,kubedb,kubestash"
 
-- `IncludeNamespaces`
-  - Usage: Namespaces to include in backup (comma-separated, e.g., `demo,kubedb,kubestash`)
-  - Default: "*"
-  - Required: false
+- ExcludeNamespaces
+  Usage: Namespaces to exclude from backup
+  Default: ""
+  Required: false
+  Example: "default,kube-system"
 
-- `ExcludeNamespaces`
-  - Usage: Namespaces to exclude from backup (comma-separated, e.g., `default,kube-system`)
-  - Default: ""
-  - Required: false
-
-- `IncludeResources`
-  - Usage: Resource types to include in backup (comma-separated, e.g., `pods,deployments`)
-  - Default: "*"
-  - Required: false
-
-- `ExcludeResources`
-  - Usage: Resource types to exclude from backup (comma-separated, e.g., `secrets,configmaps`)
-  - Default: ""
-  - Required: false
+- IncludeResources
+  Usage: Resource types to include in backup
+  Default: "*"
+  Required: false
+  Example: "secrets,configmaps,deployments"
+  
+- ExcludeResources
+  Usage: Resource types to exclude from backup
+  Default: ""
+  Required: false
+  Example: "persistentvolumeclaims,persistentvolumes"
 ```
 
 ---
@@ -114,20 +121,23 @@ This feature is especially valuable in disaster recovery scenarios, where restor
 ### Supported Parameters
 
 ``` yaml
-- `OverrideResources`
-  - Usage: Specify whether to override resources while restoring
-  - Default: "false"
-  - Required: false
+- OverrideResources`
+  Usage: Specify whether to override resources while restoring
+  Default: "false"
+  Required: false
+  Example: "false" 
 
-- `RestorePVs`
-  - Usage: Specify whether to restore PersistentVolumes
-  - Default: "false"
-  - Required: false
+- RestorePVs
+  Usage: Specify whether to restore PersistentVolumes
+  Default: "false"
+  Required: false
+  Example: "true" 
 
-- `StorageClassMappings`
-  - Usage: Mapping of old to new storage classes (e.g., `old1=new1,old2=new2`)
-  - Default: ""
-  - Required: false
+- StorageClassMappings
+  Usage: Mapping of old to new storage classes 
+  Default: ""
+  Required: false
+  Example: "gp2=ebs-sc,standard=fast-storage" 
 ```  
 
 --- 
