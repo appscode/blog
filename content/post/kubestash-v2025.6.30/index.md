@@ -128,7 +128,6 @@ This feature is especially valuable in disaster recovery scenarios, where restor
   - Usage: Mapping of old to new storage classes (e.g., `old1=new1,old2=new2`)
   - Default: ""
   - Required: false
-
 ```  
 
 --- 
