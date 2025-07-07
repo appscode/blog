@@ -44,7 +44,7 @@ This feature helps you optimize storage usage, reduce restore noise, and back up
   Required: false
   Example: "app:nginx,app:redis"
 
-- IncludeClusterResources`
+- IncludeClusterResources
   Usage: Specify whether to restore cluster scoped resources
   Default: "false"
   Required: false
@@ -121,7 +121,7 @@ This feature is especially valuable in disaster recovery scenarios, where restor
 ### Supported Parameters
 
 ``` yaml
-- OverrideResources`
+- OverrideResources
   Usage: Specify whether to override resources while restoring
   Default: "false"
   Required: false
