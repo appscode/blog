@@ -14,7 +14,7 @@ tags:
 - redis
 ---
 
-> New to KubeDB? Please start [here](/docs/README.md).
+> New to KubeDB? Please start [here](https://kubedb.com/).
 
 # Connecting to Redis from Outside Kubernetes using Redis Announce
 
@@ -24,7 +24,7 @@ Redis Announce is a feature in Redis that enables external connections to Redis 
 
 At first, you need to have a Kubernetes cluster, and the kubectl command-line tool must be configured to communicate with your cluster. If you do not already have a cluster, you can create one by using [kind](https://kind.sigs.k8s.io/docs/user/quick-start/).
 
-Now, install KubeDB cli on your workstation and KubeDB operator in your cluster following the steps [here](/docs/setup/README.md).
+Now, install KubeDB cli on your workstation and KubeDB operator in your cluster following the steps [here](https://kubedb.com/docs/v2025.6.30/setup/).
 
 To keep things isolated, this tutorial uses a separate namespace called `demo` throughout this tutorial.
 
@@ -200,7 +200,7 @@ KubeDB uses following crd fields to enable Redis Announce:
         - `shards`
             - `endpoints`
 
-Read about the fields in details in [redis concept](/docs/guides/redis/concepts/redis.md)
+Read about the fields in details in [redis concept](https://kubedb.com/docs/v2025.6.30/guides/redis/concepts/redis/)
 
 ## Redis Cluster with Announce
 
@@ -364,4 +364,4 @@ helm uninstall -n ace catalog-manager
 ```
 
 
-If you would like to uninstall the KubeDB operator, please follow the steps [here](/docs/setup/README.md).
+If you would like to uninstall the KubeDB operator, please follow the steps [here](https://kubedb.com/docs/v2025.6.30/setup/).
