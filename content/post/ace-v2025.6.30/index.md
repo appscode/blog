@@ -17,7 +17,7 @@ tags:
 - voyager-gateway
 ---
 
-We are pleased to announce the release of `ACE v2025.6.30`, packed with major improvements. You can check out the full changelog [HERE](https://github.com/appscode-cloud/CHANGELOG/pull/53/files). ACE **v2025.6.30** brings a bunch of new features & fixes. This release focuses on improving scalability and automation for production-grade deployments. In this post, we’ll highlight the changes done in this release.
+We are pleased to announce the release of `ACE v2025.6.30`, packed with major improvements. You can check out the full changelog [HERE](https://github.com/appscode-cloud/CHANGELOG/blob/master/releases/v2025.6.30/README.md). ACE **v2025.6.30** brings a bunch of new features & fixes. This release focuses on improving scalability and automation for production-grade deployments. In this post, we’ll highlight the changes done in this release.
 
 ## Key Changes
 - **OpenFGA**: Added OpenFGA support to achieve more granular-level RBAC.
@@ -37,7 +37,6 @@ Here are the components specific changes:
 
 ### Fixes
 - Handle floating points of memory in the kubedb-ui-preset’s machine-profiles
-
 
 
 ## KubeDB UI
@@ -94,16 +93,12 @@ Fix resource field
 - Permissions are permitted unless denied by default as before
 
 
-
-
-
-### Backend
-
+### Platform Backend
 
 #### OpenFGA Feature
 We have integrated OpenFGA support in this release. It is an open-source authorization solution that allows developers to build granular access control using an easy-to-read modeling language and friendly APIs.
 
-*** Key Points *** :
+**Key Points** :
 - `OpenFGA-based Authorization` :
 Introduced authorization using OpenFGA for our platform system.
 - `Default Teams on Organization Creation` :
@@ -117,8 +112,7 @@ Members of the Editors team can now edit organization-related information and ot
 - `Custom Team Creation` :
 Users can also create custom teams with read or write permissions, assigning view or edit access to team members as needed.
 
-
-*** Role Capabilities *** :
+**Role Capabilities** :
 - `Owners` :
 Full administrative privileges, including all Editors permissions.
 Can delete organizations, manage all teams (including Editors and Viewers), and perform any action on organization resources.
