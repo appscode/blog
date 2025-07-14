@@ -17,7 +17,7 @@ tags:
 - voyager-gateway
 ---
 
-We are pleased to announce the release of `ACE v2025.6.30`, packed with major improvements. You can check out the full changelog [HERE](https://github.com/appscode-cloud/CHANGELOG/blob/master/releases/v2025.6.30/README.md). ACE **v2025.6.30** brings a bunch of new features & fixes. This release focuses on improving scalability and automation for production-grade deployments. In this post, we’ll highlight the changes done in this release.
+We are pleased to announce the release of `ACE v2025.6.30`, packed with major improvements. ACE **v2025.6.30** brings a bunch of new features & fixes. This release focuses on improving scalability and automation for production-grade deployments. In this post, we’ll highlight the changes done in this release.
 
 ## Key Changes
 - **OpenFGA**: Added OpenFGA support to achieve more granular-level RBAC.
