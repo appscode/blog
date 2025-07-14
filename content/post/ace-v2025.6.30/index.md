@@ -103,8 +103,8 @@ We have integrated OpenFGA support in this release. It is an open-source authori
 Introduced authorization using OpenFGA for our platform system.
 - `Default Teams on Organization Creation` :
 When a new organization is created, two additional teams are now provisioned automatically:
-Editors: Granted write access to all organization resources.
-Viewers: Granted read-only access to all organization resources, including clusters, tokens, installers etc.
+  1) Editors: Granted write access to all organization resources.
+  2) Viewers: Granted read-only access to all organization resources, including clusters, tokens, installers etc.
 - `Manual Team Assignment` :
 Users can manually assign the Editors and Viewers teams to grant write or read access, respectively, across resources.
 - `Organization Details Management` :
@@ -128,7 +128,10 @@ Note that, The existing Owners team remains the primary organization owner with 
 #### Fixes & Improvements
 - Add support for `converting imported cluster to spoke` cluster
 - Initialize db on ace upgrade process.
+- Add support for `inbox-server`.
+- Add support for `credential-less EKS` cluster creation & import.
 - Fix owner team can't be update due to reserve team name
+- `Fix in upgrade process` for fluxcd.
 
 
 ### External products
