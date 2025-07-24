@@ -871,7 +871,7 @@
     width: 270px;
     padding: 0.2rem 0.875rem;
 
-    2 &:focus {
+    &:focus {
       border: none;
       outline: none;
     }
@@ -969,7 +969,21 @@
     height: 1.5px;
   }
 }
+iframe#notification {
+  height: 30px;
+}
+@media (max-width: 325px) {
+  iframe#notification {
+    height: 62px;
+  }
+}
 
+@media (min-width: 326px) and (max-width: 594px) {
+  iframe#notification {
+    height: 45px;
+  }
+}
+     
 /****************************************
 Responsive Classes
 *****************************************/

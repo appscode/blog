@@ -116,6 +116,9 @@
     {{ block "header-top" . }}
     <!-- new navbar area start  -->
     <div class="navbar-area">
+       <!-- iframe for top notification; IMPORTANT:- "display: flex||none;" | display: none; overflow: hidden; height: 0px; -->
+         <iframe src="https://appscode.com/notification-top/" id="notification" frameborder="0" scrolling="no" style="display: flex; width: 100%; overflow: hidden;" title="notification"></iframe>
+     
       <div class="navbar-appscode-wrapper ">
         <!-- appscode navbar start  -->
         {{ $currentPageType := cond (le (len (split (trim .Page.RelPermalink "/") "/")) 2) "products" "docs" }}
