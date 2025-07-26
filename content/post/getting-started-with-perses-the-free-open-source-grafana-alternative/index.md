@@ -65,7 +65,7 @@ There are 3 repos to look out
 
 [operator](https://github.com/perses/perses-operator)
 
-![Perses Architecture](perses_arch.jpeg)
+
 
 Together they can be used for complete UI, Dashboard-as-a-code or embedded UI
 
@@ -187,7 +187,7 @@ You can create a dashboard under a project
    - Secrets (useful for accessing you datasource using perses backend)
    - Roles and Rolebinging (permissions of users in your project)
 
-![Project dashboard](project.jpeg)
+
 
 3. You can do all these inside a dashboard as well, doing them here means they will be 
 available across dashboards of this project 
@@ -195,7 +195,7 @@ available across dashboards of this project
 4. Inside a dashboard let's first add a datasource. A data source can be accessed by 2 method 
 - Direct url: you provide your prometheus or tempo direct url It will get data from that 
 - Proxy: You setup a backend and request that to get data from prometheus or tempo 
-![Datasource](datasource.jpeg)
+
 
 
 5. Now let's add a panel which is the single unit for dashboard. To add a panel you need 3 things 
@@ -204,7 +204,7 @@ available across dashboards of this project
  - Datasource: Chose from the datasource you have created previously 
  - Query: Run the promquery or tempo query based on type and datasource 
 
-![Panel](panel.jpeg)
+
 
 6. Keep adding and you have your dashboard. You can drag and drop layout according to your need(on edit mode). Done it's that simple
 
@@ -213,8 +213,7 @@ available across dashboards of this project
 
 #### example dashboards 
 
-![dashboard 2](dashboard2.jpeg)
-![dashboard 1](dashboard1.jpeg)
+
 
 
 You can use it as it is by hosting somewhere
