@@ -1,16 +1,15 @@
 ---
 title: Getting Started with Perses the Free Open Source Grafana Alternative
-date: "2025-27-07"
-weight: 14
+date: 2025-07-27
 authors:
 - Zubair Ahmed Rafi
 tags:
 - appscode
-- visualization
-- metrics
-- obervibility 
 - grafana
-- perses 
+- metrics
+- observability
+- perses
+- visualization
 ---
 
 ## Observability
