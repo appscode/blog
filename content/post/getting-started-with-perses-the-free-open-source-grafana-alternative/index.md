@@ -213,8 +213,8 @@ available across dashboards of this project
 
 #### example dashboards 
 
-![dashboard 2](dashboard_2.jpeg)
-![dashboard 1](dashboard_1.jpeg)
+![dashboard 2](dashboard2.jpeg)
+![dashboard 1](dashboard1.jpeg)
 
 
 You can use it as it is by hosting somewhere
