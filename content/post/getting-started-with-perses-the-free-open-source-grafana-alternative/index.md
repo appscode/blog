@@ -1,5 +1,5 @@
 ---
-title: Perses - a free open-source grafana alternative
+title: Getting Started with Perses the Free Open Source Grafana Alternative
 date: "2025-27-07"
 weight: 14
 authors:
