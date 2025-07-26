@@ -49,7 +49,7 @@ amount=$99.99, error="Card declined", transaction_id=tx_abc123
 Now what if you can see all these in visually compelling graphs, charts etc 
 Basically a dashboard for your entire operations 
 
-Well **Perses** does exactly
+Well **Perses** does exactly that
 
 **Perses** is CNCF sandbox project that means it has a bright future ahead. Now let's see how to run perses and what it can do with our data
 
