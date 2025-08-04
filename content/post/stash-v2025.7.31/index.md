@@ -9,8 +9,8 @@ tags:
 - cli
 - disaster-recovery
 - kubernetes
-- restore
 - restic
+- restore
 - stash
 - unlock
 ---
@@ -27,7 +27,7 @@ But now, **Stash will automatically unlock the `Restic` repo** if it detects tha
 
 #### What’s better now:
 
-1. **Auto-Unlock Magic** — If a backup pod goes missing, Stash will notice and unlock the repo for you.
+1. **Auto-Unlock Magic** — If the `Restic` repo get locked, Stash will notice and unlock the repo for you.
 2. **Smoother Experience** — Less manual cleanup, less friction. Backups just keep working.
 3. **Less Downtime** — No waiting around or debugging why your backups are stuck.
 
