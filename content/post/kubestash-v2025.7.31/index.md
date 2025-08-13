@@ -13,15 +13,12 @@ tags:
 - restore
 ---
 
-We are pleased to announce the release of [KubeStash v2025.7.31](https://kubestash.com/docs/v2025.7.31/setup/), packed with new features. You can check out the full changelog [HERE](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2025.7.31/README.md).
-
+We are pleased to announce the release of [KubeStash v2025.7.31](https://kubestash.com/docs/v2025.7.31/setup/), packed with major improvements. You can check out the full changelog [HERE](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2025.7.31/README.md). In this post, we’ll highlight the changes done in this release.
 
 ---
 
-## What's New in v2025.7.31
+### Introduced manifest restore, view commands to CLI
 
-
-## New CLI Features
 
 In **v2025.6.30**, we introduced `kubedump-restore` for manifest-based **selective resource restoration**.
 In **v2025.7.31**, we’ve taken it to the next level with:
@@ -132,6 +129,24 @@ kubectl kubestash manifest-restore \
 - Uses a **multi-iteration restore process** to prevent resource dependency issues from blocking restoration.
 - In early iterations, resources are created as **orphans** (without owner references) to avoid dependency loops.
 - After all iterations, **owner references** are updated for all resources to match the live cluster state.
+
+---
+
+### Automatic `Restic` Unlocking — No More Manual Hassles
+
+We’ve added a thoughtful little feature in this release that quietly takes care of something annoying: **locked Restic repositories** after a backup pod vanishes.
+
+Sometimes, In Kubernetes cluster, a node might crash, resources could become scarce, or the cluster autoscaler might decide to reschedule workloads.
+In such cases, Kubernetes may terminate a backup pod while it's still running, even if the backup hasn’t finished. This can leave the backup incomplete and, in the case of `Restic`, the repository locked, blocking future backups until someone manually unlocks it. Not ideal.
+
+But now, **KubeStash will automatically unlock the `Restic` repo** if it detects that the `BackupSession` failed because the pod disappeared. No more manual commands. No more wondering why your next backup won't start.
+
+#### What’s better now:
+
+1. **Auto-Unlock Magic** — If the `Restic` repo get locked, KubeStash will notice and unlock the repo for you.
+2. **Smoother Experience** — Less manual cleanup, less friction. Backups just keep working.
+3. **Less Downtime** — No waiting around or debugging why your backups are stuck.
+
 ---
 
 ## What Next?
