@@ -26,24 +26,19 @@ Now in this release, we’ve brought these capabilities directly into the CLI wi
 
 - Give users **better control** over which resources and namespaces are restored.
 - **Dry-run validation** before applying changes to live clusters
-- **Automatic owner reference updates** to simplify dependency handling
-- **Support for group resources** in filtering flags, alongside individual resources
 
 ---
 
-#### View Snapshot Contents — `manifest-view`
+#### `manifest-view`
 You can now inspect the contents of a snapshot before restoring.
 
 ```bash
 kubectl kubestash manifest-view \
   --snapshot=azure-repo-cluster-resources-backup-1754997440 \
   --namespace=demo \
-  --include-namespaces="*" \
-  --include-resources="*" \
   --include-cluster-resources=true \
   --and-label-selectors="app" \
-  --exclude-resources="endpointslices.discovery.k8s.io,endpoints" \
-  --v=5
+  --exclude-resources="endpointslices.discovery.k8s.io,endpoints"
 ```
 
 #### Example output:
@@ -83,44 +78,38 @@ kubectl kubestash manifest-view \
 ```
 ---
 
-#### Dry-Run before Restore — `manifest-restore` with `--dry-run-dir`
+#### `manifest-restore` with `--dry-run-dir`
 Preview the restore process without impacting your cluster.
 
 ```bash
 kubectl kubestash manifest-restore \
   --snapshot=azure-repo-cluster-resources-backup-1754997440 \
   --namespace=demo \
-  --include-namespaces="demo-b,demo-a" \
-  --include-resources="*" \
   --exclude-resources="pods,nodes.metrics.k8s.io,nodes,pods.metrics.k8s.io,metrics.k8s.io,endpointslices.discovery.k8s.io" \
   --include-cluster-resources=true \
   --and-label-selectors="app" \
   --dry-run-dir="/home/nipun/Downloads" \
-  --v=5 \
   --max-iterations=5
 ```
 
 #### Benefits
 
 - **Downloads manifests locally** – Safely downloads resource manifests on your local machine without interacting with the live cluster.
-- **No changes to the cluster** – Review and validate manifests before applying them, ensuring zero risk during the verification phase.
+- **No real changes to the cluster** – Review and validate manifests before applying them, ensuring zero risk during the verification phase.
 - **Perfect for verifying large-scale restores** – Ideal for testing full-cluster restore scenarios without impacting production workloads.
 
 ---
 
-#### Full Restore — Apply Manifests to Cluster
+#### `manifest-restore` without `--dry-run-dir`
 Once you’ve verified via dry-run, you can perform the actual restore:
 
 ```bash
 kubectl kubestash manifest-restore \
   --snapshot=azure-repo-cluster-resources-backup-1754997440 \
   --namespace=demo \
-  --include-namespaces="demo-b,demo-a" \
-  --include-resources="*" \
-  --exclude-resources="pods,nodes.metrics.k8s.io,nodes,pods.metrics.k8s.io,metrics.k8s.io,endpointslices.discovery.k8s.io" \
+  --exclude-resources="nodes.metrics.k8s.io,nodes,pods.metrics.k8s.io,metrics.k8s.io" \
   --include-cluster-resources=true \
   --and-label-selectors="app" \
-  --v=5 \
   --max-iterations=5
 ```
 
@@ -148,6 +137,26 @@ But now, **KubeStash will automatically unlock the `Restic` repo** if it detects
 1. **Auto-Unlock Magic** — If the `Restic` repo get locked, KubeStash will notice and unlock the repo for you.
 2. **Smoother Experience** — Less manual cleanup, less friction. Backups just keep working.
 3. **Less Downtime** — No waiting around or debugging why your backups are stuck.
+
+---
+
+### Improvements and Bug Fixes
+
+- **Automatic owner reference updates** in kubedump to simplify dependency handling.
+- **Multiple-iteration restore process** in kubedump to avoid resource creation being blocked due to dependencies.
+- **Support for group resources** in filtering flags, alongside individual resources in kubedump.
+  - **Example:**
+    ```bash
+    --include-resources="deployments,clusterroles.rbac.authorization.k8s.io"
+    --exclude-resources="endpointslices,nodes.metrics.k8s.io,nodes"
+    ```
+- **Updated `label-selectors` flag** to support filtering with `key`.
+  - **Previous format:** `"key1:value1,key2:value2"`
+  - **New format:** `"key1:value1,key2:value2,key3"`
+  - **Example:**
+    ```bash
+    --and-label-selectors="app:my-app,app:my-sts,app"
+    ```
 
 ---
 
