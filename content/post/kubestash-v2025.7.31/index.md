@@ -20,16 +20,18 @@ We are pleased to announce the release of [KubeStash v2025.7.31](https://kubesta
 ### Introduced manifest restore, view commands to CLI
 
 
-In **v2025.6.30**, we introduced `kubedump-restore` for manifest-based **selective resource restoration**.
-In **v2025.7.31**, we’ve taken it to the next level with:
+Previously, we've introduced `kubedump-restore` for manifest-based **selective resource restoration**.
 
-- **New CLI commands** for controlled restores
-- **Dry-run restore mode** for safe validation before applying
-- **Improved dependency resolution** with **automatic owner reference updates** during restore
+Now in this release, we’ve brought these capabilities directly into the CLI with `manifest-restore` and `manifest-view` commands to make restores more **accessible, safer, and easier to manage**, providing:
+
+- Give users **better control** over which resources and namespaces are restored.
+- **Dry-run validation** before applying changes to live clusters
+- **Automatic owner reference updates** to simplify dependency handling
 - **Support for group resources** in filtering flags, alongside individual resources
+
 ---
 
-### **View Snapshot Contents — `manifest-view`**
+#### View Snapshot Contents — `manifest-view`
 You can now inspect the contents of a snapshot before restoring.
 
 ```bash
@@ -44,7 +46,7 @@ kubectl kubestash manifest-view \
   --v=5
 ```
 
-### Example output: 
+#### Example output:
 ```bash 
 ┌─ .
 └─ 
@@ -81,7 +83,7 @@ kubectl kubestash manifest-view \
 ```
 ---
 
-### **Dry-Run before Restore — `manifest-restore` with `--dry-run-dir`**
+#### Dry-Run before Restore — `manifest-restore` with `--dry-run-dir`
 Preview the restore process without impacting your cluster.
 
 ```bash
@@ -98,7 +100,7 @@ kubectl kubestash manifest-restore \
   --max-iterations=5
 ```
 
-## Benefits
+#### Benefits
 
 - **Downloads manifests locally** – Safely downloads resource manifests on your local machine without interacting with the live cluster.
 - **No changes to the cluster** – Review and validate manifests before applying them, ensuring zero risk during the verification phase.
@@ -106,7 +108,7 @@ kubectl kubestash manifest-restore \
 
 ---
 
-### **Full Restore — Apply Manifests to Cluster**
+#### Full Restore — Apply Manifests to Cluster
 Once you’ve verified via dry-run, you can perform the actual restore:
 
 ```bash
@@ -122,7 +124,7 @@ kubectl kubestash manifest-restore \
   --max-iterations=5
 ```
 
-## Restore Behavior:
+#### Restore Behavior:
 
 - Restores **CRDs** first to ensure all custom resources can be created successfully.
 - Automatically creates **namespaces** if they do not already exist.
