@@ -20,23 +20,24 @@ We are pleased to announce the release of [KubeStash v2025.7.31](https://kubesta
 
 ## What's New in v2025.7.31
 
-In **v2025.6.30**, we introduced `kubedump-restore` for manifest-based backup and selective restore.  
-In **v2025.7.31**, we’ve taken it to the next level with:
-
-- **Full Cluster Restore Support**
-- **New CLI commands** for inspection and controlled restores
-- **Dry-run restore mode** for safe validation before applying
-- **Improved dependency handling** when restoring resources
-
----
 
 ## New CLI Features
+
+In **v2025.6.30**, we introduced `kubedump-restore` for manifest-based **selective resource restoration**.
+In **v2025.7.31**, we’ve taken it to the next level with:
+
+- **New CLI commands** for controlled restores
+- **Dry-run restore mode** for safe validation before applying
+- **Improved dependency resolution** with **automatic owner reference updates** during restore
+- **Support for group resources** in filtering flags, alongside individual resources
+---
 
 ### **View Snapshot Contents — `manifest-view`**
 You can now inspect the contents of a snapshot before restoring.
 
 ```bash
-kubectl-kubestash manifest-view azure-repo-cluster-resources-backup-1754997440 \
+kubectl kubestash manifest-view \
+  --snapshot=azure-repo-cluster-resources-backup-1754997440 \
   --namespace=demo \
   --include-namespaces="*" \
   --include-resources="*" \
@@ -87,15 +88,15 @@ kubectl-kubestash manifest-view azure-repo-cluster-resources-backup-1754997440 \
 Preview the restore process without impacting your cluster.
 
 ```bash
-kubectl-kubestash manifest-restore \
+kubectl kubestash manifest-restore \
   --snapshot=azure-repo-cluster-resources-backup-1754997440 \
   --namespace=demo \
   --include-namespaces="demo-b,demo-a" \
   --include-resources="*" \
-  --exclude-resources="nodes.metrics.k8s.io,nodes,pods.metrics.k8s.io,metrics.k8s.io,endpointslices.discovery.k8s.io" \
+  --exclude-resources="pods,nodes.metrics.k8s.io,nodes,pods.metrics.k8s.io,metrics.k8s.io,endpointslices.discovery.k8s.io" \
   --include-cluster-resources=true \
   --and-label-selectors="app" \
-  --dry-run-dir="/tmp/kubestash-restore-preview" \
+  --dry-run-dir="/home/nipun/Downloads" \
   --v=5 \
   --max-iterations=5
 ```
@@ -112,12 +113,12 @@ kubectl-kubestash manifest-restore \
 Once you’ve verified via dry-run, you can perform the actual restore:
 
 ```bash
-kubectl-kubestash manifest-restore \
+kubectl kubestash manifest-restore \
   --snapshot=azure-repo-cluster-resources-backup-1754997440 \
   --namespace=demo \
   --include-namespaces="demo-b,demo-a" \
   --include-resources="*" \
-  --exclude-resources="nodes.metrics.k8s.io,nodes,pods.metrics.k8s.io,metrics.k8s.io,endpointslices.discovery.k8s.io" \
+  --exclude-resources="pods,nodes.metrics.k8s.io,nodes,pods.metrics.k8s.io,metrics.k8s.io,endpointslices.discovery.k8s.io" \
   --include-cluster-resources=true \
   --and-label-selectors="app" \
   --v=5 \
