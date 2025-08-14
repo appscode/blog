@@ -86,13 +86,13 @@ Preview the restore process without impacting your cluster.
 kubectl kubestash manifest-restore \
   --snapshot=azure-repo-cluster-resources-backup-1754997440 \
   --namespace=demo \
-  --exclude-resources="pods,nodes.metrics.k8s.io,pods.metrics.k8s.io,metrics.k8s.io,endpointslices.discovery.k8s.io" \
+  --exclude-resources="pods,nodes.metrics.k8s.io,pods.metrics.k8s.io,endpointslices.discovery.k8s.io" \
   --include-cluster-resources=true \
   --and-label-selectors="app" \
   --dry-run-dir="/home/nipun/Downloads" \
   --max-iterations=5
 ```
-This command downloads all resource manifests (YAML files) from the snapshot that have the label key `app` in the `demo` namespace (for namespace-scoped resources) to the specified `dry-run-dir` directory on the local machine, without applying them to the cluster. It excludes the resource `pods` and the resource groups `nodes.metrics.k8s.io`, `pods.metrics.k8s.io`, `metrics.k8s.io`, and `endpointslices.discovery.k8s.io`.
+This command downloads all resource manifests (YAML files) from the snapshot that have the label key `app` in the `demo` namespace (for namespace-scoped resources) to the specified `dry-run-dir` directory on the local machine, without applying them to the cluster. It excludes the resource `pods` and the resource groups `nodes.metrics.k8s.io`, `pods.metrics.k8s.io`, and `endpointslices.discovery.k8s.io`.
 
 #### Benefits
 
@@ -109,12 +109,12 @@ Once you’ve verified via dry-run, you can perform the actual restore:
 kubectl kubestash manifest-restore \
   --snapshot=azure-repo-cluster-resources-backup-1754997440 \
   --namespace=demo \
-  --exclude-resources="nodes.metrics.k8s.io,pods.metrics.k8s.io,metrics.k8s.io" \
+  --exclude-resources="nodes.metrics.k8s.io,pods.metrics.k8s.io" \
   --include-cluster-resources=true \
   --and-label-selectors="app" \
   --max-iterations=5
 ```
-This command **applies all resource manifests** (YAML files) from the snapshot that have the label key `app` in the `demo` namespace (for namespace-scoped resources) to the cluster. It excludes the resource `pods` as well as the resource groups `nodes.metrics.k8s.io`, `pods.metrics.k8s.io` and `metrics.k8s.io`.
+This command **applies all resource manifests** (YAML files) from the snapshot that have the label key `app` in the `demo` namespace (for namespace-scoped resources) to the cluster. It excludes the resource `pods` as well as the resource groups `nodes.metrics.k8s.io` and `pods.metrics.k8s.io`.
 
 #### Restore Behavior:
 
