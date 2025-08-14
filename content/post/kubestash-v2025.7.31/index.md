@@ -17,24 +17,22 @@ We are pleased to announce the release of [KubeStash v2025.7.31](https://kubesta
 
 ---
 
-### Introduced manifest restore, view commands to CLI
+### Introducing manifest-restore and manifest-view CLI Commands
 
+Building on the success of `kubedump-restore` for selective, manifest-based resource restoration, we’re excited to bring these powerful capabilities directly into the `CLI` with two new commands: `manifest-restore` and `manifest-view`.
 
-Previously, we've introduced `kubedump-restore` for manifest-based **selective resource restoration**.
-
-Now in this release, we’ve brought these capabilities directly into the CLI with `manifest-restore` and `manifest-view` commands to make restores more **accessible, safer, and easier to manage**, providing:
-
+#### Key Benefits
+- To make restores more **accessible, safer, and easier to manage**.
 - Give users **better control** over which resources and namespaces are restored.
-- **Dry-run validation** before applying changes to live clusters
+- **Dry-run validation** before applying changes to live clusters.
 
 ---
 
-#### `manifest-view`
-You can now inspect the contents of a snapshot before restoring.
-
+#### `manifest-view`: Inspect Snapshots Before Restoring
+Now, you can explore the contents of a snapshot before initiating a restore. Use `manifest-view` to preview manifests and verify exactly what will be restored.
 ```bash
 kubectl kubestash manifest-view \
-  --snapshot=azure-repo-cluster-resources-backup-1754997440 \
+  --snapshot=<snapshot-name> \
   --namespace="demo-a,demo-b" \
   --include-cluster-resources=true \
   --and-label-selectors="app" \
@@ -79,35 +77,12 @@ This command displays a tree view of all resource manifests from the snapshot th
 ```
 ---
 
-#### `manifest-restore` with `--dry-run-dir`
-Preview the restore process without impacting your cluster.
+#### `manifest-restore`: Restore Selected Resources to the Cluster
+This allows you to apply specific resource manifests from a snapshot directly to your cluster, with lots of filtering options to customize the restore process.
 
 ```bash
 kubectl kubestash manifest-restore \
-  --snapshot=azure-repo-cluster-resources-backup-1754997440 \
-  --namespace=demo \
-  --exclude-resources="pods,nodes.metrics.k8s.io,pods.metrics.k8s.io,endpointslices.discovery.k8s.io" \
-  --include-cluster-resources=true \
-  --and-label-selectors="app" \
-  --dry-run-dir="/home/nipun/Downloads" \
-  --max-iterations=5
-```
-This command downloads all resource manifests (YAML files) from the snapshot that have the label key `app` in the `demo` namespace (for namespace-scoped resources) to the specified `dry-run-dir` directory on the local machine, without applying them to the cluster. It excludes the resource `pods` and the resource groups `nodes.metrics.k8s.io`, `pods.metrics.k8s.io`, and `endpointslices.discovery.k8s.io`.
-
-#### Benefits
-
-- **Downloads manifests locally** – Safely downloads resource manifests on your local machine without interacting with the live cluster.
-- **No real changes to the cluster** – Review and validate manifests before applying them, ensuring zero risk during the verification phase.
-- **Perfect for verifying large-scale restores** – Ideal for testing full-cluster restore scenarios without impacting production workloads.
-
----
-
-#### `manifest-restore` without `--dry-run-dir`
-Once you’ve verified via dry-run, you can perform the actual restore:
-
-```bash
-kubectl kubestash manifest-restore \
-  --snapshot=azure-repo-cluster-resources-backup-1754997440 \
+  --snapshot=<snapshot-name> \
   --namespace=demo \
   --exclude-resources="nodes.metrics.k8s.io,pods.metrics.k8s.io" \
   --include-cluster-resources=true \
@@ -116,13 +91,8 @@ kubectl kubestash manifest-restore \
 ```
 This command **applies all resource manifests** (YAML files) from the snapshot that have the label key `app` in the `demo` namespace (for namespace-scoped resources) to the cluster. It excludes the resource `pods` as well as the resource groups `nodes.metrics.k8s.io` and `pods.metrics.k8s.io`.
 
-#### Restore Behavior:
-
-- Restores **CRDs** first to ensure all custom resources can be created successfully.
-- Automatically creates **namespaces** if they do not already exist.
-- Uses a **multi-iteration restore process** to prevent resource dependency issues from blocking restoration.
-- In early iterations, resources are created as **orphans** (without owner references) to avoid dependency loops.
-- After all iterations, **owner references** are updated for all resources to match the live cluster state.
+---
+>Note: We can download and apply manifests manually from a snapshot to the cluster using an extra flag `--dry-run-dir` with the `manifest-restore` command.
 
 ---
 
