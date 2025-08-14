@@ -12,7 +12,7 @@ tags:
 - kubedb
 - kubedb-ui
 - kubernetes
-- kubestash
+- kubestashi
 - platform-ui
 - voyager-gateway
 ---
@@ -56,7 +56,6 @@ Here are the components specific changes:
 ### Platform Backend
 
 #### Features
-<!-- - `Add kubevirt cluster create and delete flow` with managed and self-managed option  -->
 - `Add client-org context` in cluster & org permissions
 - `Allow viewer to connect to cluster` and view kubeconfig
 
@@ -72,9 +71,6 @@ Here is the summary of external dependency updates for `ACE v2025.7.31` :
 - `KubeDB`: v2025.7.31 [Release blog](https://appscode.com/blog/post/kubedb-v2025.7.31/).
 - `Stash`: v2025.7.31 [Release blog](https://appscode.com/blog/post/stash-v2025.7.31/).
 - `KubeStash`: v2025.7.31 [Release blog](https://appscode.com/blog/post/kubestash-v2025.7.31/).
-- `Voyager Gateway`: v2025.7.31 [Chart Ref](https://github.com/voyagermesh/installer/tree/release-v2025.7.31/charts/voyager-gateway). This uses envoy `v1.34.1-ac` & envoy-gateway `1.4.1`.
-- `panopticon`: v2025.6.30 [Chart Ref](https://github.com/open-viz/installer/tree/release-v2025.6.30/charts/monitoring-operator).
-
 
 ## Support
 - **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
