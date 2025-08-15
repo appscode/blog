@@ -22,7 +22,7 @@ We are pleased to announce the release of `ACE v2025.7.31`, packed with major im
 ## Key Changes
 - **Add kubevirt cluster create and delete flow** with managed and self-managed option 
 - **Site Admin** related settings(Ace upgrade, Allowed Domains, Branding, Client Organizations) are moved from `User Settings tab` to `Site Administration tab`
-- **SelfSubjectRulesReview** permissions added for client-organizations in [KubeDB](https://appscode.com/blog/post/kubedb-v2025.7.31/)  
+- **SelfSubjectRulesReview** permissions added for client-organizations in KubeDB  
 
 Here are the components specific changes:
 
