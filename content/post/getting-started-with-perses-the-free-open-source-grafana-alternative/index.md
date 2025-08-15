@@ -1,6 +1,6 @@
 ---
 title: Getting Started with Perses The Free, Open Source Grafana Alternative
-date: "2025-07-27"
+date: "2025-08-15"
 authors:
 - Zubair Ahmed Rafi
 tags:
