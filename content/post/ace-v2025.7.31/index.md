@@ -21,7 +21,7 @@ We are pleased to announce the release of `ACE v2025.7.31`, packed with major im
 
 ## Key Changes
 - **Add kubevirt cluster create and delete flow** with managed and self-managed option 
-- **Site Admin** related settings(Ace upgrade, Allowed Domains, Branding, Client Organizations) is moved from `User Settings tab` to `Site Administration tab`
+- **Site Admin** related settings(Ace upgrade, Allowed Domains, Branding, Client Organizations) are moved from `User Settings tab` to `Site Administration tab`
 - **SelfSubjectRulesReview** permissions added for client-organizations in [KubeDB](https://appscode.com/blog/post/kubedb-v2025.7.31/)  
 
 Here are the components specific changes:
@@ -48,6 +48,7 @@ Here are the components specific changes:
 - `Full name field` added when creating user from site-administration 
 - `Admission permission` for deleting auto generated users are `restricted`
 - Remove `permissions api` when viewing a public profile
+- `Site Admin` related settings(Ace upgrade, Allowed Domains, Branding, Client Organizations) are moved from `User Settings tab` to `Site Administration tab`
 - Update e2e tests form `claim and permissions settings`
 - `Fix error messages disappearing` when creating a client-organization
 - `Fix cookies issue` when switching to PLatform-ui from appDrawer
@@ -58,6 +59,7 @@ Here are the components specific changes:
 #### Features
 - `Add client-org context` in cluster & org permissions
 - `Allow viewer to connect to cluster` and view kubeconfig
+- `Add kubevirt cluster` create and delete flow with managed and self-managed option
 
 #### Fixes & Improvements
 - `Update cluster deletion flow` to clean up cluster components and skip feature uninstallation 
