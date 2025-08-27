@@ -44,7 +44,7 @@ Here are the components specific changes:
 ### Billing UI
 
 #### Features
-- Improve the billing ui.
+- Improve the billing ui. Please visit the [Billing & usage doc](https://appscode.com/docs/en/guides/billing-and-usage-guide/overview.html) for more details.
 
 
 ### Selfhost UI
