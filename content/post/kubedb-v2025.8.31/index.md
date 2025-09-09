@@ -635,6 +635,72 @@ This example refers to initialization from a private git repository .spec.init.g
 .spec.init.git.securityContext.runAsUser the init container git_sync run with user 999.
 .spec.podTemplate.Spec.securityContext.fsGroup In order to read the ssh key the fsGroup also should be 999.
 
+## PlacementPolicy for PetSet
+
+We have updated the api of PlacementPolicy for Distributed PetSet.
+
+Previous api:
+
+```yaml
+apiVersion: apps.k8s.appscode.com/v1
+kind: PlacementPolicy
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: distributed-postgres
+spec:
+  nodeSpreadConstraint:
+    maxSkew: 1
+    whenUnsatisfiable: ScheduleAnyway
+  ocm:
+    distributionRules:
+      - clusterName: demo-controller
+        replicas:
+          - 0
+          - 2
+      - clusterName: demo-worker
+        replicas:
+          - 1
+    sliceName: demo-slice
+  zoneSpreadConstraint:
+    maxSkew: 1
+    whenUnsatisfiable: ScheduleAnyway
+```
+
+New Api:
+
+```yaml
+apiVersion: apps.k8s.appscode.com/v1
+kind: PlacementPolicy
+metadata:
+   labels:
+      app.kubernetes.io/managed-by: Helm
+   name: distributed-postgres
+spec:
+   clusterSpreadConstraint:
+      distributionRules:
+         - clusterName: demo-controller
+           replicaIndices:
+              - 0
+              - 2
+         - clusterName: demo-worker
+           replicaIndices:
+              - 1
+      slice:
+         projectNamespace: kubeslice-demo-distributed-mariadb
+         sliceName: demo-slice
+   nodeSpreadConstraint:
+      maxSkew: 1
+      whenUnsatisfiable: ScheduleAnyway
+   zoneSpreadConstraint:
+      maxSkew: 1
+      whenUnsatisfiable: ScheduleAnyway
+```
+
+you can see changes were introduced under `spec.clusterSpreadConstraint` section. `spec.ocm` is replaced with `spec.clusterSpreadConstraint.distributionRules` and `spec.clusterSpreadConstraint.slice`. 
+
+New field `spec.clusterSpreadConstraint.slice.projectNamespace` is added to specify the project namespace of the slice.
+
 ## Support
 - **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
 - **Release Updates**: Join our [google group](https://groups.google.com/a/appscode.com/g/releases) for release updates.
