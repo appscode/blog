@@ -35,8 +35,8 @@ KubeDB **v2025.8.31** introduces new features like storage migration, TLS reconf
 - **TLS and Authentication Enhancements**: Introduced ReconfigureTLS and RotateAuth OpsRequests for **ClickHouse** and **Hazelcast**.
 - **Git-Sync Initialization**: New support for initializing databases from public/private Git repositories in **MariaDB**, **Redis**, **Pgpool**, and **Pgbouncer**.
 - **Recommendation Engine**: Added recommendations for **Pgpool**, **Hazelcast**, and **Pgbouncer**, including version updates, TLS rotation, and auth secret rotation.
-- **Version Updates**: New versions for **Postgres** (17.6, 16.10, 15.14, 14.19, 13.22).
-- **Distributed Database Enhancements**: OpsRequest support for TLS reconfiguration, version upgrades, volume expansion, and auth rotation in distributed **MariaDB** Galera Cluster mode, with fixed full cluster disaster recovery.
+- **Version Updates**: New version for **Postgres** (16.10).
+- **Distributed Database Enhancements**: Improvements in PodPlacementPolicy, OpsRequest support for TLS reconfiguration, version upgrades, volume expansion, and auth rotation in distributed **MariaDB** Galera Cluster mode, with fixed full cluster disaster recovery.
 
 ## ClickHouse
 
