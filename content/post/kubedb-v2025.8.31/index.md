@@ -287,7 +287,7 @@ spec:
 
 This example refers to initialization from a private git repository `.spec.init.git.args` represents the arguments required to represent the git repository and its actions. You can find details at [git_syc_docs](https://github.com/kubernetes/git-sync/blob/master/README.md)
 
-`.spec.init.git.authSecret` holds the necessary information to pull from the private repository You have to provide a secret with the `id_rsa` and `githubkwonhosts`. You can find detailed information at [git_sync_docs](https://github.com/kubernetes/git-sync/blob/master/docs/ssh.md).
+`.spec.init.git.authSecret` holds the necessary information to pull from the private repository. You have to provide a secret with the `id_rsa` and `github knwonhosts`. You can find detailed information at [git_sync_docs](https://github.com/kubernetes/git-sync/blob/master/docs/ssh.md).
 
 
 If you are using a different authentication mechanism for your git repository, please consult the documentation for [git-sync](https://github.com/kubernetes/git-sync/tree/master/docs) project.
@@ -413,9 +413,9 @@ spec:
         securityContext:
           runAsUser: 999
 ```
-This example refers to initialization from a private git repository .spec.init.git.args represents the arguments required to represent the git repository and its actions. You can find details at git_syc_docs
+This example refers to initialization from a private git repository .spec.init.git.args represents the arguments required to represent the git repository and its actions.
 
-.spec.init.git.authSecret holds the necessary information to pull from the private repository You have to provide a secret with the id_rsa and githubkwonhosts You can find detailed information at git_sync_docs . If you are using a different authentication mechanism for your git repository, please consult the documentation for the git-sync project.
+.spec.init.git.authSecret holds the necessary information to pull from the private repository. You have to provide a secret with the `id_rsa` and `github knwonhosts` . If you are using a different authentication mechanism for your git repository, please consult the documentation for the git-sync project.
 .spec.init.git.securityContext.runAsUser the init container git_sync runs with user 999.
 .spec.podTemplate.Spec.securityContext.fsGroup In order to read the ssh key the fsGroup also should be 999.
 
@@ -499,9 +499,9 @@ spec:
         securityContext:
           runAsUser: 999
 ```
-This example refers to initialization from a private git repository .spec.init.git.args represents the arguments required to represent the git repository and its actions. You can find details at git_syc_docs
+This example refers to initialization from a private git repository .spec.init.git.args represents the arguments required to represent the git repository and its actions.
 
-.spec.init.git.authSecret holds the necessary information to pull from the private repository You have to provide a secret with the id_rsa and githubkwonhosts You can find detailed information at git_sync_docs . If you are using a different authentication mechanism for your git repository, please consult the documentation for the git-sync project.
+.spec.init.git.authSecret holds the necessary information to pull from the private repository. You have to provide a secret with the `id_rsa` and `github knwonhosts`. If you are using a different authentication mechanism for your git repository, please consult the documentation for the git-sync project.
 .spec.init.git.securityContext.runAsUser the init container git_sync runs with user 999.
 .spec.podTemplate.Spec.securityContext.fsGroup In order to read the ssh key the fsGroup also should be 999.
 
@@ -629,13 +629,14 @@ spec:
     - ReadWriteOnce
   deletionPolicy: WipeOut
 ```
-This example refers to initialization from a private git repository .spec.init.git.args represents the arguments required to represent the git repository and its actions. You can find details at git_syc_docs
+This example refers to initialization from a private git repository .spec.init.git.args represents the arguments required to represent the git repository and its actions.
 
-.spec.init.git.authSecret holds the necessary information to pull from the private repository You have to provide a secret with the id_rsa and githubkwonhosts You can find detailed information at git_sync_docs . If you are using a different authentication mechanism for your git repository, please consult the documentation for the git-sync project.
+.spec.init.git.authSecret holds the necessary information to pull from the private repository. You have to provide a secret with the `id_rsa` and `github knwonhosts`. If you are using a different authentication mechanism for your git repository, please consult the documentation for the git-sync project.
 .spec.init.git.securityContext.runAsUser the init container git_sync run with user 999.
 .spec.podTemplate.Spec.securityContext.fsGroup In order to read the ssh key the fsGroup also should be 999.
 
-## PlacementPolicy for PetSet
+## Common Changes
+### PlacementPolicy for PetSet
 
 We have updated the api of PlacementPolicy for Distributed PetSet.
 
@@ -700,6 +701,9 @@ spec:
 you can see changes were introduced under `spec.clusterSpreadConstraint` section. `spec.ocm` is replaced with `spec.clusterSpreadConstraint.distributionRules` and `spec.clusterSpreadConstraint.slice`. 
 
 New field `spec.clusterSpreadConstraint.slice.projectNamespace` is added to specify the project namespace of the slice.
+
+### Find domain
+In all the previous releases, communications inside the k8s cluster happened using `<>.<namespace>.svc.cluster.local` (aka pod dns). In this release, we added support for different domains where "cluster.local" is even not resolvable. So, the pod dns will be `<>.<namespace>.svc.<domain>`. This is helpful when users created the kubernetes cluster with their custom domain.
 
 ## Support
 - **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
