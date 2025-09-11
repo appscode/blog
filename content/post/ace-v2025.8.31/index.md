@@ -19,22 +19,25 @@ tags:
 
 We are pleased to announce the release of `ACE v2025.8.31`, packed with major improvements. ACE **v2025.8.31** brings a bunch of new features & fixes. This release focuses on improving scalability and automation for production-grade deployments. In this post, we’ll highlight the changes done in this release.
 
-## Key Changes
-- **Billing and usages**: `Each database will get it's first month as free trial usage` if the database namespace is explicitly annotated to allow for trail usage. Please visit the [Billing & usage doc](https://appscode.com/docs/en/guides/billing-and-usage-guide/overview.html) for more details.
--**Site Admin** can now disbale registration for new account. 
+### Key Changes
+- **Site Admin** can now disable registration for new account. 
 
 Here are the components specific changes:
 
-## Cluster UI
+### Cluster UI
 
 ### Fixes & Improvements
 - `Fix namespace issue for rancher clusters` when creating project quota.
 - `Fix loader` when upgrading ace version.
 
-## KubeDB UI
+### KubeDB UI
 
 #### Features
 - Add cluster level restrictions for `create, delete and update` operations.
+
+#### Fixes & Improvements
+- `Add Configuration options` for Clickhouse keeper for both externally and internally managed.
+- `Fix securityContext issue` in ferretdb pg-backend .
 
 ### Billing UI
 
@@ -60,9 +63,9 @@ Here are the components specific changes:
 ### External products
 Here is the summary of external dependency updates for `ACE v2025.8.31` :
 
-- `KubeDB`: v2025.7.31 [Release blog](https://appscode.com/blog/post/kubedb-v2025.8.31/).
-- `Stash`: v2025.7.31 [Release blog](https://appscode.com/blog/post/stash-v2025.8.31/).
-- `KubeStash`: v2025.7.31 [Release blog](https://appscode.com/blog/post/kubestash-v2025.8.31/).
+- `KubeDB`: v2025.8.31 [Release blog](https://appscode.com/blog/post/kubedb-v2025.8.31/).
+- `Stash`: v2025.7.31 [Release blog](https://appscode.com/blog/post/stash-v2025.7.31/).
+- `KubeStash`: v2025.7.31 [Release blog](https://appscode.com/blog/post/kubestash-v2025.7.31/).
 
 ## Support
 - **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
