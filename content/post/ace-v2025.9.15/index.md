@@ -17,7 +17,7 @@ tags:
 - voyager-gateway
 ---
 
-We are pleased to announce the release of `ACE v2025.9.15`, packed with very slight improvements. ACE **v2025.9.15** focuses on improving scalability and automation for production-grade deployments. In this post, we’ll highlight the changes done in this release.
+We are pleased to announce the release of `ACE v2025.9.15`. ACE **v2025.9.15** focuses on improving scalability and automation for production-grade deployments. In this post, we’ll highlight the changes done in this release.
 
 ### Key Changes
 - Remove **Generic resource** deletion check.
