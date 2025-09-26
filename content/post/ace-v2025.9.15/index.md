@@ -33,7 +33,7 @@ Here are the components specific changes:
 ### Platform Backend
 
 #### Fixes & Improvements
-- Fix billing check by removing Generic resource deletion check on the billing summary api.
+- Removed unused generic resource deletion check from the billing aggregation job.
 
 ## Support
 - **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
