@@ -52,6 +52,8 @@ microservice adaption
 
 # Why \*-rpc/web is needed ?
 
+![Browser limitation](browser.png)
+
 #### **Logs**
 
 **What**: Timestamped text records of discrete events  
