@@ -2,12 +2,12 @@
 title: The Benefits of Using Connectrpc/web
 date: "2025-09-30"
 authors:
-  - Zubair Ahmed Rafi
+- Zubair Ahmed Rafi
 tags:
-  - appscode
-  - rpc
-  - connect-rpc
-  - microservice
+- appscode
+- connect-rpc
+- microservice
+- rpc
 ---
 
 # RPC
