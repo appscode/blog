@@ -12,7 +12,7 @@ tags:
 - kubedb
 - kubedb-ui
 - kubernetes
-- kubestashi
+- kubestash
 - platform-ui
 - voyager-gateway
 ---
@@ -20,7 +20,7 @@ tags:
 We are pleased to announce the release of `ACE v2025.9.30`. ACE **v2025.9.30** focuses on improving scalability and automation for production-grade deployments. In this post, we’ll highlight the changes done in this release.
 
 ### Key Changes
-- Improve billing details by fixing **Precision related issues**
+- **Improved handling of billing usage values** by ensuring consistent rounding and normalizing the fractional part.
 - Skip name from license and **reuse existing licenses only if valid**
 - **Fix featureExclusionGroup issue**
 
@@ -29,7 +29,12 @@ Here are the components specific changes:
 ### Billing UI
 
 #### Fixes & Improvements
-- Improve the "usage" pages  in the billing-ui by fixing **Precision related issues**
+Improved handling of billing usage values by ensuring consistent rounding and normalizing the fractional part. Previously, usage values were displayed as 0.0000 even when the fractional part was zero. Now, these values are normalized for a cleaner and more consistent display — for example:
+
+* `0.0001` → remains `0.0001`
+* `0.0100` → shown as `0.01`
+* `0.1000` → shown as `0.1`
+* `0.0000` → shown as `0`
 
 ### Platform Backend
 
