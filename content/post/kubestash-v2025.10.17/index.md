@@ -13,13 +13,15 @@ tags:
 - restore
 ---
 
-We are pleased to announce the release of [KubeStash v2025.10.17](https://kubestash.com/docs/v2025.10.17/setup/), featuring enhanced documentation and stability improvements.
+We are pleased to announce the release of [KubeStash v2025.10.17](https://kubestash.com/docs/v2025.10.17/setup/), featuring enhanced documentation, stability improvements, and important bug fixes.
 
 You can check out the full changelog [HERE](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2025.10.17/README.md). In this post, we'll walk you through the highlights of this release.
 
 ---
 
-### Documentation Updates: Manifest-based Backup & Restore of Cluster Resources
+## Documentation Updates:
+
+### Manifest-based Backup & Restore of Cluster Resources
 
 This release includes comprehensive documentation for manifest-based backup and restore operations, helping you protect and recover your cluster resources with greater flexibility.
 
@@ -32,7 +34,9 @@ This release includes comprehensive documentation for manifest-based backup and 
 
 ---
 
-### Improvements and Bug Fixes
+## Improvements and Bug Fixes
+
+### Gracefully Skip Restricted Resources During Backup & Restore
 
 In managed Kubernetes clusters, it’s common for certain **resources or API groups to be restricted** — meaning you might not have permission to create or restore them. In earlier versions, this could lead to unnecessary errors or confusion during restore operations.
 
@@ -40,18 +44,27 @@ Starting from this release, **KubeStash now automatically excludes these resourc
 
 #### What’s New
 
-- #### Automatic Resource Exclusion
+- **Automatic Resource Exclusion**
+
   KubeStash now **skips any resources that do not support the `create` verb**, as these cannot be restored in new cluster.
   
   This optimization ensures backups include only restorable resources, reducing restore-time errors and improving reliability. 
   
 
-- #### Default Exclusions for System-Managed Resources
+- **Excluding System-Managed Resources by Default**
+
    By default, the following resources are now excluded from backup and restore operations:
    - `nodes` 
-   -  `endpointslices.discovery.k8s.io`
+   - `endpointslices.discovery.k8s.io`
 
-  These objects are dynamically managed by Kubernetes and do not need to be backed up.
+  These resources have `create` verb. But these objects are dynamically managed by Kubernetes and do not need to be backed up. 
+
+---
+
+### Fix VolumeSnapshot API Version Compatibility
+
+Introduced a [generic mechanism](https://github.com/kubestash/apimachinery/pull/174) in API Machinery to handle compatibility across different VolumeSnapshot API versions.
+This enhancement eliminates the need to update VolumeSnapshot API references in each KubeStash or KubeDB repository for every new API release.
 
 ---
 
