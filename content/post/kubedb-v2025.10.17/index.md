@@ -1,5 +1,5 @@
 ---
-title: Announcing KubeDB v2025.10.27
+title: Announcing KubeDB v2025.10.17
 date: "2025-10-27"
 weight: 15
 authors:
