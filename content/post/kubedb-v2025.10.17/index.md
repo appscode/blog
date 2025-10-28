@@ -30,7 +30,7 @@ KubeDB **v2025.10.27** introduces enhancements like rack awareness for Kafka, di
 - **Rack Awareness for Kafka**: Added support for rack-aware replica placement to enhance fault tolerance.
 - **Distributed MariaDB Enhancements**: Introduced autoscaling support and KubeStash (Stash 2.0) backup/restore, with Restic driver for continuous archiving and new replication strategies for PITR.
 - **Postgres Improvements**: Updated health checks to avoid unnecessary LSN advancement and fixed standby join issues.
-- **Redis/Valkey ACL**: Added Access Control List (ACL) for fine-grained user permissions, plus new Redis version 8.2.2.
+- **Redis/Valkey ACL**: Added Access Control List (ACL) for fine-grained user permissions, plus new Redis versions.
 - **ClickHouse Features**: Introduced autoscaling for compute and storage, along with recommendation engine for version updates, TLS, and auth rotations.
 
 ## ClickHouse
@@ -304,9 +304,9 @@ We have fixed a bug which was not letting a standby join with primary saying `gr
 
 ### ACL (Access Control List)
 
-In this Release, we have added an Access Control List (ACL) for Redis.
+In this Release, we have added Access Control List (ACL) support for Redis.
 
-Initially, you can deploy Redis/Valkey with user-associated password and rules.
+Initially, You can deploy Redis/Valkey with user-associated password and rules.
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -330,7 +330,7 @@ spec:
       - app2 ${k2} allkeys +@string +@set -SADD
 ```
 
-Deploy the secret associated with `acl.rules`:
+Deploy the secret that has the necessary passwords for ACL users:
 
 ```yaml
 apiVersion: v1
@@ -343,8 +343,6 @@ stringData:
   k1: "pass1"
   k2: "pass2"
 ```
-
-You can check the `acl list` now.
 
 To add/update/delete ACL, you can use RedisOpsRequest. As an example:
 
@@ -366,11 +364,13 @@ spec:
       deleteUsers:
         - app2
       secretRef:
-        name: <new/old secret name which have all the key list>
+        name: <new/old secret name which contains referenced keys>
 ```
 
+Please follow these docs below for the complete guidance on redis ACL: [Using Access Control Lists (ACL) in Redis](https://kubedb.com/docs/v2025.10.17/guides/redis/configuration/acl/), [Reconfiguring Redis ACL](https://kubedb.com/docs/v2025.10.17/guides/redis/reconfigure/acl/).
+
 ### New version support
-Redis version `8.2.2` is now available in KubeDB.
+Redis versions `7.4.6`, `8.0.4` and `8.2.2` are now available in KubeDB.
 
 ## Support
 - **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
