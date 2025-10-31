@@ -44,7 +44,7 @@ Here is the summary of external dependency updates for `ACE v2025.10.17` :
 - `Stash`: v2025.10.17 [Release blog](https://appscode.com/blog/post/stash-v2025.10.17/).
 - `KubeStash`: v2025.10.17 [Release blog](https://appscode.com/blog/post/kubestash-v2025.10.17/).
 - `Voyager-gateway`: v2025.10.24 [Repo](https://github.com/voyagermesh/installer/tree/release-v2025.10.24).
-- 
+
 ## Support
 - **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
 - **Release Updates**: Join our [google group](https://groups.google.com/a/appscode.com/g/releases) for release updates.
