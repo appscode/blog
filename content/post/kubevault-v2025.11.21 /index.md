@@ -17,7 +17,7 @@ tags:
 
 [KubeVault](https://kubevault.com) is a Kubernetes operator for [HashiCorp Vault](https://www.vaultproject.io/). The Vault is a tool for secrets management, encryption as a service, and privileged access management. The KubeVault operator makes it easy to deploy, maintain and manage Vault servers in Kubernetes. It also supports various secret engines' management, policy management in the Kubernetes native way.
 
-We are very excited to announce the release of [KubeVault v2023.9.7](https://kubevault.com/docs/v2025.11.21/setup/) Edition. 
+We are very excited to announce the release of [KubeVault v2025.11.21](https://kubevault.com/docs/v2025.11.21/setup/) Edition. 
 
 You can find the complete commit by commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2025.11.21/README.md).
 
@@ -55,16 +55,18 @@ spec:
 
 After deployment:
 
-- You can exec into the pod and run native bao commands.
-- Secret engines, auth methods, policies, and tokens behave as expected.
-- All KubeVault unsealing, backup/restore, and management workflows continue to work seamlessly.
+- You can exec into the pod and use either the `vault` or `bao` CLI.
+- All secret engines, auth methods, policies, tokens, and KubeVault workflows work as expected.
+
+## Bug Fixes and Performance Improvements
+We have fixed some minor bugs and improved performance in this release.
 
 
 ## What's Next?
 
 Please try the latest release and give us your valuable feedback.
 
-- If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2023.03.03/setup).
+- If you want to install KubeVault, please follow the installation instruction from [here](https://kubevault.com/docs/v2025.11.21/setup).
 
 ## Support
 
