@@ -23,7 +23,7 @@ You can find the complete commit by commit changelog [here](https://github.com/k
 
 ## New Version Support
 
-KubeVault now supports the latest openbao version 2.4.3. To deploy a VaultServer with the latest release, apply the following manifest.
+KubeVault now supports the latest OpenBao version 2.4.3. To deploy a VaultServer with the latest release, apply the following manifest.
 
 ````yaml
 apiVersion: kubevault.com/v1alpha2
