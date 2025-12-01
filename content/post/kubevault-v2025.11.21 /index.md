@@ -33,7 +33,7 @@ metadata:
   namespace: demo
 spec:
   replicas: 3
-  version: 2.4.3
+  version: openbao-2.4.3
   allowedSecretEngines:
     namespaces:
       from: All
