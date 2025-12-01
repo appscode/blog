@@ -59,8 +59,8 @@ After deployment:
 - All secret engines, auth methods, policies, tokens, and KubeVault workflows work as expected.
 
 ## Bug Fixes and Performance Improvements
-We have fixed some minor bugs and improved performance in this release.
 
+We have fixed an issue affecting Raft-backed Vault clusters where a leader node could become unresponsive to API calls. This “zombie leader” state prevented proper failover and could impact cluster availability. The operator now detects this condition more reliably to ensure smoother recovery and improved stability for Raft-based deployments.
 
 ## What's Next?
 
