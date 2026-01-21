@@ -5,25 +5,25 @@ weight: 15
 authors:
 - Saurov Chandra Biswas
 tags:
+- ai
+- cloud-native
+- configuration
+- database
+- elasticsearch
+- gitops
+- hanadb
 - kubedb
 - kubernetes
-- database
-- cloud-native
-- gitops
-- configuration
-- postgres
-- redis
 - mariadb
-- mysql
-- oracle
-- elasticsearch
-- vector-database
-- ai
-- neo4j
 - milvus
+- mysql
+- neo4j
+- oracle
+- postgres
 - qdrant
+- redis
+- vector-database
 - weaviate
-- hanadb
 ---
 
 KubeDB **v2026.1.19** is a major milestone focused on **unified configuration management**, **GitOps safety**, **operational reliability**, and **massive database ecosystem expansion**. This release introduces a redesigned configuration/reconfiguration framework across *all* databases, smarter OpsRequest execution, and first-class support for several new **vector, graph, and enterprise databases**.
