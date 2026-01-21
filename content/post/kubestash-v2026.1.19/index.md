@@ -18,7 +18,7 @@ We are pleased to announce the release of [KubeStash v2026.1.19](https://kubesta
 ---
 
 ### Quick highlights
-- aws-credential-manager: added a mutating webhook to validate bucket access on AWS IRSA`credential-less` mode cluster setup.
+- aws-credential-manager: added a mutating webhook to validate bucket access on `credentialless` (IRSA) EKS setups.
 - Kubernetes client libraries upgraded to Kubernetes 1.34 in many components for better forward compatibility.
 - Image references moved to fully-qualified docker image strings where code expects them.
 - Documentation improved with clarifications around database backup & restore and a new manifest-based cluster resource workflow.
@@ -31,8 +31,14 @@ We are pleased to announce the release of [KubeStash v2026.1.19](https://kubesta
 
 #### AWS Credential Manager
 
-Added a mutating webhook to check bucket access permission for credential-less backup & restore in `eks` cluster. A mutating admission webhook was added to aws-credential-manager to run a bucket access test when `backup`, `restore` jobs are created by KubeStash `operator`. The webhook validates that provided S3 buckets are accessible by KubeStash `Jobs` when the cluster is setup in AWS IRSA `credential-less` mode. This reduces failed backup attempts caused by incorrect bucket permissions and helps operators validate storage targets.
+We added a mutating admission webhook in aws-credential-manager that validates S3/S3-compatible bucket access for `credentialless` (IRSA) EKS setups. When KubeStash creates backup or restore Jobs, the webhook injects an init-container that runs a bucket-access test before the Job’s main containers start. If the test fails, the Job is prevented from proceeding, surfacing misconfigured credentials or permission issues early and reducing failed backups.
 
+##### Two tunable flags control the init-container behavior
+
+- `--aws-max-interval-seconds` (default: 5) — retry interval between access attempts.
+- `--aws-max-wait-seconds` (default: 300) — overall timeout for the access test.
+
+The init-container retries at the configured interval until access succeeds or the total wait is exceeded—adjust these to balance retry aggressiveness and overall timeout for high-latency or eventually-consistent storage backends.
 
 ### Documentation update
 - Updated the cluster-resources guide with a manifest-based "Full Cluster Backup & Restore" workflow and a concise "Keep in mind" note clarifying backup tasks. See the details [here](https://kubestash.com/docs/v2026.1.19/guides/cluster-resources/full-cluster-backup-and-restore/#keep-in-mind).
