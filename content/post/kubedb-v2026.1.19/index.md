@@ -28,7 +28,7 @@ tags:
 
 KubeDB **v2026.1.19** is a major milestone focused on **unified configuration management**, **GitOps safety**, **operational reliability**, and **massive database ecosystem expansion**. This release introduces a redesigned configuration/reconfiguration framework across *all* databases, smarter OpsRequest execution, and first-class support for several new **vector, graph, and enterprise databases**.
 
-Alongside core stability improvements, this release brings **PostgreSQL sharded OpsRequests**, **Postgresql auto-tuning with pgtune**, **spec-driven TLS for Oracle**, and **new database engines** like **Neo4j, Qdrant, Milvus, Weaviate, and SAP HanaDB**.
+Alongside core stability improvements, this release brings **PostgreSQL sharded OpsRequests**, **Postgresql auto-tuning with pgtune**, **spec-driven TLS for Oracle**, and **new database operators** like **Neo4j, Qdrant, Milvus, Weaviate, and SAP HanaDB**.
 
 ---
 
@@ -494,12 +494,14 @@ spec:
 
 ### Neo4j (NEW)
 
-We’re excited to introduce support for Neo4j, the world’s leading graph database management system designed to harness the power of connected data. Neo4j offers native graph storage, full ACID compliance, and the expressive Cypher query language, making it ideal for knowledge graphs, fraud detection, and real-time recommendation engines. Key features include:
+We’re excited to introduce support for Neo4j, the world’s leading graph database management system designed to harness the power of connected data. Neo4j offers native graph storage, full ACID compliance, and the expressive Cypher query language, making it ideal for knowledge graphs, fraud detection, and real-time recommendation engines. 
+
+Key features include:
 
 * Cluster Mode Provisioning: Deploy Neo4j Autonomous Clusters with ease using KubeDB.
 * Custom Configuration: Support for custom configurations via Kubernetes secrets to fine-tune your graph engine.
 * Authentication: Enhanced security with built-in authentication.
-* 
+
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: Neo4j
