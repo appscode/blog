@@ -466,7 +466,7 @@ In this release, MariaDB has resolved the physical base backup version incompati
 ## Pgpool
 
 In this release we have removed `spec.configSecret` & `spec.initConfig` from the pgpool api.
-Instead you can use `spec.configuration`. See the common changes for more details.
+Instead you can use `spec.configuration`. See the common changes for [more details](#common-improvements).
 
 ---
 
