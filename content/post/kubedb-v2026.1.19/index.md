@@ -724,7 +724,7 @@ spec:
       inline:
           conf.yaml: |- 
               query_defaults:
-	       limit: 1000
+	            limit: 1000
   podTemplate:
     spec:
       containers:
