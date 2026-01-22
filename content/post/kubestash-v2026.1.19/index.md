@@ -52,12 +52,16 @@ Tunable flags (defaults shown):
 This behavior reduces failed backups by detecting credential, permission, or cloud-latency issues before workload containers start.
 
 
-### Documentation update
+### Documentation Update
 -  Updated the cluster-resources guide with a manifest-based ***Full Cluster Backup & Restore***, including a concise ***Keep in mind*** note to clarify the distinction between database backup/restore and cluster resources. See the details [here](https://kubestash.com/docs/v2026.1.19/guides/cluster-resources/full-cluster-backup-and-restore/#keep-in-mind).
 
 ---
 
-### Improvements and Bug fixes
+### Improvements and Bug Fixes
+
+BackupSession/SnapShot Phase Stuck Due to Pod Eviction
+
+Previously, if Job's (Backup/RetentionPolicy/Restore) pods were evicted or deleted (due to preemption, node-pressure), BackupSessions or SnapShots were stuck on Running phase as those wouldn't be marked incomplete by the Job controller. Now the controller detects evicted Job pods and sets the appropriate incomplete  conditions ensuring BackupSessions, SnapShots, RestoreSessions reflects actual failure and allowing next scheduled Backup to trigger. 
 
 ---
 
