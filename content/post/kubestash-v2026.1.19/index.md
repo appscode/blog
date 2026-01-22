@@ -21,7 +21,7 @@ We are pleased to announce the release of [KubeStash v2026.1.19](https://kubesta
 - aws-credential-manager: added a mutating webhook to validate bucket access on `credentialless` (IRSA) EKS setups.
 - Kubernetes client libraries upgraded to Kubernetes 1.34 in many components for better forward compatibility.
 - Image references moved to fully-qualified docker image strings where code expects them.
-- Documentation improved with clarifications around database backup & restore and a new manifest-based cluster resource workflow.
+- Documentation improved with clarifications manifest-based cluster resource backup & restore.
 - Installer and charts: generated certified charts, stricter semver for certified charts, many `CVE` report updates, chart tests and better test logging.
 - Improved compatibility and packaging for `Red Hat` certification (published images in several repos).
 
@@ -31,17 +31,32 @@ We are pleased to announce the release of [KubeStash v2026.1.19](https://kubesta
 
 #### AWS Credential Manager
 
-We added a mutating admission webhook in aws-credential-manager that validates S3/S3-compatible bucket access for `credentialless` (IRSA) EKS setups. When KubeStash creates backup or restore Jobs, the webhook injects an init-container that runs a bucket-access test before the Job’s main containers start. If the test fails, the Job is prevented from proceeding, surfacing misconfigured credentials or permission issues early and reducing failed backups.
+We added a mutating admission webhook in aws-credential-manager that injects an `init-container` to the Jobs for checking access to S3 buckets for `credentialless` (IRSA) EKS setups.
 
-##### Two tunable flags control the init-container behavior
+The workflow:
 
+- The KubeStash operator creates Jobs (Backup, RetentionPolicy, Restore) and the corresponding ServiceAccounts with required annotations.
+- The operator's ServiceAccount must include the annotation:
+  `eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT_ID>:role/<role-name>` for IRSA (credentialless) access. This annotation is set by the cluster administrator.
+- When the role ARN annotation is present, KubeStash propagates a second annotation to Job ServiceAccounts listing required buckets:
+  `go.klusters.dev/bucket-names: <bucket1,bucket2,...>`. Bucket names are derived from all `BackupStorage` resources referenced by the `BackupConfiguration`.
+- The AWS Credential Manager updates the IAM role trust policy to allow the annotated ServiceAccount to assume the role.
+- When a Job ServiceAccount carries the `go.klusters.dev/bucket-names` annotation, the webhook injects an init-container that verifies access to each bucket before the Job's main containers run. The init-container retries at a configured interval until access succeeds or a total timeout is reached. On success the Job proceeds; on failure the init-container exits non‑zero and the Job is prevented from running, surfacing misconfigured credentials or permissions early.
+
+Tunable flags (defaults shown):
 - `--aws-max-interval-seconds` (default: 5) — retry interval between access attempts.
 - `--aws-max-wait-seconds` (default: 300) — overall timeout for the access test.
 
-The init-container retries at the configured interval until access succeeds or the total wait is exceeded—adjust these to balance retry aggressiveness and overall timeout for high-latency or eventually-consistent storage backends.
+This behavior reduces failed backups by detecting credential or permission issues before workload containers start.
+
+##### Two tunable flags control the init-container behavior
+```bash
+- `--aws-max-interval-seconds` (default: 5) — retry interval between access attempts.
+- `--aws-max-wait-seconds` (default: 300) — overall timeout for the access test.
+```
 
 ### Documentation update
-- Updated the cluster-resources guide with a manifest-based "Full Cluster Backup & Restore" workflow and a concise "Keep in mind" note clarifying backup tasks. See the details [here](https://kubestash.com/docs/v2026.1.19/guides/cluster-resources/full-cluster-backup-and-restore/#keep-in-mind).
+-  Updated the cluster-resources guide with a manifest-based ***Full Cluster Backup & Restore***, including a concise ***Keep in mind*** note to clarify the distinction between database backup/restore and cluster resources. See the details [here](https://kubestash.com/docs/v2026.1.19/guides/cluster-resources/full-cluster-backup-and-restore/#keep-in-mind).
 
 ---
 
