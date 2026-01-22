@@ -41,19 +41,16 @@ The workflow:
 - When the role ARN annotation is present, KubeStash propagates a second annotation to Job ServiceAccounts listing required buckets:
   `go.klusters.dev/bucket-names: <bucket1,bucket2,...>`. Bucket names are derived from all `BackupStorage` resources referenced by the `BackupConfiguration`.
 - The AWS Credential Manager updates the IAM role trust policy to allow the annotated ServiceAccount to assume the role.
-- When a Job ServiceAccount carries the `go.klusters.dev/bucket-names` annotation, the webhook injects an init-container that verifies access to each bucket before the Job's main containers run. The init-container retries at a configured interval until access succeeds or a total timeout is reached. On success the Job proceeds; on failure the init-container exits non‑zero and the Job is prevented from running, surfacing misconfigured credentials or permissions early.
+- When a Job ServiceAccount carries the `go.klusters.dev/bucket-names` annotation, the webhook injects an init-container that verifies access to each bucket before the Job's main containers run. The init-container retries at a configured interval until access succeeds or a total timeout is reached. On success the Job proceeds; on failure the init-container exits non‑zero and the Job is prevented from running, surfacing misconfigured credentials or permissions early. 
+
+     This mechanism was added to address a race condition: the AWS Credential Manager updates the IAM role trust policy after Jobs and ServiceAccounts are created, and `cloud latency` can cause pods to start before the ServiceAccount has permission to assume the role, leading to authentication errors. The injected init-container blocks the main containers until bucket access succeeds (or the timeout elapses), preventing premature start and noisy failures.
 
 Tunable flags (defaults shown):
 - `--aws-max-interval-seconds` (default: 5) — retry interval between access attempts.
 - `--aws-max-wait-seconds` (default: 300) — overall timeout for the access test.
 
-This behavior reduces failed backups by detecting credential or permission issues before workload containers start.
+This behavior reduces failed backups by detecting credential, permission, or cloud-latency issues before workload containers start.
 
-##### Two tunable flags control the init-container behavior
-```bash
-- `--aws-max-interval-seconds` (default: 5) — retry interval between access attempts.
-- `--aws-max-wait-seconds` (default: 300) — overall timeout for the access test.
-```
 
 ### Documentation update
 -  Updated the cluster-resources guide with a manifest-based ***Full Cluster Backup & Restore***, including a concise ***Keep in mind*** note to clarify the distinction between database backup/restore and cluster resources. See the details [here](https://kubestash.com/docs/v2026.1.19/guides/cluster-resources/full-cluster-backup-and-restore/#keep-in-mind).
