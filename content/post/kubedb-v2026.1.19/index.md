@@ -80,11 +80,7 @@ Operators no longer mutate user-provided custom config secrets.
 **New behavior**
 
 * User secrets are **read-only**
-* Operator creates an internal secret:
-
-  ```
-  <db-name>-<db-cr-uid-last-6>
-  ```
+* Operator creates an internal secret in this format `<db-name>-<db-cr-uid-last-6>`
 * Internal secret stores:
 
     * Generated configs
@@ -118,7 +114,7 @@ spec:
 > Note: If the same configuration exists in both Secret and Inline, Inline takes priority
 
 ### Restart-Aware Reconfiguration
-
+The operator now determines whether a restart is required during reconfiguration.
 ```yaml
 spec:
   configuration:
@@ -228,7 +224,7 @@ spec:
       storageType: ssd
 ```
 
-Some example of auto tuning parameters are given as sample:
+This api fields are the same field defined [here](https://pgtune.leopard.in.ua/). Some example of auto-tuning parameters are given as sample:
 
 ```bash
 
@@ -303,7 +299,7 @@ Previously we used the  `.spec.configSecret` field to provide custom configurati
 
 spec:
   configuration:
-    secretName: pg-conf  // previously this secret was given vai .spec.configSecret field
+    secretName: pg-conf  // previously this secret was given via .spec.configSecret field
 ```
 
 #### Using inline configuration
@@ -388,26 +384,7 @@ Continuous mount check has been added in case of node failure. A evict will be p
 In this release we have updated the API of redis where we moved the ACL Spec from `spec.acl` to `spec.configuration.acl`. As an example you can have a look in this yaml:
 
 ```yaml
-apiVersion: kubedb.com/v1
-kind: Redis
-metadata:
-  name: redis-instance
-  namespace: demo
 spec:
-  version: 8.2.2
-  mode: Cluster
-  cluster:
-    shards: 3
-    replicas: 2
-  storageType: Durable
-  storage:
-    resources:
-      requests:
-        storage: 20M
-    storageClassName: "standard"
-    accessModes:
-    - ReadWriteOnce
-  deletionPolicy: WipeOut
   configuration:
     acl:
       secretRef:
@@ -415,8 +392,6 @@ spec:
       rules:
         - userName1 ${k1} allkeys +@string +@set -SADD
         - userName2 ${k2} allkeys +@string +@set -SADD
-        - userName3 ${k3} allkeys +@string +@set -SADD
-        - userName4 ${k4} allkeys +@string +@set -SADD
 ```
 
 
@@ -492,6 +467,36 @@ spec:
 
 ## New Database Engines
 
+### DB2
+
+KubeDB now supports IBM DB2, a high-performance enterprise relational database designed for transactional (OLTP), analytical (OLAP), and mixed workloads. DB2 provides strong ACID guarantees, advanced SQL capabilities, high availability, and robust security features, making it suitable for mission-critical applications.  With KubeDB integration, users can deploy DB2 on Kubernetes with persistent storage, authentication for production workloads.
+
+
+Here’s an example YAML to deploy DB2 using KubeDB:
+
+
+```yaml
+
+apiVersion: kubedb.com/v1alpha2
+kind: DB2
+metadata:
+  name: my-db2
+  namespace: demo
+spec:
+  deletionPolicy: Delete
+  replicas: 2
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5G
+  storageType: Durable
+  version: 11.5.8.0
+ 
+```
+
+
 ### Neo4j (NEW)
 
 We’re excited to introduce support for Neo4j, the world’s leading graph database management system designed to harness the power of connected data. Neo4j offers native graph storage, full ACID compliance, and the expressive Cypher query language, making it ideal for knowledge graphs, fraud detection, and real-time recommendation engines. 
@@ -510,24 +515,6 @@ metadata:
   namespace: demo
 spec:
   replicas: 3
-  podTemplate:
-    spec:
-      securityContext:
-        fsGroup: 7474
-        fsGroupChangePolicy: Always
-        runAsGroup: 7474
-        runAsNonRoot: true
-        runAsUser: 7474
-      terminationGracePeriodSeconds: 3600
-      containers:
-        - name: neo4j
-          resources:
-            limits:
-              cpu: 500m
-              memory: 2Gi
-            requests:
-              cpu: 500m
-              memory: 2Gi
   version: "2025.10.1"
   storage:
     storageClassName: standard
@@ -720,30 +707,12 @@ spec:
       requests:
         storage: 10Gi
   configuration:
-      secretName: weaviate-user-config
-      inline:
-          conf.yaml: |- 
-              query_defaults:
-	            limit: 1000
-  podTemplate:
-    spec:
-      containers:
-        - name: weaviate
-          securityContext:
-            runAsNonRoot: false
-          resources:
-            requests:
-              cpu: 500m
-              memory: 1Gi
-            limits:
-              memory: 1Gi
-
-  healthChecker:
-    periodSeconds: 10
-    timeoutSeconds: 10
-    failureThreshold: 3
+    secretName: weaviate-user-config
+    inline:
+      conf.yaml: |- 
+        query_defaults:
+          limit: 1000
 ```
-
 
 Supported version: **1.33.1**
 
@@ -789,8 +758,8 @@ metadata:
   namespace: demo
 type: kubernetes.io/basic-auth
 stringData:
-  username: SYSTEM
-  password: HanaCluster123!
+  username: "SYSTEM"
+  password: "HanaCluster123!"
 ```
 When using an externally managed secret, set authSecret.externallyManaged: true in the HanaDB spec. For automatic credential generation, set it to false and KubeDB will create and manage the authentication secret for you.
 
@@ -799,7 +768,7 @@ Supported version: **2.0.82**
 
 ---
 
-## Version Updates
+## New Versions
 
 * **MariaDB**: 11.8.5, 12.1.2
 * **MySQL**: 9.4.0
