@@ -13,7 +13,7 @@ tags:
 - restore
 ---
 
-We are pleased to announce the release of [KubeStash v2026.1.19](https://kubestash.com/docs/v2026.1.19/setup/), packed with improvements across the KubeStash ecosystem that packed with improvements across the KubeStash ecosystem that increase compatibility with newer Kubernetes releases, improve reliability of backups and restores, and advance our certified chart and image publishing work. You can check out the full changelog [HERE](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.1.19/README.md). In this post, we’ll highlight the changes done in this release.
+We are pleased to announce the release of [KubeStash v2026.1.19](https://kubestash.com/docs/v2026.1.19/setup/), packed with improvements across the KubeStash ecosystem that increase compatibility with newer Kubernetes releases, improve reliability of backups and restores, and advance our certified chart and image publishing work. You can check out the full changelog [HERE](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.1.19/README.md). In this post, we’ll highlight the changes done in this release.
 
 ---
 
@@ -21,7 +21,7 @@ We are pleased to announce the release of [KubeStash v2026.1.19](https://kubesta
 - aws-credential-manager: added a mutating webhook to validate bucket access on `credentialless` (IRSA) EKS setups.
 - Kubernetes client libraries upgraded to Kubernetes 1.34 in many components for better forward compatibility.
 - Image references moved to fully-qualified docker image strings where code expects them.
-- Documentation improved with clarifications manifest-based cluster resource backup & restore.
+- Documentation improved with clarifications on manifest-based cluster resource backup & restore.
 - Installer and charts: generated certified charts, stricter semver for certified charts, many `CVE` report updates, chart tests and better test logging.
 - Improved compatibility and packaging for `Red Hat` certification (published images in several repos).
 
