@@ -51,6 +51,14 @@ Tunable flags (defaults shown):
 
 This behavior reduces failed backups by detecting credential, permission, or cloud-latency issues before workload containers start.
 
+### Introduce Concurrent Worker Pool Pattern [PR(https://github.com/kubestash/apimachinery/commit/98bb7d6a)
+In Kubestash the `Backupstorage` with `WipeOut` during the `Deletion` operation we introduced a `concurrent pool pattern` to handle the deletion of the backup data from the cloud.
+
+* `MaxConnections`:
+  * In  `BackupStorage` each cloud provider has field `MaxConnections` which is used to limit the number of concurrent connections to the cloud provider.
+  * We use this field to delete the backup data from the cloud.
+  * Previously we used to use only one worker to delete now, by default `10` workers will use to delete the backup data from the cloud.
+  * User can configure this field using `MaxConnections` field in `BackupStorage` CRD under the `spec.provider.s3` section (Here, I used s3 as an example).
 
 ### Documentation Update
 -  Updated the cluster-resources guide with a manifest-based ***Full Cluster Backup & Restore***, including a concise ***Keep in mind*** note to clarify the distinction between database backup/restore and cluster resources. See the details [here](https://kubestash.com/docs/v2026.1.19/guides/cluster-resources/full-cluster-backup-and-restore/#keep-in-mind).
@@ -62,6 +70,12 @@ This behavior reduces failed backups by detecting credential, permission, or clo
 BackupSession/SnapShot Phase Stuck Due to Pod Eviction
 
 Previously, if Job's (Backup/RetentionPolicy/Restore) pods were evicted or deleted (due to preemption, node-pressure), BackupSessions or SnapShots were stuck on Running phase as those wouldn't be marked incomplete by the Job controller. Now the controller detects evicted Job pods and sets the appropriate incomplete  conditions ensuring BackupSessions, SnapShots, RestoreSessions reflects actual failure and allowing next scheduled Backup to trigger. 
+
+
+#### Remove non-exclusive locks also while ensureNoExclusive locks [Here](https://github.com/kubestash/apimachinery/commit/e6109991)
+  * Removing all stale locks (restic determines which locks are stale)
+  * Checking if any exclusive locks remain (if they do, they're active)
+  * Waiting for active exclusive locks to be released
 
 ---
 
