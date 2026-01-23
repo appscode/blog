@@ -29,25 +29,50 @@ We are pleased to announce the release of [KubeStash v2026.1.19](https://kubesta
 
 ### What's New
 
-#### AWS Credential Manager
+#### Mutating Webhook for AWS IRSA
 
-We added a mutating admission webhook in aws-credential-manager that injects an `init-container` to the Jobs for checking access to S3 buckets for `credentialless` (IRSA) EKS setups.
+This release introduces a mutating admission webhook in `AWS Credential Manager` that injects an init-container into Jobs that access S3 buckets using IRSA authentication.
+The init-container ensures bucket access is available before the Job starts, preventing failures caused by IAM propagation delays.
 
-The workflow:
+##### Responsibilities and Workflow
 
-- The KubeStash operator creates Jobs (Backup, RetentionPolicy, Restore) and the corresponding ServiceAccounts with required annotations.
-- The operator's ServiceAccount must include the annotation:
-  `eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT_ID>:role/<role-name>` for IRSA (credentialless) access. This annotation is set by the cluster administrator.
-- When the role ARN annotation is present, KubeStash propagates a second annotation to Job ServiceAccounts listing required buckets:
-  `go.klusters.dev/bucket-names: <bucket1,bucket2,...>`. Bucket names are derived from all `BackupStorage` resources referenced by the `BackupConfiguration`.
-- The AWS Credential Manager updates the IAM role trust policy to allow the annotated ServiceAccount to assume the role.
-- When a Job ServiceAccount carries the `go.klusters.dev/bucket-names` annotation, the webhook injects an init-container that verifies access to each bucket before the Job's main containers run. The init-container retries at a configured interval until access succeeds or a total timeout is reached. On success the Job proceeds; on failure the init-container exits non‑zero and the Job is prevented from running, surfacing misconfigured credentials or permissions early. 
+###### KubeStash [PR](https://github.com/kubestash/apimachinery/pull/196)
 
-     This mechanism was added to address a race condition: the AWS Credential Manager updates the IAM role trust policy after Jobs and ServiceAccounts are created, and `cloud latency` can cause pods to start before the ServiceAccount has permission to assume the role, leading to authentication errors. The injected init-container blocks the main containers until bucket access succeeds (or the timeout elapses), preventing premature start and noisy failures.
+- KubeStash creates:
+     - Backup/restore Jobs for accessing cloud buckets
+     - Corresponding ServiceAccounts used by those Jobs
+- The ServiceAccount must be pre-configured by the cluster administrator with the IRSA annotation:
+    ```bash
+    eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT_ID>:role/<role-name>
+     ```
+- When this role ARN annotation is present:
+    - KubeStash derives bucket names from all referenced BackupStorage resources.
+    - KubeStash propagates the following annotation to the Job ServiceAccount:
+       ```bash
+      go.klusters.dev/bucket-names: <bucket1,bucket2,...>
+       ```
 
-Tunable flags (defaults shown):
-- `--aws-max-interval-seconds` (default: 5) — retry interval between access attempts.
-- `--aws-max-wait-seconds` (default: 300) — overall timeout for the access test.
+###### AWS Credential Manager
+
+ - Watches for ServiceAccounts annotated with:
+   ```bash
+   go.klusters.dev/bucket-names
+   ```
+
+- Updates the `IAM role trust policy` to allow the annotated `ServiceAccount` to assume the IRSA role.
+
+- Provides a `mutating admission webhook` that:
+   - Detects Jobs whose ServiceAccount includes the bucket annotation
+
+   - Injects an `init-container` into those Jobs
+- Init-Container Behavior: Injected by AWS Credential Manager
+    - Runs before the Job’s main containers
+    - Verifies access to each annotated `S3 bucket`
+- Race Condition Fix
+    - There is an inherent race condition in IRSA-based workflows:
+        - Jobs and ServiceAccounts may be created `before` The IAM role trust policy update fully propagates in AWS
+
+Due to `cloud propagation latency`, pods may start before the `ServiceAccount` is allowed to assume the role, resulting in authentication failures. The injected init-container blocks `Job execution` until bucket access is confirmed.         
 
 This behavior reduces failed backups by detecting credential, permission, or cloud-latency issues before workload containers start.
 
@@ -61,13 +86,13 @@ In Kubestash the `Backupstorage` with `WipeOut` during the `Deletion` operation 
   * User can configure this field using `MaxConnections` field in `BackupStorage` CRD under the `spec.provider.s3` section (Here, I used s3 as an example).
 
 ### Documentation Update
--  Updated the cluster-resources guide with a manifest-based ***Full Cluster Backup & Restore***, including a concise ***Keep in mind*** note to clarify the distinction between database backup/restore and cluster resources. See the details [here](https://kubestash.com/docs/v2026.1.19/guides/cluster-resources/full-cluster-backup-and-restore/#keep-in-mind).
+-  Updated the cluster-resources guide with a manifest-based `Full Cluster Backup & Restore`, including a concise `Keep in mind` note to clarify the distinction between database backup/restore and cluster resources. See the details [here](https://kubestash.com/docs/v2026.1.19/guides/cluster-resources/full-cluster-backup-and-restore/#keep-in-mind).
 
 ---
 
 ### Improvements and Bug Fixes
 
-BackupSession/SnapShot Phase Stuck Due to Pod Eviction
+#### BackupSession/SnapShot Phase Stuck Due to Pod Eviction [PR](https://github.com/kubestash/kubestash/pull/310)
 
 Previously, if Job's (Backup/RetentionPolicy/Restore) pods were evicted or deleted (due to preemption, node-pressure), BackupSessions or SnapShots were stuck on Running phase as those wouldn't be marked incomplete by the Job controller. Now the controller detects evicted Job pods and sets the appropriate incomplete  conditions ensuring BackupSessions, SnapShots, RestoreSessions reflects actual failure and allowing next scheduled Backup to trigger. 
 
