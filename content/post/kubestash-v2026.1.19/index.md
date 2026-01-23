@@ -51,7 +51,7 @@ Tunable flags (defaults shown):
 
 This behavior reduces failed backups by detecting credential, permission, or cloud-latency issues before workload containers start.
 
-### Introduce Concurrent Worker Pool Pattern [PR(https://github.com/kubestash/apimachinery/commit/98bb7d6a)
+### Introduce Concurrent Worker Pool Pattern [PR](https://github.com/kubestash/apimachinery/commit/98bb7d6a)
 In Kubestash the `Backupstorage` with `WipeOut` during the `Deletion` operation we introduced a `concurrent pool pattern` to handle the deletion of the backup data from the cloud.
 
 * `MaxConnections`:
@@ -72,7 +72,7 @@ BackupSession/SnapShot Phase Stuck Due to Pod Eviction
 Previously, if Job's (Backup/RetentionPolicy/Restore) pods were evicted or deleted (due to preemption, node-pressure), BackupSessions or SnapShots were stuck on Running phase as those wouldn't be marked incomplete by the Job controller. Now the controller detects evicted Job pods and sets the appropriate incomplete  conditions ensuring BackupSessions, SnapShots, RestoreSessions reflects actual failure and allowing next scheduled Backup to trigger. 
 
 
-#### Remove non-exclusive locks also while ensureNoExclusive locks [Here](https://github.com/kubestash/apimachinery/commit/e6109991)
+#### Remove non-exclusive locks also while ensureNoExclusive locks [PR](https://github.com/kubestash/apimachinery/commit/e6109991)
   * Removing all stale locks (restic determines which locks are stale)
   * Checking if any exclusive locks remain (if they do, they're active)
   * Waiting for active exclusive locks to be released
