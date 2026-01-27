@@ -1,6 +1,6 @@
 ---
 title: Announcing KubeDB v2026.1.19
-date: "2026-1-19"
+date: "2026-01-19"
 weight: 15
 authors:
 - Saurov Chandra Biswas
