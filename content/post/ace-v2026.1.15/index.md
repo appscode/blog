@@ -1,6 +1,6 @@
 ---
 title: Announcing ACE v2026.1.15
-date: "2026-1-30"
+date: "2026-01-30"
 weight: 16
 authors:
 - Arnob Kumar Saha
