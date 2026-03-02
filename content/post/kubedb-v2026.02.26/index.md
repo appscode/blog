@@ -177,6 +177,57 @@ you can also set below fields in the `.spec.readReplicas[i]`
   # 9. ServiceTemplate for modifying the read replica service
 ```
 
+#### Scaling Read Replicas
+
+Horizontal and vertical scaling of read replicas is supported using `PostgresOpsRequest`. You can increase or decrease the number of replicas in each group, and adjust their resource settings as needed. This allows you to easily adapt to changing read workloads without affecting the primary or standby replicas.
+
+**Vertical Scaling**: You can update the CPU and memory resources allocated to the read replicas to handle increased read traffic or reduce costs during low traffic periods.
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: PostgresOpsRequest
+metadata:
+  name: pg-vertical
+  namespace: demo
+spec:
+  apply: Always
+  type: VerticalScaling
+  databaseRef:
+    name: ha-postgres
+  verticalScaling:
+    readReplicas:
+    - name: reporting
+      postgres:
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 100m
+```
+
+Here, you need to specify the name of the read replica group you want to scale (e.g., `reporting` in this example, multiple read replica group can be scaled in a single OpsRequest) and the new resource settings for that group.
+
+**Horizontal Scaling**: You can increase or decrease the number of read replicas in each group to handle changes in read traffic.
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: PostgresOpsRequest
+metadata:
+  name: pg-scale-horizontal-slot
+  namespace: demo
+spec:
+  type: HorizontalScaling
+  databaseRef:
+    name: ha-postgres
+  horizontalScaling:
+    readReplicas:
+      - name: reporting
+        replicas: 8
+      - name: user-facing
+        replicas: 2
+```
+
+In this example, the `reporting` group is scaled up to 8 replicas, while the `user-facing` group is scaled down to 2 replicas. You can adjust the number of replicas in each group based on your read workload requirements.
+
 ### PostgreSQL Migration Tool
 
 We are excited to introduce our new PostgreSQL migration tool, designed to simplify and streamline database migrations to KubeDB-managed PostgreSQL instances. This tool enables seamless migration of PostgreSQL databases from any source environment—including Amazon RDS, CloudNativePG (CNPG), Zalando PostgreSQL Operator, Bitnami Helm charts, and self-hosted PostgreSQL instances—to KubeDB-managed PostgreSQL clusters with **minimal downtime**.
