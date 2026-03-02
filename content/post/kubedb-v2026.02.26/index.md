@@ -719,10 +719,8 @@ spec:
   version: "2.0.82"
   replicas: 3
   storageType: Durable
-
   topology:
     mode: SystemReplication
-
   storage:
     accessModes:
       - ReadWriteOnce
@@ -781,6 +779,8 @@ This example sets a custom global memory allocation limit.
 
 - PostgreSQL: 18.2, 17.8, 16.12, 15.16, 14.21
 - Milvus: 2.6.7, 2.6.9, 2.6.11
+- Kafka: 4.2.0
+- Qdrant: 1.17.0
 
 ## Support
 - **Contact Us**: Reach out via [our website](https://appscode.com/contact/).
