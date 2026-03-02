@@ -45,7 +45,7 @@ From enterprise databases like **Oracle and HanaDB** to modern vector and graph 
 * Native monitoring for Neo4j, Qdrant, and Oracle
 * Milvus Distributed Mode support
 * HanaDB System Replication clustering
-* New PostgreSQL, Milvus versions
+* New PostgreSQL, Milvus, Kafka, Qdrant versions
 
 ---
 
