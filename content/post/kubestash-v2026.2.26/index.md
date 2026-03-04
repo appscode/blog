@@ -18,7 +18,7 @@ We are pleased to announce the release of [KubeStash v2026.2.26](https://kubesta
 ---
 
 ### Quick highlights
-- Added MongoDB backup & restore support for non-KubeDB managed MongoDB instances using `AppBinding`.
+- Added backup and restore support for a `MongoDB` instance deployed as a `StatefulSet` within the same Kubernetes cluster.
 - Refactored restic integration into a standalone package and updated dependent components accordingly.
 - Improved cloud identity workflows by propagating cloud and bucket annotations to backup/restore Jobs and ServiceAccounts.
 - Fixed retention policy pods getting stuck in the `Pending` state by surfacing scheduling reasons in status.
@@ -29,7 +29,7 @@ We are pleased to announce the release of [KubeStash v2026.2.26](https://kubesta
 
 #### MongoDB Backup & Restore for Non-KubeDB Managed Instances [PR](https://github.com/kubedb/mongodb-restic-plugin/pull/112)
 
-KubeStash can now back up and restore MongoDB instances that are not managed by KubeDB, using an `AppBinding` as the target. This is useful when MongoDB is deployed via Helm charts, manifests, or external operators, but you still want to use KubeStash for backups.
+KubeStash can now back up and restore MongoDB instances that are running inside a Statefulset in the same cluster and not managed by KubeDB.
 
 **Sample `AppBinding`**
 
@@ -70,8 +70,6 @@ spec:
       name: mongodb-addon
       tasks:
       - name: logical-backup
-        params:
-          args: --db=playground1 --db=playground2
 ```
 
 **Backup pod logs (example)**
@@ -149,9 +147,6 @@ The release also adopts `gomodules.xyz/restic v0.2.0` ([PR](https://github.com/k
 KubeStash now propagates cloud and bucket annotations to backup/restore Jobs and their ServiceAccounts. This is intended to reduce manual setup when using cloud-native identity mechanisms such as:
 
 - **AWS IRSA** (S3 access through IAM roles for service accounts)
-- **GCP Workload Identity** (GCS access)
-
-For GCP setups, IAM-related annotations are propagated as part of this work ([PR](https://github.com/kubestash/apimachinery/pull/209)).
 
 ---
 
