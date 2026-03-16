@@ -21,10 +21,10 @@ We are pleased to announce the release of `ACE v2026.2.16`.
 ACE **v2026.2.16** focuses on improving observability, billing workflows, and everyday usability across the platform. In this post, we'll highlight the changes done in this release.
 
 ### Key Changes
-- **Monthly billing usage projection and automatic assignment of cluster to contract to simplify cluster management. User can now see projected monthly usage and clusters are automatically assigned to the appropriate contract.
+- **Monthly billing usage** projection and automatic assignment of cluster to contract to simplify cluster management. User can now see projected monthly usage and clusters are automatically assigned to the appropriate contract.
 - **Observability is improved** with billing pod metrics endpoints and service-mode-aware dashboard panels.
 - **Cluster and database workflows are more streamlined** with preset form-builder updates, backup editing, and cleaner in-app navigation.
-- **Credential-less EKS support has been introduced across the platform, allowing all downstream products to run on EKS clusters without requiring cloud credentials.
+- **Credential-less EKS support** has been introduced across the platform, allowing all downstream products to run on EKS clusters without requiring cloud credentials.
 
 Here are the components specific changes:
 
