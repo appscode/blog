@@ -31,13 +31,13 @@ Here are the components specific changes:
 ### Billing UI
 #### Enhancements
 - Added an **Auto Assign Cluster** action to simplify assigning clusters to contracts.
-- Replaced Monaco Editor with **CodeMirror 6**, resulting in a lighter editor setup with better usability.
+- Added a **lighter and faster editor setup** for a smoother editing experience.
 - Updated copy actions and labels for a cleaner contract and customer workflow.
 - Resolved dependency and security issues.
 
 ### Cluster UI
 #### Enhancements
-- Added the **form builder to presets** for a more flexible preset management workflow.
+- Updated **presets design** for a faster UI experience.
 - Updated create links to take users directly to **KubeDB UI** where appropriate.
 - Opening **Platform UI** from Cluster UI now happens in the **current tab**.
 - Improved alert messaging behavior after required conditions are met.
@@ -52,7 +52,7 @@ Here are the components specific changes:
 - Added an **Edit** action on the backup page for easier backup management.
 - Improved **project quota** visibility when only the group or partial CPU/memory limits are set.
 - Removed unnecessary new-tab behavior in related flows for a more consistent navigation experience.
-- Updated shared UI modules and resolved dependency and security issues.
+- Resolved dependency and security issues.
 
 ### Platform UI
 #### Enhancements
