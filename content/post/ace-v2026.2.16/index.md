@@ -5,14 +5,15 @@ weight: 16
 authors:
 - Samiul Islam
 tags:
-- cloud-native
-- kubernetes
 - billing-ui
+- cloud-native
 - cluster-ui
+- database
+- kubedb
 - kubedb-ui
+- kubernetes
+- kubestash
 - platform-ui
-- platform-backend
-- platform-opscenter
 ---
 
 We are pleased to announce the release of `ACE v2026.2.16`.
@@ -38,7 +39,7 @@ Here are the components specific changes:
 #### Enhancements
 - Added the **form builder to presets** for a more flexible preset management workflow.
 - Updated create links to take users directly to **KubeDB UI** where appropriate.
-- Cluster and platform navigation now opens in the **current tab** for a smoother experience.
+- Opening **Platform UI** from Cluster UI now happens in the **current tab**.
 - Improved alert messaging behavior after required conditions are met.
 - Resolved dependency and security issues.
 
@@ -70,7 +71,7 @@ Here are the components specific changes:
 
 #### Fixes & Improvements
 - Skipped installing **KubeStash** from the ACE chart where appropriate.
-- Enabled datasource metrics by default.
+- Enabled **DS metrics** by default.
 - Fixed the **License Bucket** setting.
 - Set `infra.tenantSpreadPolicy` to `single` by default when not provided.
 - Added missing registries and included dependency and CVE fixes.
