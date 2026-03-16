@@ -21,10 +21,10 @@ We are pleased to announce the release of `ACE v2026.2.16`.
 ACE **v2026.2.16** focuses on improving observability, billing workflows, and everyday usability across the platform. In this post, we'll highlight the changes done in this release.
 
 ### Key Changes
-- **Billing usage projection and auto-assign workflows** make contract management easier for operators.
+- **Monthly billing usage projection and automatic assignment of cluster to contract to simplify cluster management. User can now see projected monthly usage and clusters are automatically assigned to the appropriate contract.
 - **Observability is improved** with billing pod metrics endpoints and service-mode-aware dashboard panels.
 - **Cluster and database workflows are more streamlined** with preset form-builder updates, backup editing, and cleaner in-app navigation.
-- **Credential-less and EKS flows are improved** in the platform backend for smoother self-hosted operations.
+- **Credential-less EKS support has been introduced across the platform, allowing all downstream products to run on EKS clusters without requiring cloud credentials.
 
 Here are the components specific changes:
 
@@ -62,12 +62,13 @@ Here are the components specific changes:
 
 ### Platform Backend
 #### Enhancements
-- Exposed **metrics endpoints for billing pods** and improved dashboards so different **service modes** of B3 can be visualized separately.
-- Added **automated email alerts for expiring contracts** for operational follow-up.
-- Added **end-of-month billable usage projection** support.
-- Added **credential-less support** to the virtual secret server.
-- Improved **EKS support** with OCM-related updates for cluster flows.
-- Clusters can now still be **auto-assigned to active contracts** after free contracts expire, with matching UI support.
+- Exposed metrics endpoints for billing pods and enhanced dashboards to visualize different ACE service modes independently.
+- Introduced automated email notifications for expiring contracts to help the support team proactively manage upcoming contract expirations.
+- Added end-of-month billable usage projection to help users estimate expected monthly billing usage.
+- Introduced end-of-month billable usage projection, providing visibility into expected monthly billing usage.
+- Implemented credential-less operation in the Virtual Secret Server
+- Improved **EKS CredLess** implementation with OCM-related updates for cluster management.
+- Introduced an Auto-Assign Clusters setting in the billing UI, enabling new clusters to be automatically associated with a selected contract.
 
 #### Fixes & Improvements
 - Skipped installing **KubeStash** from the ACE chart where appropriate.
@@ -75,7 +76,7 @@ Here are the components specific changes:
 - Fixed the **License Bucket** setting.
 - Set `infra.tenantSpreadPolicy` to `single` by default when not provided.
 - Added missing registries and included dependency and CVE fixes.
-- Converted ingress handling to **Gateway**.
+- Converted ingress to **Gateway**.
 
 ### External products
 Here is the summary of external dependency updates for `ACE v2026.2.16` :
