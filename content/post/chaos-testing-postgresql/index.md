@@ -17,7 +17,7 @@ tags:
 - postgresql
 ---
 
-> New to KubeDB? Please start [here](https://kubedb.com/docs/v2025.5.30/welcome/).
+> New to KubeDB? Please start [here](https://kubedb.com/docs/v2026.2.26/welcome/).
 
 
 
@@ -27,7 +27,7 @@ tags:
 To follow along with this tutorial, you will need:
 
 1. A running Kubernetes cluster.
-2. KubeDB [installed](https://kubedb.com/docs/v2025.5.30/setup/install/kubedb/) in your cluster.
+2. KubeDB [installed](https://kubedb.com/docs/v2026.2.26/setup/install/kubedb/) in your cluster.
 3. kubectl command-line tool configured to communicate with your cluster.
 4. Chaos-Mesh [installed](https://chaos-mesh.org/docs/production-installation-using-helm/) in your cluster.
     ```shell
@@ -137,7 +137,7 @@ You can monitor the status until all pods are ready:
 ```shell
 watch kubectl get pg,petset,pods -n demo
 ```
-See the database is ready.
+See the database status is ready.
 
 ```shell
 ➤ kubectl get pg,petset,pods -n demo
@@ -184,6 +184,7 @@ during chaos scenarios. Make sure you change the password of your database in th
 
 
 ```yaml
+# k8s/01-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -221,6 +222,7 @@ data:
   # Reporting
   REPORT_INTERVAL: "20"
 ---
+# k8s/02-secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -257,6 +259,7 @@ data:
 # echo -n "CIX6TzfTYFn8~pj4" | base64
 # echo -n "postgres" | base64
 ---
+# k8s/03-job.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -301,6 +304,7 @@ spec:
           persistentVolumeClaim:
             claimName: pg-load-test-results
 ---
+# k8s/04-pvc.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
