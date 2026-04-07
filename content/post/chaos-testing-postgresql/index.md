@@ -58,6 +58,17 @@ kubedb-sidekick-794cf489b4-t9rgf                 1/1     Running   0          14
 
 ```
 
+```shell
+➤ kubectl get pods -n chaos-mesh
+NAME                                        READY   STATUS    RESTARTS   AGE
+chaos-controller-manager-7d44db47fb-4cwc9   1/1     Running   0          3d17h
+chaos-controller-manager-7d44db47fb-cqvf7   1/1     Running   0          3d15h
+chaos-controller-manager-7d44db47fb-x4xnt   1/1     Running   0          3d17h
+chaos-daemon-f779s                          1/1     Running   0          3d17h
+chaos-dashboard-6855b9d4c-phkht             1/1     Running   0          4d1h
+chaos-dns-server-85b8846dc9-ngcwm           1/1     Running   0          4d1h
+```
+
 ## Create a High-Availability PostgreSQL Cluster
 
 
@@ -535,6 +546,10 @@ podchaos.chaos-mesh.org/pg-primary-pod-kill created
 ```
 
 ```shell
+kubectl get pg,petset,pods -n demo
+```
+
+```shell
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/pg-ha-cluster   16.4      Critical   2d15h
 
@@ -673,6 +688,9 @@ stresschaos.chaos-mesh.org/pg-primary-oom created
 
 Now you should see the primary pod is OOMKilled and the failover happens. The database state will be `Critical` during the failover and will be `Ready` again after the old primary is back as standby.
 
+```shell
+watch kubectl get pg,petset,pods -n demo
+```
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 10:47:30 2026
@@ -709,6 +727,10 @@ You can check the status of chaos experiment by running `kubectl get stresschaos
 ```
 
 Now after some time, you should see the old primary is back and the database state is `Ready` again.
+
+```shell
+watch kubectl get pg,petset,pods -n demo
+```
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 10:48:18 2026
@@ -816,6 +838,10 @@ podchaos.chaos-mesh.org/pg-kill-postgres-process created
 ```
 
 As soon as you run the chaos experiment, you should see the primary pod is killed, the failover might/might not happen based on the possibility of data loss. If all the replica were synced up with primary before primary went down, a failover will happen immediately. Conversely, if there was some lag between primary and replica, there is a possibility of data loss and in that case, failover will not happen until the primary is back and the replica is synced up with primary.
+
+```shell
+watch kubectl get pg,petset,pods -n demo
+```
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 11:15:07 2026
@@ -1142,6 +1168,10 @@ persistentvolumeclaim/pg-load-test-results created
 Before running this experiment, lets examine db state.
 
 ```shell
+watch kubectl get pg,petset,pods -n demo
+```
+
+```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 13:21:23 2026
 
 NAME                                VERSION   STATUS   AGE
@@ -1430,7 +1460,7 @@ I0406 07:45:57.178359       1 load_generator_v2.go:556] totalRows in LoadGenerat
 
 ```
 
-See this time there is no data loss.
+See this time there is `no data loss`.
 
 Clean up the chaos experiment.
 
@@ -1508,6 +1538,11 @@ job.batch/pg-load-test-job created
 persistentvolumeclaim/pg-load-test-results created
 ```
 Now let's watch the pods and postgres. 
+
+```shell
+watch kubectl get pg,petset,pods -n demo
+```
+
 
 ```shell
 > watch -n demo kubectl get pg,petset,pods
@@ -1651,6 +1686,11 @@ persistentvolumeclaim/pg-load-test-results created
 ```
 
 Now watch the pods and postgres status.
+
+
+```shell
+watch kubectl get pg,petset,pods -n demo
+```
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 18:39:12 2026
@@ -1816,6 +1856,10 @@ networkchaos.chaos-mesh.org/pg-primary-packet-loss created
 Now watch the pods and postgres status.
 
 ```shell
+watch kubectl get pg,petset,pods -n demo
+```
+
+```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 19:00:54 2026
 
 NAME                                VERSION   STATUS   AGE
@@ -1976,6 +2020,10 @@ networkchaos.chaos-mesh.org/pg-primary-packet-duplicate created
 Now watch the pods and postgres status.
 
 ```shell
+watch kubectl get pg,petset,pods -n demo
+```
+
+```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 19:19:44 2026
 
 NAME                                VERSION   STATUS   AGE
@@ -2129,6 +2177,10 @@ persistentvolumeclaim/pg-load-test-results created
 Now check if the database is in ready state.
 
 ```shell
+kubectl get pg,petset,pods -n demo
+```
+
+```shell
 postgres.kubedb.com/pg-ha-cluster   16.4      Ready    3d1h
 
 NAME                                         AGE
@@ -2149,6 +2201,10 @@ networkchaos.chaos-mesh.org/pg-primary-packet-corrupt created
 ```
 
 Now watch the pods and postgres status.
+
+```shell
+watch kubectl get pg,petset,pods -n demo
+```
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 19:27:48 2026
@@ -2375,7 +2431,11 @@ saurov@saurov-pc:~/g/s/g/s/chaos-mesh|main⚡*
 dnschaos.chaos-mesh.org/pg-primary-dns-error created
 ```
 
-Your database will be in ready state throught the whole chaos.
+Your database will be in ready state through the whole chaos.
+
+```shell
+watch kubectl get pg,petset,pods -n demo
+```
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 19:50:14 2026
@@ -2558,6 +2618,10 @@ iochaos.chaos-mesh.org/pg-primary-io-latency created
 
 Soon after we created the chaos test, the database should be in `NotReady` state. The reason for this is, the client call to `Primary` pod is getting timed
 out due of slow IO. 
+
+```shell
+watch kubectl get pg,petset,pods -n demo
+```
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 20:37:24 2026
@@ -2817,6 +2881,10 @@ iochaos.chaos-mesh.org/pg-primary-io-fault created
 keep watching the database and pods,
 
 ```shell
+watch kubectl get pg,petset,pods -n demo
+```
+
+```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:05:39 2026
 
 NAME                                VERSION   STATUS     AGE
@@ -3020,7 +3088,9 @@ spec:
 ```
 
 Let's see how our database is now.
-
+```shell
+kubectl get pg,petset,pods -n demo
+```
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:32:42 2026
 
@@ -3056,6 +3126,10 @@ iochaos.chaos-mesh.org/pg-primary-io-attr-override created
 ```
 
 Keep watching the database resources.
+
+```shell
+watch kubectl get pg,petset,pods -n demo
+```
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:33:45 2026
@@ -3362,6 +3436,10 @@ iochaos.chaos-mesh.org/pg-primary-io-mistake created
 Keep watching the database.
 
 ```shell
+watch kubectl get pg,petset,pods -n demo
+```
+
+```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:59:26 2026
 
 NAME                                VERSION   STATUS     AGE
@@ -3505,6 +3583,15 @@ pod/pg-ha-cluster-2          2/2     Running     0          13h
 Lets apply the experiment.
 
 ```shell
+kubectl apply -f tests/17-node-reboot.yaml
+```
+
+
+```shell
+watch kubectl get pg,petset,pods -n demo
+```
+
+```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:12 2026
 
 NAME                                VERSION   STATUS     AGE
@@ -3565,6 +3652,8 @@ pod/pg-ha-cluster-2          2/2     Running     0          27s
 ```
 
 So the database is back in ready state within 30s of applying the chaos. Now let's apply the next chaos which will stress CPU.
+
+Now lets try to stress the cpu.
 
 Save this yaml as `tests/18-stress-cpu-primary.yaml`:
 
@@ -3630,6 +3719,10 @@ pg-load-test-job-sfj6z   load-test        1594m        216Mi
 ```
 
 ```shell
+watch kubectl top pods --containers -n demo
+```
+
+```shell
 Every 2.0s: kubectl top pods --containers -n demo          saurov-pc: Tue Apr  7 09:35:58 2026
 
 POD                      NAME             CPU(cores)   MEMORY(bytes)
@@ -3644,6 +3737,11 @@ pg-load-test-job-sfj6z   load-test        1256m        272Mi
 ```
 
 Database remain in ready state as there was sufficient cpu left in the cluster. However, this test case will pass in every environment.
+
+
+```shell
+watch kubectl get pg,petset,pods -n demo
+```
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:36:31 2026
