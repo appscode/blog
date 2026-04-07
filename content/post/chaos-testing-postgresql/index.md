@@ -641,7 +641,7 @@ You can check the status of chaos experiment by running `kubectl get stresschaos
       type: Selected
     - status: "False"
       type: AllInjected
-    - status: "True" # All chaos injected
+    - status: "True" # All chaos recovered
       type: AllRecovered
     - status: "False"
       type: Paused
@@ -699,15 +699,6 @@ Clean up the chaos experiment.
 ```shell
 kubectl delete -f tests/02-oomkill.yaml
 stresschaos.chaos-mesh.org "pg-primary-oom" deleted
-```
-kubectl delete -f k8s/01-configmap.yaml 
-configmap "pg-load-test-config" deleted
-kubectl delete -f k8s/02-secret.yaml
-secret "pg-load-test-secret" deleted
-kubectl delete -f k8s/03-job.yaml 
-job.batch "pg-load-test-job" deleted
-kubectl delete -f k8s/04-pvc.yaml
-persistentvolumeclaim "pg-load-test-results" deleted
 ```
 
 
