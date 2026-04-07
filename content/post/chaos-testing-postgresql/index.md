@@ -172,20 +172,17 @@ The pod having `kubedb.com/role=primary` is the primary and `kubedb.com/role=sta
 ## Chaos Testing
 
 We will run some chaos experiments to see how our
-cluster behaves under failure scenarios. We will use a PostgreSQL client application to simulate high write and read load on the cluster.
+cluster behaves under failure scenarios like oom kill, network latency, network partition, io latency, io fault etc. We will use a PostgreSQL client application to simulate high write and read load on the cluster.
+
+### PostgreSQL High Write/Read Load Client
 
 You can apply these YAMLs to create a client application
 that will continuously write and read data from the database.
 This will help us see how the cluster behaves under load and
 during chaos scenarios. Make sure you change the password of your database in the below Secret YAML.
 
-> Also as a standard, we will use 10% write, 10% update and 80% 
-read operations. In 5 minutes of high load,
-it should generate around 30GB of data, more than 
-30M rows inserted, more than 300M rows read. 
 
-> **Note**: If you do not want to generate this much data, you can reduce the INSERT_PERCENT and BATCH_SIZE values.
-> 
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -291,97 +288,11 @@ spec:
             limits:
               memory: "2Gi"
               cpu: "2000m"
-          env:
-            - name: TEST_RUN_DURATION
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: TEST_RUN_DURATION
-            - name: CONCURRENT_WRITERS
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: CONCURRENT_WRITERS
-            - name: READ_PERCENT
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: READ_PERCENT
-            - name: INSERT_PERCENT
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: INSERT_PERCENT
-            - name: UPDATE_PERCENT
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: UPDATE_PERCENT
-            - name: BATCH_SIZE
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: BATCH_SIZE
-            - name: READ_BATCH_SIZE
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: READ_BATCH_SIZE
-            - name: TABLE_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: TABLE_NAME
-            - name: MAX_OPEN_CONNS
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: MAX_OPEN_CONNS
-            - name: MAX_IDLE_CONNS
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: MAX_IDLE_CONNS
-            - name: CONN_MAX_LIFETIME
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: CONN_MAX_LIFETIME
-            - name: MIN_FREE_CONNS
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: MIN_FREE_CONNS
-            - name: REPORT_INTERVAL
-              valueFrom:
-                configMapKeyRef:
-                  name: pg-load-test-config
-                  key: REPORT_INTERVAL
-            - name: DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: pg-load-test-secret
-                  key: DB_HOST
-            - name: DB_PORT
-              valueFrom:
-                secretKeyRef:
-                  name: pg-load-test-secret
-                  key: DB_PORT
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: pg-load-test-secret
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: pg-load-test-secret
-                  key: DB_PASSWORD
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: pg-load-test-secret
-                  key: DB_NAME
+          envFrom:
+            - configMapRef:
+                name: pg-load-test-config
+            - secretRef:
+                name: pg-load-test-secret
           volumeMounts:
             - name: results
               mountPath: /results
@@ -404,6 +315,13 @@ spec:
     requests:
       storage: 1Gi
 ```
+
+> Also as a standard, we will use 10% write, 10% update and 80% 
+read operations. In 5 minutes of high load,
+it should generate around 30GB of data, more than 
+30M rows inserted, more than 300M rows read. 
+
+> **Note**: If you do not want to generate this much data, you can reduce the INSERT_PERCENT and BATCH_SIZE values.
 
 
 Save the above yamls. Then make a script like below:
@@ -482,7 +400,7 @@ Test completed successfully!
 
 With this load on the cluster, we are ready to run some chaos experiments and see how our cluster behaves under failure scenarios.
 
-### Kill the Primary Pod
+###  Chaos#1: Kill the Primary Pod
 
 We will ignore the load test for this experiment.
 
@@ -508,6 +426,8 @@ spec:
   gracePeriod: 0
   duration: "30s"
 ```
+
+**What this chaos does:** Terminates the primary pod abruptly, forcing an immediate failover to a standby replica.
 
 We are selecting the primary pod using label selector and killing it. The `duration` field specifies how long the chaos will last. In this case, we are killing the primary pod for 30 seconds.
 
@@ -603,7 +523,7 @@ kubectl delete -f tests/01-pod-kill.yaml
 podchaos.chaos-mesh.org "pg-primary-pod-kill" deleted
 ```
 
-### OOMKill the Primary Pod
+###  Chaos#2: OOMKill the Primary Pod
 
 Now we are going to OOMKill the primary pod. This is a more realistic scenario than just killing the pod, because in real life, your primary pod might get OOMKilled due to high memory usage.
 
@@ -630,7 +550,9 @@ spec:
   duration: "10m"
 
 ```
-This will create a memory stress on the primary pod that exceeds its memory limit, causing it to be OOMKilled.
+
+**What this chaos does:** Allocates excessive memory on the primary pod to exceed its limits, triggering an OOMKill that forces failover.
+
 
 Before running this, we will run the load test job.
 
@@ -789,7 +711,7 @@ persistentvolumeclaim "pg-load-test-results" deleted
 ```
 
 
-### Kill Postgres process in the Primary Pod
+###  Chaos#3: Kill Postgres process in the Primary Pod
 
 Now we are going to kill the postgres process in the primary pod. Save this yaml as `tests/03-kill-postgres-process.yaml`:
 
@@ -812,6 +734,8 @@ spec:
     - postgres
   duration: "30s"
 ```
+
+**What this chaos does:** Forcefully terminates the PostgreSQL process in the primary container, simulating a database crash without pod termination.
 
 Create the load test job. I will alter the duration of the load test job to 1 minute as this chaos experiment is generally shorter.
 
@@ -945,7 +869,7 @@ kubectl delete -f tests/03-kill-postgres-process.yaml
 podchaos.chaos-mesh.org "pg-kill-postgres-process" deleted
 ```
 
-### Primary Pod Failure
+###  Chaos#4: Primary Pod Failure
 
 In this experiment, we are going to simulate a complete failure of the primary pod, including the node it is running on. This is a more extreme scenario than just killing the pod or the postgres process.
 
@@ -969,6 +893,9 @@ spec:
   duration: "5m" 
 
 ```
+
+**What this chaos does:** Makes the primary pod unreachable by blocking all network traffic, simulating a node isolation or complete network failure for the specified duration.
+
 > **NOTE**: Chaos-Mesh will simulate a pod failure for `.spec.duration` amount of time; for our case, it is 5 minutes. As this simulates the complete failure of a pod for 5 minutes, our database will be in either a NotReady or Critical state for 5 minutes. Once this chaos is `Recovered`, the database will move back to `Ready` state automatically.
 
 We will not run load tests for this experiment as well.
@@ -1062,7 +989,7 @@ kubectl delete -f tests/04-pod-failure.yaml
 podchaos.chaos-mesh.org "pg-primary-pod-failure" deleted
 ```
 
-### Network Partition Primary Pod
+###  Chaos#5: Network Partition Primary Pod
 
 > **NOTE**: The only possible way to avoid data loss in the network partition case is to use synchronous replication. You can do this by changing `db.spec.streamingMode: Synchronous`. In this case, there won't be any data loss.
 
@@ -1141,6 +1068,8 @@ spec:
   direction: both
   duration: "4m"
 ```
+
+**What this chaos does:** Blocks network connectivity between the primary pod and all standby pods, forcing a split-brain scenario where standbys promote a new primary in their partition while the isolated primary continues running.
 
 Lets first test on the current postgres, which is running in asynchronous replication mode. Its basically the default mode if you have not mentioned anything in the `.spec.streamingMode` field of Postgres Object.
 
@@ -1480,7 +1409,7 @@ UPDATE_PERCENT: "10" # 19% of the operations will be update, so total write load
 CONCURRENT_WRITERS: "20" # Reduce the concurrent writters
 ```
 
-### Limit bandwidth of Primary Pod
+###  Chaos#6: Limit bandwidth of Primary Pod
 
 > As you changed `.db.spec.streamingMode: Synchronous` in the previous experiment, change it back to `Asynchronous` for this experiment. You can also keep it as it if you want though.
 
@@ -1517,6 +1446,8 @@ spec:
   direction: both
   duration: "2m"
 ```
+
+**What this chaos does:** Restricts the egress/ingress bandwidth of the primary pod to 1 Mbps, simulating a slow network connection and increasing replication lag.
 
 Additionally, we will run the load test with some changes introduced.
 
@@ -1628,7 +1559,7 @@ kubectl delete -f tests/06-bandwidth-limit.yaml
 networkchaos.chaos-mesh.org "pg-primary-bandwidth-limit" deleted
 ```
 
-### Network Delay Primary Pod
+###  Chaos#7: Network Delay Primary Pod
 
 In this chaos experiment, we are going to introduce network delay to the primary pod. This will cause the replication lag between primary and standby to increase, which can lead to data loss if a failover happens during this time. So this is a good experiment to test the behavior of your cluster under network congestion.
 
@@ -1663,6 +1594,8 @@ spec:
   duration: "3m"
   direction: both
 ```
+
+**What this chaos does:** Adds 500ms latency with 100ms jitter to all network packets of the primary pod, simulating high-latency network conditions.
 
 Let's adjust the load test config before running the load test job.
 
@@ -1793,7 +1726,7 @@ kubectl delete -f tests/07-network-delay.yaml
 networkchaos.chaos-mesh.org "pg-primary-network-delay" deleted
 ```
 
-### Network Loss Primary Pod
+###  Chaos#8: Network Loss Primary Pod
 
 In this chaos experiment, we are going to introduce network loss to the primary pod. We expect our database to be able to hold Ready state, even though we see some failover, the end state of database should be `Ready`.
 
@@ -1828,6 +1761,8 @@ spec:
   direction: both
 
 ```
+
+**What this chaos does:** Drops 100% of network packets to/from the primary pod, simulating a complete network blackhole while allowing recovery when the chaos ends.
 
 Lets run the load test job with some changes in config.
 
@@ -1958,7 +1893,7 @@ kubectl delete -f tests/08-network-loss.yaml
 networkchaos.chaos-mesh.org "pg-primary-packet-loss" deleted
 ```
 
-### Network Duplicate to Primary Pod    
+###  Chaos#9: Network Duplicate to Primary Pod
 
 In this experiment, we will introduce packet duplication to the primary pod. We expect the database to be able to handle packet duplication and be ready all the time.
 
@@ -1993,6 +1928,8 @@ spec:
   direction: both
 
 ```
+
+**What this chaos does:** Duplicates 50% of network packets to/from the primary pod, creating redundant traffic that can overwhelm or confuse the receiving end.
 
 Lets run the load test job with some changes in config.
 
@@ -2123,7 +2060,7 @@ kubectl delete -f tests/09-network-duplicate.yaml
 networkchaos.chaos-mesh.org "pg-primary-packet-duplicate" deleted
 ```
 
-### Network Corruption to Primary Pod
+###  Chaos#10: Network Corruption to Primary Pod
 
 In this experiment, we will introduce packet corruption to the primary pod. We expect the database to be able to handle packet corruption and not lose any data.
 
@@ -2158,6 +2095,8 @@ spec:
   direction: both
 
 ```
+
+**What this chaos does:** Corrupts 50% of network packets to/from the primary pod by flipping random bits in the payload, causing checksums to fail.
 
 Lets change some config and apply the load test creation script.
 
@@ -2375,7 +2314,7 @@ kubectl delete -f tests/10-network-corrupt.yaml
 networkchaos.chaos-mesh.org "pg-primary-packet-corrupt" deleted
 ```
 
-### Time Offset and DNS error
+###  Chaos#11: Time Offset and DNS error
 
 We will run two chaos experiments one after another in this case. No load test will be run in these two cases.
 
@@ -2402,6 +2341,8 @@ spec:
 
 ```
 
+**What this chaos does:** Shifts the system clock of the primary pod back by 2 hours, simulating time skew that can cause certificate validation, timestamp-based logic, and replication synchronization issues.
+
 Save this yaml as `tests/12-dns-error.yaml`:
 
 ```yaml
@@ -2422,6 +2363,8 @@ spec:
   duration: "2m"
 
 ```
+
+**What this chaos does:** Makes all DNS queries from the primary pod fail with resolution errors, simulating DNS service outage or misconfiguration.
 
 ```shell
 ➤ kubectl apply -f tests/11-time-offset.yaml
@@ -2476,7 +2419,7 @@ the database in `Ready` state when chaos is recovered.
 
 
 
-### IO latency 
+###  Chaos#12: IO latency
 
 In this experiment, we will simulate IO latency. Our end goal is to have as low downtime as possible and the database should be in `Ready` state when chaos is recovered.
 
@@ -2505,6 +2448,8 @@ spec:
   containerNames:
     - postgres
 ```
+
+**What this chaos does:** Injects 500ms latency into all disk I/O operations on the primary pod, simulating slow storage that increases replication lag and can trigger failover.
 
 As i am going to apply postgres with `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`, i will just delete and reapply the below yaml.
 If you don't want to do this change, feel free to continue without this step.
@@ -2792,7 +2737,7 @@ kubectl delete -f tests/13-io-latency.yaml
 iochaos.chaos-mesh.org "pg-primary-io-latency" deleted
 ```
 
-### IO Fault to primary
+###  Chaos#13: IO Fault to primary
 
 In this experiment, chaos-mesh will insert io/fault. Our database should handle this chaos and remain in `Ready` or `Critical` state. 
 Once the chaos is recovered by chaos-mesh, the database should be back in `Ready` state.
@@ -2822,6 +2767,8 @@ spec:
   containerNames:
     - postgres
 ```
+
+**What this chaos does:** Injects I/O errors (EIO) on 50% of disk operations to the primary pod, simulating disk hardware failures or filesystem corruption.
 
 Let's see how our database is now,
 
@@ -3053,7 +3000,7 @@ kubectl delete -f tests/14-io-fault.yaml
 iochaos.chaos-mesh.org "pg-primary-io-fault" deleted
 ```
 
-### IO attribute overwrite
+###  Chaos#14: IO attribute overwrite
 
 In this experiment, i/o attributes will be overwritten. We expect our database to be available (`Ready` | `Critical`) during the chaos experiment.
 
@@ -3086,6 +3033,8 @@ spec:
     - postgres
 
 ```
+
+**What this chaos does:** Overrides file permissions on data files to read-only (444), preventing write operations and forcing the database to encounter permission denied errors on all writes.
 
 Let's see how our database is now.
 ```shell
@@ -3343,7 +3292,7 @@ kubectl delete -f tests/15-io-attr-override.yaml
 iochaos.chaos-mesh.org "pg-primary-io-attr-override" deleted
 ```
 
-### IO mistake 
+###  Chaos#15: IO mistake
 
 In this experiment, chaos-mesh will insert IO mistakes. We expect the database to be in `Ready` state after the chaos is recovered. If you are using the `forceFailover` API, then your database will be up even when chaos is running, but this will increase the chance of some data loss (if some write operations are going on during the failover process).
 
@@ -3377,6 +3326,8 @@ spec:
   containerNames:
     - postgres
 ```
+
+**What this chaos does:** Randomly injects garbage data (random bytes) into file operations on 50% of disk writes, corrupting the data stored on disk.
 
 Let's check the database state.
 
@@ -3538,7 +3489,7 @@ iochaos.chaos-mesh.org "pg-primary-io-mistake" deleted
 
 ## Misc Chaos Tests
 
-### Node Reboot | Stress CPU memory
+###  Chaos#16: Node Reboot | Stress CPU memory
 
 We will perform three experiments one after another here. We will not run load tests for some of these experiments.
 
@@ -3562,6 +3513,8 @@ spec:
   duration: "30s"
 
 ```
+
+**What this chaos does:** Simultaneously kills all PostgreSQL pods in the cluster, simulating a complete node failure where all replicas restart at once.
 
 This is simulate a typical node failure scenario where all the pod restarted.
 
@@ -3678,6 +3631,8 @@ spec:
   duration: "2m"
 
 ```
+
+**What this chaos does:** Stresses the CPU on the primary pod by running 2 CPU-intensive worker processes at 90% load, consuming system resources and potentially causing slowdowns and failover.
 
 But before running this, we will run the load test job.
 
