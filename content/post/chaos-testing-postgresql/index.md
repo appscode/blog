@@ -477,7 +477,7 @@ We will ignore the load test for this experiment.
 
 We are about to kill the primary pod and see how fast the failover happens. We will use Chaos-Mesh to do this. You can also do this manually by running `kubectl delete pod` command, but using Chaos-Mesh will give you more insights about the failover process.
 
-Now save this yaml as primary-pod-kill.yaml.
+Save this yaml as `tests/01-pod-kill.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -584,7 +584,7 @@ pod/pg-ha-cluster-2   2/2     Running   0             4m28s
 Now let's clean up the chaos experiment.
 
 ```shell
-kubectl delete -f primary-pod-kill.yaml
+kubectl delete -f tests/01-pod-kill.yaml
 podchaos.chaos-mesh.org "pg-primary-pod-kill" deleted
 ```
 
@@ -592,7 +592,7 @@ podchaos.chaos-mesh.org "pg-primary-pod-kill" deleted
 
 Now we are going to OOMKill the primary pod. This is a more realistic scenario than just killing the pod, because in real life, your primary pod might get OOMKilled due to high memory usage.
 
-Save this yaml as primary-oomkill.yaml.
+Save this yaml as `tests/02-oomkill.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -750,15 +750,12 @@ Test completed successfully!
 ```
 
 
-> Clean up the chaos experiment.
+Clean up the chaos experiment.
 
 ```shell
-kubectl delete -f primary-oomkill.yaml
+kubectl delete -f tests/02-oomkill.yaml
 stresschaos.chaos-mesh.org "pg-primary-oom" deleted
 ```
-> Clean up the load test job.
-
-```shell
 kubectl delete -f k8s/01-configmap.yaml 
 configmap "pg-load-test-config" deleted
 kubectl delete -f k8s/02-secret.yaml
@@ -772,7 +769,7 @@ persistentvolumeclaim "pg-load-test-results" deleted
 
 ### Kill Postgres process in the Primary Pod
 
-Now we are going to kill the postgres process in the primary pod. Save the yaml as pg-kill-postgres-process.yaml.
+Now we are going to kill the postgres process in the primary pod. Save this yaml as `tests/03-kill-postgres-process.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -915,18 +912,18 @@ Test data table deleted successfully
 Test completed successfully!
 ```
 
-> Clean up the chaos experiment.
+Clean up the chaos experiment.
 
 ```shell
-kubectl delete -f pg-kill-postgres-process.yaml
+kubectl delete -f tests/03-kill-postgres-process.yaml
 podchaos.chaos-mesh.org "pg-kill-postgres-process" deleted
 ```
-> Cleanup the load test job.
-
 
 ### Primary Pod Failure
 
 In this experiment, we are going to simulate a complete failure of the primary pod, including the node it is running on. This is a more extreme scenario than just killing the pod or the postgres process.
+
+Save this yaml as `tests/04-pod-failure.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -1032,9 +1029,10 @@ pod/pg-ha-cluster-1          2/2     Running     4 (10m ago)   110m
 pod/pg-ha-cluster-2          2/2     Running     0          106m
 ```
 
-Now cleanup the chaos experiment.
+Clean up the chaos experiment.
 
-```shellkubectl delete -f pg-primary-pod-failure.yaml
+```shell
+kubectl delete -f tests/04-pod-failure.yaml
 podchaos.chaos-mesh.org "pg-primary-pod-failure" deleted
 ```
 
@@ -1089,7 +1087,7 @@ Safe Outcome
 
 But again, there exists a data loss window which is generally small (30s - 1 minute). So how much data might be lost? Depends on your write load during that time, might be none in case there wasn't any write load.
 
-Now go ahead and save this yaml, we will test this scenario against both asynchronous and synchronous replication mode and see the difference.
+Now save this yaml as `tests/05-network-partition.yaml`. We will test this scenario against both asynchronous and synchronous replication mode and see the difference.
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -1434,15 +1432,11 @@ I0406 07:45:57.178359       1 load_generator_v2.go:556] totalRows in LoadGenerat
 
 See this time there is no data loss.
 
-Now cleanup the chaos experiment.
+Clean up the chaos experiment.
 
-```shellkubectl delete -f tests/05-network-partition.yaml
+```shell
+kubectl delete -f tests/05-network-partition.yaml
 networkchaos.chaos-mesh.org "pg-primary-network-partition" deleted
-``` 
-> Cleanup the load test job.
-
-```shellkubectl delete -f k8s/03-job.yaml
-job.batch "pg-load-test-job" deleted
 ```
 
 Delete and recreate the postgres with asynchronous replication if you want to do more experiments.
@@ -1457,9 +1451,12 @@ CONCURRENT_WRITERS: "20" # Reduce the concurrent writters
 ```
 
 ### Limit bandwidth of Primary Pod
+
 > As you changed `.db.spec.streamingMode: Synchronous` in the previous experiment, change it back to `Asynchronous` for this experiment. You can also keep it as it if you want though.
 
 For this chaos experiment, we are going to limit the bandwidth of the primary pod. This will cause the replication lag between primary and standby to increase, which can lead to data loss if a failover happens during this time. So this is a good experiment to test the behavior of your cluster under network congestion.
+
+Save this yaml as `tests/06-bandwidth-limit.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -1589,14 +1586,18 @@ Data Loss Report:
 
 Cleanup the chaos experiment.
 
-```shellkubectl delete -f tests/05-bandwidth-limit.yaml
+Clean up the chaos experiment.
+
+```shell
+kubectl delete -f tests/06-bandwidth-limit.yaml
 networkchaos.chaos-mesh.org "pg-primary-bandwidth-limit" deleted
 ```
-
 
 ### Network Delay Primary Pod
 
 In this chaos experiment, we are going to introduce network delay to the primary pod. This will cause the replication lag between primary and standby to increase, which can lead to data loss if a failover happens during this time. So this is a good experiment to test the behavior of your cluster under network congestion.
+
+Save this yaml as `tests/07-network-delay.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -1745,17 +1746,18 @@ I0406 12:41:39.032102       1 load_generator_v2.go:556] totalRows in LoadGenerat
 ```
 As you can see, 25M rows were inserted, 23GB data was transferred to the database and there was no data loss. So even with 500ms network delay, our cluster was able to handle the load and there was no data loss.
 
-Cleanup the chaos experiment.
+Clean up the chaos experiment.
 
-```shellkubectl delete -f tests/05-network-delay.yaml
+```shell
+kubectl delete -f tests/07-network-delay.yaml
 networkchaos.chaos-mesh.org "pg-primary-network-delay" deleted
-``` 
-
-Revert back the load test config changes if you want to do more experiments.
+```
 
 ### Network Loss Primary Pod
 
 In this chaos experiment, we are going to introduce network loss to the primary pod. We expect our database to be able to hold Ready state, even though we see some failover, the end state of database should be `Ready`.
+
+Save this yaml as `tests/08-network-loss.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -1905,15 +1907,18 @@ Data Loss Report:
 
 You can see the stats and this clearly shows lots of rows were inserted and reads were performed, but there was no data loss. And no downtime.
 
-Cleanup the chaos experiment.
+Clean up the chaos experiment.
 
-```shellkubectl delete -f tests/08-network-loss.yaml
+```shell
+kubectl delete -f tests/08-network-loss.yaml
 networkchaos.chaos-mesh.org "pg-primary-packet-loss" deleted
-``` 
+```
 
 ### Network Duplicate to Primary Pod    
 
-In this experiment, we will introduce packet duplication to the primary pod. We expect database to be able to handle packet duplication and be ready all the time.
+In this experiment, we will introduce packet duplication to the primary pod. We expect the database to be able to handle packet duplication and be ready all the time.
+
+Save this yaml as `tests/09-network-duplicate.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -2063,15 +2068,18 @@ I0406 13:15:39.100624       1 load_generator_v2.go:556] totalRows in LoadGenerat
 
 As usual, despite load on the database and packet duplication, there was no data loss and database was in `Ready` state all the time.
 
-Cleanup the chaos experiment.
+Clean up the chaos experiment.
 
-```shellkubectl delete -f tests/09-network-duplicate.yaml
+```shell
+kubectl delete -f tests/09-network-duplicate.yaml
 networkchaos.chaos-mesh.org "pg-primary-packet-duplicate" deleted
 ```
 
 ### Network Corruption to Primary Pod
 
-In this experiment, we will introduce packet corruption to the primary pod. We expect database to be able to handle packet corruption and do not loss any data.
+In this experiment, we will introduce packet corruption to the primary pod. We expect the database to be able to handle packet corruption and not lose any data.
+
+Save this yaml as `tests/10-network-corrupt.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -2307,13 +2315,15 @@ So everything looks alright. No data loss.
 Cleanup the chaos experiment:
 
 ```shell
-➤ kubectl delete -f tests/10-network-corrupt.yaml
+kubectl delete -f tests/10-network-corrupt.yaml
 networkchaos.chaos-mesh.org "pg-primary-packet-corrupt" deleted
 ```
 
 ### Time Offset and DNS error
 
 We will run two chaos experiments one after another in this case. No load test will be run in these two cases.
+
+Save this yaml as `tests/11-time-offset.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -2335,6 +2345,8 @@ spec:
   duration: "2m"
 
 ```
+
+Save this yaml as `tests/12-dns-error.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -2380,19 +2392,19 @@ pod/pg-ha-cluster-1          2/2     Running     0          154m
 pod/pg-ha-cluster-2          2/2     Running     0          154m
 ```
 
-Cleanup the created chaos experiments.
+Clean up the chaos experiments.
+
 ```shell
-➤ kubectl delete -f tests/11-time-offset.yaml 
+kubectl delete -f tests/11-time-offset.yaml 
 timechaos.chaos-mesh.org "pg-primary-time-offset" deleted
-saurov@saurov-pc:~/g/s/g/s/chaos-mesh|main⚡*
-➤ kubectl delete -f tests/12-dns-error.yaml 
+kubectl delete -f tests/12-dns-error.yaml 
 dnschaos.chaos-mesh.org "pg-primary-dns-error" deleted
 ```
 
 ## IO chaos
 
 For IO related chaos, if you prioritize high availability over data loss, then set 
-`.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`. This will results in better availability. 
+`.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`. This will result in better availability. 
 
 
 I will demonstrate postgres with  `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`. 
@@ -2406,9 +2418,9 @@ the database in `Ready` state when chaos is recovered.
 
 ### IO latency 
 
-In this experiment, we will simulate IO latency. Our end goal is to have as low downtime as possible and database should be in `Ready` state when chaos is recovered.
+In this experiment, we will simulate IO latency. Our end goal is to have as low downtime as possible and the database should be in `Ready` state when chaos is recovered.
 
-Save this yaml.
+Save this yaml as `tests/13-io-latency.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -2709,16 +2721,19 @@ This may indicate:
 
 Total number of rows inserted 2135800, lost rows 100, so basically 1 batch insert query was lost. **If you have not set force failover, this data loss won't be there**.
 
-Cleanup: Delete the created chaos experiment.
+Clean up the chaos experiment.
 
 ```shell
-kubectl delete chaos-mesh -n chaos-mesh --all
+kubectl delete -f tests/13-io-latency.yaml
+iochaos.chaos-mesh.org "pg-primary-io-latency" deleted
 ```
 
 ### IO Fault to primary
 
-In this experiment, chaos-mesh will insert io/fault. Our Database should handle this chaos and remain in `Ready` or `Critical` state. 
+In this experiment, chaos-mesh will insert io/fault. Our database should handle this chaos and remain in `Ready` or `Critical` state. 
 Once the chaos is recovered by chaos-mesh, the database should be back in `Ready` state.
+
+Save this yaml as `tests/14-io-fault.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -2963,10 +2978,20 @@ Data Loss Report:
 
 You can see the statistics here, 25 GB was inserted in 5 minutes with zero data loss even though we accepted data loss via `forceFailoverAcceptingDataLossAfter`.
 
-### IO attribute overwrite
-In this experiment, i/o attributes will be overwritten. We expect our database to be available(`Ready` | `Critical`) during the chaos experiment.
+Clean up the chaos experiment.
 
-> Note: If you are not using `forceFailoverAcceptingDataLossAfter`, then you might see database is in `NotReady` during the chaos.
+```shell
+kubectl delete -f tests/14-io-fault.yaml
+iochaos.chaos-mesh.org "pg-primary-io-fault" deleted
+```
+
+### IO attribute overwrite
+
+In this experiment, i/o attributes will be overwritten. We expect our database to be available (`Ready` | `Critical`) during the chaos experiment.
+
+> Note: If you are not using `forceFailoverAcceptingDataLossAfter`, then you might see the database is in `NotReady` during the chaos.
+
+Save this yaml as `tests/15-io-attr-override.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -3237,18 +3262,20 @@ I0407 02:37:53.535709       1 load_generator_v2.go:556] totalRows in LoadGenerat
 
 We inserted around 23 GB in 5 minutes. No data loss detected.
 
-Cleaup the chaos experiment.
+Clean up the chaos experiment.
+
 ```shell
-➤ kubectl delete -f tests/15-io-attr-override.yaml 
+kubectl delete -f tests/15-io-attr-override.yaml 
 iochaos.chaos-mesh.org "pg-primary-io-attr-override" deleted
 ```
 
 ### IO mistake 
 
-In this experiment, chaos-mesh will insert IO mistakes. We expect database to be in `Ready` state after the
-chaos is recovered. If you are using `forceFailover` api, then your db will be up
-even when chaos is running, but this will increase the chance of some data loss (if some write operation going on during failover process).
-Just to remind you again, we are using `forceFailoverAcceptingDataLossAfter` api for IO related chaos.
+In this experiment, chaos-mesh will insert IO mistakes. We expect the database to be in `Ready` state after the chaos is recovered. If you are using the `forceFailover` API, then your database will be up even when chaos is running, but this will increase the chance of some data loss (if some write operations are going on during the failover process).
+
+Just to remind you, we are using `forceFailoverAcceptingDataLossAfter` API for IO related chaos.
+
+Save this yaml as `tests/16-io-mistake.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -3435,7 +3462,9 @@ iochaos.chaos-mesh.org "pg-primary-io-mistake" deleted
 
 ### Node Reboot | Stress CPU memory
 
-We will do three experiment one after another here.
+We will perform three experiments one after another here. We will not run load tests for some of these experiments.
+
+Save this yaml as `tests/17-node-reboot.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -3535,7 +3564,9 @@ pod/pg-ha-cluster-2          2/2     Running     0          27s
 
 ```
 
-So the database is back in ready state within 30s of applying the chaos. Now lets apply the next chaos which will stress cpu.
+So the database is back in ready state within 30s of applying the chaos. Now let's apply the next chaos which will stress CPU.
+
+Save this yaml as `tests/18-stress-cpu-primary.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -3649,14 +3680,13 @@ I0407 03:40:04.020008       1 load_generator_v2.go:556] totalRows in LoadGenerat
 CleanUp:
 
 ```shell
-➤ kubectl delete -f tests/17-node-reboot.yaml 
+kubectl delete -f tests/17-node-reboot.yaml 
 podchaos.chaos-mesh.org "pg-cluster-all-pods-kill" deleted
-saurov@saurov-pc:~/g/s/g/s/chaos-mesh|main⚡*
-➤ kubectl delete -f tests/18-stress-cpu-primary.yaml 
+kubectl delete -f tests/18-stress-cpu-primary.yaml 
 stresschaos.chaos-mesh.org "pg-primary-cpu-stress" deleted
 ```
 
-## What Next?`
+## What Next?
 
 Please try the latest release and give us your valuable feedback.
 
