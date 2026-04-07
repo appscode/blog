@@ -1,10 +1,12 @@
 ---
-title: Automating PostgreSQL Operations In Kubernetes Using KubeDB
-date: "2025-06-22"
+title: Chaos Testing KubeDB Managed PostgreSQL with Chaos-Mesh
+date: "2026-04-07"
 weight: 25
 authors:
 - Saurov Chandra Biswas
 tags:
+- chaos-engineering
+- chaos-mesh
 - cloud-native
 - database
 - disaster-recovery
@@ -12,16 +14,16 @@ tags:
 - high-availability
 - kubedb
 - kubernetes
+- PostgreSQL
 ---
 
 > New to KubeDB? Please start [here](https://kubedb.com/docs/v2025.5.30/welcome/).
 
 
 
-# Chaos Testing PostgreSQL with KubeDB
+# Chaos Testing KubeDB Managed PostgreSQL with Chaos-Mesh
 
 ## Setup Cluster
-To follow along with this tutorial, you will need:
 To follow along with this tutorial, you will need:
 
 1. A running Kubernetes cluster.
@@ -101,12 +103,12 @@ spec:
   storageType: Durable
   version: "16.4"
 ```
-> **`Important Notes`**: 
+> **`Important Notes`**:
 > - We have set walLimitPolicy to WALKeepSize and
 > walKeepSize to 5000. This means that we will keep 5000 MB
-> of WAL files in our cluster. If your write operation is
+> of WAL files in our cluster. If your write operations are
 > very high, you might want to increase this value.
-> We suggest you set it to atleast 15 - 30% of your storage.
+> We suggest you set it to at least 15 - 30% of your storage.
 > - If you can tolerate some data loss, but you want your primary to be up and running at any time with minimal downtime, you can set `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`
 > - You can read/write in your database in both **`Ready`** and **`Critical`** state. So it means even if your db is in `Critical` state, your uptime is not compromised. `Critical` means one or more replicas are offline. But `primary` is up and running along with some other replicas probably.
 
@@ -152,24 +154,24 @@ pg-ha-cluster-1   2/2     Running   0          19m   app.kubernetes.io/component
 pg-ha-cluster-2   2/2     Running   0          18m   app.kubernetes.io/component=database,app.kubernetes.io/instance=pg-ha-cluster,app.kubernetes.io/managed-by=kubedb.com,app.kubernetes.io/name=postgreses.kubedb.com,apps.kubernetes.io/pod-index=2,controller-revision-hash=pg-ha-cluster-6c5954fd77,kubedb.com/role=standby,statefulset.kubernetes.io/pod-name=pg-ha-cluster-2
 
 ```
-The pod having `kubedb.com/role=primary` is the primary and `kubedb.com/role=standby` are the standby's.
+The pod having `kubedb.com/role=primary` is the primary and `kubedb.com/role=standby` are the standbys.
 
 
 
 ## Chaos Testing
 
 We will run some chaos experiments to see how our
-cluster behaves under failure scenarios. We will use a postgresql client application to simulate high write and read load on the cluster. 
+cluster behaves under failure scenarios. We will use a PostgreSQL client application to simulate high write and read load on the cluster.
 
-You can apply these yaml's to create a client application
+You can apply these YAMLs to create a client application
 that will continuously write and read data from the database.
 This will help us see how the cluster behaves under load and
-during chaos scenarios. Make sure you change the password of your database in the below secret yaml.
+during chaos scenarios. Make sure you change the password of your database in the below Secret YAML.
 
-> Also for standard, we will use 10% write, 10% update and 80% 
+> Also as a standard, we will use 10% write, 10% update and 80% 
 read operations. In 5 minutes of high load,
 it should generate around 30GB of data, more than 
-30M of rows insert, more than 300M of rows read. 
+30M rows inserted, more than 300M rows read. 
 
 > **Note**: If you do not want to generate this much data, you can reduce the INSERT_PERCENT and BATCH_SIZE values.
 > 
@@ -209,7 +211,7 @@ data:
   MIN_FREE_CONNS: "5"
   
   # Reporting
-  REPORT_INTERVAL: "20s"
+  REPORT_INTERVAL: "20"
 ---
 apiVersion: v1
 kind: Secret
@@ -419,14 +421,14 @@ job.batch/pg-load-test-job created
 persistentvolumeclaim/pg-load-test-results created
 ```
 
-I have attached a sample of output of the load test job below. This metrics will be printed after every `REPORT_INTERVAL` seconds. You can see that we are generating around 38GB of data, more than 40M of rows insert, more than 326M of rows read in 7 minutes of high load.
+I have attached a sample output of the load test job below. These metrics will be printed after every `REPORT_INTERVAL` seconds. You can see that we are generating around 38GB of data, more than 40M rows inserted, more than 326M rows read in 7 minutes of high load.
 
 ```shell
 Test Duration: 7m3s
 -----------------------------------------------------------------
 Cumulative Statistics:
   Total Operations: 408454 (Reads: 326500, Inserts: 40908, Updates: 41046)
-  Total Number of Rows Reads: 32650000, Inserts: 4090800, Updates: 41046)
+  Total Number of Rows Reads: 32650000, Inserts: 4090800, Updates: 41046
   Total Errors: 0
   Total Data Transferred: 38187.80 MB
 -----------------------------------------------------------------
@@ -465,13 +467,13 @@ Test data table deleted successfully
 Test completed successfully!
 ```
 
-> You can see this logs by running `kubectl logs -n demo job/pg-load-test-job` command.
+> You can see these logs by running `kubectl logs -n demo job/pg-load-test-job` command.
 
 With this load on the cluster, we are ready to run some chaos experiments and see how our cluster behaves under failure scenarios.
 
 ### Kill the Primary Pod
 
-> We ignore load test for this experiment.
+We will ignore the load test for this experiment.
 
 We are about to kill the primary pod and see how fast the failover happens. We will use Chaos-Mesh to do this. You can also do this manually by running `kubectl delete pod` command, but using Chaos-Mesh will give you more insights about the failover process.
 
@@ -500,7 +502,7 @@ We are selecting the primary pod using label selector and killing it. The `durat
 
 Our expectation is that within 30 seconds, the primary pod will be killed, and one of the standby pods will be promoted to primary. The killed pod will be brought back by our PetSet operator and will join the cluster as a standby.
 
-Before running, lets see who is the master
+Before running, let's see who is the primary
 
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep  primary | awk '{print $1}'
@@ -545,15 +547,15 @@ pod/pg-ha-cluster-1   2/2     Running   0            3m36s
 pod/pg-ha-cluster-2   2/2     Running   0            3m34s
 ```
 
-Note the `Restarts` sections, you will see the primary pod is 
-killed 8 seconds ago. The failover was done almost immediately. 
-The database state is now `Critical`, that
+Note the `Restarts` section; you will see the primary pod was
+killed 8 seconds ago. The failover was done almost immediately.
+The database state is now `Critical`, which
 means your new primary is ready to accept connections, but one or
-more of your replica is not ready, in this case which is the old
-primary. Old primary will
-be ready after `chaos.spec.duration` seconds which is 30 seconds.
+more of your replicas are not ready, in this case the old
+primary. The old primary will
+be ready after `chaos.spec.duration` seconds, which is 30 seconds.
 
-Lets see who is the new primary.
+Let's see who is the new primary.
 
 
 ```shell
@@ -579,9 +581,10 @@ pod/pg-ha-cluster-1   2/2     Running   0             4m30s
 pod/pg-ha-cluster-2   2/2     Running   0             4m28s
 ```
 
-Now lets cleanup the chaos experiment.
+Now let's clean up the chaos experiment.
 
-```shellkubectl delete -f primary-pod-kill.yaml
+```shell
+kubectl delete -f primary-pod-kill.yaml
 podchaos.chaos-mesh.org "pg-primary-pod-kill" deleted
 ```
 
@@ -633,7 +636,7 @@ postgres.kubedb.com/pg-ha-cluster   16.4      Ready    2d16h
 pod/pg-load-test-job-z8bxf   1/1     Running   0          22s
 ```
 
-Lets see the log from the load test job:
+Let's see the log from the load test job:
 
 ```shell
 ➤ kubectl logs -f -n demo job/pg-load-test-job
@@ -642,7 +645,7 @@ Test Duration: 43s
 -----------------------------------------------------------------
 Cumulative Statistics:
   Total Operations: 70123 (Reads: 55952, Inserts: 7053, Updates: 7118)
-  Total Number of Rows Reads: 5595200, Inserts: 705300, Updates: 7118)
+  Total Number of Rows Reads: 5595200, Inserts: 705300, Updates: 7118
   Total Errors: 0
   Total Data Transferred: 6548.86 MB
 -----------------------------------------------------------------
@@ -682,7 +685,7 @@ petset.apps.k8s.appscode.com/pg-ha-cluster   2d16h
 
 NAME                         READY   STATUS    RESTARTS     AGE
 pod/pg-ha-cluster-0          2/2     Running   0            54m
-pod/pg-ha-cluster-1          2/2     Running   1 (3s ago)   56m # NOTE this Restarts part, it shows the pod is OOMKilled and restarted by kubernetes
+pod/pg-ha-cluster-1          2/2     Running   1 (3s ago)   56m # NOTE: This shows the Restarts counter. It indicates that the pod is OOMKilled and restarted by Kubernetes
 pod/pg-ha-cluster-2          2/2     Running   0            54m
 pod/pg-load-test-job-z8bxf   1/1     Running   0            113s
 
@@ -747,14 +750,16 @@ Test completed successfully!
 ```
 
 
-> Cleanup the chaos experiment.
+> Clean up the chaos experiment.
 
-```shellkubectl delete -f primary-oomkill.yaml
+```shell
+kubectl delete -f primary-oomkill.yaml
 stresschaos.chaos-mesh.org "pg-primary-oom" deleted
 ```
-> Cleanup the load test job.
+> Clean up the load test job.
 
-```shellkubectl delete -f k8s/01-configmap.yaml 
+```shell
+kubectl delete -f k8s/01-configmap.yaml 
 configmap "pg-load-test-config" deleted
 kubectl delete -f k8s/02-secret.yaml
 secret "pg-load-test-secret" deleted
@@ -789,9 +794,9 @@ spec:
   duration: "30s"
 ```
 
-Create the load test job, i will alter the duration of the load test job to 1 minute as this chaos experiment is generally shorter.
+Create the load test job. I will alter the duration of the load test job to 1 minute as this chaos experiment is generally shorter.
 
-Just change the `TEST_RUN_DURATION: "60"` in the configmap yaml and apply all the yamls again.
+Just change the `TEST_RUN_DURATION: "60"` in the ConfigMap YAML and apply all the YAMLs again.
 
 ```shell
 ./run-k8s.sh
@@ -831,7 +836,7 @@ pod/pg-ha-cluster-2          2/2     Running   0            81m
 pod/pg-load-test-job-79k9p   1/1     Running   0            39s
 
 ```
-You can see the primary pod is killed and restarted by kubernetes. The failover still not performed and database state is `NotReady`. The reason database went ready is, chaos-mesh killed the postgres process immediately without giving standby time to receive the last wal primary generated under high load.So there is a chance of data loss if we do a failover, so we are not doing a failover in this case to protect your data. However there are api's using which you can do a failover in this case also.
+You can see the primary pod was killed and restarted by Kubernetes. The failover was not performed and the database state is `NotReady`. The reason the database didn't go ready is that chaos-mesh killed the postgres process immediately without giving the standby time to receive the last WAL the primary generated under high load. So there is a chance of data loss if we do a failover, so we are not doing a failover in this case to protect your data. However, there are APIs using which you can do a failover in this case also.
 Now wait some time and you should see the old primary is back and the database state is `Ready` again.
 
 
@@ -910,9 +915,10 @@ Test data table deleted successfully
 Test completed successfully!
 ```
 
-> Cleanup the chaos experiment.
+> Clean up the chaos experiment.
 
-```shellkubectl delete -f pg-kill-postgres-process.yaml
+```shell
+kubectl delete -f pg-kill-postgres-process.yaml
 podchaos.chaos-mesh.org "pg-kill-postgres-process" deleted
 ```
 > Cleanup the load test job.
@@ -940,11 +946,11 @@ spec:
   duration: "5m" 
 
 ```
-> **NOTE**: Chaos-Mesh will simulate a pod failure for `.spec.duration` amount of time, for our case, it is 5 minutes. As this simulates the complete failure of a pod for 5 minutes, our db will be in either in Not Ready or Critical state for 5 minutes. Once this chaos is `Recovered`, the database will move back to `Ready` state automatically.
+> **NOTE**: Chaos-Mesh will simulate a pod failure for `.spec.duration` amount of time; for our case, it is 5 minutes. As this simulates the complete failure of a pod for 5 minutes, our database will be in either a NotReady or Critical state for 5 minutes. Once this chaos is `Recovered`, the database will move back to `Ready` state automatically.
 
-We are not going to do load test for this experiments as well.
+We will not run load tests for this experiment as well.
 
-Before running this, lets examine db state.
+Before running this, let's examine the database state.
 
 ```shell
 ➤ kubectl get pg -n demo
@@ -968,14 +974,14 @@ kubectl apply -f pg-primary-pod-failure.yaml
 podchaos.chaos-mesh.org/pg-primary-pod-failure created
 ```
 
-See the database went into not ready state. Now based on the possibility of data loss a failover will happen/prohibited.
+See the database went into NotReady state. Now based on the possibility of data loss, a failover will happen or be prohibited.
 
 ```shell
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/pg-ha-cluster   16.4      NotReady   2d17h
 ```
 
-A failover happened immediately as there was no possibility of data loss. See the database is now in `Critical` state, that means the new primary is ready to accept connections, but one or more of the replicas are not ready, in this case which is the old primary. Old primary will be ready after `chaos.spec.duration` seconds which is 5 minutes in our case.
+A failover happened immediately as there was no possibility of data loss. See the database is now in `Critical` state, which means the new primary is ready to accept connections, but one or more of the replicas are not ready, in this case, the old primary. The old primary will be ready after `chaos.spec.duration` seconds, which is 5 minutes in our case.
 
 ```shell
 postgres.kubedb.com/pg-ha-cluster   16.4      Critical   2d17h
@@ -989,14 +995,14 @@ pod/pg-ha-cluster-1          2/2     Running     2 (22m ago)   106m
 pod/pg-ha-cluster-2          2/2     Running     0             103m
 ```
 
-Lets see who is the new primary.
+Let's see who is the new primary.
 
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep  primary | awk '{print $1}'
 pg-ha-cluster-0
 ```
 
-Now lets wait 5 minutes and follow the status of chaos experiment by running `kubectl get podchaos -n chaos-mesh pg-primary-pod-failure` command.
+Now let's wait 5 minutes and follow the status of the chaos experiment by running `kubectl get podchaos -n chaos-mesh pg-primary-pod-failure` command.
 
 ```shell
 status:
@@ -1042,7 +1048,7 @@ podchaos.chaos-mesh.org "pg-primary-pod-failure" deleted
 In this experiment, we simulate a network partition affecting the primary pod in a PostgreSQL cluster.
 
 
-Lets say we have a cluster with 3 nodes, one primary and two standby. Now we are going to create a network partition between the primary and the standby pods. After the split, the primary will be in minority partition and the standbys will be in majority partition. 
+Let's say we have a cluster with 3 nodes: one primary and two standbys. Now we are going to create a network partition between the primary and the standby pods. After the split, the primary will be in the minority partition and the standbys will be in the majority partition. 
 ```shell
 Cluster (3 nodes)
 -----------------
@@ -1051,7 +1057,7 @@ Cluster (3 nodes)
 |  primary-0    |  standby-1      |
 |               |  standby-2      |
 ```
-The primary will keep running as primary in minority partition and one of the standby will be promoted to primary in majority partition. Because majority quorum can't reach primary in the minority quorum due to network partition, they 
+The primary will keep running as primary in the minority partition and one of the standbys will be promoted to primary in the majority partition. Because the majority quorum can't reach the primary in the minority partition due to network partition, they 
 think the primary is down and they will promote one of the standby to primary by leader election.
 
 ```shell
@@ -1119,9 +1125,9 @@ Now lets first apply the load test job, but I will modify some config before run
 ```shell
 BATCH_SIZE: "100"
 TEST_RUN_DURATION: "600" # updated this, 10 minutes
-INSERT_PERCENT: "1" # lets put some relistic write load, 1% of the operations will be insert
-UPDATE_PERCENT: "19" # 19% of the operations will be update, so total write load is 20% which is pretty high for postgres, we want to see some data loss in this case
-CONCURRENT_WRITERS: "10" # Reduce the concurrent writters
+  INSERT_PERCENT: "1" # let's put some realistic write load, 1% of the operations will be insert
+  UPDATE_PERCENT: "19" # 19% of the operations will be update, so total write load is 20% which is quite high for postgres. We want to see some data loss in this case
+  CONCURRENT_WRITERS: "10" # Reduce the concurrent writers
 ```
 
 Now,
@@ -1159,7 +1165,7 @@ pod/pg-load-test-job-ztb94   1/1     Running   0          12s
 pg-ha-cluster-1 # Primary pod
 ```
 
-Now lets go ahead and run the chaos experiment.
+Now let's go ahead and run the chaos experiment.
 
 ```shell
 ➤ kubectl apply -f tests/05-network-partition.yaml
@@ -1209,9 +1215,9 @@ pod/pg-ha-cluster-2          2/2     Running   0          4m32s
 pod/pg-load-test-job-ztb94   1/1     Running   0          3m8s
 ```
 > **NOTE**: There is one possible way where data loss might be avoided even with asynchronous replication, this reason is somewhat weird but possible. In a scenario where the standby was lagging behind the primary before the network partition happened, there won't be a failover in this case as we know doing a failover will result in data loss in this case. So in this case, your db will be in `NotReady` state.
-> So, if you see your db is in **NotReady** state, this might be the reason, and voila, you avoided data loss even with asynchronous replication conceding some downtime. Again, if you prefer uptime, use `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`
+> So, if you see your db is in **NotReady** state, this might be the reason, and you have successfully avoided data loss even with asynchronous replication at the cost of some downtime. Again, if you prefer uptime, use `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`
 
-Lets see the logs of the old primary, you should see the postgres process is shutdown immediately after the network partition is detected.
+Let's see the logs of the old primary, you should see the postgres process is shutdown immediately after the network partition is detected.
 
 ```shell
 ➤ kubectl logs -f -n demo pg-ha-cluster-1
@@ -1220,14 +1226,14 @@ Lets see the logs of the old primary, you should see the postgres process is shu
 2026-04-06 07:23:50.514 UTC [77] LOG:  checkpoint complete: wrote 24464 buffers (37.3%); 0 WAL file(s) added, 0 removed, 23 recycled; write=0.441 s, sync=0.036 s, total=0.519 s; sync files=44, longest=0.025 s, average=0.001 s; distance=376832 kB, estimate=376832 kB; lsn=8/48000028, redo lsn=8/48000028
 2026-04-06 07:23:50.576 UTC [48] LOG:  database system is shut down
 ```
-Lets check who is the new primary.
+Let's check who is the new primary.
 
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep  primary | awk '{print $1}'
 pg-ha-cluster-0
 ```
 
-check the logs of new primary, which says it is now accepting connections, so new read/write will now go to new primary.
+Check the logs of the new primary. It shows that it is now accepting connections, so new read/write operations will now go to the new primary.
 
 ```shell
 ➤ kubectl logs -f -n demo pg-ha-cluster-0
@@ -1260,7 +1266,7 @@ Once `AllRecovered` is `True` you should see the old primary is back as standby 
 postgres.kubedb.com/pg-ha-cluster   16.4      Ready    2d19h
 ```
 
-Now lets see how many rows we lost in this case by checking the load test job logs.
+Now let's see how many rows we lost in this case by checking the load test job logs.
 
 ```shell
 Cumulative Statistics:
@@ -1309,7 +1315,7 @@ Data Loss Report:
 ⚠️  WARNING: 16930 records were inserted but not found in database!
 ```
 
-So we did incurred data loss. Now question is how much? In our above case, there were:
+So we incurred data loss. Now the question is: how much? In our above case, there were:
 Insert Operations: 47445 (78.70/sec avg) -> 78.70 insert operations per second, each insert uses batch size of `BATCH_SIZE: 5`,
 which is 78.70 * 5 = 393.5 rows inserted per second.
 We lost 16930 rows, so the data loss window is 16930 / 393.5 = 43 seconds. So we can say that there was a network partition for around 43 seconds and all the rows inserted during that time are lost.
@@ -1352,7 +1358,7 @@ spec:
 
 ```
 
-Before applying this, lets cleanup the previous yamls including postgres, load-test jobs and chaos experiment.
+Before applying this, let's clean up the previous yamls including postgres, load-test jobs and chaos experiment.
 
 ```shell
 kubectl delete -f pg-ha-cluster.yaml
@@ -1370,7 +1376,7 @@ Once the db is in `Ready` state, apply the load test job and then wait 1 minute,
 You should experience the same scenario as before, but this time there won't be any data loss as we are using synchronous replication.
 
 
-Lets wait and verify the logs from load test job once the test is completed.
+Let's wait and verify the logs from the load test job once the test is completed.
 
 ```shell
 Final Results:
@@ -1504,7 +1510,7 @@ configmap/pg-load-test-config configured
 job.batch/pg-load-test-job created
 persistentvolumeclaim/pg-load-test-results created
 ```
-Now lets watch the pods, and postgres. 
+Now let's watch the pods and postgres. 
 
 ```shell
 > watch -n demo kubectl get pg,petset,pods
@@ -1622,7 +1628,7 @@ spec:
   direction: both
 ```
 
-Lets adjust the load test config before running the load test job.
+Let's adjust the load test config before running the load test job.
 
 ```shell
 TEST_RUN_DURATION: "200"
@@ -1678,7 +1684,7 @@ kubectl get networkchaos -n chaos-mesh -oyaml
       type: AllInjected
 ```
 
-`AllRecovered` condition is `True`, that means chaos experiment is done. Now lets check how many rows were inserted.
+`AllRecovered` condition is `True`, that means the chaos experiment is done. Now let's check how many rows were inserted.
 
 ```shell
 Final Results:
@@ -1842,7 +1848,7 @@ kubectl get networkchaos -n chaos-mesh -oyaml
 
 ```
 
-`AllRecovered` condition is `True`, that means chaos experiment is done. Now lets check how many rows were inserted and if there were any data loss.
+`AllRecovered` condition is `True`, that means the chaos experiment is done. Now let's check how many rows were inserted and if there was any data loss.
 
 ```shell
 Final Results:
@@ -2152,7 +2158,7 @@ pod/pg-ha-cluster-2          2/2     Running     0          131m
 
 ```
 
-Database is ready so far and pg-ha-cluster-0 is the primary.
+The database is ready so far, and pg-ha-cluster-0 is the primary.
 
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
@@ -2239,7 +2245,7 @@ pod/pg-ha-cluster-2          2/2     Running   0          140m
 pod/pg-load-test-job-5q4gh   1/1     Running   0          2m8s
 
 ```
-Database is drifted back to `Ready` state.
+The database has returned to `Ready` state.
 
 
 Now check the stats of data insertion and read.
@@ -2307,7 +2313,7 @@ networkchaos.chaos-mesh.org "pg-primary-packet-corrupt" deleted
 
 ### Time Offset and DNS error
 
-we will run two chaos in this case one after another. No load test will be run in these two cases.
+We will run two chaos experiments one after another in this case. No load test will be run in these two cases.
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -2390,7 +2396,7 @@ For IO related chaos, if you prioritize high availability over data loss, then s
 
 
 I will demonstrate postgres with  `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`. 
-You will see even though we will force failover accepting the fact that there might be data loss,
+You will see that even though we will force failover accepting the possibility that there might be data loss,
 but in really this data loss chances are very not very high. We should be able to achieve high availability without losing any data in most cases. But our end goal is to have 
 the database in `Ready` state when chaos is recovered.
 
@@ -2484,7 +2490,7 @@ pod/pg-ha-cluster-2   2/2     Running   0          38s
 
 ```
 
-lets check which pod is the primary.
+Let's check which pod is the primary.
 
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
@@ -2558,7 +2564,7 @@ pod/pg-load-test-job-62l88   1/1     Running   0          2m10s
 
 ```
 
-Now we might see some drama here as the IO is not behaving correctly, we might see frequent failover and possible split brain. But that's not going to last longer.
+Now we might observe some interesting behavior as the IO is not performing correctly. We might see frequent failovers and a possible split brain situation. However, this won't last long.
 
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
@@ -2738,7 +2744,7 @@ spec:
     - postgres
 ```
 
-Lets see how our database is now,
+Let's see how our database is now,
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:00:56 2026
@@ -2756,7 +2762,7 @@ pod/pg-ha-cluster-2          2/2     Running     0          11h
 pod/pg-load-test-job-62l88   0/1     Completed   0          11h
 ```
 
-Lets see who is primary:
+Let's see who is primary:
 
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
@@ -2811,7 +2817,7 @@ pod/pg-ha-cluster-2          2/2     Running   0          11h
 pod/pg-load-test-job-pq4l6   1/1     Running   0          117s
 ```
 
-After running some time, the database went into critical state. Lets see if there is a failover.
+After running for some time, the database went into critical state. Let's see if there is a failover.
 
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
@@ -2830,7 +2836,7 @@ postgres=# select pg_is_in_recovery();
 
 ```
 
-So there is a failover, and we can run queries on new primary. Things looking good so far.
+There is a failover, and we can run queries on the new primary. Things are looking good so far.
 
 I will show you what happened to old primary due to i/o error.
 
@@ -2988,7 +2994,7 @@ spec:
 
 ```
 
-Lets see how our database is now.
+Let's see how our database is now.
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:32:42 2026
@@ -3042,16 +3048,16 @@ pod/pg-ha-cluster-2          2/2     Running   0          12h
 pod/pg-load-test-job-cgbgt   1/1     Running   0          72s
 ```
 
-So database went into `NotReady` state, that means primary is not responsive. The reason might be database inside primary pod is not running.
+So the database went into `NotReady` state, which means the primary is not responsive. The reason might be that the database inside the primary pod is not running.
 
-Lets check this:
+Let's check this:
 
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 pg-ha-cluster-1
 ```
 
-Lets check the logs from unresponsive primary `pg-ha-cluster-1`.
+Let's check the logs from unresponsive primary `pg-ha-cluster-1`.
 
 ```shell
 ➤ kubectl logs -f -n demo pg-ha-cluster-1
@@ -3088,7 +3094,7 @@ pod/pg-load-test-job-cgbgt   1/1     Running   0          2m9s
 
 ```
 
-Our database now moved to `NotReady` -> `Critical` state. Lets see who is new primary.
+Our database now moved to `NotReady` -> `Critical` state. Let's see who is the new primary.
 
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
@@ -3133,7 +3139,7 @@ status:
     type: AllInjected
 ```
 
-All the generated chaos recovered.
+All the generated chaos has been recovered.
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:38:52 2026
@@ -3271,7 +3277,7 @@ spec:
     - postgres
 ```
 
-Lets check the database state.
+Let's check the database state.
 
 ```shell
 Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:57:53 2026
