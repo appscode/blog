@@ -14,7 +14,7 @@ tags:
 - high-availability
 - kubedb
 - kubernetes
-- PostgreSQL
+- postgresql
 ---
 
 > New to KubeDB? Please start [here](https://kubedb.com/docs/v2025.5.30/welcome/).
