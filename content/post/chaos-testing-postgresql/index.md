@@ -88,7 +88,7 @@ spec:
               memory: 2Gi
   replicas: 3
   replication:
-    walKeepSize: 3000
+    walKeepSize: 5000
     walLimitPolicy: WALKeepSize
     # forceFailoverAcceptingDataLossAfter: 30s # uncomment this if you want to accept data loss during failover, but want to have minimal downtime. 
   standbyMode: Hot
@@ -101,12 +101,14 @@ spec:
   storageType: Durable
   version: "16.4"
 ```
-> **Note**: We have set walLimitPolicy to WALKeepSize and
-> walKeepSize to 3000. This means that we will keep 3000 MB
+> **`Important Notes`**: 
+> - We have set walLimitPolicy to WALKeepSize and
+> walKeepSize to 5000. This means that we will keep 5000 MB
 > of WAL files in our cluster. If your write operation is
 > very high, you might want to increase this value.
 > We suggest you set it to atleast 15 - 30% of your storage.
-> If you can tolerate some data loss, but you want your primary to be up and running at any time with minimal downtime, you can set `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`
+> - If you can tolerate some data loss, but you want your primary to be up and running at any time with minimal downtime, you can set `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`
+> - You can read/write in your database in both **`Ready`** and **`Critical`** state. So it means even if your db is in `Critical` state, your uptime is not compromised. `Critical` means one or more replicas are offline. But `primary` is up and running along with some other replicas probably.
 
 Now, create the namespace and apply the manifest:
 
@@ -1335,7 +1337,7 @@ spec:
               memory: 2Gi
   replicas: 3
   replication:
-    walKeepSize: 3000
+    walKeepSize: 5000
     walLimitPolicy: WALKeepSize
   standbyMode: Hot
   storage:
@@ -2392,7 +2394,7 @@ You will see even though we will force failover accepting the fact that there mi
 but in really this data loss chances are very not very high. We should be able to achieve high availability without losing any data in most cases. But our end goal is to have 
 the database in `Ready` state when chaos is recovered.
 
-In case you do not prefer to set this `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`, feel free to continue with the current setup. Its just you might face some extra downtime in some IOChaos cases.
+> NOTE: In case you do not prefer to set this `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`, feel free to continue with the current setup. Its just you might face some extra downtime(Database might stay in `NotReady` state for longer period until chaos is recovered) in some IOChaos cases.
 
 
 
@@ -2450,7 +2452,7 @@ spec:
               memory: 2Gi
   replicas: 3
   replication:
-    walKeepSize: 3000
+    walKeepSize: 5000
     walLimitPolicy: WALKeepSize
     forceFailoverAcceptingDataLossAfter: 30s # uncomment this if you want to accept data loss during failover, but want to have minimal downtime. 
   standbyMode: Hot
@@ -2705,6 +2707,947 @@ Cleanup: Delete the created chaos experiment.
 
 ```shell
 kubectl delete chaos-mesh -n chaos-mesh --all
+```
+
+### IO Fault to primary
+
+In this experiment, chaos-mesh will insert io/fault. Our Database should handle this chaos and remain in `Ready` or `Critical` state. 
+Once the chaos is recovered by chaos-mesh, the database should be back in `Ready` state.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: pg-primary-io-fault
+  namespace: chaos-mesh
+spec:
+  action: fault
+  mode: one
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      "app.kubernetes.io/instance": "pg-ha-cluster"
+      "kubedb.com/role": "primary"
+  volumePath: /var/pv
+  path: /var/pv/data/**/*
+  errno: 5  # EIO (Input/output error)
+  percent: 50
+  duration: "5m"
+  containerNames:
+    - postgres
+```
+
+Lets see how our database is now,
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:00:56 2026
+
+NAME                                VERSION   STATUS   AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Ready    11h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   11h
+
+NAME                         READY   STATUS      RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running     0          11h
+pod/pg-ha-cluster-1          2/2     Running     0          11h
+pod/pg-ha-cluster-2          2/2     Running     0          11h
+pod/pg-load-test-job-62l88   0/1     Completed   0          11h
+```
+
+Lets see who is primary:
+
+```shell
+➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
+pg-ha-cluster-0
+➤ kubectl exec -it -n demo pg-ha-cluster-0 -- bash
+Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+pg-ha-cluster-0:/$ psql
+psql (16.4)
+Type "help" for help.
+
+postgres=# select pg_is_in_recovery();
+ pg_is_in_recovery 
+-------------------
+ f
+(1 row)
+
+```
+
+Lets now create the load generate job,
+
+```shell
+➤ ./run-k8s.sh
+job.batch "pg-load-test-job" deleted
+persistentvolumeclaim "pg-load-test-results" deleted
+configmap/pg-load-test-config unchanged
+job.batch/pg-load-test-job created
+persistentvolumeclaim/pg-load-test-results created
+```
+
+Wait 15-20 second and then apply the io-fault yaml.
+
+```shell
+➤ kubectl apply -f tests/14-io-fault.yaml
+iochaos.chaos-mesh.org/pg-primary-io-fault created
+```
+
+keep watching the database and pods,
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:05:39 2026
+
+NAME                                VERSION   STATUS     AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Critical   11h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   11h
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running   0          11h
+pod/pg-ha-cluster-1          2/2     Running   0          11h
+pod/pg-ha-cluster-2          2/2     Running   0          11h
+pod/pg-load-test-job-pq4l6   1/1     Running   0          117s
+```
+
+After running some time, the database went into critical state. Lets see if there is a failover.
+
+```shell
+➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
+pg-ha-cluster-1
+➤ kubectl exec -it -n demo pg-ha-cluster-1 -- bash
+Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+pg-ha-cluster-1:/$ psql
+psql (16.4)
+Type "help" for help.
+
+postgres=# select pg_is_in_recovery();
+ pg_is_in_recovery 
+-------------------
+ f
+(1 row)
+
+```
+
+So there is a failover, and we can run queries on new primary. Things looking good so far.
+
+I will show you what happened to old primary due to i/o error.
+
+```shell
+➤ kubectl logs -n demo pg-ha-cluster-0
+Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+...
+2026-04-07 02:04:14.564 UTC [2813] LOG:  all server processes terminated; reinitializing
+2026-04-07 02:04:14.564 UTC [2813] LOG:  could not open directory "base/pgsql_tmp": I/O error
+2026-04-07 02:04:14.564 UTC [2813] LOG:  could not open directory "base": I/O error
+2026-04-07 02:04:14.564 UTC [2813] LOG:  could not open directory "pg_tblspc": I/O error
+2026-04-07 02:04:14.643 UTC [2813] PANIC:  could not open file "global/pg_control": I/O error
+/scripts/run.sh: line 61:  2813 Aborted                 (core dumped) /run_scripts/role/run.sh
+removing the initial scripts as server is not running ...
+
+```
+
+So as it wasn't able to operate cleanly and communicate with standby's, a new leader election happened and `pg-ha-cluster-1` was promoted as primary.
+As we saw earlier, we can run queries on `pg-ha-cluster-1`, so our cluster is usable even in the time of chaos.
+
+Now wait until chaos is recovered.
+
+```shell
+➤ kubectl get iochaos -n chaos-mesh pg-primary-io-fault -oyaml
+...
+status:
+  conditions:
+  - status: "False"
+    type: AllInjected
+  - status: "True"
+    type: AllRecovered
+  - status: "False"
+    type: Paused
+  - status: "True"
+    type: Selected
+
+```
+
+Chaos is recovered by chaos-mesh.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:11:28 2026
+
+NAME                                VERSION   STATUS   AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Ready    11h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   11h
+
+NAME                         READY   STATUS      RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running     0          11h
+pod/pg-ha-cluster-1          2/2     Running     0          11h
+pod/pg-ha-cluster-2          2/2     Running     0          11h
+pod/pg-load-test-job-pq4l6   0/1     Completed   0          7m47s
+```
+
+Our database is transitioned back into `Ready` state.
+
+```shell
+Final Results:
+  Total Data Transferred: 24419.35 MB
+-----------------------------------------------------------------
+Current Throughput (interval):
+  Operations/sec: 1115.64 (Reads: 893.05/s, Inserts: 111.29/s, Updates: 111.29/s)
+  Throughput: 104.36 MB/s
+  Errors/sec: 0.00
+-----------------------------------------------------------------
+Latency Statistics:
+  Reads   - Avg: 16.1ms, P95: 60.276ms, P99: 295.835ms
+  Inserts - Avg: 42.911ms, P95: 117.868ms, P99: 204.391ms
+  Updates - Avg: 18.051ms, P95: 65.577ms, P99: 131.106ms
+-----------------------------------------------------------------
+Connection Pool:
+  Active: 29, Max: 100, Available: 71
+=================================================================
+=================================================================
+Test Duration: 5m3s
+-----------------------------------------------------------------
+Cumulative Statistics:
+  Total Operations: 260920 (Reads: 208927, Inserts: 26033, Updates: 25960)
+  Total Number of Rows Reads: 20892700, Inserts: 2603300, Updates: 25960)
+  Total Errors: 242129
+  Total Data Transferred: 24420.59 MB
+-----------------------------------------------------------------
+Current Throughput (interval):
+  Operations/sec: 35.96 (Reads: 32.97/s, Inserts: 3.00/s, Updates: 0.00/s)
+  Throughput: 3.71 MB/s
+  Errors/sec: 0.00
+-----------------------------------------------------------------
+Latency Statistics:
+  Reads   - Avg: 16.102ms, P95: 60.291ms, P99: 295.835ms
+  Inserts - Avg: 42.912ms, P95: 117.868ms, P99: 204.391ms
+  Updates - Avg: 18.051ms, P95: 65.577ms, P99: 131.106ms
+-----------------------------------------------------------------
+Connection Pool:
+  Active: 11, Max: 100, Available: 89
+=================================================================
+
+=================================================================
+Performance Summary:
+  Average Throughput: 861.35 operations/sec
+  Read Operations: 208927 (689.71/sec avg)
+  Insert Operations: 26033 (85.94/sec avg)
+  Update Operations: 25960 (85.70/sec avg)
+  Error Rate: 48.1323%
+  Total Data Transferred: 23.85 GB
+=================================================================
+
+=================================================================
+Checking for Data Loss...
+=================================================================
+
+=================================================================
+Data Loss Report:
+-----------------------------------------------------------------
+  Total Records Inserted: 2653300
+  Records Found in DB: 2653300
+  Records Lost: 0
+  Data Loss Percentage: 0.00%
+=================================================================
+
+✅ No data loss detected - all inserted records are present in database
+```
+
+You can see the statistics here, 25 GB was inserted in 5 minutes with zero data loss even though we accepted data loss via `forceFailoverAcceptingDataLossAfter`.
+
+### IO attribute overwrite
+In this experiment, i/o attributes will be overwritten. We expect our database to be available(`Ready` | `Critical`) during the chaos experiment.
+
+> Note: If you are not using `forceFailoverAcceptingDataLossAfter`, then you might see database is in `NotReady` during the chaos.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: pg-primary-io-attr-override
+  namespace: chaos-mesh
+spec:
+  action: attrOverride
+  mode: one
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      "app.kubernetes.io/instance": "pg-ha-cluster"
+      "kubedb.com/role": "primary"
+  volumePath: /var/pv
+  path: /var/pv/data/**/*
+  attr:
+    perm: 444  # Read-only permissions
+  percent: 100
+  duration: "4m"
+  containerNames:
+    - postgres
+
+```
+
+Lets see how our database is now.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:32:42 2026
+
+NAME                                VERSION   STATUS   AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Ready    12h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   12h
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running   0          12h
+pod/pg-ha-cluster-1          2/2     Running   0          12h
+pod/pg-ha-cluster-2          2/2     Running   0          12h
+
+```
+
+Create the load generation job.
+
+```shell
+➤ ./run-k8s.sh
+job.batch "pg-load-test-job" deleted
+persistentvolumeclaim "pg-load-test-results" deleted
+configmap/pg-load-test-config unchanged
+job.batch/pg-load-test-job created
+persistentvolumeclaim/pg-load-test-results created
+```
+
+Apply the chaos experiment.
+
+```shell
+➤ kubectl apply -f tests/15-io-attr-override.yaml
+iochaos.chaos-mesh.org/pg-primary-io-attr-override created
+```
+
+Keep watching the database resources.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:33:45 2026
+
+NAME                                VERSION   STATUS     AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      NotReady   12h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   12h
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running   0          12h
+pod/pg-ha-cluster-1          2/2     Running   0          12h
+pod/pg-ha-cluster-2          2/2     Running   0          12h
+pod/pg-load-test-job-cgbgt   1/1     Running   0          72s
+```
+
+So database went into `NotReady` state, that means primary is not responsive. The reason might be database inside primary pod is not running.
+
+Lets check this:
+
+```shell
+➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
+pg-ha-cluster-1
+```
+
+Lets check the logs from unresponsive primary `pg-ha-cluster-1`.
+
+```shell
+➤ kubectl logs -f -n demo pg-ha-cluster-1
+Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+...
+2026-04-07 02:33:20.552 UTC [237694] FATAL:  the database system is in recovery mode
+2026-04-07 02:33:20.553 UTC [2908] LOG:  all server processes terminated; reinitializing
+2026-04-07 02:33:20.553 UTC [2908] LOG:  could not open directory "base/pgsql_tmp": Permission denied
+2026-04-07 02:33:20.554 UTC [2908] LOG:  could not open directory "base/4": Permission denied
+2026-04-07 02:33:20.554 UTC [2908] LOG:  could not open directory "base/5": Permission denied
+2026-04-07 02:33:20.554 UTC [2908] LOG:  could not open directory "base/1": Permission denied
+2026-04-07 02:33:20.627 UTC [2908] PANIC:  could not open file "global/pg_control": Permission denied
+removing the initial scripts as server is not running ...
+/scripts/run.sh: line 61:  2908 Aborted                 (core dumped) /run_scripts/role/run.sh
+
+```
+
+So you can see primary is shut down for I/O chaos. A failover should happen soon.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:34:42 2026
+
+NAME                                VERSION   STATUS     AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Critical   12h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   12h
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running   0          12h
+pod/pg-ha-cluster-1          2/2     Running   0          12h
+pod/pg-ha-cluster-2          2/2     Running   0          12h
+pod/pg-load-test-job-cgbgt   1/1     Running   0          2m9s
+
+```
+
+Our database now moved to `NotReady` -> `Critical` state. Lets see who is new primary.
+
+```shell
+➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
+pg-ha-cluster-0
+-----
+➤ kubectl exec -it -n demo pg-ha-cluster-0 -- bash
+Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+pg-ha-cluster-0:/$ psql
+psql (16.4)
+Type "help" for help.
+
+postgres=# select pg_is_in_recovery();
+ pg_is_in_recovery 
+-------------------
+ f
+(1 row)
+----
+➤ kubectl logs -f -n demo pg-ha-cluster-0
+Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+...
+2026-04-07 02:34:38.753 UTC [368446] LOG:  checkpoint starting: wal
+2026-04-07 02:35:09.342 UTC [368446] LOG:  checkpoint complete: wrote 20389 buffers (31.1%); 0 WAL file(s) added, 0 removed, 21 recycled; write=29.948 s, sync=0.444 s, total=30.589 s; sync files=11, longest=0.351 s, average=0.041 s; distance=539515 kB, estimate=618146 kB; lsn=4/FACB3C48, redo lsn=4/DD03C9B0
+2026-04-07 02:35:12.932 UTC [368446] LOG:  checkpoint starting: wal
+2026-04-07 02:35:29.121 UTC [368446] LOG:  checkpoint complete: wrote 22745 buffers (34.7%); 0 WAL file(s) added, 2 removed, 33 recycled; write=15.541 s, sync=0.535 s, total=16.190 s; sync files=12, longest=0.216 s, average=0.045 s; distance=540559 kB, estimate=610387 kB; lsn=5/1C15E728, redo lsn=4/FE0207D8
+
+```
+
+So database is back online again, however old primary has not yet joined in the cluster. We will wait until all the chaos recovered.
+
+```shell
+➤ kubectl get iochaos -n chaos-mesh pg-primary-io-attr-override -oyaml
+...
+status:
+  conditions:
+  - status: "True"
+    type: AllRecovered
+  - status: "False"
+    type: Paused
+  - status: "True"
+    type: Selected
+  - status: "False"
+    type: AllInjected
+```
+
+All the generated chaos recovered.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:38:52 2026
+
+NAME                                VERSION   STATUS   AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Ready    12h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   12h
+
+NAME                         READY   STATUS      RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running     0          12h
+pod/pg-ha-cluster-1          2/2     Running     0          12h
+pod/pg-ha-cluster-2          2/2     Running     0          12h
+pod/pg-load-test-job-cgbgt   0/1     Completed   0          6m20s
+
+```
+
+Database moved into `Ready` state.
+
+```shell
+Final Results:
+=================================================================
+Test Duration: 5m3s
+-----------------------------------------------------------------
+Cumulative Statistics:
+  Total Operations: 248425 (Reads: 198683, Inserts: 24948, Updates: 24794)
+  Total Number of Rows Reads: 19868300, Inserts: 2494800, Updates: 24794)
+  Total Errors: 232435
+  Total Data Transferred: 23243.14 MB
+-----------------------------------------------------------------
+Current Throughput (interval):
+  Operations/sec: 48.77 (Reads: 36.58/s, Inserts: 4.88/s, Updates: 7.32/s)
+  Throughput: 4.34 MB/s
+  Errors/sec: 0.00
+-----------------------------------------------------------------
+Latency Statistics:
+  Reads   - Avg: 16.922ms, P95: 52.069ms, P99: 317.142ms
+  Inserts - Avg: 44.849ms, P95: 130.692ms, P99: 211.022ms
+  Updates - Avg: 19.201ms, P95: 66.474ms, P99: 148.452ms
+-----------------------------------------------------------------
+Connection Pool:
+  Active: 25, Max: 100, Available: 75
+=================================================================
+
+=================================================================
+Performance Summary:
+  Average Throughput: 820.04 operations/sec
+  Read Operations: 198683 (655.85/sec avg)
+  Insert Operations: 24948 (82.35/sec avg)
+  Update Operations: 24794 (81.84/sec avg)
+  Error Rate: 48.3374%
+  Total Data Transferred: 22.70 GB
+=================================================================
+
+=================================================================
+Checking for Data Loss...
+=================================================================
+=================================================================
+Test Duration: 5m13s
+-----------------------------------------------------------------
+Cumulative Statistics:
+  Total Operations: 248425 (Reads: 198683, Inserts: 24948, Updates: 24794)
+  Total Number of Rows Reads: 19868300, Inserts: 2494800, Updates: 24794)
+  Total Errors: 232435
+  Total Data Transferred: 23243.14 MB
+-----------------------------------------------------------------
+Current Throughput (interval):
+  Operations/sec: 0.00 (Reads: 0.00/s, Inserts: 0.00/s, Updates: 0.00/s)
+  Throughput: 0.00 MB/s
+  Errors/sec: 0.00
+-----------------------------------------------------------------
+Latency Statistics:
+  Reads   - Avg: 16.922ms, P95: 52.069ms, P99: 317.142ms
+  Inserts - Avg: 44.849ms, P95: 130.692ms, P99: 211.022ms
+  Updates - Avg: 19.201ms, P95: 66.474ms, P99: 148.452ms
+-----------------------------------------------------------------
+Connection Pool:
+  Active: 14, Max: 100, Available: 86
+=================================================================
+
+I0407 02:37:53.535684       1 load_generator_v2.go:555] Total records in table: 2544800
+=================================================================
+Data Loss Report:
+-----------------------------------------------------------------
+  Total Records Inserted: 2544800
+I0407 02:37:53.535709       1 load_generator_v2.go:556] totalRows in LoadGenerator: 2544800
+  Records Found in DB: 2544800
+  Records Lost: 0
+  Data Loss Percentage: 0.00%
+=================================================================
+
+✅ No data loss detected - all inserted records are present in database
+```
+
+We inserted around 23 GB in 5 minutes. No data loss detected.
+
+Cleaup the chaos experiment.
+```shell
+➤ kubectl delete -f tests/15-io-attr-override.yaml 
+iochaos.chaos-mesh.org "pg-primary-io-attr-override" deleted
+```
+
+### IO mistake 
+
+In this experiment, chaos-mesh will insert IO mistakes. We expect database to be in `Ready` state after the
+chaos is recovered. If you are using `forceFailover` api, then your db will be up
+even when chaos is running, but this will increase the chance of some data loss (if some write operation going on during failover process).
+Just to remind you again, we are using `forceFailoverAcceptingDataLossAfter` api for IO related chaos.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: pg-primary-io-mistake
+  namespace: chaos-mesh
+spec:
+  action: mistake
+  mode: one
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      "app.kubernetes.io/instance": "pg-ha-cluster"
+      "kubedb.com/role": "primary"
+  volumePath: /var/pv
+  path: /var/pv/data/**/*
+  mistake:
+    filling: random
+    maxOccurrences: 10
+    maxLength: 100
+  percent: 50
+  duration: "5m"
+  containerNames:
+    - postgres
+```
+
+Lets check the database state.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:57:53 2026
+
+NAME                                VERSION   STATUS   AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Ready    12h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   12h
+
+NAME                         READY   STATUS      RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running     0          12h
+pod/pg-ha-cluster-1          2/2     Running     0          12h
+pod/pg-ha-cluster-2          2/2     Running     0          12h
+
+```
+
+Running the load generation job.
+
+```shell
+➤ ./run-k8s.sh
+job.batch "pg-load-test-job" deleted
+persistentvolumeclaim "pg-load-test-results" deleted
+configmap/pg-load-test-config unchanged
+job.batch/pg-load-test-job created
+persistentvolumeclaim/pg-load-test-results created
+```
+
+Lets check the primary.
+
+```shell
+➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
+pg-ha-cluster-0
+saurov@saurov-pc:~
+➤ kubectl exec -it -n demo pg-ha-cluster-0 -- bash
+Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+pg-ha-cluster-0:/$ psql
+psql (16.4)
+Type "help" for help.
+
+postgres=# select pg_is_in_recovery();
+ pg_is_in_recovery 
+-------------------
+ f
+(1 row)
+```
+
+Lets apply the experiment.
+
+```shell
+➤ kubectl apply -f tests/16-io-mistake.yaml 
+iochaos.chaos-mesh.org/pg-primary-io-mistake created
+```
+
+Keep watching the database.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:59:26 2026
+
+NAME                                VERSION   STATUS     AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      NotReady   12h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   12h
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running   0          12h
+pod/pg-ha-cluster-1          2/2     Running   0          12h
+pod/pg-ha-cluster-2          2/2     Running   0          12h
+pod/pg-load-test-job-b56q6   1/1     Running   0          75s
+
+```
+
+Database went into NotReady state and should be back in `Critical` state as we used `forceFailoverAcceptingDataLossAfter` api.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:00:32 2026
+
+NAME                                VERSION   STATUS     AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Critical   12h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   12h
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running   0          12h
+pod/pg-ha-cluster-1          2/2     Running   0          12h
+pod/pg-ha-cluster-2          2/2     Running   0          12h
+pod/pg-load-test-job-b56q6   1/1     Running   0          2m21s
+
+```
+
+The database is back in `Critical` state.
+
+```shell
+➤ kubectl get iochaos -n chaos-mesh pg-primary-io-mistake -oyaml
+status:
+  conditions:
+  - status: "True"
+    type: Selected
+  - status: "False"
+    type: AllInjected
+  - status: "True"
+    type: AllRecovered
+  - status: "False"
+    type: Paused
+
+```
+
+All the chaos recovered.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:04:55 2026
+
+NAME                                VERSION   STATUS   AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Ready    12h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   12h
+
+NAME                         READY   STATUS      RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running     0          12h
+pod/pg-ha-cluster-1          2/2     Running     0          12h
+pod/pg-ha-cluster-2          2/2     Running     0          12h
+pod/pg-load-test-job-b56q6   0/1     Completed   0          6m44
+```
+
+Database back in `Ready` state.
+
+```shell
+...
+Data Loss Report:
+-----------------------------------------------------------------
+  Total Records Inserted: 2537700
+I0407 03:03:27.372254       1 load_generator_v2.go:556] totalRows in LoadGenerator: 2537700
+  Records Found in DB: 2537700
+  Records Lost: 0
+  Data Loss Percentage: 0.00%
+=================================================================
+
+✅ No data loss detected - all inserted records are present in database
+```
+
+No data loss.
+
+Cleanup:
+
+```shell
+➤ kubectl delete -f tests/16-io-mistake.yaml 
+iochaos.chaos-mesh.org "pg-primary-io-mistake" deleted
+```
+
+
+## Misc Chaos Tests
+
+### Node Reboot | Stress CPU memory
+
+We will do three experiment one after another here.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: pg-cluster-all-pods-kill
+  namespace: chaos-mesh
+spec:
+  action: pod-kill
+  mode: all
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      "app.kubernetes.io/instance": "pg-ha-cluster"
+  gracePeriod: 0
+  duration: "30s"
+
+```
+
+This is simulate a typical node failure scenario where all the pod restarted.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:31:47 2026
+
+NAME                                VERSION   STATUS   AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Ready    13h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   13h
+
+NAME                         READY   STATUS      RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running     0          13h
+pod/pg-ha-cluster-1          2/2     Running     0          13h
+pod/pg-ha-cluster-2          2/2     Running     0          13h
+```
+
+Lets apply the experiment.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:12 2026
+
+NAME                                VERSION   STATUS     AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Critical   13h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   13h
+
+NAME                         READY   STATUS      RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running     0          5s
+pod/pg-ha-cluster-1          2/2     Running     0          2s
+
+```
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:24 2026
+
+NAME                                VERSION   STATUS     AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      NotReady   13h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   13h
+
+NAME                         READY   STATUS      RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running     0          16s
+pod/pg-ha-cluster-1          2/2     Running     0          13s
+pod/pg-ha-cluster-2          2/2     Running     0          11s
+```
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:33 2026
+
+NAME                                VERSION   STATUS     AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Critical   13h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   13h
+
+NAME                         READY   STATUS      RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running     0          26s
+pod/pg-ha-cluster-1          2/2     Running     0          23s
+pod/pg-ha-cluster-2          2/2     Running     0          21s
+```
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:40 2026
+
+NAME                                VERSION   STATUS   AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Ready    13h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   13h
+
+NAME                         READY   STATUS      RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running     0          32s
+pod/pg-ha-cluster-1          2/2     Running     0          29s
+pod/pg-ha-cluster-2          2/2     Running     0          27s
+
+```
+
+So the database is back in ready state within 30s of applying the chaos. Now lets apply the next chaos which will stress cpu.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: pg-primary-cpu-stress
+  namespace: chaos-mesh
+spec:
+  mode: one
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      "app.kubernetes.io/instance": "pg-ha-cluster"
+      "kubedb.com/role": "primary"
+  stressors:
+    cpu:
+      workers: 2
+      load: 90
+  duration: "2m"
+
+```
+
+But before running this, we will run the load test job.
+
+```shell
+➤ ./run-k8s.sh
+job.batch "pg-load-test-job" deleted
+persistentvolumeclaim "pg-load-test-results" deleted
+configmap/pg-load-test-config unchanged
+job.batch/pg-load-test-job created
+persistentvolumeclaim/pg-load-test-results created
+```
+
+Now lets apply the chaos experiment.
+
+```shell
+➤ kubectl apply -f tests/18-stress-cpu-primary.yaml
+stresschaos.chaos-mesh.org/pg-primary-cpu-stress created
+```
+```shell
+➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
+pg-ha-cluster-1
+
+```
+
+Lets check the cpu usages:
+
+```shell
+Every 2.0s: kubectl top pods --containers -n demo          saurov-pc: Tue Apr  7 09:35:42 2026
+
+POD                      NAME             CPU(cores)   MEMORY(bytes)
+pg-ha-cluster-0          pg-coordinator   29m          40Mi
+pg-ha-cluster-0          postgres         244m         621Mi
+pg-ha-cluster-1          pg-coordinator   15m          38Mi
+pg-ha-cluster-1          postgres         7060m        693Mi
+pg-ha-cluster-2          pg-coordinator   16m          38Mi
+pg-ha-cluster-2          postgres         217m         629Mi
+pg-load-test-job-sfj6z   load-test        1594m        216Mi
+
+```
+
+```shell
+Every 2.0s: kubectl top pods --containers -n demo          saurov-pc: Tue Apr  7 09:35:58 2026
+
+POD                      NAME             CPU(cores)   MEMORY(bytes)
+pg-ha-cluster-0          pg-coordinator   29m          37Mi
+pg-ha-cluster-0          postgres         272m         633Mi
+pg-ha-cluster-1          pg-coordinator   15m          38Mi
+pg-ha-cluster-1          postgres         8509m        941Mi
+pg-ha-cluster-2          pg-coordinator   14m          39Mi
+pg-ha-cluster-2          postgres         241m         657Mi
+pg-load-test-job-sfj6z   load-test        1256m        272Mi
+
+```
+
+Database remain in ready state as there was sufficient cpu left in the cluster. However, this test case will pass in every environment.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:36:31 2026
+
+NAME                                VERSION   STATUS   AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Ready    13h
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   13h
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running   0          4m24s
+pod/pg-ha-cluster-1          2/2     Running   0          4m21s
+pod/pg-ha-cluster-2          2/2     Running   0          4m19s
+pod/pg-load-test-job-sfj6z   1/1     Running   0          113s
+```
+
+
+```shell
+Data Loss Report:
+-----------------------------------------------------------------
+  Total Records Inserted: 3273100
+  Records Found in DB: 3273100
+  Records Lost: 0
+  Data Loss Percentage: 0.00%
+=================================================================
+I0407 03:40:04.019990       1 load_generator_v2.go:555] Total records in table: 3273100
+I0407 03:40:04.020008       1 load_generator_v2.go:556] totalRows in LoadGenerator: 3273100
+
+✅ No data loss detected - all inserted records are present in database
+
+```
+
+CleanUp:
+
+```shell
+➤ kubectl delete -f tests/17-node-reboot.yaml 
+podchaos.chaos-mesh.org "pg-cluster-all-pods-kill" deleted
+saurov@saurov-pc:~/g/s/g/s/chaos-mesh|main⚡*
+➤ kubectl delete -f tests/18-stress-cpu-primary.yaml 
+stresschaos.chaos-mesh.org "pg-primary-cpu-stress" deleted
 ```
 
 ## What Next?`
