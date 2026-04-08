@@ -69,6 +69,24 @@ chaos-dashboard-6855b9d4c-phkht             1/1     Running   0          4d1h
 chaos-dns-server-85b8846dc9-ngcwm           1/1     Running   0          4d1h
 ```
 
+## Introduction to Chaos Engineering
+
+**Chaos Engineering** is a disciplined approach to testing distributed systems by deliberately introducing controlled failure scenarios to discover vulnerabilities and weaknesses before they impact your users. Rather than waiting for production incidents, chaos engineering proactively identifies how your system behaves under adverse conditions—such as pod failures, network outages, resource exhaustion, and data corruption.
+
+This methodology is particularly crucial for database systems, where failures can lead to data loss, service downtime, and compromised data consistency. By testing these scenarios in controlled environments, you gain confidence that your system can recover gracefully and maintain availability.
+
+### What This Blog Covers
+
+In this comprehensive guide, we will:
+
+1. **Deploy a Highly Available PostgreSQL Cluster** on Kubernetes using KubeDB, configured with replication and automatic failover capabilities
+2. **Run 16+ Chaos Engineering Experiments** using Chaos-Mesh to simulate real-world failure scenarios
+3. **Observe Cluster Behavior** during failures including pod crashes, network issues, resource exhaustion, and disk I/O errors
+4. **Measure Resilience** by tracking data consistency, failover speed, and recovery capabilities
+5. **Learn Best Practices** for configuring PostgreSQL replication and failover strategies to maximize availability
+
+Each experiment progressively tests different aspects of the system—from simple pod failures to complex scenarios involving multiple simultaneous failures. By the end, you'll have a thorough understanding of how your PostgreSQL cluster behaves under various failure modes and how to configure it for maximum resilience.
+
 ## Create a High-Availability PostgreSQL Cluster
 
 
@@ -490,8 +508,7 @@ Note the `Restarts` section; you will see the primary pod was
 killed 8 seconds ago. The failover was done almost immediately.
 The database state is now `Critical`, which
 means your new primary is ready to accept connections, but one or
-more of your replicas are not ready, in this case the old
-primary. The old primary will
+more of your replicas are not ready. The old primary will
 be ready after `chaos.spec.duration` seconds, which is 30 seconds.
 
 Let's see who is the new primary.
