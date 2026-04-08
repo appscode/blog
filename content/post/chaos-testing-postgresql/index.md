@@ -1289,9 +1289,16 @@ Data Loss Report:
 So we incurred data loss. Now the question is: how much? In our above case, there were:
 Insert Operations: 47445 (78.70/sec avg) -> 78.70 insert operations per second, each insert uses batch size of `BATCH_SIZE: 5`,
 which is 78.70 * 5 = 393.5 rows inserted per second.
-We lost 16930 rows, so the data loss window is 16930 / 393.5 = 43 seconds. So we can say that there was a network partition for around 43 seconds and all the rows inserted during that time are lost.
 
-Now lets try to avoid data loss by using synchronous replication. Change the `db.spec.streamingMode: Synchronous` to the setup/pg-ha-cluster.yaml.
+We lost 16930 rows, so the data loss window is 16930 / 393.5 = 43 seconds. 
+So we can say that there was a network partition for around 4 minutes (`chaos.spec.duration`) 
+and split brain due of network partition was for 43 seconds. 
+
+This split brain detection time is around ~30 seconds(Your data loss window) despite how longer your network partition lasts.
+
+> Note: If your network partition window is less than 30 seconds, you won't loose any data even in Asynchronous mode.
+
+Now lets try to **avoid data loss** by using **Synchronous** replication. Change the `db.spec.streamingMode: Synchronous` to the setup/pg-ha-cluster.yaml.
 
 ```yaml
 apiVersion: kubedb.com/v1
@@ -2830,9 +2837,10 @@ This may indicate:
   - Transaction rollback due to replication issues
 ```
 
-Total number of rows inserted 2135800, lost rows 100, so basically 1 batch insert query was lost. **If you have not set force failover, this data loss won't be there**.
+Total number of rows inserted 2135800, lost rows 100, so basically 1 batch insert query was lost.
+**If you have not set force failover, this data loss won't be there**.
 
-> **NOTE**: The same test is run again in the `IO Chaos Tests Without Force Failover` section below, but without the `forceFailoverAcceptingDataLossAfter: 30s` API. In that case, no data loss occurred. You will find that case shown below as you follow along with me.
+> **NOTE**: The same chaos experiment is run again in the `IO Chaos Tests Without Force Failover` section below without the `forceFailoverAcceptingDataLossAfter: 30s` API. In that case, no data loss was incurred.
 
 
 Clean up the chaos experiment.
