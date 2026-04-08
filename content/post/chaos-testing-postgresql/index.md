@@ -142,7 +142,7 @@ See the database status is ready.
 ```shell
 ➤ kubectl get pg,petset,pods -n demo
 NAME                             VERSION   STATUS   AGE
-postgres.kubedb.com/pg-ha-cluster   17.2      Ready    4m45s
+postgres.kubedb.com/pg-ha-cluster   16.4      Ready    4m45s
 
 NAME                                      AGE
 petset.apps.k8s.appscode.com/pg-ha-cluster   4m41s
@@ -2476,14 +2476,17 @@ For IO related chaos, if you prioritize high availability over data loss, then s
 `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`. This will result in better availability. But if you prefer data safety over high availability, then do not set `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s` this.
 
 
-I will set`.spec.replication.forceFailoverAcceptingDataLossAfter: 30s` for IO related chaos tests. **If you do not prefer data loss, ignore this Recreation step**.
+I will set`.spec.replication.forceFailoverAcceptingDataLossAfter: 30s` for IO related chaos tests. 
+**If you do not prefer data loss, ignore this Recreation step**.
 
 
 You will see that even though we will force failover accepting the possibility that there might be data loss,
 but in really this data loss chances are very not very high. We should be able to achieve high availability without losing any data in most cases. Our end goal is to have 
 the database in `Ready` state when chaos is recovered.
 
-> NOTE: In case you do not prefer to set this `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`, . Its just you might face some extra downtime(Database might stay in `NotReady` state for longer period until chaos is recovered) in some IOChaos cases.
+> NOTE: In case you do not prefer to set this `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`.
+> Its just you might face some extra downtime(Database might stay in `NotReady` state for longer period 
+> until chaos is recovered) in some IOChaos cases.
 
 
 
@@ -2811,6 +2814,9 @@ This may indicate:
 ```
 
 Total number of rows inserted 2135800, lost rows 100, so basically 1 batch insert query was lost. **If you have not set force failover, this data loss won't be there**.
+
+> **NOTE**: The same test is run again in the `IO Chaos Tests Without Force Failover` section below, but without the `forceFailoverAcceptingDataLossAfter: 30s` API. In that case, no data loss occurred. You will find that case shown below as you follow along with me.
+
 
 Clean up the chaos experiment.
 
@@ -3568,6 +3574,235 @@ Cleanup:
 iochaos.chaos-mesh.org "pg-primary-io-mistake" deleted
 ```
 
+
+### IO Chaos Tests Without Force Failover
+
+We have seen data losses in chaos tests with `forceFailoverAcceptingDataLossAfter: 30s` api, so we will now try the same chaos,
+but without this api.
+
+Now save this yaml at `setup/pg-ha-cluster.yaml`
+```yaml
+apiVersion: kubedb.com/v1
+kind: Postgres
+metadata:
+  name: pg-ha-cluster
+  namespace: demo
+spec:
+  clientAuthMode: md5
+  deletionPolicy: Delete
+  podTemplate:
+    spec:
+      containers:
+        - name: postgres
+          resources:
+            limits:
+              memory: 3Gi
+            requests:
+              cpu: 2
+              memory: 2Gi
+  replicas: 3
+  replication:
+    walKeepSize: 3000
+    walLimitPolicy: WALKeepSize
+  standbyMode: Hot
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 20Gi
+  storageType: Durable
+  version: "16.4"
+```
+
+Now apply this yaml `kubectl apply -f setup/pg-ha-cluster.yaml`.
+
+watch the resource coming up and db getting `Ready`.
+
+```shell
+watch kubectl get pg,petset,pods -n demo
+```
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Wed Apr  8 10:15:14 2026
+
+NAME                                VERSION   STATUS   AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Ready    68s
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   63s
+
+NAME                  READY   STATUS    RESTARTS   AGE
+pod/pg-ha-cluster-0   2/2     Running   0          63s
+pod/pg-ha-cluster-1   2/2     Running   0          56s
+pod/pg-ha-cluster-2   2/2     Running   0          48s
+
+```
+
+lets see who is the primary.
+
+```shell
+➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
+pg-ha-cluster-0
+-----
+➤ kubectl exec -it -n demo pg-ha-cluster-0 -- bash
+Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+pg-ha-cluster-0:/$ psql
+psql (16.4)
+Type "help" for help.
+
+postgres=# select pg_is_in_recovery();
+ pg_is_in_recovery 
+-------------------
+ f
+(1 row)
+
+```
+
+lets run the load generate job.
+
+```shell
+➤ ./run-k8s.sh
+job.batch "pg-load-test-job" deleted
+persistentvolumeclaim "pg-load-test-results" deleted
+configmap/pg-load-test-config unchanged
+job.batch/pg-load-test-job created
+persistentvolumeclaim/pg-load-test-results created
+```
+
+Apply the io-latency chaos experiment.
+
+```shell
+➤ kubectl apply -f tests/13-io-latency.yaml 
+iochaos.chaos-mesh.org/pg-primary-io-latency created
+```
+
+Now watch the database state.
+
+```shell
+watch kubectl get pg,petset,pods -n demo
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Wed Apr  8 10:20:38 2026
+
+NAME                                VERSION   STATUS     AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      NotReady   6m32s
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   6m27s
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running   0          6m27s
+pod/pg-ha-cluster-1          2/2     Running   0          6m20s
+pod/pg-ha-cluster-2          2/2     Running   0          6m12s
+pod/pg-load-test-job-p7vvw   1/1     Running   0          80s
+
+```
+
+You should see your database is in `NotReady` state all the time. The reason behind that:
+- Primary database is up and running, but as IO latency increased, new connection creation is getting timed out.
+- All existing connections to the primary are working fine.
+- Primary postgres process are working fine, that's why we are not doing a failover.
+- So new connections during this test wasn't possible, and as we do not used force failover, no failover performed.
+
+```shell
+status:
+  conditions:
+  - status: "True"
+    type: Selected
+  - status: "False"
+    type: AllInjected
+  - status: "True"
+    type: AllRecovered
+  - status: "False"
+    type: Paused
+
+```
+
+Now the chaos is recovered and our database should eventually reach `Ready` state.
+
+```shell
+Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Wed Apr  8 10:33:12 2026
+
+NAME                                VERSION   STATUS   AGE
+postgres.kubedb.com/pg-ha-cluster   16.4      Ready    19m
+
+NAME                                         AGE
+petset.apps.k8s.appscode.com/pg-ha-cluster   19m
+
+NAME                         READY   STATUS      RESTARTS   AGE
+pod/pg-ha-cluster-0          2/2     Running     0          53s
+pod/pg-ha-cluster-1          2/2     Running     0          18m
+pod/pg-ha-cluster-2          2/2     Running     0          18m
+pod/pg-load-test-job-p7vvw   0/1     Completed   0          13m
+```
+
+The database reached in `Ready` state.
+
+```shell
+Final Results:
+=================================================================
+Test Duration: 6m10s
+-----------------------------------------------------------------
+Cumulative Statistics:
+  Total Operations: 72980 (Reads: 58363, Inserts: 7250, Updates: 7367)
+  Total Number of Rows Reads: 5836300, Inserts: 725000, Updates: 7367)
+  Total Errors: 17
+  Total Data Transferred: 6820.02 MB
+-----------------------------------------------------------------
+Current Throughput (interval):
+  Operations/sec: 0.00 (Reads: 0.00/s, Inserts: 0.00/s, Updates: 0.00/s)
+  Throughput: 0.00 MB/s
+  Errors/sec: 0.36
+-----------------------------------------------------------------
+Latency Statistics:
+  Reads   - Avg: 42.497ms, P95: 35.26ms, P99: 48.91ms
+  Inserts - Avg: 53.254ms, P95: 109.955ms, P99: 266.726ms
+  Updates - Avg: 93.204ms, P95: 91.333ms, P99: 260.728ms
+-----------------------------------------------------------------
+Connection Pool:
+  Active: 14, Max: 100, Available: 86
+=================================================================
+
+=================================================================
+Performance Summary:
+  Average Throughput: 197.22 operations/sec
+  Read Operations: 58363 (157.72/sec avg)
+  Insert Operations: 7250 (19.59/sec avg)
+  Update Operations: 7367 (19.91/sec avg)
+  Error Rate: 0.0233%
+  Total Data Transferred: 6.66 GB
+=================================================================
+
+=================================================================
+Checking for Data Loss...
+=================================================================
+Error getting connection stats: failed to get current connections: pq: canceling statement due to user request
+Error getting connection stats: failed to get max_connections: context deadline exceeded
+I0408 04:30:19.253637       1 load_generator_v2.go:555] Total records in table: 775000
+I0408 04:30:19.253658       1 load_generator_v2.go:556] totalRows in LoadGenerator: 775000
+
+=================================================================
+Data Loss Report:
+-----------------------------------------------------------------
+  Total Records Inserted: 775000
+  Records Found in DB: 775000
+  Records Lost: 0
+  Data Loss Percentage: 0.00%
+=================================================================
+
+✅ No data loss detected - all inserted records are present in database
+
+```
+
+From the load generate job, we can see there was less data inserted as database was unavailable. But more importantly,
+**No data loss** was recorded.
+
+Similarly, you can try the other chaos also. You should find out no data loss for each io chaos cases.
+
+Cleanup:
+```shell
+➤ kubectl delete -f tests/13-io-latency.yaml
+iochaos.chaos-mesh.org "pg-primary-io-latency" deleted
+```
 
 ## Misc Chaos Tests
 
