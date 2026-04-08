@@ -1,5 +1,5 @@
 ---
-title: Chaos Testing KubeDB Managed PostgreSQL with Chaos-Mesh
+title: 'Chaos Testing KubeDB PostgreSQL: Building Resilience with Chaos Mesh'
 date: "2026-04-07"
 weight: 25
 authors:
