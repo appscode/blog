@@ -39,6 +39,8 @@ For a MySQL Group Replication cluster managed by KubeDB, we needed to answer:
 
 | Component | Details |
 |---|---|
+| Kubernetes | kind (local cluster) |
+| KubeDB Version | 2026.2.26 |
 | Cluster Topology | 3-node Group Replication (Single-Primary & Multi-Primary) |
 | MySQL Versions | 8.0.36, 8.4.8, 9.6.0 |
 | Storage | 2Gi PVC per node (Durable, ReadWriteOnce) |
@@ -48,7 +50,340 @@ For a MySQL Group Replication cluster managed by KubeDB, we needed to answer:
 | Load Generator | sysbench `oltp_write_only`, 4-12 tables, 4-16 threads |
 | Baseline TPS | ~2,400 (Single-Primary) / ~1,150 (Multi-Primary) |
 
-All experiments were run under **sustained sysbench write load** to simulate production traffic during failures. The load generator ran as a Kubernetes Deployment inside the same namespace as the MySQL cluster.
+All experiments were run under **sustained sysbench write load** to simulate production traffic during failures.
+
+## Setup Guide
+
+### Step 1: Create a kind Cluster
+
+We used [kind](https://kind.sigs.k8s.io/) (Kubernetes IN Docker) as our local Kubernetes cluster. Follow the [kind installation guide](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) to install it, then create a cluster:
+
+```bash
+kind create cluster --name chaos-test
+```
+
+### Step 2: Install KubeDB
+
+Install KubeDB operator using Helm:
+
+```bash
+helm install kubedb oci://ghcr.io/appscode-charts/kubedb \
+  --version v2026.2.26 \
+  --namespace kubedb --create-namespace \
+  --set-file global.license=/path/to/license.txt \
+  --wait --burst-limit=10000 --debug
+```
+
+### Step 3: Install Chaos Mesh
+
+Install Chaos Mesh for fault injection:
+
+```bash
+helm repo add chaos-mesh https://charts.chaos-mesh.org
+helm repo update chaos-mesh
+
+helm upgrade -i chaos-mesh chaos-mesh/chaos-mesh \
+  -n chaos-mesh --create-namespace \
+  --set dashboard.create=true \
+  --set dashboard.securityMode=false \
+  --set chaosDaemon.runtime=containerd \
+  --set chaosDaemon.socketPath=/run/containerd/containerd.sock \
+  --set chaosDaemon.privileged=true
+```
+
+### Step 4: Deploy MySQL Cluster
+
+Create the namespace:
+
+```bash
+kubectl create namespace demo
+```
+
+**Single-Primary Mode:**
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: MySQL
+metadata:
+  name: mysql-ha-cluster
+  namespace: demo
+spec:
+  deletionPolicy: Delete
+  podTemplate:
+    spec:
+      containers:
+        - name: mysql
+          resources:
+            limits:
+              memory: 1.5Gi
+            requests:
+              cpu: 500m
+              memory: 1.5Gi
+  replicas: 3
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 2Gi
+  storageType: Durable
+  topology:
+    mode: GroupReplication
+    group:
+      mode: Single-Primary
+  version: 8.4.8
+```
+
+**Multi-Primary Mode** (change only the group mode):
+
+> **Note:** Multi-Primary mode in KubeDB is available from MySQL version **8.4.2** and above.
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: MySQL
+metadata:
+  name: mysql-ha-cluster
+  namespace: demo
+spec:
+  deletionPolicy: Delete
+  podTemplate:
+    spec:
+      containers:
+        - name: mysql
+          resources:
+            limits:
+              memory: 1.5Gi
+            requests:
+              cpu: 500m
+              memory: 1.5Gi
+  replicas: 3
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 2Gi
+  storageType: Durable
+  topology:
+    mode: GroupReplication
+    group:
+      mode: Multi-Primary
+  version: 8.4.8
+```
+
+Deploy and wait for Ready:
+
+```bash
+kubectl apply -f mysql-ha-cluster.yaml
+kubectl wait --for=jsonpath='{.status.phase}'=Ready mysql/mysql-ha-cluster -n demo --timeout=5m
+```
+
+### Step 5: Deploy sysbench Load Generator
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sysbench-load
+  namespace: demo
+  labels:
+    app: sysbench
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sysbench
+  template:
+    metadata:
+      labels:
+        app: sysbench
+    spec:
+      containers:
+        - name: sysbench
+          image: perconalab/sysbench:latest
+          command: ["/bin/sleep", "infinity"]
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+          env:
+            - name: MYSQL_HOST
+              value: "mysql-ha-cluster.demo.svc.cluster.local"
+            - name: MYSQL_PORT
+              value: "3306"
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-ha-cluster-auth
+                  key: password
+            - name: MYSQL_DB
+              value: "sbtest"
+```
+
+```bash
+kubectl apply -f sysbench.yaml
+```
+
+### Step 6: Prepare sysbench Tables
+
+```bash
+# Get the MySQL root password
+PASS=$(kubectl get secret mysql-ha-cluster-auth -n demo -o jsonpath='{.data.password}' | base64 -d)
+
+# Create the sbtest database
+kubectl exec -n demo mysql-ha-cluster-0 -c mysql -- \
+  mysql -uroot -p"$PASS" -e "CREATE DATABASE IF NOT EXISTS sbtest;"
+
+# Get the sysbench pod name
+SBPOD=$(kubectl get pods -n demo -l app=sysbench -o jsonpath='{.items[0].metadata.name}')
+
+# Prepare tables (12 tables x 100k rows)
+kubectl exec -n demo $SBPOD -- sysbench oltp_write_only \
+  --mysql-host=mysql-ha-cluster --mysql-port=3306 \
+  --mysql-user=root --mysql-password="$PASS" \
+  --mysql-db=sbtest --tables=12 --table-size=100000 \
+  --threads=8 prepare
+```
+
+### Step 7: Run sysbench During Chaos
+
+```bash
+# Standard write load (used during most experiments)
+kubectl exec -n demo $SBPOD -- sysbench oltp_write_only \
+  --mysql-host=mysql-ha-cluster --mysql-port=3306 \
+  --mysql-user=root --mysql-password="$PASS" \
+  --mysql-db=sbtest --tables=12 --table-size=100000 \
+  --threads=8 --time=60 --report-interval=10 run
+```
+
+## Chaos Experiment Examples
+
+Below are the Chaos Mesh YAML definitions used. Apply with `kubectl apply -f <file>.yaml` and delete with `kubectl delete -f <file>.yaml` after the experiment.
+
+### Pod Kill (Single-Primary)
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: mysql-primary-pod-kill
+  namespace: chaos-mesh
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      "app.kubernetes.io/instance": "mysql-ha-cluster"
+      "kubedb.com/role": "primary"
+  gracePeriod: 0
+```
+
+### Network Partition (Single-Primary)
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: mysql-primary-network-partition
+  namespace: chaos-mesh
+spec:
+  action: partition
+  mode: one
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      "app.kubernetes.io/instance": "mysql-ha-cluster"
+      "kubedb.com/role": "primary"
+  target:
+    mode: all
+    selector:
+      namespaces:
+        - demo
+      labelSelectors:
+        "kubedb.com/role": "standby"
+  direction: both
+  duration: "2m"
+```
+
+### IO Latency
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: mysql-primary-io-latency
+  namespace: chaos-mesh
+spec:
+  action: latency
+  mode: one
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      "app.kubernetes.io/instance": "mysql-ha-cluster"
+      "kubedb.com/role": "primary"
+  volumePath: "/var/lib/mysql"
+  path: "/**"
+  delay: "100ms"
+  percent: 100
+  duration: "3m"
+```
+
+### Pod Kill (Multi-Primary)
+
+In multi-primary mode, there is no `primary`/`standby` role distinction — all nodes are writable. Target any pod by instance label:
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: mysql-pod-kill-multi-primary
+  namespace: chaos-mesh
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      "app.kubernetes.io/instance": "mysql-ha-cluster"
+  gracePeriod: 0
+```
+
+### Verifying Data Integrity After Each Experiment
+
+After each chaos experiment, verify data consistency:
+
+```bash
+PASS=$(kubectl get secret mysql-ha-cluster-auth -n demo -o jsonpath='{.data.password}' | base64 -d)
+
+# Check GR member status
+kubectl exec -n demo mysql-ha-cluster-0 -c mysql -- \
+  mysql -uroot -p"$PASS" -e "SELECT MEMBER_HOST, MEMBER_STATE, MEMBER_ROLE \
+  FROM performance_schema.replication_group_members;"
+
+# Compare GTIDs across all nodes
+for i in 0 1 2; do
+  echo -n "pod-$i: "
+  kubectl exec -n demo mysql-ha-cluster-$i -c mysql -- \
+    mysql -uroot -p"$PASS" -N -e "SELECT @@gtid_executed;"
+done
+
+# Compare checksums across all nodes
+for i in 0 1 2; do
+  echo -n "pod-$i: "
+  kubectl exec -n demo mysql-ha-cluster-$i -c mysql -- \
+    mysql -uroot -p"$PASS" -N -e "CHECKSUM TABLE sbtest.sbtest1, sbtest.sbtest2, sbtest.sbtest3, sbtest.sbtest4;"
+done
+```
 
 ## The 12-Experiment Matrix
 
@@ -219,7 +554,7 @@ In Multi-Primary mode, **all 3 nodes accept writes** — there is no primary/rep
 
 ## What's Next
 
-- **Multi-Primary testing on additional MySQL versions** — extend chaos testing to MySQL 8.0.36 and 9.6.0 in Multi-Primary mode
+- **Multi-Primary testing on additional MySQL versions** — extend chaos testing to MySQL 9.6.0 in Multi-Primary mode
 - **Long-duration soak testing** — extended chaos runs (hours/days) to validate stability under sustained failure injection
 
 ## Support
