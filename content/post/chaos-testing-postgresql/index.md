@@ -87,7 +87,7 @@ In this comprehensive guide, we will:
 
 Each experiment progressively tests different aspects of the system—from simple pod failures to complex scenarios involving multiple simultaneous failures. By the end, you'll have a thorough understanding of how your PostgreSQL cluster behaves under various failure modes and how to configure it for maximum resilience.
 
-You can see the [`Chaos Testing Results Summary`](#chaos-testing-results-summary) for a quick view.
+You can see the [`Chaos Testing Results Summary`](#chaos-testing-results-summary) for a quick view of what we have done in this blog.
 
 ## Create a High-Availability PostgreSQL Cluster
 
@@ -411,7 +411,7 @@ I0406 04:26:53.097700       1 load_generator_v2.go:556] totalRows in LoadGenerat
   Data Loss Percentage: 0.00%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 
 Cleaning up test data...
 Cleaning up test table...
@@ -706,7 +706,7 @@ I0406 04:52:42.162960       1 load_generator_v2.go:556] totalRows in LoadGenerat
   Data Loss Percentage: 0.00%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 
 Cleaning up test data...
 Cleaning up test table...
@@ -865,7 +865,7 @@ Data Loss Report:
   Data Loss Percentage: 0.00%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 
 Cleaning up test data...
 Cleaning up test table...
@@ -1438,7 +1438,7 @@ I0406 07:45:57.178359       1 load_generator_v2.go:556] totalRows in LoadGenerat
   Data Loss Percentage: 0.00%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 
 ```
 
@@ -1637,7 +1637,7 @@ Data Loss Report:
   Data Loss Percentage: -0.39%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 
 ```
 
@@ -1799,7 +1799,7 @@ Data Loss Report:
   Data Loss Percentage: 0.00%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 
 Cleaning up test data...
 Cleaning up test table...
@@ -1972,7 +1972,7 @@ Data Loss Report:
   Data Loss Percentage: 0.00%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 ```
 
 You can see the stats and this clearly shows lots of rows were inserted and reads were performed, but there was no data loss. And no downtime.
@@ -2133,7 +2133,7 @@ Data Loss Report:
   Data Loss Percentage: 0.00%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 
 Cleaning up test data...
 Cleaning up test table...
@@ -2394,7 +2394,7 @@ Data Loss Report:
   Data Loss Percentage: 0.00%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 ```
 So everything looks alright. No data loss.
 
@@ -3104,7 +3104,7 @@ Data Loss Report:
   Data Loss Percentage: 0.00%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 ```
 
 You can see the statistics here, 25 GB was inserted in 5 minutes with zero data loss even though we accepted data loss via `forceFailoverAcceptingDataLossAfter`.
@@ -3396,7 +3396,7 @@ I0407 02:37:53.535709       1 load_generator_v2.go:556] totalRows in LoadGenerat
   Data Loss Percentage: 0.00%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 ```
 
 We inserted around 23 GB in 5 minutes. No data loss detected.
@@ -3590,7 +3590,7 @@ I0407 03:03:27.372254       1 load_generator_v2.go:556] totalRows in LoadGenerat
   Data Loss Percentage: 0.00%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 ```
 
 No data loss.
@@ -3817,7 +3817,7 @@ Data Loss Report:
   Data Loss Percentage: 0.00%
 =================================================================
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 
 ```
 
@@ -4071,7 +4071,7 @@ Data Loss Report:
 I0407 03:40:04.019990       1 load_generator_v2.go:555] Total records in table: 3273100
 I0407 03:40:04.020008       1 load_generator_v2.go:556] totalRows in LoadGenerator: 3273100
 
-✅ No data loss detected - all inserted records are present in database
+ No data loss detected - all inserted records are present in database
 
 ```
 
@@ -4092,24 +4092,26 @@ Below is a comprehensive summary of all chaos engineering experiments conducted 
 - **With Force Failover**: Using `forceFailoverAcceptingDataLossAfter: 30s`
 - **Without Force Failover**: Waiting for data consistency before failover
 
+> Note: You might see different results if you have tested under no read/write load.
+
 | # | Experiment | Failure Mode | Failover Time | Data Loss | Downtime | Notes |
 |---|---|---|---|---|---|---|
-| 1 | Kill Primary Pod | Pod termination | **With**: ~8s  **Without**: ~8s | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Minimal / **Without**: Minimal | Immediate failover works in both cases |
-| 2 | OOMKill Primary Pod | Memory exhaustion | **With**: ~3s / **Without**: ~3s | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Minimal / **Without**: Minimal | Rapid failover, 4.1M rows inserted |
-| 3 | Kill Postgres Process | Process crash | **With**: ~30s / **Without**: ~30s+ | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: ~30s / **Without**: 40s | Blocks failover to prevent data loss in both cases |
-| 4 | Primary Pod Failure | Network isolation | **With**: ~10s / **Without**: ~10s | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Minimal / **Without**: Minimal | Split-brain handled well |
+| 1 | Kill Primary Pod | Pod termination | **With**: ~8s  **Without**: ~8s | **With**:  0 / **Without**:  0 | **With**: Minimal / **Without**: Minimal | Immediate failover works in both cases |
+| 2 | OOMKill Primary Pod | Memory exhaustion | **With**: ~3s / **Without**: ~3s | **With**:  0 / **Without**:  0 | **With**: Minimal / **Without**: Minimal | Rapid failover, 4.1M rows inserted |
+| 3 | Kill Postgres Process | Process crash | **With**: ~30s / **Without**: ~30s+ | **With**:  0 / **Without**:  0 | **With**: ~30s / **Without**: 40s | Blocks failover to prevent data loss in both cases |
+| 4 | Primary Pod Failure | Network isolation | **With**: ~10s / **Without**: ~10s | **With**:  0 / **Without**:  0 | **With**: Minimal / **Without**: Minimal | Split-brain handled well |
 | 5 | Network Partition | Complete isolation | **With**: ~30s / **Without**: ~30s+ | **With**: ⚠️ Possible / **Without**: ⚠️ Possible | **With**: Brief / **Without**: Extended | Split-brain scenario, data safety challenge in both |
-| 6 | Bandwidth Limit (1 Mbps) | Slow network | **With**: No failover / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: 0s / **Without**: 0s | 2.3M rows inserted, high latency tolerated |
-| 7 | Network Delay (500ms) | High latency | **With**: No failover / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: 0s / **Without**: 0s | 2.5M rows inserted, consistency maintained |
-| 8 | Network Loss (100%) | Packet drop | **With**: No failover / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: 0s / **Without**: 0s | 2.3M rows inserted, no data loss |
-| 9 | Network Duplicate (50%) | Redundant traffic | **With**: No failover / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: 0s / **Without**: 0s | 2.2M rows inserted, gracefully handled |
-| 10 | Network Corruption (50%) | Corrupted packets | **With**: ~15s / **Without**: ~15s | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: ~30s / **Without**: ~30s | 2.1M rows inserted, checksums fail |
-| 11 | Time Offset & DNS Error | System time shift | **With**: No failover / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: 0s / **Without**: 0s | 2.0M rows inserted |
-| 12 | IO Latency | Disk I/O delay | **With**: ~30s / **Without**: No failover | **With**: ⚠️ ~1 insert loss / **Without**: ✅ 0 | **With**: Brief / **Without**: Extended | Critical difference: force failover causes ~1 insert loss |
-| 13 | IO Fault (50%) | I/O errors | **With**: ~30s / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Brief / **Without**: Extended | 2.6M rows inserted, 25GB transferred |
-| 14 | IO Attribute Override | Filesystem attr change | **With**: ~30s / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Brief / **Without**: Extended | 2.5M rows inserted, 23GB transferred |
-| 15 | IO Mistake | Random I/O faults | **With**: ~30s / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Brief / **Without**: Extended | 2.5M rows inserted, 23GB transferred |
-| 16 | Node Reboot (All Pods) | Complete node failure | **With**: ~30s / **Without**: ~30s+ | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Extended / **Without**: Extended | 3.2M rows inserted, full cluster restart |
+| 6 | Bandwidth Limit (1 Mbps) | Slow network | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: 0s / **Without**: 0s | 2.3M rows inserted, high latency tolerated |
+| 7 | Network Delay (500ms) | High latency | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: 0s / **Without**: 0s | 2.5M rows inserted, consistency maintained |
+| 8 | Network Loss (100%) | Packet drop | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: 0s / **Without**: 0s | 2.3M rows inserted, no data loss |
+| 9 | Network Duplicate (50%) | Redundant traffic | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: 0s / **Without**: 0s | 2.2M rows inserted, gracefully handled |
+| 10 | Network Corruption (50%) | Corrupted packets | **With**: ~15s / **Without**: ~15s | **With**:  0 / **Without**:  0 | **With**: ~30s / **Without**: ~30s | 2.1M rows inserted, checksums fail |
+| 11 | Time Offset & DNS Error | System time shift | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: 0s / **Without**: 0s | 2.0M rows inserted |
+| 12 | IO Latency | Disk I/O delay | **With**: ~30s / **Without**: No failover | **With**: ⚠️ ~1 insert loss / **Without**:  0 | **With**: Brief / **Without**: Extended | Critical difference: force failover causes ~1 insert loss |
+| 13 | IO Fault (50%) | I/O errors | **With**: ~30s / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: Brief / **Without**: Extended | 2.6M rows inserted, 25GB transferred |
+| 14 | IO Attribute Override | Filesystem attr change | **With**: ~30s / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: Brief / **Without**: Extended | 2.5M rows inserted, 23GB transferred |
+| 15 | IO Mistake | Random I/O faults | **With**: ~30s / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: Brief / **Without**: Extended | 2.5M rows inserted, 23GB transferred |
+| 16 | Node Reboot (All Pods) | Complete node failure | **With**: ~30s / **Without**: ~30s+ | **With**:  0 / **Without**:  0 | **With**: Extended / **Without**: Extended | 3.2M rows inserted, full cluster restart |
 
 > Note: `Extended` means as long as the chaos runs.
 
@@ -4120,8 +4122,8 @@ Below is a comprehensive summary of all chaos engineering experiments conducted 
 | Scenario | With Force Failover (30s) | Without Force Failover | Winner |
 |---|---|---|---|
 | **Availability** | High - immediate failover | Lower - waits for consistency | 
-| **Data Loss Risk** | Low-Medium | ✅ Zero Risk 
-| **IO Chaos Tests** | ⚠️ 1 insert lost (rare) | ✅ 0 insert lost | 
+| **Data Loss Risk** | Low-Medium |  Zero Risk 
+| **IO Chaos Tests** | ⚠️ 1 insert lost (rare) |  0 insert lost | 
 | **Failover Time** | 30 seconds or less | Variable (extended if unsafe) |
 | **Use Case** | High-availability priority | Data integrity priority | 
 
@@ -4176,7 +4178,7 @@ Below is a comprehensive summary of all chaos engineering experiments conducted 
 | **Data Transferred** | 21.5 GB | 25 GB | 6.6 GB |
 | **Failover Time** | ~20 seconds | ~3 seconds | 30+ seconds |
 | **Data Loss (with Force Failover)** | < 0.01% | 0% | 0.004% |
-| **Data Loss (without Force Failover)** | ✅ 0% | ✅ 0% | ✅ 0% |
+| **Data Loss (without Force Failover)** |  0% |  0% |  0% |
 | **Recovery Time** | < 1 minutes | ~30 seconds | ~5 minutes |
 
 > **Important Note**: All these metrics are taken during chaos experiment. Kubedb performs notably well in both chaos scenarios and normal scenarios. For example
