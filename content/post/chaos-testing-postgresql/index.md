@@ -87,6 +87,8 @@ In this comprehensive guide, we will:
 
 Each experiment progressively tests different aspects of the system—from simple pod failures to complex scenarios involving multiple simultaneous failures. By the end, you'll have a thorough understanding of how your PostgreSQL cluster behaves under various failure modes and how to configure it for maximum resilience.
 
+You can see the [`Chaos Testing Results Summary`](#chaos-testing-results-summary) for a quick view.
+
 ## Create a High-Availability PostgreSQL Cluster
 
 
@@ -140,6 +142,7 @@ spec:
 > We suggest you set it to at least 15 - 30% of your storage.
 > - If you can tolerate some data loss, but you want your primary to be up and running at any time with minimal downtime, you can set `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`
 > - You can read/write in your database in both **`Ready`** and **`Critical`** state. So it means even if your db is in `Critical` state, your uptime is not compromised. `Critical` means one or more replicas are offline. But `primary` is up and running along with some other replicas probably.
+> - All the results/metrics shown in this blog is related to the chaos scenarios. In general, **a failover takes ~5 seconds** and **without any data loss** ensuring high availability and data safety.
 
 Now, create the namespace and apply the manifest:
 
@@ -372,7 +375,7 @@ job.batch/pg-load-test-job created
 persistentvolumeclaim/pg-load-test-results created
 ```
 
-I have attached a sample output of the load test job below. These metrics will be printed after every `REPORT_INTERVAL` seconds. You can see that we are generating around 38GB of data, more than 40M rows inserted, more than 326M rows read in 7 minutes of high load.
+I have attached a sample output of the load test job below. These metrics will be printed after every `REPORT_INTERVAL` seconds. You can see that we are generating around 38GB of data, more than 4M rows inserted, more than 32M rows read in 7 minutes of high load.
 
 ```shell
 Test Duration: 7m3s
@@ -2840,7 +2843,7 @@ This may indicate:
 Total number of rows inserted 2135800, lost rows 100, so basically 1 batch insert query was lost.
 **If you have not set force failover, this data loss won't be there**.
 
-> **NOTE**: The same chaos experiment is run again in the `IO Chaos Tests Without Force Failover` section below without the `forceFailoverAcceptingDataLossAfter: 30s` API. In that case, no data loss was incurred.
+> **NOTE**: The same chaos experiment is run again in the [`IO Chaos Tests Without Force Failover`](#io-chaos-tests-without-force-failover) section below without the `forceFailoverAcceptingDataLossAfter: 30s` API. In that case, no data loss was incurred.
 
 
 Clean up the chaos experiment.
@@ -4080,6 +4083,110 @@ podchaos.chaos-mesh.org "pg-cluster-all-pods-kill" deleted
 kubectl delete -f tests/18-stress-cpu-primary.yaml 
 stresschaos.chaos-mesh.org "pg-primary-cpu-stress" deleted
 ```
+
+## Chaos Testing Results Summary
+
+### Test Results Overview
+
+Below is a comprehensive summary of all chaos engineering experiments conducted on the KubeDB-managed PostgreSQL High-Availability cluster. Each metric shows results in two configurations:
+- **With Force Failover**: Using `forceFailoverAcceptingDataLossAfter: 30s`
+- **Without Force Failover**: Waiting for data consistency before failover
+
+| # | Experiment | Failure Mode | Failover Time | Data Loss | Downtime | Notes |
+|---|---|---|---|---|---|---|
+| 1 | Kill Primary Pod | Pod termination | **With**: ~8s  **Without**: ~8s | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Minimal / **Without**: Minimal | Immediate failover works in both cases |
+| 2 | OOMKill Primary Pod | Memory exhaustion | **With**: ~3s / **Without**: ~3s | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Minimal / **Without**: Minimal | Rapid failover, 4.1M rows inserted |
+| 3 | Kill Postgres Process | Process crash | **With**: ~30s / **Without**: ~30s+ | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: ~30s / **Without**: 40s | Blocks failover to prevent data loss in both cases |
+| 4 | Primary Pod Failure | Network isolation | **With**: ~10s / **Without**: ~10s | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Minimal / **Without**: Minimal | Split-brain handled well |
+| 5 | Network Partition | Complete isolation | **With**: ~30s / **Without**: ~30s+ | **With**: ⚠️ Possible / **Without**: ⚠️ Possible | **With**: Brief / **Without**: Extended | Split-brain scenario, data safety challenge in both |
+| 6 | Bandwidth Limit (1 Mbps) | Slow network | **With**: No failover / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: 0s / **Without**: 0s | 2.3M rows inserted, high latency tolerated |
+| 7 | Network Delay (500ms) | High latency | **With**: No failover / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: 0s / **Without**: 0s | 2.5M rows inserted, consistency maintained |
+| 8 | Network Loss (100%) | Packet drop | **With**: No failover / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: 0s / **Without**: 0s | 2.3M rows inserted, no data loss |
+| 9 | Network Duplicate (50%) | Redundant traffic | **With**: No failover / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: 0s / **Without**: 0s | 2.2M rows inserted, gracefully handled |
+| 10 | Network Corruption (50%) | Corrupted packets | **With**: ~15s / **Without**: ~15s | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: ~30s / **Without**: ~30s | 2.1M rows inserted, checksums fail |
+| 11 | Time Offset & DNS Error | System time shift | **With**: No failover / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: 0s / **Without**: 0s | 2.0M rows inserted |
+| 12 | IO Latency | Disk I/O delay | **With**: ~30s / **Without**: No failover | **With**: ⚠️ ~1 insert loss / **Without**: ✅ 0 | **With**: Brief / **Without**: Extended | Critical difference: force failover causes ~1 insert loss |
+| 13 | IO Fault (50%) | I/O errors | **With**: ~30s / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Brief / **Without**: Extended | 2.6M rows inserted, 25GB transferred |
+| 14 | IO Attribute Override | Filesystem attr change | **With**: ~30s / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Brief / **Without**: Extended | 2.5M rows inserted, 23GB transferred |
+| 15 | IO Mistake | Random I/O faults | **With**: ~30s / **Without**: No failover | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Brief / **Without**: Extended | 2.5M rows inserted, 23GB transferred |
+| 16 | Node Reboot (All Pods) | Complete node failure | **With**: ~30s / **Without**: ~30s+ | **With**: ✅ 0 / **Without**: ✅ 0 | **With**: Extended / **Without**: Extended | 3.2M rows inserted, full cluster restart |
+
+> Note: `Extended` means as long as the chaos runs.
+
+### Key Findings
+
+#### Replication Strategy Impact
+
+| Scenario | With Force Failover (30s) | Without Force Failover | Winner |
+|---|---|---|---|
+| **Availability** | High - immediate failover | Lower - waits for consistency | 
+| **Data Loss Risk** | Low-Medium | ✅ Zero Risk 
+| **IO Chaos Tests** | ⚠️ 1 insert lost (rare) | ✅ 0 insert lost | 
+| **Failover Time** | 30 seconds or less | Variable (extended if unsafe) |
+| **Use Case** | High-availability priority | Data integrity priority | 
+
+#### Chaos Test Categories
+
+**1. Pod-Level Failures (Chaos #1-4)**
+- **Result**: Immediate failovers work well
+- **Data Loss**: Zero in all cases
+- **Downtime**: Minimal (< 30s recovery)
+- **Best Practice**: Default configuration handles these excellently
+
+**2. Network Chaos (Chaos #5-11)**
+- **Result**: Cluster remains stable without failover
+- **Data Loss**: Zero in all cases (except network partition which forces split-brain)
+- **Downtime**: Minimal to none (connections recover automatically)
+- **Best Practice**: PostgreSQL's replication is resilient to network impairments
+
+**3. IO Chaos with Force Failover (Chaos #12-15, with `forceFailoverAcceptingDataLossAfter`)**
+- **Result**: Cluster stays highly available
+- **Data Loss**: Minimal (~1 insert in worst case = 0.004%)
+- **Downtime**: Minimal (automatic failover keeps cluster up)
+- **Trade-off**: Sacrifices tiny bit of data for high availability
+
+**4. IO Chaos Without Force Failover (Chaos #12-15, without `forceFailoverAcceptingDataLossAfter`)**
+- **Result**: Database may enter NotReady state
+- **Data Loss**: Zero across all tests
+- **Downtime**: Extended (until chaos clears or manual intervention)
+- **Trade-off**: Prioritizes data safety over availability
+
+### Replication Configuration Recommendations
+
+**Choose WITH `forceFailoverAcceptingDataLossAfter: 30s` if:**
+- Your application requires high availability
+- You can tolerate rare events of < 0.01% data loss
+- Your database serves real-time or customer-facing services
+
+**Choose WITHOUT `forceFailoverAcceptingDataLossAfter` if:**
+- Data integrity is fine, but not critical
+- You can tolerate extended downtime during node failures
+- Your database serves compliance-sensitive operations
+
+**Choose WITHOUT `streamingMode: Synchronous` if:**
+- Data integrity is absolutely critical
+- You want high availability
+- Your database serves compliance-sensitive operations
+
+### Performance Metrics Summary in chaos cases
+
+| Metric | Average | Best | Worst |
+|---|---|---|---|
+| **Rows Inserted** | 2.3M | 4.1M | 0.7M |
+| **Data Transferred** | 21.5 GB | 25 GB | 6.6 GB |
+| **Failover Time** | ~20 seconds | ~3 seconds | 30+ seconds |
+| **Data Loss (with Force Failover)** | < 0.01% | 0% | 0.004% |
+| **Data Loss (without Force Failover)** | ✅ 0% | ✅ 0% | ✅ 0% |
+| **Recovery Time** | < 1 minutes | ~30 seconds | ~5 minutes |
+
+> **Important Note**: All these metrics are taken during chaos experiment. Kubedb performs notably well in both chaos scenarios and normal scenarios. For example
+> In normal scenarios where you kubernetes cluster is behaving normal, you should see a failover happening within `~5 seconds` without `any data loss` every time, and of course automatically.  
+
+### Conclusion
+
+The KubeDB-managed PostgreSQL HA cluster demonstrates excellent resilience across all tested failure scenarios.
+
+The cluster achieves the balance between high availability and data consistency, allowing operators to choose their preferred trade-off based on business requirements.
 
 ## What Next?
 
