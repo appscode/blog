@@ -8,6 +8,7 @@ tags:
 - billing-ui
 - cloud-native
 - cluster-ui
+- selfhost-ui
 - database
 - kubedb
 - kubedb-ui
@@ -42,7 +43,7 @@ Here are the components specific changes:
 #### Enhancements
 - Moved feature-set configuration from modal dialogs to dedicated pages across cluster, hub, and spoke flows.
 - Added generated manifest preview and edit support before deployment in feature-set workflows.
-- Extended the same guided flow to preset editing.
+- Extended the guided preset-edit flow to **KubeDB UI** and **Stash** presets.
 
 #### Fixes & Improvements
 - Improved public cluster import routing to support cluster names that contain slashes.
@@ -53,27 +54,34 @@ Here are the components specific changes:
 #### Enhancements
 - Improved project quota visibility in the initial database create flow, including cases where only CPU or memory limits are partially set.
 - Added an **Edit** action for `kubestash.com` resources to make related edit flows easier to reach.
-- Updated several related navigation flows to stay in the same tab.
+- Updated some create and edit entry flows to stay in the same tab.
+- Added create-flow support for **DB2**, **HanaDB**, **Milvus**, **Neo4j**, **Qdrant**, and **Weaviate** through new `ui-wizards` editor flows.
 
 #### Fixes & Improvements
 - Clarified quota charts when no CPU or memory limit is set instead of showing misleading empty states.
 - Hid the snapshot create button where it should not be exposed.
 - Added earlier validation for overly long resource names in create flows.
+- Added backup toggle wiring in **Redis** and **ZooKeeper** create forms for KubeStash-backed backup flows.
 
 ### Platform UI
 #### Enhancements
 - Added a dedicated **Clusters** page in Site Administration with search and key cluster metadata.
 - Added visibility for likely orphaned organizations in the Site Administration organization list and direct delete action from the table.
-- Improved URL handling by automatically adding `https` where needed.
+- Platform UI now auto-prefixes `https://` for user and organization website links.
 
 #### Fixes & Improvements
 - Cluster navigation now stays in the same tab instead of opening a new tab unexpectedly.
+
+### Selfhost UI
+#### Enhancements
+- Added an **OpenShift** toggle in create, reconfigure, and promote installer flows.
+- Exposed **Alertmanager** email and webhook settings in the self-hosted installer UI.
 
 ### Platform Backend
 #### Enhancements
 - Exposed **Alertmanager** email and webhook routing through ACE installer options.
 - Added support for Gateway API based service presets in installer-driven deployments.
-- Improved credential-less **EKS** onboarding with better IAM setup and smoother OCM registration behavior.
+- Improved credential-less **EKS** onboarding with additional IAM setup and better OCM registration handling.
 - Added APIs to list and delete orphan organizations.
 - Implemented **get-update API pagination** for update workflows.
 - Added an admin API to list cluster information for site administration workflows.
@@ -81,7 +89,7 @@ Here are the components specific changes:
 
 #### Fixes & Improvements
 - Preserved existing platform `user-config` secrets instead of overwriting them during install or upgrade.
-- Added safer handling for existing **KubeStash** components during ACE upgrades.
+- Added safer upgrade handling for the `kubestash` HelmRelease during ACE upgrades.
 - Made `storageClass` optional in ACE options schema.
 - Improved billing event handling and contract reminder timing in backend flows.
 - Updated observability and networking dependencies including **Envoy**, **KEDA**, **ingress-nginx**, **grafana-tools**, and **Voyager**.
