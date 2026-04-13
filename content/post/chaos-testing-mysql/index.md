@@ -1,5 +1,5 @@
 ---
-title: 'Chaos Engineering Results: KubeDB MySQL Achieves Zero Data Loss Across 69 Experiments — Group Replication & InnoDB Cluster'
+title: Chaos Engineering KubeDB MySQL on Kubernetes, Testing Group Replication & InnoDB Cluster Resilience
 date: "2026-04-08"
 weight: 14
 authors:
@@ -9,8 +9,8 @@ tags:
 - chaos-mesh
 - database
 - group-replication
-- innodb-cluster
 - high-availability
+- innodb-cluster
 - kubedb
 - kubernetes
 - mysql
@@ -306,8 +306,6 @@ The pod having `kubedb.com/role=primary` is the primary and `kubedb.com/role=sta
 
 ### Chaos#1: Kill the Primary Pod
 
-We will ignore the sysbench load for this experiment and focus on the failover behavior.
-
 We are about to kill the primary pod and see how fast the failover happens. Save this yaml as `tests/01-pod-kill.yaml`:
 
 ```yaml
@@ -476,7 +474,7 @@ pod/mysql-ha-cluster-1               2/2     Running   0            3h3m   stand
 pod/mysql-ha-cluster-2               2/2     Running   1 (9s ago)   3h3m   standby
 ```
 
-Note the `Restarts: 1` on pod-2 — it was OOMKilled and restarted by Kubernetes. The status `NotReady` means failover is in progress. After ~60 seconds, the cluster is fully recovered:
+Note the `Restarts: 1` on pod-2 — it was OOMKilled and restarted by Kubernetes. The status `NotReady` means failover is in progress. This is an ungraceful shutdown for the primary node. The node remains part of the group but becomes unreachable. After 20 seconds, the unreachable node is expelled from the group and a new primary is elected. Within approximately 60 seconds, the cluster fully recovers, and the failed node rejoins as a standby.
 
 ```shell
 ➤ kubectl get mysql,pods -n demo -L kubedb.com/role
@@ -2750,17 +2748,6 @@ No impact — GR's Paxos protocol uses logical clocks for consensus, not wall-cl
 
 **Result: PASS** — Clock skew tolerated. Zero data loss.
 
-### InnoDB Cluster vs Group Replication — Key Differences
-
-| Aspect | Group Replication (8.4.8) | InnoDB Cluster (8.4.8) |
-|---|---|---|
-| OOMKill (1200MB stress) | Survived (no OOMKill) | OOMKill triggered, failover |
-| Packet Loss (30%) | Failover triggered | No failover (stable) |
-| Connection routing | Direct to MySQL pods | Via MySQL Router (auto-failover) |
-| RW-Split (port 6450) | N/A | Available (auto-enabled in 8.4+) |
-| Recovery mechanism | Coordinator signals | Same + `rebootClusterFromCompleteOutage` |
-| Rejoin after expulsion | 10-attempt restart cycle | Same 10-attempt restart cycle |
-
 ### Router-Specific Observations
 
 1. **Automatic failover re-route**: Router detects primary changes via metadata cache (TTL=0.5s) and re-routes RW traffic within seconds
@@ -2814,15 +2801,6 @@ No impact — GR's Paxos protocol uses logical clocks for consensus, not wall-cl
 | Packet Loss (30%) | 4.98 | 99.6% drop |
 | Combined Stress | ~530 then OOMKill | ~44% drop |
 
-### InnoDB Cluster (via Router port 6446)
-
-| Chaos Type | TPS During Chaos | Impact |
-|---|---|---|
-| IO Latency (100ms) | 0.1-0.2 (recovered to 1242) | ~99.9% during, full recovery after |
-| Network Latency (1s) | 1.26 | 99.9% drop |
-| CPU Stress (98%) | 763 avg (dipped to 188) | ~25% avg drop |
-| Packet Loss (30%) | Router connection failed | Cluster stable, no failover |
-| RW-Split (port 6450) | 555 TPS (`oltp_read_write`) | Baseline for mixed workload |
 
 ## Multi-Primary vs Single-Primary
 
@@ -2835,19 +2813,6 @@ No impact — GR's Paxos protocol uses logical clocks for consensus, not wall-cl
 | Packet loss 30% | 4.98 TPS (stayed ONLINE) | Triggers failover |
 | High concurrency | GR certification conflicts possible | No conflicts (single writer) |
 | Recovery mechanism | Rejoin as PRIMARY | Election + rejoin |
-
-## Version Compatibility
-
-| Capability | 8.0.36 | 8.4.8 | 9.6.0 |
-|---|---|---|---|
-| Pod Kill Recovery | Yes | Yes | Yes |
-| OOMKill Recovery | Yes | Yes | Yes |
-| Network Partition Recovery | Yes | Yes | Yes |
-| CLONE Plugin | Yes | Yes | Yes |
-| Single-Primary (core 12) | **12/12** | **12/12** | **12/12** |
-| Single-Primary (extended 13-21) | Not tested | **9/9** | Not tested |
-| Multi-Primary (12 tests) | Not tested | **12/12** | Not tested |
-| InnoDB Cluster (12 tests) | Not tested | **12/12** | Not tested |
 
 ## Key Takeaways
 
