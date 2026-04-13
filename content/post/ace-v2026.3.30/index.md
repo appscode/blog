@@ -8,13 +8,13 @@ tags:
 - billing-ui
 - cloud-native
 - cluster-ui
-- selfhost-ui
 - database
 - kubedb
 - kubedb-ui
 - kubernetes
 - kubestash
 - platform-ui
+- selfhost-ui
 ---
 
 We are pleased to announce the release of `ACE v2026.3.30`.
