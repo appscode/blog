@@ -19,7 +19,7 @@ tags:
 
 ## Overview
 
-We conducted **69 chaos experiments** across **3 MySQL versions** (8.0.36, 8.4.8, 9.6.0), **2 Group Replication topologies** (Single-Primary and Multi-Primary), and **InnoDB Cluster with MySQL Router** on KubeDB-managed 3-node clusters. The goal: validate that KubeDB MySQL delivers **zero data loss**, **automatic failover**, and **self-healing recovery** under realistic failure conditions with production-level write loads.
+We conducted **70+ chaos experiments** across **3 MySQL versions** (8.0.36, 8.4.8, 9.6.0), **2 Group Replication topologies** (Single-Primary and Multi-Primary), and **InnoDB Cluster with MySQL Router** on KubeDB-managed 3-node clusters. The goal: validate that KubeDB MySQL delivers **zero data loss**, **automatic failover**, and **self-healing recovery** under realistic failure conditions with production-level write loads.
 
 **The result: every experiment passed with zero data loss, zero split-brain, and zero errant GTIDs.**
 
@@ -2235,193 +2235,6 @@ In Multi-Primary mode, **all 3 nodes accept writes** — there is no primary/rep
 | 11 | Scheduled Pod Kill (every 1 min) | Zero | MATCH | MATCH | **PASS** |
 | 12 | Degraded Failover (IO + Kill) | Zero | MATCH | MATCH | **PASS** |
 
-**All 12 experiments PASSED with zero data loss.**
-
-## Extended Experiments — Details (MySQL 8.4.8 Single-Primary)
-
-### Exp 13: Double Primary Kill
-
-Kill the primary, wait for new election, then immediately kill the new primary. Tests survival of two consecutive leader failures.
-
-```bash
-# Kill first primary
-kubectl delete pod mysql-ha-cluster-2 -n demo --force --grace-period=0
-# Wait 15s for new primary election, then kill the new primary
-sleep 15
-NEW_PRIMARY=$(kubectl get pods -n demo \
-  -l "app.kubernetes.io/instance=mysql-ha-cluster,kubedb.com/role=primary" \
-  -o jsonpath='{.items[0].metadata.name}')
-kubectl delete pod $NEW_PRIMARY -n demo --force --grace-period=0
-```
-
-**Result:** Pod-0 was elected as the third primary. Cluster recovered in ~90 seconds. Zero data loss.
-
-### Exp 14: Rolling Restart (0→1→2)
-
-Simulate a rolling upgrade — delete each pod sequentially with 40-second gaps under write load.
-
-```bash
-kubectl delete pod mysql-ha-cluster-0 -n demo --force --grace-period=0
-sleep 40
-kubectl delete pod mysql-ha-cluster-1 -n demo --force --grace-period=0
-sleep 40
-kubectl delete pod mysql-ha-cluster-2 -n demo --force --grace-period=0
-```
-
-**Result:** Each pod recovered and rejoined within ~30 seconds. Two failovers triggered (when primary was deleted). Zero data loss.
-
-### Exp 15: Coordinator Crash
-
-Kill only the mysql-coordinator sidecar container, leaving MySQL running. Tests whether the cluster stays stable without coordinator.
-
-```bash
-kubectl exec -n demo mysql-ha-cluster-1 -c mysql-coordinator -- kill 1
-```
-
-**Result:** Kubernetes auto-restarted the coordinator container. MySQL was completely unaffected — no failover, no write interruption, 728 TPS (normal). The coordinator is a management layer; MySQL GR operates independently.
-
-### Exp 16: Long Network Partition (10 min)
-
-Isolate the primary from replicas for 10 minutes — 5x longer than the standard 2-minute test.
-
-```yaml
-apiVersion: chaos-mesh.org/v1alpha1
-kind: NetworkChaos
-metadata:
-  name: mysql-primary-network-partition-long
-  namespace: chaos-mesh
-spec:
-  action: partition
-  mode: one
-  selector:
-    namespaces: [demo]
-    labelSelectors:
-      "app.kubernetes.io/instance": "mysql-ha-cluster"
-      "kubedb.com/role": "primary"
-  target:
-    mode: all
-    selector:
-      namespaces: [demo]
-      labelSelectors:
-        "kubedb.com/role": "standby"
-  direction: both
-  duration: "10m"
-```
-
-**Result:** Failover triggered within seconds. After 10-minute partition removed, the isolated node rejoined cleanly via GR distributed recovery. All 3 nodes ONLINE within ~2 minutes. Zero data loss.
-
-### Exp 17: DNS Failure on Primary
-
-Block all DNS resolution on the primary for 3 minutes. GR uses hostnames for inter-node communication, so this tests a critical infrastructure dependency.
-
-```yaml
-apiVersion: chaos-mesh.org/v1alpha1
-kind: DNSChaos
-metadata:
-  name: mysql-dns-error-primary
-  namespace: chaos-mesh
-spec:
-  action: error
-  mode: one
-  selector:
-    namespaces: [demo]
-    labelSelectors:
-      "app.kubernetes.io/instance": "mysql-ha-cluster"
-      "kubedb.com/role": "primary"
-  duration: "3m"
-```
-
-**Result:** Primary survived without failover. TPS dropped ~32% (497 vs ~730 baseline) due to DNS-dependent operations timing out. No errors, no data loss. Existing TCP connections between GR members stayed open.
-
-### Exp 18: PVC Delete + Pod Kill
-
-Completely destroy a node's data — delete both the pod and its PVC. The node must rebuild from scratch using the CLONE plugin.
-
-```bash
-kubectl delete pod mysql-ha-cluster-0 -n demo --force --grace-period=0
-kubectl delete pvc data-mysql-ha-cluster-0 -n demo
-```
-
-**Result:** StatefulSet auto-created a new PVC. The CLONE plugin copied a full data snapshot from a donor node. Pod recovered and joined GR in ~90 seconds with identical GTIDs and checksums. This is the ultimate recovery test — MySQL 8.0+ handles it fully automatically.
-
-### Exp 19: IO Fault (EIO Errors)
-
-Inject I/O read/write errors (errno 5 = EIO) on 50% of disk operations on the primary's data volume. Unlike IO latency which slows things down, IO faults cause actual operation failures — simulating a failing disk or storage system.
-
-```yaml
-apiVersion: chaos-mesh.org/v1alpha1
-kind: IOChaos
-metadata:
-  name: mysql-primary-io-fault
-  namespace: chaos-mesh
-spec:
-  action: fault
-  mode: one
-  selector:
-    namespaces: [demo]
-    labelSelectors:
-      "app.kubernetes.io/instance": "mysql-ha-cluster"
-      "kubedb.com/role": "primary"
-  volumePath: "/var/lib/mysql"
-  path: "/**"
-  errno: 5
-  percent: 50
-  duration: "3m"
-```
-
-**Result:** Initially 703 TPS (InnoDB retries handle some errors), but the 50% EIO rate eventually crashed the MySQL process on the primary. Failover triggered to a secondary. After chaos removed and pod force-restarted, InnoDB crash recovery repaired the data directory and the node rejoined GR cleanly. Zero data loss.
-
-### Exp 20: Clock Skew (-5 min)
-
-Shift the primary's system clock back by 5 minutes. GR uses timestamps for conflict detection, Paxos message ordering, and timeout calculations. Tests whether clock drift breaks consensus or causes split-brain.
-
-```yaml
-apiVersion: chaos-mesh.org/v1alpha1
-kind: TimeChaos
-metadata:
-  name: mysql-primary-clock-skew
-  namespace: chaos-mesh
-spec:
-  mode: one
-  selector:
-    namespaces: [demo]
-    labelSelectors:
-      "app.kubernetes.io/instance": "mysql-ha-cluster"
-      "kubedb.com/role": "primary"
-  timeOffset: "-5m"
-  duration: "3m"
-```
-
-**Result:** 404 TPS (~45% reduction from baseline). No failover triggered, no errors. GR's Paxos protocol is resilient to clock drift — it uses logical clocks for consensus, not wall-clock time. All 3 nodes stayed ONLINE throughout. Zero data loss.
-
-### Exp 21: Bandwidth Throttle (1mbps)
-
-Limit the primary's outbound network bandwidth to 1mbps. Simulates degraded network in cross-AZ or cross-region deployments where bandwidth is limited but not broken.
-
-```yaml
-apiVersion: chaos-mesh.org/v1alpha1
-kind: NetworkChaos
-metadata:
-  name: mysql-bandwidth-throttle
-  namespace: chaos-mesh
-spec:
-  action: bandwidth
-  mode: one
-  selector:
-    namespaces: [demo]
-    labelSelectors:
-      "app.kubernetes.io/instance": "mysql-ha-cluster"
-      "kubedb.com/role": "primary"
-  bandwidth:
-    rate: "1mbps"
-    limit: 20971520
-    buffer: 10000
-  duration: "3m"
-```
-
-**Result:** 147 TPS (~80% reduction from baseline). The bandwidth limit heavily throttles GR's Paxos consensus traffic, but the cluster stays completely stable — no failover, no errors, no member state changes. All 3 nodes remained ONLINE. Zero data loss.
-
----
 
 ## InnoDB Cluster Mode (MySQL 8.4.8 + MySQL Router)
 
@@ -2804,21 +2617,21 @@ No impact — GR's Paxos protocol uses logical clocks for consensus, not wall-cl
 
 ## Multi-Primary vs Single-Primary
 
-| Aspect | Multi-Primary | Single-Primary |
-|---|---|---|
-| Failover needed | No (all primaries) | Yes (election ~2-3s) |
-| Write availability | All nodes writable | Only primary writable |
-| CPU stress 98% | All writes blocked (Paxos fails) | ~46% TPS reduction |
-| IO latency impact | ~73% TPS drop | ~99.9% TPS drop |
-| Packet loss 30% | 4.98 TPS (stayed ONLINE) | Triggers failover |
+| Aspect | Multi-Primary | Single-Primary             |
+|---|---|----------------------------|
+| Failover needed | No (all primaries) | Yes (election ~1s)         |
+| Write availability | All nodes writable | Only primary writable      |
+| CPU stress 98% | All writes blocked (Paxos fails) | ~46% TPS reduction         |
+| IO latency impact | ~73% TPS drop | ~99.9% TPS drop            |
+| Packet loss 30% | 4.98 TPS (stayed ONLINE) | Triggers failover          |
 | High concurrency | GR certification conflicts possible | No conflicts (single writer) |
-| Recovery mechanism | Rejoin as PRIMARY | Election + rejoin |
+| Recovery mechanism | Rejoin as PRIMARY | Election + rejoin          |
 
 ## Key Takeaways
 
-1. **KubeDB MySQL achieves zero data loss** across all 69 chaos experiments in Single-Primary, Multi-Primary, and InnoDB Cluster topologies.
+1. **KubeDB MySQL achieves zero data loss** across all 70+ chaos experiments in Single-Primary, Multi-Primary, and InnoDB Cluster topologies.
 
-2. **Automatic failover works reliably** — primary election completes in 2-3 seconds, full recovery in under 4 minutes for all scenarios, including double primary kill and disk failure.
+2. **Automatic failover works reliably** — primary election completes in less that 1 second, full recovery in under 4 minutes for all scenarios, including double primary kill and disk failure.
 
 3. **Multi-Primary mode is production-ready** — all 12 experiments passed on MySQL 8.4.8. Be aware that multi-primary has higher sensitivity to CPU stress and network issues due to Paxos consensus requirements on all writable nodes.
 
