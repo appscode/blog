@@ -1,6 +1,6 @@
 ---
 title: 'Chaos Testing KubeDB PostgreSQL: Building Resilience with Chaos Mesh'
-date: "2026-04-07"
+date: "2026-04-16"
 weight: 25
 authors:
 - Saurov Chandra Biswas
