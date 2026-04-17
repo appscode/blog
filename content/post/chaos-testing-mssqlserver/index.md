@@ -1,5 +1,5 @@
 ---
-title: 'Chaos Testing KubeDB SQL Server Availability Group Clusters with Chaos Mesh: Building Resilient Database Systems'
+title: 'Building Resilient SQL Server Availability Group Clusters on KubeDB with Chaos Mesh'
 date: "2026-04-16"
 weight: 25
 authors:
