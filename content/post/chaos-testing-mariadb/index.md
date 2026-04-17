@@ -1,5 +1,5 @@
 ---
-title: "Chaos Testing KubeDB MariaDB on Kubernetes, Testing Galera Cluster Resilience"
+title: Chaos Testing KubeDB MariaDB on Kubernetes, Testing Galera Cluster Resilience
 date: "2026-04-17"
 weight: 25
 authors:
