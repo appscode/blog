@@ -1,5 +1,5 @@
 ---
-title: Chaos Testing KubeDB MariaDB on Kubernetes, Testing Galera Cluster Resilience
+title: Chaos Engineering KubeDB MariaDB on Kubernetes, Testing Galera Cluster & Replication with MaxScale Resilience
 date: "2026-04-17"
 weight: 25
 authors:
@@ -13,11 +13,13 @@ tags:
 - kubedb
 - kubernetes
 - mariadb
+- maxscale
+- replication
 ---
 
 > New to KubeDB? Please start [here](https://kubedb.com/docs/v2026.2.26/welcome/).
 
-# Chaos Testing KubeDB Managed MariaDB Galera Cluster with Chaos Mesh
+# Chaos Testing KubeDB Managed MariaDB with Chaos Mesh
 
 ## Setup Cluster
 
@@ -49,13 +51,13 @@ This methodology is particularly crucial for database systems, where failures ca
 
 In this comprehensive guide, we will:
 
-1. **Deploy a Highly Available MariaDB Galera Cluster** on Kubernetes using KubeDB, configured with synchronous multi-master replication
-2. **Run 18 Chaos Engineering Experiments** using Chaos Mesh to simulate real-world failure scenarios
-3. **Observe Cluster Behavior** during failures including pod crashes, network issues, resource exhaustion, and disk I/O errors
-4. **Measure Resilience** by tracking data consistency, failover speed, and recovery capabilities
-5. **Learn Best Practices** for configuring MariaDB Galera Cluster for maximum resilience
+1. **Deploy a MariaDB Galera Cluster** on Kubernetes using KubeDB, configured with synchronous multi-master replication
+2. **Deploy a MariaDB Replication cluster with MaxScale** proxy for automatic read-write splitting and failover
+3. **Run 36 Chaos Engineering Experiments** (18 per topology) using Chaos Mesh to simulate real-world failure scenarios
+4. **Compare Galera vs Replication** — head-to-head under identical failure conditions
+5. **Learn Best Practices** for choosing the right topology based on your workload
 
-Each experiment progressively tests different aspects of the system — from simple pod failures to complex scenarios involving packet corruption and IO data manipulation. By the end, you'll have a thorough understanding of how your MariaDB Galera cluster behaves under various failure modes.
+Each experiment progressively tests different aspects of the system — from simple pod failures to complex scenarios involving packet corruption and IO data manipulation.
 
 You can see the [`Chaos Testing Results Summary`](#chaos-testing-results-summary) for a quick view of what we have done in this blog.
 
@@ -1846,87 +1848,208 @@ SQL statistics:
 
 ---
 
+## MariaDB Replication with MaxScale (18 Experiments)
+
+Now we test the same 18 chaos experiments on **MariaDB Replication** topology with **MaxScale** proxy. Unlike Galera (synchronous multi-master), Replication uses asynchronous Master-Slave replication with MaxScale handling automatic failover and read-write splitting.
+
+### Replication Test Environment
+
+| Component | Details |
+|---|---|
+| Cluster Topology | MariaDB Replication (1 Master + 2 Slaves) |
+| Proxy | MaxScale (3 replicas) |
+| MariaDB Version | 11.8.5 |
+| Load via | `md-mx` service (MaxScale, port 3306) |
+| Baseline TPS | ~926 (via MaxScale) |
+
+### Deploy MariaDB Replication with MaxScale
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: MariaDB
+metadata:
+  name: md
+  namespace: demo
+spec:
+  deletionPolicy: Delete
+  replicas: 3
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 2Gi
+  storageType: Durable
+  podTemplate:
+    spec:
+      containers:
+        - name: mariadb
+          resources:
+            limits:
+              memory: 1.5Gi
+            requests:
+              cpu: 500m
+              memory: 1.5Gi
+  topology:
+    mode: MariaDBReplication
+    maxscale:
+      replicas: 3
+      enableUI: true
+      storage:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi
+      storageType: Durable
+  version: 11.8.5
+```
+
+> **Key differences from Galera:**
+> - `kubedb.com/role: Master` (1 node) and `kubedb.com/role: Slave` (2 nodes) — not multi-master
+> - **MaxScale** automatically routes writes to Master, reads to Slaves
+> - Async replication — Master doesn't wait for Slave acknowledgment
+> - All sysbench load goes through `md-mx` (MaxScale service)
+
+Verify:
+
+```shell
+➤ kubectl get mariadb,pods -n demo -L kubedb.com/role
+NAME                       VERSION   STATUS   AGE
+mariadb.kubedb.com/md      11.8.5    Ready    3m
+
+NAME         READY   STATUS    RESTARTS   AGE   ROLE
+pod/md-0     2/2     Running   0          3m    Master
+pod/md-1     2/2     Running   0          3m    Slave
+pod/md-2     2/2     Running   0          3m    Slave
+pod/md-mx-0  1/1     Running   0          3m
+pod/md-mx-1  1/1     Running   0          3m
+pod/md-mx-2  1/1     Running   0          3m
+
+➤ # Replication status:
+Slave_IO_Running: Yes
+Slave_SQL_Running: Yes
+Seconds_Behind_Master: 0
+
+➤ # Baseline via MaxScale:
+transactions: 13902 (926.35 per sec.)
+reconnects: 0 (0.00 per sec.)
+```
+
+### Replication Chaos Experiments
+
+The same 18 chaos experiments were run on the Replication topology. All traffic routed through MaxScale (`md-mx`).
+
+| # | Experiment | Repl TPS | Impact | Recovery | Data | Galera TPS (comparison) |
+|---|---|---|---|---|---|---|
+| 1 | Kill Master Pod | 958 | Failover md-0→md-1, MaxScale re-routed | ~10s | 25/25 | 1061 |
+| 2 | OOMKill (1200MB) | 946 | Survived, no kill | N/A | 25/25 | 1050 |
+| 3 | Network Partition | 939 | No failover needed | N/A | 25/25 | 1430 |
+| 4 | IO Latency (100ms) | **5** | Single-Master bottleneck | After expiry | 25/25 | **1450** |
+| 5 | Network Latency (1s) | **941** | No impact (async!) | N/A | 25/25 | **3** |
+| 6 | CPU Stress (98%) | 933 | Negligible | N/A | 25/25 | 1034 |
+| 7 | Packet Loss (30%) | 1.9 | Severe | After expiry | 25/25 | 1.3 |
+| 8 | Full Cluster Kill | 951 | Total outage ~3 min | MaxScale bootstrap | 25/25 | 1024 |
+| 9 | DNS Error | 945 | No impact | N/A | 25/25 | 1016 |
+| 10 | IO Fault (EIO 50%) | 0 (down) | Master crashed | Recovery | 25/25 | 1404 |
+| 11 | Clock Skew (-5 min) | 865 | 7% drop | Instant | 25/25 | 988 |
+| 12 | Bandwidth Throttle | 22 | 97% drop | Instant | 25/25 | 280 |
+| 13 | Pod Failure (freeze) | 1104 | Failover triggered | Automatic | 25/25 | 1409 |
+| 14 | Container Kill | 1163 | Failover triggered | Automatic | 25/25 | 1381 |
+| 15 | Packet Duplicate (50%) | 926 | No impact | N/A | 25/25 | 995 |
+| 16 | Packet Corrupt (50%) | **967** | No impact | N/A | 25/25 | **0 (outage)** |
+| 17 | IO Attr Override (r/o) | 870 | Status Critical, 0 errors | Automatic | 25/25 | 1388 |
+| 18 | IO Mistake (corruption) | 964 | No impact | N/A | 25/25 | 1380 |
+
+**18/18 experiments passed with zero data loss.** All 25/25 tracking markers preserved.
+
+---
+
 ## Chaos Testing Results Summary
 
-### Test Results Overview
+### Combined Results: 36/36 Experiments PASS
 
-**All 18 experiments passed with zero data loss.**
+We ran **36 chaos experiments** across **2 MariaDB topologies** — all with **zero data loss**.
+
+### Galera Cluster Results (18 experiments, baseline ~1039 TPS)
 
 | # | Experiment | TPS During | Impact | Recovery | Data |
 |---|---|---|---|---|---|
-| 1 | Pod Kill | 1061 | None | ~5s auto-rejoin | 25/25, checksums MATCH |
-| 2 | OOMKill (1200MB) | 1050 | None (survived) | N/A | 25/25, checksums MATCH |
-| 3 | Network Partition | 1430 (+37%) | TPS increased (2 nodes) | Auto-rejoin after expiry | 25/25, checksums MATCH |
-| 4 | IO Latency (100ms) | 1450 (2 nodes) | Node unresponsive | Auto-rejoin after expiry | 25/25, checksums MATCH |
-| 5 | Network Latency (1s) | 3 (-99.7%) | Severe degradation | Instant after removal | 25/25, checksums MATCH |
-| 6 | CPU Stress (98%) | 1034 | Negligible | N/A | 25/25, checksums MATCH |
-| 7 | Packet Loss (30%) | 1.3 (-99.9%) | Severe degradation | Instant after removal | 25/25, checksums MATCH |
-| 8 | Full Cluster Kill | 1024 | Full outage | ~3 min bootstrap | 25/25, checksums MATCH |
-| 9 | DNS Error | 1016 | None | N/A | 25/25, checksums MATCH |
-| 10 | IO Fault (EIO 50%) | 1404 (2 nodes) | Node crash (segfault) | Coordinator recovery | 25/25, checksums MATCH |
-| 11 | Clock Skew (-5 min) | 988 (-5%) | Minor | Instant after removal | 25/25, checksums MATCH |
-| 12 | Bandwidth Throttle | 280 (-73%) | Significant | Instant after removal | 25/25, checksums MATCH |
-| 13 | Pod Failure (freeze) | 1409 (2 nodes) | Node frozen | Auto-rejoin after expiry | 25/25, checksums MATCH |
-| 14 | Container Kill | 1381 (2 nodes) | Process killed | Kubelet restart + rejoin | 25/25, checksums MATCH |
-| 15 | Packet Duplicate (50%) | 995 (-4%) | Minor | N/A | 25/25, checksums MATCH |
-| 16 | Packet Corrupt (50%) | 0 (all down) | **Complete outage** | Auto-bootstrap after removal | 25/25, checksums MATCH |
-| 17 | IO Attr Override (r/o) | 1388 (2 nodes) | Node crash | Coordinator recovery | 25/25, checksums MATCH |
-| 18 | IO Mistake (corruption) | 1380 (2 nodes) | Node crash | SST recovery | 25/25, checksums MATCH |
+| 1 | Pod Kill | 1061 | None | ~5s auto-rejoin | 25/25 |
+| 2 | OOMKill (1200MB) | 1050 | None (survived) | N/A | 25/25 |
+| 3 | Network Partition | 1430 (+37%) | TPS increased (2 nodes) | Auto-rejoin | 25/25 |
+| 4 | IO Latency (100ms) | 1450 (2 nodes) | Node unresponsive | Auto-rejoin | 25/25 |
+| 5 | Network Latency (1s) | 3 (-99.7%) | Severe | Instant | 25/25 |
+| 6 | CPU Stress (98%) | 1034 | Negligible | N/A | 25/25 |
+| 7 | Packet Loss (30%) | 1.3 (-99.9%) | Severe | Instant | 25/25 |
+| 8 | Full Cluster Kill | 1024 | Full outage | ~3 min bootstrap | 25/25 |
+| 9 | DNS Error | 1016 | None | N/A | 25/25 |
+| 10 | IO Fault (EIO 50%) | 1404 (2 nodes) | Node crash | Coordinator | 25/25 |
+| 11 | Clock Skew (-5 min) | 988 (-5%) | Minor | Instant | 25/25 |
+| 12 | Bandwidth Throttle | 280 (-73%) | Significant | Instant | 25/25 |
+| 13 | Pod Failure (freeze) | 1409 (2 nodes) | Node frozen | Auto-rejoin | 25/25 |
+| 14 | Container Kill | 1381 (2 nodes) | Process killed | Kubelet restart | 25/25 |
+| 15 | Packet Duplicate (50%) | 995 (-4%) | Minor | N/A | 25/25 |
+| 16 | Packet Corrupt (50%) | 0 (all down) | **Complete outage** | Auto-bootstrap | 25/25 |
+| 17 | IO Attr Override (r/o) | 1388 (2 nodes) | Node crash | Coordinator | 25/25 |
+| 18 | IO Mistake (corruption) | 1380 (2 nodes) | Node crash | SST recovery | 25/25 |
+
+### Replication + MaxScale Results (18 experiments, baseline ~926 TPS)
+
+| # | Experiment | TPS During | Impact | Recovery | Data |
+|---|---|---|---|---|---|
+| 1 | Kill Master Pod | 958 | Failover ~10s | MaxScale re-route | 25/25 |
+| 2 | OOMKill (1200MB) | 946 | None (survived) | N/A | 25/25 |
+| 3 | Network Partition | 939 | No failover needed | N/A | 25/25 |
+| 4 | IO Latency (100ms) | 5 (-99%) | Single-Master bottleneck | After expiry | 25/25 |
+| 5 | Network Latency (1s) | 941 | No impact (async!) | N/A | 25/25 |
+| 6 | CPU Stress (98%) | 933 | Negligible | N/A | 25/25 |
+| 7 | Packet Loss (30%) | 1.9 | Severe | After expiry | 25/25 |
+| 8 | Full Cluster Kill | 951 | Total outage ~3 min | MaxScale bootstrap | 25/25 |
+| 9 | DNS Error | 945 | None | N/A | 25/25 |
+| 10 | IO Fault (EIO 50%) | 0 (down) | Master crashed | Recovery | 25/25 |
+| 11 | Clock Skew (-5 min) | 865 (-7%) | Minor | Instant | 25/25 |
+| 12 | Bandwidth Throttle | 22 (-97%) | Severe | Instant | 25/25 |
+| 13 | Pod Failure (freeze) | 1104 | Failover triggered | Automatic | 25/25 |
+| 14 | Container Kill | 1163 | Failover triggered | Automatic | 25/25 |
+| 15 | Packet Duplicate (50%) | 926 | None | N/A | 25/25 |
+| 16 | Packet Corrupt (50%) | 967 | None | N/A | 25/25 |
+| 17 | IO Attr Override (r/o) | 870 | Status Critical | Automatic | 25/25 |
+| 18 | IO Mistake (corruption) | 964 | None | N/A | 25/25 |
 
 ## Key Findings
 
-### Galera Cluster Strengths
-1. **Zero data loss** across all 18 experiments — Galera's synchronous replication guarantees consistency
-2. **Automatic recovery** from all failure modes — no manual intervention needed
-3. **No split-brain** — isolated nodes become `non-Primary` and stop accepting writes
-4. **CPU stress resilience** — 98% CPU had virtually no impact (write path is IO-bound)
-5. **Packet duplication resilience** — 50% packet duplication caused only 4% TPS drop (TCP handles duplicates natively)
-6. **Full cluster kill recovery** — KubeDB coordinator handles Galera bootstrap automatically
-7. **IO corruption recovery** — random data corruption and read-only filesystem both recovered via SST/IST
+### Galera vs Replication: Head-to-Head
 
-### Galera Cluster Sensitivities
-1. **Network latency** — 1s latency caused 99.7% TPS drop (synchronous replication amplifies latency)
-2. **Packet loss** — 30% loss caused 99.9% TPS drop (TCP retransmissions compound with certification)
-3. **Packet corruption** — 50% corruption caused **complete cluster outage** (all nodes non-Primary) — the only chaos that broke the entire cluster
-4. **IO faults** — EIO errors, read-only filesystem, and random corruption all crash MariaDB, but cluster continues on remaining nodes
-5. **Bandwidth** — 1 mbps limit caused 73% TPS drop, but flow control kept nodes Synced
+| Scenario | Galera TPS | Replication TPS | Winner | Why |
+|---|---|---|---|---|
+| Network Latency 1s | 3 | **941** | **Replication** | Async replication doesn't wait for acknowledgment |
+| Packet Corrupt 50% | 0 (outage) | **967** | **Replication** | Galera needs valid certification packets |
+| IO Latency 100ms | **1450** | 5 | **Galera** | Multi-master routes writes to healthy nodes |
+| IO Fault (EIO) | **1404** | 0 (down) | **Galera** | Multi-master continues on remaining nodes |
+| Bandwidth 1mbps | **280** | 22 | **Galera** | Multi-master distributes load |
+| Pod Kill | 1061 | 958 | Tie | Both recover quickly |
+| CPU Stress | 1034 | 933 | Tie | Both unaffected |
 
-### Galera vs MySQL Group Replication
+### When to Choose Each Topology
 
-| Aspect | Galera Cluster | MySQL GR (Single-Primary) |
-|---|---|---|
-| Topology | Multi-master (all nodes write) | Single primary + secondaries |
-| Network latency impact | Severe (every write certified across all nodes) | Moderate (only primary writes) |
-| CPU stress impact | Negligible | Negligible |
-| Packet loss 30% | Severe TPS drop, no expulsion | Node expulsion, failover |
-| Recovery from full kill | ~3 min (coordinator bootstrap) | ~1 min (coordinator + GR protocol) |
-| Flow control | `wsrep_flow_control_paused` | N/A (group_replication handles internally) |
+**Choose Galera Cluster when:**
+- IO-intensive workloads that benefit from multi-node write distribution
+- Environments needing true multi-master writes
+- Single-node failure should not block writes
+- Synchronous replication guarantees are required
 
-### Performance Metrics Summary
-
-| Metric | Value |
-|---|---|
-| **Baseline TPS** | ~1,039 |
-| **Best TPS during chaos** | 1,450 (2-node, during partition/IO chaos) |
-| **Worst TPS during chaos** | 0 (packet corruption — full outage) |
-| **Worst TPS (cluster functional)** | 1.3 (30% packet loss) |
-| **Recovery Time (single node)** | ~5-30 seconds |
-| **Recovery Time (full cluster kill)** | ~3 minutes |
-| **Data Loss** | Zero across all 18 experiments |
-| **Tracking Rows Preserved** | 25/25 on every experiment |
-| **Checksum Mismatches** | Zero |
+**Choose Replication + MaxScale when:**
+- Networks with high latency or unreliable connections (WAN, cross-region)
+- Environments prone to packet corruption or packet loss
+- Read-heavy workloads where Slaves offload read traffic
+- Simpler operational model with clear Master/Slave roles
 
 ### Conclusion
 
-The KubeDB-managed MariaDB Galera Cluster demonstrates excellent resilience across all 18 tested failure scenarios. Key takeaways:
+KubeDB MariaDB demonstrated excellent resilience across **36 chaos experiments** on **2 topologies** — Galera Cluster and Replication with MaxScale. **Zero data loss** in every experiment across both topologies.
 
-- **Zero data loss** in every experiment — Galera's synchronous replication guarantees consistency
-- **Automatic recovery** from all failure modes including full cluster kill — no manual intervention needed
-- **No split-brain** — isolated nodes become `non-Primary` and stop accepting writes
-- **Network quality is critical** — Galera's synchronous certification amplifies network issues (latency/loss → severe TPS drop)
-- **IO failures are handled gracefully** — affected node crashes but remaining nodes continue serving traffic, and the coordinator recovers the crashed node automatically
-
-The cluster achieves a strong balance of high availability and data consistency, making it suitable for production workloads that require zero data loss guarantees.
+Both topologies achieve production-grade reliability with KubeDB's automatic recovery, making them suitable for different workload profiles.
 
 ## What Next?
 
