@@ -45,7 +45,19 @@ To follow along with this tutorial, you will need:
 
 **Chaos Engineering** is a disciplined approach to testing distributed systems by deliberately introducing controlled failure scenarios to discover vulnerabilities and weaknesses before they impact your users. Rather than waiting for production incidents, chaos engineering proactively identifies how your system behaves under adverse conditions — such as pod failures, network outages, resource exhaustion, and data corruption.
 
-This methodology is particularly crucial for database systems, where failures can lead to data loss, service downtime, and compromised data consistency. By testing these scenarios in controlled environments, you gain confidence that your system can recover gracefully and maintain availability.
+This methodology is particularly crucial for **operator-managed databases on Kubernetes**. When a database pod crashes, who detects it? Who decides the new primary? Who reconfigures replication? Who bootstraps the cluster after a total outage? The answer is the **KubeDB operator** — and this blog validates that it does all of this correctly, automatically, and without data loss.
+
+### Why Test the KubeDB Operator?
+
+Running MariaDB on Kubernetes is not the same as running MariaDB on bare metal. On Kubernetes, the **KubeDB operator** is responsible for:
+
+- **Failure detection** — the operator's coordinator sidecar continuously monitors MariaDB health inside each pod
+- **Automatic failover** — when the primary/master fails, the coordinator elects a new one and reconfigures replication
+- **Pod recovery** — when a pod is killed or crashes, the operator ensures it's recreated and rejoins the cluster
+- **Cluster bootstrap** — after a full cluster outage (all pods killed), the coordinator identifies the most up-to-date node and bootstraps from scratch
+- **MaxScale integration** — the operator configures MaxScale to automatically detect topology changes and re-route traffic
+
+Our goal was to answer: **Does the KubeDB operator handle all of these scenarios correctly, with zero data loss and minimal downtime?**
 
 ### What This Blog Covers
 
@@ -54,10 +66,10 @@ In this comprehensive guide, we will:
 1. **Deploy a MariaDB Galera Cluster** on Kubernetes using KubeDB, configured with synchronous multi-master replication
 2. **Deploy a MariaDB Replication cluster with MaxScale** proxy for automatic read-write splitting and failover
 3. **Run 36 Chaos Engineering Experiments** (18 per topology) using Chaos Mesh to simulate real-world failure scenarios
-4. **Compare Galera vs Replication** — head-to-head under identical failure conditions
-5. **Learn Best Practices** for choosing the right topology based on your workload
+4. **Validate the KubeDB operator's recovery capabilities** — failure detection, failover, pod recovery, cluster bootstrap
+5. **Compare Galera vs Replication** — head-to-head under identical failure conditions
 
-Each experiment progressively tests different aspects of the system — from simple pod failures to complex scenarios involving packet corruption and IO data manipulation.
+Each experiment progressively tests different aspects of the operator — from simple pod recovery to complex scenarios where the coordinator must bootstrap an entire cluster from a total outage.
 
 You can see the [`Chaos Testing Results Summary`](#chaos-testing-results-summary) for a quick view of what we have done in this blog.
 
@@ -118,6 +130,7 @@ spec:
 > **Important Notes:**
 > - You can read/write in your database in both **`Ready`** and **`Critical`** states. So it means even if your db is in `Critical` state, your uptime is not compromised. `Critical` means one or more nodes are offline, but the remaining nodes have quorum and accept connections.
 > - All the results/metrics shown in this blog are related to the chaos scenarios. In general, a **Galera node recovery takes ~5-30 seconds** with **zero data loss**, ensuring high availability and data safety.
+> - Each MariaDB pod runs a **KubeDB coordinator sidecar** (`md-coordinator` container) alongside the `mariadb` container. The coordinator is the brain behind all recovery operations — it detects failures, triggers failovers, bootstraps clusters, and manages replication. This is what we are testing.
 
 Now, create the namespace and apply the manifest:
 
@@ -2047,9 +2060,22 @@ We ran **36 chaos experiments** across **2 MariaDB topologies** — all with **z
 
 ### Conclusion
 
-KubeDB MariaDB demonstrated excellent resilience across **36 chaos experiments** on **2 topologies** — Galera Cluster and Replication with MaxScale. **Zero data loss** in every experiment across both topologies.
+The KubeDB operator demonstrated excellent recovery capabilities across **36 chaos experiments** on **2 MariaDB topologies** — Galera Cluster and Replication with MaxScale. **Zero data loss** in every experiment across both topologies.
 
-Both topologies achieve production-grade reliability with KubeDB's automatic recovery, making them suitable for different workload profiles.
+The operator handled every failure scenario we threw at it:
+
+| Operator Capability | What We Tested | Result |
+|---|---|---|
+| **Failure detection** | Pod kill, container kill, pod freeze, IO crash, segfault | Coordinator detected all failures within seconds |
+| **Automatic failover** | Kill master/primary during active writes | New master elected, replication reconfigured, MaxScale re-routed — all automatically |
+| **Pod recovery** | OOMKill, IO faults, IO corruption, read-only filesystem | Crashed pods restarted, rejoined cluster via IST/SST, data fully restored |
+| **Cluster bootstrap** | Kill all 3 pods simultaneously | Coordinator bootstrapped from scratch in ~3 min — identified most up-to-date node, elected master, rejoined others |
+| **Network resilience** | Partition, latency, packet loss/corrupt/duplicate, bandwidth throttle, DNS error | Cluster stayed operational (or recovered automatically after chaos expired) |
+| **MaxScale integration** | All 18 replication experiments via MaxScale proxy | MaxScale detected every topology change and re-routed traffic automatically |
+
+**The KubeDB operator is the reason these chaos tests pass.** MariaDB itself doesn't know how to bootstrap a Galera cluster from a total outage, elect a new replication master, or reconfigure MaxScale routing. The operator's coordinator sidecar handles all of this — making KubeDB MariaDB truly self-healing on Kubernetes.
+
+Both topologies achieve production-grade reliability, making them suitable for workloads that demand zero data loss and automatic recovery without manual intervention.
 
 ## What Next?
 
