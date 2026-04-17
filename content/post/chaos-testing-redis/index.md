@@ -3,8 +3,7 @@ title: Chaos Testing Redis on Kubernetes with KubeDB and Chaos Mesh
 date: "2026-04-15"
 weight: 14
 authors:
-- name: Hiranmoy Chowdhury
-  image: /images/author/hiranmoy.jpg
+- Hiranmoy Das Chowdhury
 tags:
 - chaos-engineering
 - chaos-mesh
