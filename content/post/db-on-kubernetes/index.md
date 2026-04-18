@@ -1,5 +1,5 @@
 ---
-title: 'Why Production Databases Do Belong on Kubernetes: Debunking a Persistent Myth in 2026'
+title: 'Why Databases Belong on Kubernetes: A practical comparison of cost, control, and scalability'
 date: "2026-04-18"
 weight: 14
 authors:
