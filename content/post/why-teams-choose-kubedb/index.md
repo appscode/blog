@@ -25,7 +25,7 @@ Here’s a clear, side-by-side comparison that shows exactly why KubeDB wins for
 
 The table below is ordered by **importance to DBaaS decision-makers**, starting with the areas where KubeDB delivers the strongest, most decisive advantages. KubeDB’s key advantages are highlighted in **bold**.
 
-| Aspect                          | **KubeDB (Kubernetes Operator DBaaS)** | Cloud Managed DBaaS (RDS, Cloud SQL, Azure DB, etc.) | VM-based DBaaS (self-managed on EC2/GCE/Azure VM) | DIY DBaaS (custom scripts/Helm/Ansible) |
+| Aspect                          | **KubeDB (Kubernetes Operator DBaaS)** | Cloud Managed DBaaS (RDS, Cloud SQL, Azure DB, etc.) | VM-based DBaaS (cloud or on-prem) | DIY (single operator/Helm/Ansible) |
 |---------------------------------|-----------------------------------------|-------------------------------------------------------|----------------------------------------------------|------------------------------------------|
 | **Cost**                        | **Low** (pay only for Kubernetes nodes + storage) | High (80–100% markup on infrastructure + per-service pricing) | Medium (VM costs only) | Medium (but high engineering time/cost) |
 | **Portability / Multi-Cloud**   | **Excellent** (same YAML everywhere: EKS, AKS, GKE, on-prem, air-gapped, hybrid) | Poor (vendor lock-in + painful migrations) | Medium (cloud-specific images/scripts) | Varies (usually tied to your custom tooling) |
