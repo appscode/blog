@@ -328,6 +328,12 @@ spec:
 
 **What this chaos does:** Terminates the primary pod abruptly with `grace-period=0`, forcing an immediate failover to a standby replica.
 
+- **Expected behavior:**
+  Primary pod is killed → cluster transitions `Ready` → `Critical` (1 replica missing after failover to a standby) → when the killed pod rejoins as standby, cluster returns to `Ready`. Zero data loss, GTIDs and checksums consistent across all 3 nodes.
+
+- **Actual result:**
+  Pod-0 killed → pod-2 elected as new primary in ~5 seconds → pod-0 rejoined as standby ~30s later → cluster returned to `Ready`. All 3 members `ONLINE` in GR, GTIDs match across nodes, checksums match on every sysbench table. **PASS.**
+
 Before running, let's see who is the primary:
 
 ```shell
@@ -435,6 +441,12 @@ spec:
 ```
 
 **What this chaos does:** Allocates 1200MB of extra memory on the primary pod. Combined with MySQL's memory usage (~500MB), this exceeds the 1.5Gi limit and triggers an OOMKill.
+
+- **Expected behavior:**
+  Primary pod is OOMKilled during sysbench writes → cluster goes `NotReady` during failover → after ~20s(based on config) a new primary is elected and the OOMKilled pod rejoins as standby → cluster returns to `Ready`. Zero data loss, GTIDs and checksums consistent across nodes.
+
+- **Actual result:**
+  Primary pod-2 OOMKilled mid-writes. Sysbench lost connection (error 2013). After ~20s(as replication_unreachable_majority_timeout = 20) the unreachable member was expelled, pod-1 elected as new primary. Pod-2 restarted (`Restarts: 1`) and rejoined as standby ~82s after kill. All 3 `ONLINE` in GR, GTIDs match, checksums match. **PASS.**
 
 First, start the sysbench load test so we have writes in-flight when the OOMKill hits:
 
@@ -553,6 +565,12 @@ spec:
 
 **What this chaos does:** Creates a complete network partition between the primary and all standby replicas for 2 minutes. The primary loses quorum and is expelled from the group. The standbys elect a new primary.
 
+- **Expected behavior:**
+  Primary isolated from standbys → within `group_replication_unreachable_majority_timeout` (~20s) the isolated primary loses quorum → standbys elect a new primary → cluster goes `Critical` → after partition removed the old primary rejoins → cluster returns to `Ready`. Zero data loss.
+
+- **Actual result:**
+  Partition applied for 2 minutes. New primary (pod-2) elected in ~20s. Old primary (pod-1) stayed isolated until partition ended, then rejoined automatically via coordinator restart. Cluster returned to `Ready` at ~4 minutes total. GTIDs and checksums match across all 3 nodes. **PASS.**
+
 Before running:
 
 ```shell
@@ -668,6 +686,12 @@ spec:
 
 **What this chaos does:** Adds 100ms delay to every disk read/write operation on the primary's MySQL data directory. Every `fsync`, `write`, and `read` is slowed down.
 
+- **Expected behavior:**
+  Primary's disk I/O slowed by 100ms → TPS drops significantly → cluster stays `Ready` (no failover — InnoDB should handle slow disk gracefully, not crash) → when chaos ends, TPS recovers. Zero data loss, GTIDs/checksums consistent.
+
+- **Actual result:**
+  TPS degraded from 703 → 104 (~85% drop). No failover triggered. All 3 members stayed `ONLINE` throughout. After chaos removed, TPS recovered. GTIDs and checksums match across all 3 nodes. **PASS.**
+
 Apply the chaos and run sysbench simultaneously:
 
 ```shell
@@ -775,6 +799,12 @@ spec:
 
 **What this chaos does:** Adds 1-second delay (with 50ms jitter) to all network traffic between the primary and standby replicas. Paxos consensus requires majority acknowledgment for each transaction, so every write now takes at least 1 second to commit.
 
+- **Expected behavior:**
+  Every Paxos round-trip delayed by ≥1 s → TPS collapses (each commit waits for majority ack) → cluster stays `Ready` (no failover — group replication doesn't treat slow nodes as failed within `unreachable_majority_timeout`) → TPS recovers after chaos. Zero data loss.
+
+- **Actual result:**
+  TPS dropped from ~460 → 0.91 (99.8%). No failover, no errors. All 3 members stayed `ONLINE` throughout the 10-minute delay window. GTIDs and checksums match across all 3 nodes. **PASS.**
+
 Apply the chaos and run sysbench:
 
 ```shell
@@ -876,6 +906,12 @@ spec:
 
 **What this chaos does:** Consumes 98% of the CPU on the primary pod, leaving minimal CPU for MySQL query processing and Paxos consensus.
 
+- **Expected behavior:**
+  Primary CPU saturated at 98% → TPS drops significantly → cluster stays `Ready` (no failover — CPU contention slows MySQL but doesn't make it unresponsive to GR heartbeats) → recovers when chaos ends. Zero data loss.
+
+- **Actual result:**
+  TPS reduced from ~686 → ~212 (~69% drop). No failover, no errors. All 3 members stayed `ONLINE`. GTIDs and checksums match across all 3 nodes. **PASS.**
+
 Apply the chaos and run sysbench:
 
 ```shell
@@ -976,6 +1012,12 @@ spec:
 
 **What this chaos does:** Drops 30% of all network packets on every MySQL pod (with 25% correlation — dropped packets tend to cluster together). This affects both client connections and GR inter-node communication.
 
+- **Expected behavior:**
+  Packet drops disrupt GR heartbeats → some members go `UNREACHABLE` (transient, not failed) → TPS collapses but writes still eventually commit → cluster remains functional (primary stays primary) → after chaos, all members return to `ONLINE`. Zero data loss.
+
+- **Actual result:**
+  TPS dropped to 2.70 (99.4% reduction). Pod-1 observed `UNREACHABLE` during chaos, no failover triggered. After chaos removed, all 3 members returned to `ONLINE` immediately. GTIDs and checksums match across all 3 nodes. **PASS.**
+
 Apply the chaos and run sysbench:
 
 ```shell
@@ -1074,6 +1116,12 @@ This is the most aggressive test — we apply memory stress on the primary, CPU 
 
 **What this chaos does:** Applies memory pressure + CPU exhaustion while the database is under active write load. The primary is likely to get OOMKilled.
 
+- **Expected behavior:**
+  Combined memory + CPU stress under sysbench load → primary OOMKilled → cluster `NotReady` during failover → new primary elected from standby → OOMKilled pod restarts and rejoins → cluster returns to `Ready`. Zero data loss.
+
+- **Actual result:**
+  Primary pod-2 OOMKilled (restart count 2). Cluster went `NotReady` briefly. Pod-1 elected as new primary. Pod-2 rejoined as standby within ~90s. All 3 members `ONLINE`, GTIDs match, checksums match. **PASS.**
+
 Start sysbench load first (~1186 TPS baseline), then apply both stress experiments:
 
 ```shell
@@ -1160,6 +1208,12 @@ The ultimate stress test — we force-delete all 3 MySQL pods simultaneously. Th
 
 **Method:** `kubectl delete pod --force --grace-period=0` on all 3 pods at once.
 
+- **Expected behavior:**
+  All 3 pods deleted → cluster `NotReady` (no primary) → coordinator detects full outage → identifies pod with highest GTID → bootstraps new cluster from it → other pods rejoin as standbys → cluster returns to `Ready`. Zero data loss.
+
+- **Actual result:**
+  Full cluster outage. Coordinator detected outage and elected pod-0 (highest GTID) as new primary. Cluster recovered in ~2 minutes. All 3 members `ONLINE`, GTIDs and checksums match across all 3 nodes. **PASS.**
+
 Before running:
 
 ```shell
@@ -1244,6 +1298,12 @@ Instead of using StressChaos, we try to trigger an OOMKill naturally by running 
 
 **Method:** Launch 90 heavy JOIN queries across all pods + 4-thread sysbench for 120s.
 
+- **Expected behavior:**
+  Heavy JOINs + concurrent writes push memory toward the 1.5 Gi limit → either (a) primary survives by spilling to temp tables, staying `Ready` throughout, or (b) OOMKill triggers and cluster auto-recovers via failover. Zero data loss either way.
+
+- **Actual result:**
+  MySQL 8.4.8 survived — no OOMKill, no pod restarts. 388 TPS sustained across the full 120s. Zero errors, GTIDs and checksums match. **PASS.** *(Note: same test triggers OOMKill on MySQL 9.6.0 due to different memory allocation — also recovers cleanly.)*
+
 ```shell
 ➤ # Launch 90 large JOINs + sysbench writes
 SQL statistics:
@@ -1307,6 +1367,12 @@ spec:
 ```
 
 **What this chaos does:** Kills a random MySQL pod every minute for 3 minutes. The cluster must repeatedly recover from pod failures.
+
+- **Expected behavior:**
+  Random pod killed each minute → rapid primary reelection when primary is hit, quick rejoin when standby is hit → between kills cluster returns to `Ready` → after schedule ends and enough time passes, all 3 members `ONLINE`. Zero data loss.
+
+- **Actual result:**
+  Multiple pods killed over 3-minute window. Cluster auto-recovered after each kill. After schedule removed, all 3 members `ONLINE`, pod-0 primary, pod-1/pod-2 standbys. GTIDs and checksums match. **PASS.**
 
 ```shell
 ➤ kubectl apply -f tests/11-scheduled-pod-kill.yaml
@@ -1421,6 +1487,12 @@ spec:
 
 **What this chaos does:** Runs IO latency + pod kill in parallel. IO latency starts first, then after 30s the primary pod is killed while it's already degraded.
 
+- **Expected behavior:**
+  IO latency slows primary → after 30s the degraded primary is killed → failover elects healthy standby as new primary → cluster `Critical` → killed pod rejoins → cluster returns to `Ready`. Despite cascading fault, zero data loss.
+
+- **Actual result:**
+  Sysbench saw slow writes, then lost connection at ~30s when primary killed. Pod-2 elected as new primary, pod-1 (old primary) rejoined as standby. Cluster returned to `Ready`. GTIDs and checksums match across all 3 nodes. **PASS.**
+
 Apply and run sysbench:
 
 ```shell
@@ -1483,6 +1555,12 @@ Clean up:
 ### Chaos#13: Double Primary Kill
 
 Kill the primary, wait for new election, then immediately kill the new primary. Tests whether the cluster survives two consecutive leader failures.
+
+- **Expected behavior:**
+  First primary killed → new primary elected → second kill (of newly elected primary) → third election → surviving standby becomes primary → killed pods rejoin → cluster returns to `Ready`. Zero data loss despite rapid leader churn.
+
+- **Actual result:**
+  Pod-2 killed → pod-1 elected → pod-1 killed within ~15s → pod-2 re-elected (after its restart) as third primary. All pods rejoined. All 3 members `ONLINE`, GTIDs and checksums match. **PASS.**
 
 ```shell
 ➤ kubectl get pods -n demo -L kubedb.com/role
@@ -1564,6 +1642,12 @@ pod-2: sbtest1=740913138, sbtest2=3199164728, sbtest3=1207551779, sbtest4=395095
 
 Simulate a rolling upgrade — delete each pod sequentially with 40-second gaps. Tests graceful rolling restart behavior.
 
+- **Expected behavior:**
+  Pods deleted one at a time (0 → 1 → 2) with 40s gap between kills → each pod rejoins before the next is killed → when the primary is hit, a quick failover occurs → cluster returns to `Ready` between each step. Zero data loss.
+
+- **Actual result:**
+  All 3 pods restarted in sequence. Single failover when primary (pod-2) was killed. Each pod rejoined within ~40s. GTIDs and checksums match across all 3 nodes. **PASS.**
+
 ```shell
 ➤ # Delete pod-0 (standby)
 kubectl delete pod mysql-ha-cluster-0 -n demo --force --grace-period=0
@@ -1626,6 +1710,12 @@ pod-2: sbtest1=740913138, sbtest2=3199164728, sbtest3=1207551779, sbtest4=395095
 ### Chaos#15: Coordinator Crash
 
 Kill only the mysql-coordinator sidecar container on the primary pod, leaving the MySQL process running. Tests whether MySQL GR operates independently of the coordinator.
+
+- **Expected behavior:**
+  Coordinator sidecar killed, MySQL process untouched → coordinator container restarted by Kubernetes → MySQL keeps serving writes throughout → no failover, no TPS drop, cluster stays `Ready`. Zero data loss.
+
+- **Actual result:**
+  Coordinator restarted automatically. MySQL stayed primary, no role change. Sysbench ran at 691 TPS (baseline) throughout. All 3 members `ONLINE`, GTIDs match. **PASS** — confirms the coordinator is a management-layer sidecar; GR runs independently.
 
 ```shell
 ➤ # Kill coordinator process (PID 1) on the primary
@@ -1703,6 +1793,12 @@ spec:
 
 **What this chaos does:** Isolates the primary from all replicas for 10 minutes — 5x longer than the standard test.
 
+- **Expected behavior:**
+  Primary isolated for 10 min → failover in ~20s → cluster stays `Critical` (isolated node unreachable) throughout the 10 min → when partition lifts, isolated node rejoins via GR distributed recovery → cluster returns to `Ready`. Zero data loss.
+
+- **Actual result:**
+  Failover happened in ~20s. Pod-1 went `UNREACHABLE` (restarted once during the 10-min window). After partition removed, pod-1 rejoined cleanly. Cluster returned to `Ready`. GTIDs and checksums match across all 3 nodes. **PASS.**
+
 ```shell
 ➤ kubectl apply -f tests/16-network-partition-long.yaml
 networkchaos.chaos-mesh.org/mysql-primary-network-partition-long created
@@ -1771,6 +1867,12 @@ pod-2: sbtest1=4029255859, sbtest2=3385379889, sbtest3=3777442529, sbtest4=91444
 
 Block all DNS resolution on the primary for 3 minutes. GR uses hostnames for communication.
 
+- **Expected behavior:**
+  DNS resolution fails on primary → existing TCP connections remain open (already resolved) → writes continue with modest TPS drop → no failover (heartbeats go over existing sockets) → when DNS recovers, TPS returns to baseline. Zero data loss.
+
+- **Actual result:**
+  TPS dropped from ~720 → ~360 (~33% impact). No failover, no errors. GR heartbeats kept working over established sockets. GTIDs match across all 3 nodes. **PASS.**
+
 Save this yaml as `tests/17-dns-error.yaml`:
 
 ```yaml
@@ -1822,6 +1924,12 @@ pod-2: 65a93aae-...:1-166380:1000001-1000198
 ### Chaos#18: PVC Delete + Pod Kill (Full Data Rebuild)
 
 Completely destroy a node's data — delete both the pod and its PVC. The node must rebuild from scratch using the CLONE plugin.
+
+- **Expected behavior:**
+  Pod and PVC deleted → new pod provisioned with fresh empty PVC → pod enters `Init:0/1` while storage binds → operator initiates CLONE from a healthy primary → data fully restored → node rejoins as standby → cluster returns to `Ready`. Zero data loss on remaining nodes.
+
+- **Actual result:**
+  Pod-0 destroyed (pod + PVC). Pod reprovisioned, CLONE plugin rebuilt the datadir from primary. Cluster `Critical` during rebuild (~2 min), then `Ready` with all 3 members `ONLINE`. GTIDs and checksums match across all 3 nodes. **PASS.**
 
 ```shell
 ➤ kubectl delete pod mysql-ha-cluster-0 -n demo --force --grace-period=0
@@ -1921,6 +2029,12 @@ spec:
 
 **What this chaos does:** Returns EIO (errno 5) on 50% of all disk I/O operations on the primary's MySQL data directory. InnoDB cannot write to disk reliably.
 
+- **Expected behavior:**
+  InnoDB hits real I/O errors → MySQL crashes on primary → GR expels the unreachable member → standby elected as new primary → crashed pod restarts, InnoDB crash recovery repairs the datadir → pod rejoins as standby → cluster returns to `Ready`. Zero data loss.
+
+- **Actual result:**
+  Primary pod-2 crashed (error 2013 on sysbench). Pod-2 observed `UNREACHABLE`, failover to pod-1. After chaos removed, InnoDB crash recovery + GR distributed recovery brought pod-2 back as standby within ~90s. All 3 members `ONLINE`, GTIDs match. **PASS.**
+
 ```shell
 ➤ kubectl apply -f tests/19-io-fault.yaml
 iochaos.chaos-mesh.org/mysql-primary-io-fault created
@@ -1976,6 +2090,12 @@ pod-2: 65a93aae-...:1-166608:1000001-1000236
 
 Shift the primary's system clock back by 5 minutes. Tests whether clock drift breaks Paxos consensus.
 
+- **Expected behavior:**
+  Primary's wall clock shifted -5 min → MySQL's logical/GTID ordering unaffected (GR uses logical clocks, not wall-clock) → sysbench may see modest TPS drop → no failover, no errors. Zero data loss.
+
+- **Actual result:**
+  TPS dropped from 618 → 359 (~39% drop, largely from sysbench/query timing noise). No failover, no errors. GTIDs match across all 3 nodes. **PASS** — confirms GR Paxos uses logical clocks.
+
 Save this yaml as `tests/20-clock-skew.yaml`:
 
 ```yaml
@@ -2027,6 +2147,12 @@ pod-2: 65a93aae-...:1-191908:1000001-1000236
 ### Chaos#21: Bandwidth Throttle (1mbps)
 
 Limit the primary's outbound network bandwidth to 1mbps — simulating degraded cross-AZ network.
+
+- **Expected behavior:**
+  Primary's outbound bandwidth throttled to 1 Mbps → Paxos writes back up behind limited capacity → TPS drops substantially but commits still succeed → no failover (heartbeats fit within the bandwidth budget) → TPS recovers after chaos. Zero data loss.
+
+- **Actual result:**
+  TPS dropped from 618 → 136 (~80% drop). Zero errors, no failover. Cluster stayed `Ready` throughout. GTIDs match across all 3 nodes. **PASS.**
 
 Save this yaml as `tests/21-bandwidth-throttle.yaml`:
 
@@ -2351,6 +2477,12 @@ kubectl exec -n demo $SBPOD -- sysbench oltp_read_write \
 
 ### InnoDB Chaos#1: Kill the Primary Pod
 
+- **Expected behavior:**
+  Primary killed → GR elects new primary → MySQL Router (metadata-cache TTL 0.5s) detects topology change and re-routes RW traffic on port 6446 → killed pod rejoins as secondary → cluster `Ready`. Zero data loss.
+
+- **Actual result:**
+  Pod-0 killed → pod-2 elected new primary → Router re-routed within seconds (confirmed via `SELECT @@hostname` on port 6446). Pod-0 rejoined as secondary. All 3 members `ONLINE`, GTIDs and checksums match. **PASS.**
+
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
@@ -2412,6 +2544,12 @@ pod-2: sbtest1=309802666
 
 Applied 1200MB memory stress on the primary via StressChaos. Unlike Group Replication mode where 8.4.8 survived 1600MB stress, InnoDB Cluster with 1200MB triggered an OOMKill.
 
+- **Expected behavior:**
+  Memory stress pushes primary past 1.5Gi limit → OOMKill → GR expels member, new primary elected → Router re-routes RW traffic → killed pod restarts and rejoins → cluster `Ready`. Zero data loss.
+
+- **Actual result:**
+  Primary pod-2 OOMKilled (restart count 1). Pod-1 elected new primary. Router re-routed automatically. Pod-2 rejoined as secondary. All 3 members `ONLINE`, GTIDs and checksums match. **PASS.**
+
 ```shell
 $ kubectl get pods -n demo -l app.kubernetes.io/instance=mysql-ha-cluster
 NAME                        READY   STATUS    RESTARTS      AGE
@@ -2426,6 +2564,12 @@ pod-1 elected as new PRIMARY. After recovery — all 3 ONLINE, GTIDs MATCH, chec
 **Result: PASS** — OOMKill triggered failover. Router re-routed automatically. Zero data loss.
 
 ### InnoDB Chaos#3: Network Partition
+
+- **Expected behavior:**
+  Primary isolated from standbys for 2 min → GR marks it `UNREACHABLE` → after timeout, expelled and new primary elected from remaining 2 nodes → Router re-routes RW to new primary → after partition lifts, expelled node rejoins via coordinator → cluster `Ready`. Zero data loss.
+
+- **Actual result:**
+  Pod-1 (old primary) shown `UNREACHABLE`, expelled. Pod-2 elected as new primary. Router re-routed. Pod-1 auto-rejoined ~90s after partition lifted. GTIDs and checksums match. **PASS.**
 
 Partitioned the primary from standbys for 2 minutes:
 
@@ -2448,6 +2592,12 @@ After partition ended, the coordinator rejoined pod-1 automatically (~90s). All 
 
 ### InnoDB Chaos#4: IO Latency (100ms) + Write Load via Router
 
+- **Expected behavior:**
+  IO latency on primary → TPS collapses (disk-bound writes) but cluster stays `Ready` → Router keeps connection to the degraded primary (it's still alive, just slow) → when chaos ends, TPS recovers. Zero data loss.
+
+- **Actual result:**
+  TPS dropped to ~0 during the 30s latency window, then recovered to 1242 TPS after chaos expired. No failover, no errors. GTIDs and checksums match. **PASS.**
+
 Applied 100ms IO latency on the primary while running 8-thread sysbench write load through the Router (port 6446):
 
 ```shell
@@ -2465,6 +2615,12 @@ TPS dropped to near-zero during IO latency, then recovered to ~1242 TPS after ch
 
 ### InnoDB Chaos#5: Network Latency (1s) + Write Load
 
+- **Expected behavior:**
+  1s delay on GR traffic → each Paxos commit waits ≥1s → TPS near zero but writes still succeed → no failover (delay within unreachable timeout) → recovers after chaos. Zero data loss.
+
+- **Actual result:**
+  Average TPS 1.26 (99.9% reduction), 95p latency 7.6s. Zero errors, no failover. All 3 members stayed `ONLINE`. GTIDs and checksums match. **PASS.**
+
 Applied 1-second network delay between primary and replicas:
 
 ```shell
@@ -2478,6 +2634,12 @@ Average TPS: 1.26 (99.9% reduction). 95th percentile latency: 7,616ms. Zero erro
 **Result: PASS** — GR tolerated extreme latency. Zero data loss.
 
 ### InnoDB Chaos#6: CPU Stress (98%) + Write Load
+
+- **Expected behavior:**
+  98% CPU stress on primary → TPS drops significantly → no failover (primary still responds to heartbeats) → TPS recovers when chaos ends. Zero data loss.
+
+- **Actual result:**
+  Baseline 1113 TPS dropped to 188 at peak stress, then stabilized around 810 as MySQL adapted. Average 763 TPS. No failover, zero errors. GTIDs and checksums match. **PASS.**
 
 Applied 98% CPU stress on the primary:
 
@@ -2494,6 +2656,12 @@ Average TPS: 763. Dipped to 188 at peak stress, then recovered. No failover, zer
 
 ### InnoDB Chaos#7: Packet Loss (30%)
 
+- **Expected behavior:**
+  30% packet loss on all pods → Router and GR member-to-member connections degraded → cluster either stays `Ready` (if heartbeats get through) or sees `UNREACHABLE`/failover. Zero data loss either way.
+
+- **Actual result:**
+  Sysbench could not connect through Router (error 2003), but cluster internals stayed stable — all 3 members `ONLINE`, **no failover** triggered. Notable contrast with GR-only mode where 30% loss did cause an `UNREACHABLE` state. GTIDs and checksums match. **PASS.**
+
 Applied 30% packet loss on all cluster pods. Sysbench could not connect through the Router (error 2003), but the cluster itself remained stable — all 3 members stayed ONLINE with no failover.
 
 This is a notable difference from Group Replication mode, where 30% packet loss triggered a failover.
@@ -2501,6 +2669,12 @@ This is a notable difference from Group Replication mode, where 30% packet loss 
 **Result: PASS** — Cluster stable despite packet loss. Router connections failed but no data loss.
 
 ### InnoDB Chaos#8: Full Cluster Kill
+
+- **Expected behavior:**
+  All 3 pods killed → no primary → coordinator detects complete outage, identifies pod with highest GTID → invokes `dba.rebootClusterFromCompleteOutage()` from that pod → other pods rejoin → cluster `Ready`. Zero data loss.
+
+- **Actual result:**
+  Pod-0 elected as bootstrap candidate (max transacted pod). `rebootClusterFromCompleteOutage` succeeded, pod-1 and pod-2 rejoined. Recovery in ~60s. All 3 members `ONLINE`, GTIDs and checksums match. **PASS.**
 
 Force-deleted all 3 MySQL pods simultaneously:
 
@@ -2524,6 +2698,12 @@ pod-0 was elected as bootstrap candidate (highest GTID), bootstrapped the cluste
 
 ### InnoDB Chaos#9: Double Primary Kill
 
+- **Expected behavior:**
+  First primary killed → new primary elected (Router re-routes) → second primary killed → third primary elected → both killed pods rejoin → cluster `Ready`. Zero data loss despite rapid leader churn.
+
+- **Actual result:**
+  Pod-0 killed → pod-2 elected → pod-2 killed → pod-1 elected as third primary. Both killed pods rejoined as secondary. Router re-routed correctly after each failover. GTIDs and checksums match across all 3 nodes. **PASS.**
+
 Killed the primary, waited for a new primary to be elected, then immediately killed the new primary:
 
 ```
@@ -2537,17 +2717,35 @@ Both killed pods rejoined as SECONDARY after restart. All GTIDs and checksums ma
 
 ### InnoDB Chaos#10: Rolling Restart (0→1→2)
 
+- **Expected behavior:**
+  Pods deleted sequentially (0 → 1 → 2) → each rejoins before the next is killed → primary maintained throughout (unless hit) → cluster returns to `Ready` between steps. Zero data loss.
+
+- **Actual result:**
+  Pod-1 maintained PRIMARY throughout. Pod-2 needed the coordinator's 10-attempt restart cycle before rejoining (known behavior for rapid rejoin), then joined cleanly. All 3 members `ONLINE`, GTIDs and checksums match. **PASS.**
+
 Sequentially force-deleted pod-0, pod-1, and pod-2. pod-1 maintained PRIMARY throughout the rolling restart. pod-2 required the coordinator's 10-attempt restart cycle before rejoining.
 
 **Result: PASS** — Rolling restart completed with zero data loss.
 
 ### InnoDB Chaos#11: DNS Failure on Primary
 
+- **Expected behavior:**
+  DNS resolution blocked on primary → no impact on existing TCP connections (GR uses IP addresses internally) → cluster stays `Ready`, no failover. Zero data loss.
+
+- **Actual result:**
+  Cluster stayed `Ready` throughout the 3-minute DNS chaos. No failover, no errors. GTIDs and checksums match. **PASS.**
+
 Applied DNS error mode on the primary for 3 minutes. No impact — GR uses IP addresses for group communication. Cluster remained Ready, no failover.
 
 **Result: PASS** — DNS failure has no impact on InnoDB Cluster. Zero data loss.
 
 ### InnoDB Chaos#12: Clock Skew (-5 min)
+
+- **Expected behavior:**
+  Primary wall clock shifted -5 min → GR's Paxos uses logical clocks, so consensus unaffected → no failover → cluster stays `Ready`. Zero data loss.
+
+- **Actual result:**
+  Primary showed time 5 min behind secondaries; cluster stayed `Ready` throughout, no failover, no errors. GTIDs and checksums match. **PASS** — confirms logical-clock-based Paxos.
 
 Shifted the primary's clock back by 5 minutes:
 
