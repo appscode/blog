@@ -328,6 +328,12 @@ spec:
 
 **What this chaos does:** Terminates one MariaDB pod abruptly with `grace-period=0`, forcing the remaining 2 nodes to handle all traffic while the killed pod recovers.
 
+- **Expected behavior:**
+  One pod killed → cluster briefly `Critical` (2/3 members left) → killed pod recreated by StatefulSet → rejoins via IST (Incremental State Transfer) → `wsrep_cluster_size` returns to 3, all nodes `Synced` → cluster `Ready`. Zero data loss — all 25 tracking rows and table checksums consistent.
+
+- **Actual result:**
+  md-0 killed (age=8s after recreation). Auto-rejoined via IST within ~5s. All 3 nodes `Synced`, `wsrep_cluster_size=3`. 25/25 tracking rows preserved, checksums match across all 3 nodes. Post-recovery TPS 1061 (back to baseline). **PASS.**
+
 Before running:
 
 ```shell
@@ -459,6 +465,12 @@ spec:
 
 **What this chaos does:** Allocates 1200MB of extra memory on one pod. With MariaDB's memory usage, this approaches the 1.5Gi limit.
 
+- **Expected behavior:**
+  Memory stress pushes pod near 1.5Gi limit → either (a) pod OOMKilled → recreated → rejoins via IST, or (b) survives with degraded performance. Cluster stays operational at ≥ 2 nodes throughout. Zero data loss either way.
+
+- **Actual result:**
+  MariaDB **survived** 1200MB stress without OOMKill. No pod restarts. Cluster ran at 1050 TPS (no degradation). 25/25 tracking rows preserved, checksums match. **PASS.**
+
 Apply the chaos:
 
 ```shell
@@ -550,6 +562,12 @@ spec:
 ```
 
 **What this chaos does:** Creates a complete network partition between one node and the rest of the cluster for 2 minutes. The isolated node loses quorum and becomes `non-Primary`. The remaining 2 nodes maintain quorum and continue accepting writes.
+
+- **Expected behavior:**
+  One node isolated → loses quorum, becomes `non-Primary`, stops accepting queries (no split-brain) → remaining 2 nodes keep quorum, continue serving reads/writes → after partition lifts, isolated node auto-rejoins and syncs. Zero data loss.
+
+- **Actual result:**
+  md-2 isolated, went `wsrep_cluster_size=1, non-Primary, wsrep_ready=OFF`. md-0/md-1 kept quorum at `wsrep_cluster_size=2, Primary`. TPS actually increased from 1039 → 1430 (fewer nodes to certify through). After partition lifted, md-2 auto-rejoined, all `Synced`. 25/25 tracking rows and checksums match. **PASS.**
 
 Before running:
 
@@ -710,6 +728,12 @@ spec:
 
 **What this chaos does:** Adds 100ms delay to every disk read/write on `/var/lib/mysql` for one node. This makes every InnoDB flush, WAL write, and data page read significantly slower.
 
+- **Expected behavior:**
+  100ms delay on every I/O → affected node becomes unresponsive → Galera flow control expels it (`wsrep_cluster_size` drops to 2 on remaining nodes) → the 2 healthy nodes keep serving writes → after chaos ends, expelled node auto-recovers and rejoins via IST. Zero data loss.
+
+- **Actual result:**
+  md-1 became unreachable (socket errors). Remaining 2 nodes showed `wsrep_cluster_size=2`, served 1450 TPS with zero errors. After chaos, md-1 auto-rejoined, all 3 `Synced`. 25/25 tracking rows preserved, checksums match. **PASS.**
+
 Apply the chaos:
 
 ```shell
@@ -842,6 +866,12 @@ spec:
 
 **What this chaos does:** Adds 1 second latency (+ 50ms jitter) between one node and all other cluster nodes. Every Galera certification message must wait 1 second each way.
 
+- **Expected behavior:**
+  1s latency on Galera traffic → synchronous certification requires ≥2s round trip → TPS collapses dramatically → but all 3 nodes stay `Synced` (1s is below the wsrep-timeout threshold) → no errors, no split-brain → TPS recovers after chaos. Zero data loss — this is Galera's synchronous safety trade-off.
+
+- **Actual result:**
+  TPS dropped from 1039 → 2.77 (99.7% reduction). 95p latency 2045ms (exactly one Paxos round-trip). All 3 nodes stayed `Synced`, 0 errors, 0 reconnects. 25/25 tracking rows and checksums match. **PASS.**
+
 Apply the chaos:
 
 ```shell
@@ -935,6 +965,12 @@ spec:
 
 **What this chaos does:** Consumes 98% CPU on one node using 2 stress workers. Tests whether the cluster maintains throughput and data consistency under extreme CPU pressure.
 
+- **Expected behavior:**
+  98% CPU stress on one node → MariaDB writes are mostly IO-bound, so impact should be modest → all 3 nodes stay `Synced` → TPS largely unchanged. Zero data loss.
+
+- **Actual result:**
+  1034 TPS (99.5% of baseline — negligible impact). All 3 nodes stayed `Synced` with `wsrep_cluster_size=3`. Zero errors, 25/25 tracking rows and checksums match. **PASS** — confirms Galera writes are IO-bound, not CPU-bound.
+
 Apply the chaos:
 
 ```shell
@@ -1018,6 +1054,12 @@ spec:
 ```
 
 **What this chaos does:** Drops 30% of all network packets on every cluster node with 25% correlation (burst losses). This affects both Galera replication traffic and client connections.
+
+- **Expected behavior:**
+  30% packet loss → TCP retransmissions slow Galera certification massively → TPS collapses → all 3 nodes stay `Synced` (losses don't cross wsrep-timeout) → after chaos, TPS recovers. Zero data loss.
+
+- **Actual result:**
+  TPS collapsed from 1039 → 1.32 (-99.9%). 95p latency 4.5s. All 3 nodes stayed `Synced`, `wsrep_cluster_size=3`, no expulsion, zero errors. 25/25 tracking rows and checksums match. **PASS.**
 
 Apply the chaos:
 
@@ -1105,6 +1147,12 @@ spec:
 ```
 
 **What this chaos does:** Kills all 3 MariaDB pods simultaneously. No surviving node means the cluster must bootstrap from scratch using the data on PVCs.
+
+- **Expected behavior:**
+  All 3 pods killed → cluster `NotReady`, no primary component → coordinator identifies pod with highest `seqno` (via `--wsrep-recover`) → bootstraps that pod with `--wsrep-new-cluster` → other pods rejoin via IST/SST → cluster `Ready`. Zero data loss.
+
+- **Actual result:**
+  All 3 pods recreated. Coordinator detected full outage, ran seqno recovery, bootstrapped the highest-seqno node, other 2 rejoined. Full recovery in ~3 min. Post-recovery TPS 1024. 25/25 tracking rows and checksums match. **PASS.**
 
 Apply the chaos:
 
@@ -1218,6 +1266,12 @@ spec:
 
 **What this chaos does:** Makes all DNS lookups fail on one MariaDB pod. Tests whether Galera replication (which uses IP addresses internally) is affected by DNS failures.
 
+- **Expected behavior:**
+  DNS resolution blocked on one pod → Galera uses pre-resolved IPs for cluster communication, so no impact → all 3 nodes stay `Synced`, TPS unchanged. Zero data loss.
+
+- **Actual result:**
+  All 3 nodes stayed `Synced` throughout 3-minute DNS chaos. 1016 TPS (97.8% of baseline — noise-level impact). 25/25 tracking rows and checksums match. **PASS.**
+
 Apply and check:
 
 ```shell
@@ -1290,6 +1344,12 @@ spec:
 ```
 
 **What this chaos does:** Returns `EIO` (Input/output error) for 50% of all disk operations on `/var/lib/mysql`. This is more severe than IO latency — it causes actual data access failures.
+
+- **Expected behavior:**
+  Real I/O errors → MariaDB crashes on affected node → Galera expels it → remaining 2 nodes continue serving → after chaos ends, coordinator rejoins the crashed node via IST/SST → cluster `Ready`. Zero data loss.
+
+- **Actual result:**
+  md-0 crashed (role became `Unknown`). Remaining 2 nodes (md-1, md-2) stayed `Primary`, served traffic. After chaos cleared, coordinator rejoined md-0 and cluster returned to `Ready`. 25/25 tracking rows and checksums match. **PASS.**
 
 Apply the chaos:
 
@@ -1385,6 +1445,12 @@ spec:
 
 **What this chaos does:** Shifts the system clock backward by 5 minutes on one pod. This can confuse time-dependent operations like TLS certificate validation, timeout calculations, and log ordering.
 
+- **Expected behavior:**
+  Clock skewed -5 min on one node → Galera certification uses write-set ordering (not wall clock) → minor impact at most → cluster stays `Synced` on all 3 nodes. Zero data loss.
+
+- **Actual result:**
+  988 TPS (5% drop), 3 ignored errors (transient deadlocks from skewed timestamps). All 3 nodes stayed `Synced`. 25/25 tracking rows and checksums match. **PASS.**
+
 Apply and check:
 
 ```shell
@@ -1457,6 +1523,12 @@ spec:
 ```
 
 **What this chaos does:** Limits the outbound bandwidth of one node to 1 mbps. This severely restricts the amount of data the node can send for Galera replication and client responses.
+
+- **Expected behavior:**
+  Bandwidth throttled on one node → that node falls behind on write-set replication → Galera **flow control** pauses the writer side to let it catch up → TPS drops significantly but cluster stays `Synced` → zero errors. Zero data loss.
+
+- **Actual result:**
+  TPS dropped from 1039 → 280 (-73%). `wsrep_flow_control_paused` increased to ~0.02 (Galera pausing writers). All 3 nodes stayed `Synced`, zero errors. 25/25 tracking rows and checksums match. **PASS.**
 
 Apply and check:
 
@@ -1537,6 +1609,12 @@ spec:
 
 **What this chaos does:** Freezes one pod completely — the container appears Running but is unresponsive. This simulates a hung process or kernel-level freeze.
 
+- **Expected behavior:**
+  One pod frozen (appears Running but unresponsive) → Galera heartbeats fail → expelled from cluster → remaining 2 nodes serve traffic → after chaos, frozen pod resumes and rejoins via IST. Zero data loss.
+
+- **Actual result:**
+  md-1 frozen, shown as `Unknown` role; remaining md-0/md-2 kept `Primary` with `wsrep_cluster_size=2`, served 1409 TPS with zero errors. After chaos expired, md-1 resumed and rejoined. 25/25 tracking rows and checksums match. **PASS.**
+
 During chaos, the frozen pod (md-1) shows `container not found` when exec'd:
 
 ```shell
@@ -1598,6 +1676,12 @@ spec:
 
 **What this chaos does:** Kills only the `mariadb` container inside the pod. The coordinator container keeps running. Kubelet restarts the killed container automatically.
 
+- **Expected behavior:**
+  mariadb container killed → kubelet restarts it → coordinator detects restart and rejoins the node to Galera → remaining 2 nodes serve during the restart window → all 3 back `Synced`. Zero data loss.
+
+- **Actual result:**
+  md-1 `mariadb` container killed (restart count 5). Remaining md-0/md-2 kept `Primary` with `wsrep_cluster_size=2`, served 1381 TPS. Coordinator rejoined md-1 after restart. 25/25 tracking rows and checksums match. **PASS.**
+
 ```shell
 ➤ kubectl get pods -n demo -L kubedb.com/role
 NAME   READY   STATUS    RESTARTS      AGE   ROLE
@@ -1657,6 +1741,12 @@ spec:
   direction: both
 ```
 
+- **Expected behavior:**
+  50% packet duplication → TCP dedups duplicates via sequence numbers → Galera certification unaffected → cluster stays `Synced` on all 3 nodes → minimal TPS impact. Zero data loss.
+
+- **Actual result:**
+  995 TPS (4% drop). All 3 nodes stayed `Synced` throughout. Zero errors, 25/25 tracking rows and checksums match. **PASS** — TCP handles duplicate packets natively.
+
 All 3 nodes remain Synced:
 
 ```shell
@@ -1712,6 +1802,12 @@ spec:
   duration: "10m"
   direction: both
 ```
+
+- **Expected behavior:**
+  50% packet corruption → corrupt packets fail TCP checksum → massive retransmissions → Galera group communication breaks → all nodes may lose quorum (worst case). After chaos lifts, coordinator must bootstrap cluster. Zero data loss.
+
+- **Actual result:**
+  All 3 nodes lost quorum (`wsrep_cluster_size=1, non-Primary, wsrep_ready=OFF`). Sysbench got error 1047 (WSREP not ready). After chaos removed, coordinator detected full outage and automatically bootstrapped the cluster. 25/25 tracking rows and checksums match after recovery. **PASS** — worst-case Galera failure, but data survived.
 
 **This is the most severe chaos experiment.** 50% packet corruption completely broke the Galera cluster:
 
@@ -1769,6 +1865,12 @@ spec:
 ```
 
 **What this chaos does:** Makes all files in `/var/lib/mysql` read-only (perm 444). MariaDB cannot write WAL, flush pages, or commit transactions.
+
+- **Expected behavior:**
+  Data dir becomes read-only on one node → MariaDB fails on writes and crashes → Galera expels the node → remaining 2 nodes continue serving → after chaos ends, coordinator recovers the crashed node (likely via SST). Zero data loss.
+
+- **Actual result:**
+  md-2 crashed (role `Unknown`, socket unavailable). md-0/md-1 kept `Primary` with `wsrep_cluster_size=2`, served 1388 TPS with zero errors. Coordinator recovered md-2 after chaos cleared. 25/25 tracking rows and checksums match. **PASS.**
 
 ```shell
 ➤ kubectl get mariadb,pods -n demo -L kubedb.com/role
@@ -1831,6 +1933,12 @@ spec:
 ```
 
 **What this chaos does:** Replaces up to 10 occurrences of up to 100 bytes with random data in 50% of IO operations. This corrupts InnoDB pages, WAL entries, and metadata.
+
+- **Expected behavior:**
+  Random data corruption on disk → InnoDB page checksums detect corruption → MariaDB crashes on the affected node → Galera expels it → remaining 2 nodes continue → coordinator recovers the corrupted node via full SST (data cannot be salvaged). Zero data loss on surviving nodes.
+
+- **Actual result:**
+  md-1 crashed (page corruption detected by InnoDB checksums). md-0/md-2 kept `Primary` with `wsrep_cluster_size=2`, served 1380 TPS with zero errors. Coordinator recovered md-1 via SST from a healthy node. 25/25 tracking rows and checksums match across all 3 nodes. **PASS.**
 
 ```shell
 ➤ kubectl get mariadb,pods -n demo -L kubedb.com/role
