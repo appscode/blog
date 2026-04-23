@@ -121,6 +121,119 @@ This update makes GitOps-driven database management safer, more predictable, and
 
 ---
 
+### Databases Log Archiver Backup and Restore: Credentials-less AWS Support
+
+For `PostgreSQL, MySQL and MariaDB` database log archiver backup and restore now support credentials-less authentication for AWS using:
+
+- IAM Roles for Service Accounts (IRSA)
+- AWS Pod Identity
+
+This enables WAL archiving to `S3` without configuring static AWS credentials.
+
+**Benefits:**
+
+- Eliminates the need for static AWS access keys
+- Uses native AWS IAM roles for secure access
+- Simplifies backup and restore configuration
+
+#### Example for PostgreSQL: Credentials-less WAL Archiving with IRSA
+
+**BackupStorage**
+```yaml
+apiVersion: storage.kubestash.com/v1alpha1
+kind: BackupStorage
+metadata:
+  name: s3-storage
+  namespace: demo
+spec:
+---
+  storage:
+    provider: s3
+    s3:
+      bucket: credentialless-test
+      endpoint: https://s3.us-west-1.amazonaws.com
+      prefix: anisur
+      region: us-west-1
+---
+```
+Note that no credential references are provided in the `spec.s3` section.
+
+**PostgreSQLArchiver**
+```yaml
+apiVersion: archiver.kubedb.com/v1alpha1
+kind: PostgresArchiver
+metadata:
+  name: postgresarchiver-sample
+  namespace: demo
+spec:
+---
+  databases:
+    namespaces:
+      from: Selector
+      selector:
+        matchLabels:
+          kubernetes.io/metadata.name: demo
+    selector:
+      matchLabels:
+        archiver: "true"
+---
+  backupStorage:
+    ref:
+      name: "s3-storage"
+      namespace: "demo"
+```
+The archiver CR refers to the credential-less `BackupStorage`.
+
+**Postgres**
+```yaml
+apiVersion: kubedb.com/v1
+kind: Postgres
+metadata:
+  name: sample-postgres
+  namespace: demo
+  labels:
+    archiver: "true"
+spec:
+  version: "16.1"
+  replicas: 3
+  standbyMode: Hot
+  storageType: Durable
+---
+deletionPolicy: WipeOut
+```
+
+The Postgres CR is labeled with `archiver: "true"` to be selected by the archiver.
+
+
+### Verify that the Full Backup and Log Archiver are Working Without Credentials
+```bash
+$ kubectl get backupconfigurations.core.kubestash.com,backupsessions.core.kubestash.com,restoresession,sidekick -n demo
+NAME                                                              PHASE   PAUSED   AGE
+backupconfiguration.core.kubestash.com/sample-postgres-archiver   Ready            30m
+
+NAME                                                                                   INVOKER-TYPE          INVOKER-NAME               PHASE       DURATION   AGE
+backupsession.core.kubestash.com/sample-postgres-archiver-full-backup-1776666707       BackupConfiguration   sample-postgres-archiver   Succeeded   2m7s       29m
+backupsession.core.kubestash.com/sample-postgres-archiver-manifest-backup-1776666707   BackupConfiguration   sample-postgres-archiver   Succeeded   54s        29m
+
+NAME                                                      STATUS    AGE
+sidekick.apps.k8s.appscode.com/sample-postgres-sidekick   Current   27m
+
+$  kubectl get pg,pods -n demo
+NAME                                  VERSION   STATUS   AGE
+postgres.kubedb.com/sample-postgres   16.1      Ready    31m
+
+NAME                                                                  READY   STATUS      RESTARTS   AGE
+pod/retention-policy-sample-postgres-archiver-full-backu-17766stfg9   0/1     Completed   0          27m
+pod/retention-policy-sample-postgres-archiver-manifest-b-177669q9tm   0/1     Completed   0          28m
+pod/sample-postgres-0                                                 2/2     Running     0          31m
+pod/sample-postgres-1                                                 2/2     Running     0          31m
+pod/sample-postgres-2                                                 2/2     Running     0          31m
+pod/sample-postgres-archiver-full-backup-1776666707-2pm5x             0/1     Completed   0          29m
+pod/sample-postgres-archiver-manifest-backup-1776666707-rxmnd         0/1     Completed   0          29m
+pod/sample-postgres-sidekick                                          1/1     Running     0          27m
+
+```
+
 ## SQL Server
 
 ### Vertical Scaling for Arbiter, Coordinator, and Exporter
