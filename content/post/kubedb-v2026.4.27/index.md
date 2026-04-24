@@ -34,6 +34,7 @@ This release brings **SQL Server vertical scaling** for additional components, *
 
 ## Key Highlights
 
+* Credentials-less AWS Postgresql WAL Archiving
 * Autoscaler Operator Sharding for horizontal scalability
 * Neo4j OpsRequests (Reconfigure, HorizontalScaling, VerticalScaling, VolumeExpansion, UpdateVersion, RotateAuth)
 * Qdrant OpsRequests support
@@ -289,6 +290,18 @@ This enhancement completes SQL Server vertical scaling support by allowing all c
 
 ## MariaDB
 
+In this release, we have introduced support for PITR (Point-in-Time Recovery) backup and restore for distributed databases.
+
+The distributed MariaDB archiver now supports both **VolumeSnapshotter**-based and **Restic** physical backups.
+
+To use VolumeSnapshot as the base backup method, you must:
+
+- Install the Volume Snapshotter controller on your spoke cluster, and
+- Ensure a suitable VolumeSnapshotClass already exists on the spoke cluster.
+
+- This enables reliable point-in-time recovery capabilities across distributed MariaDB deployments.
+
+
 ### New MariaDB bin-Log Retention Feature
 
 We're excited to announce a new bin-log retention management feature in our MariaDB operator, designed to give users more control over their binlog storage.
@@ -361,6 +374,12 @@ spec:
 
 ---
 
+## MongoDB
+We have fixed the full-db repository name & oplog-restore job name in the archive restore process.
+
+We also published a new image of wal-g for CVE fixes.
+
+---
 ## MySQL
 
 In this release, we have significantly improved MySQL Group Replication support. The default value for `group_replication_unreachable_majority_timeout` has been set to 20 seconds.
@@ -570,12 +589,12 @@ spec:
   deletionPolicy: WipeOut
   configuration:
     backends:
-groupName: reporting
-weight: 2
-groupName: user-facing
-weight: 1
-groupName: analytics
-weight: 5
+    - groupName: reporting
+      weight: 2
+    - groupName: user-facing
+      weight: 1
+    - groupName: analytics
+      weight: 5
 ```
 If you want to configure backends, run PgpoolOpsRequest. For example:
 ```yaml
@@ -599,6 +618,7 @@ spec:
         max_pool = 72
         num_init_children = 9
 ```
+
 
 
 ---
@@ -809,7 +829,7 @@ Panopticon is required for KubeDB summary metrics.
 
 ```bash
 helm upgrade -i panopticon oci://ghcr.io/appscode-charts/panopticon \
-  --version v202.9.30 \
+  --version v2026.4.30 \
   -n monitoring --create-namespace --wait \
   --set-file license=/path/to/license-file.txt \
   --set monitoring.serviceMonitor.labels.release=prometheus
@@ -819,7 +839,7 @@ helm upgrade -i panopticon oci://ghcr.io/appscode-charts/panopticon \
 
 ```bash
 helm upgrade -i kubedb-metrics oci://ghcr.io/appscode-charts/kubedb-metrics \
-  --version v2026.4.13 \
+  --version v2026.4.27 \
   -n kubedb --create-namespace \
   --set featureGates.HanaDB=true
 ```
