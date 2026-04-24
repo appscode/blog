@@ -599,6 +599,7 @@ spec:
 If you want to configure backends, run PgpoolOpsRequest. For example:
 ```yaml
 spec:
+  type: Reconfigure
   configuration:
     backend:
       sync:
