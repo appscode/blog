@@ -17,7 +17,7 @@ tags:
 - replication
 ---
 
-> New to KubeDB? Please start [here](https://kubedb.com/docs/v2026.2.26/welcome/).
+> New to KubeDB? Please start [here](https://kubedb.com).
 
 # Chaos Testing KubeDB Managed MariaDB with Chaos Mesh
 
@@ -1969,9 +1969,9 @@ SQL statistics:
 
 ---
 
-## MariaDB Replication with MaxScale (18 Experiments)
+## MariaDB Replication with MaxScale (29 Experiments)
 
-Now we test the same 18 chaos experiments on **MariaDB Replication** topology with **MaxScale** proxy. Unlike Galera (synchronous multi-master), Replication uses asynchronous Master-Slave replication with MaxScale handling automatic failover and read-write splitting.
+Now we test **29 chaos experiments** on **MariaDB Replication** topology with **MaxScale** proxy — an extended pass that goes beyond the 18 Galera experiments above with Slave-side variants (pod kill slave, memory / IO stress on slave), MaxScale-targeted chaos, compound faults, and a rolling restart. Unlike Galera (synchronous multi-master), Replication uses asynchronous Master-Slave replication with MaxScale handling automatic failover and read-write splitting.
 
 ### Replication Test Environment
 
@@ -2059,38 +2059,926 @@ reconnects: 0 (0.00 per sec.)
 
 ### Replication Chaos Experiments
 
-The same 18 chaos experiments were run on the Replication topology. All traffic routed through MaxScale (`md-mx`).
+A total of **29 chaos experiments** were run on the Replication topology — deeper than Galera's 18-test pass. We added Slave-side variants (pod kill slave, memory / IO stress on slave), MaxScale-targeted chaos, compound faults (master + MaxScale together), and a rolling restart. Every fault ran to completion without manual intervention. All traffic routed through MaxScale (`md-mx`).
 
-| # | Experiment | Repl TPS | Impact | Recovery | Data | Galera TPS (comparison) |
-|---|---|---|---|---|---|---|
-| 1 | Kill Master Pod | 958 | Failover md-0→md-1, MaxScale re-routed | ~10s | 25/25 | 1061 |
-| 2 | OOMKill (1200MB) | 946 | Survived, no kill | N/A | 25/25 | 1050 |
-| 3 | Network Partition | 939 | No failover needed | N/A | 25/25 | 1430 |
-| 4 | IO Latency (100ms) | **5** | Single-Master bottleneck | After expiry | 25/25 | **1450** |
-| 5 | Network Latency (1s) | **941** | No impact (async!) | N/A | 25/25 | **3** |
-| 6 | CPU Stress (98%) | 933 | Negligible | N/A | 25/25 | 1034 |
-| 7 | Packet Loss (30%) | 1.9 | Severe | After expiry | 25/25 | 1.3 |
-| 8 | Full Cluster Kill | 951 | Total outage ~3 min | MaxScale bootstrap | 25/25 | 1024 |
-| 9 | DNS Error | 945 | No impact | N/A | 25/25 | 1016 |
-| 10 | IO Fault (EIO 50%) | 0 (down) | Master crashed | Recovery | 25/25 | 1404 |
-| 11 | Clock Skew (-5 min) | 865 | 7% drop | Instant | 25/25 | 988 |
-| 12 | Bandwidth Throttle | 22 | 97% drop | Instant | 25/25 | 280 |
-| 13 | Pod Failure (freeze) | 1104 | Failover triggered | Automatic | 25/25 | 1409 |
-| 14 | Container Kill | 1163 | Failover triggered | Automatic | 25/25 | 1381 |
-| 15 | Packet Duplicate (50%) | 926 | No impact | N/A | 25/25 | 995 |
-| 16 | Packet Corrupt (50%) | **967** | No impact | N/A | 25/25 | **0 (outage)** |
-| 17 | IO Attr Override (r/o) | 870 | Status Critical, 0 errors | Automatic | 25/25 | 1388 |
-| 18 | IO Mistake (corruption) | 964 | No impact | N/A | 25/25 | 1380 |
+| # | Experiment | Result | Impact / Behavior |
+|---|---|---|---|
+| 1 | Pod Kill — Master | PASS (1043 TPS) | Failover md-2 → md-0, killed pod rejoined as Slave, 0 reconnects |
+| 2 | Pod Kill — Slave | PASS (1125 TPS) | Slave killed and recreated, zero write impact |
+| 3 | Pod Kill — MaxScale | PASS (898 TPS) | md-mx-0 restarted, routing continued via remaining 2 MaxScale pods |
+| 4 | Container Kill — `mariadb` on Master | PASS | Failover md-0 → md-1, reconnects succeeded, ~30s to steady state |
+| 5 | Pod Failure (90s freeze) on Master | PASS (750–1127 TPS) | Master frozen, kubelet killed container 4× during freeze, failover completed |
+| 6 | Memory stress (1400MB) on Master | PASS (775–950 TPS) | OOMKilled, failover md-0 → md-1, rejoined as Slave |
+| 7 | Memory stress (1400MB) on Slave | PASS (1138 TPS) | Slave OOMKilled; zero write impact (writes go via MaxScale → master) |
+| 8 | CPU stress 98% on Master | PASS (867–950 TPS) | No failover, degraded but stable |
+| 9 | Combined Memory + CPU stress on Master | PASS (749–958 TPS) | Survived, no restart |
+| 10 | IO Latency (100ms) on Master | PASS (5 TPS) | Severe write throttle, 0 errors, no failover |
+| 11 | IO Latency (100ms) on Slave | PASS (1131 TPS) | Slave disk-bound reads degraded, writes unaffected |
+| 12 | **IOChaos `fault` (EIO 50%) on Master** | **FAIL — Defect #1 (High)** | `mariadbd` dies; init script stuck in ping loop; pod not auto-recovered. **Fixed on chaos branch** — see below. |
+| 13 | **IOChaos `fault` (EIO 50%) on Slave** | **FAIL — Defect #1 repro** | Same stuck pattern as T12 — role-independent. |
+| 14 | IO AttrOverride (read-only datadir) on Master | PASS (656 TPS) | Degraded, no crash, auto-recovered |
+| 15 | **IOChaos `mistake` (random corruption 50%) on Master** | **FAIL — Defect #2 (Critical)** | Binlog + InnoDB undo corruption; replication silently broken; no auto-repair. **Fix in flight on chaos branch** — see below. |
+| 16 | Network Partition (Master ↔ Slaves, 90s) | PASS (1122 TPS) | No failover needed (async replication), 0 reconnects |
+| 17 | Network Partition (Slave isolated, 90s) | PASS (964 TPS) | No write impact |
+| 18 | Network Partition (MaxScale ↔ MariaDB, 60s) | PASS (0 during / 955 after) | Sysbench lost conn during chaos, full recovery after |
+| 19 | Network Latency 1s (master ↔ slaves) | PASS (1148 TPS) | **Zero impact** — async replication (contrast: Galera tanks to ~3 TPS on this test) |
+| 20 | Packet Loss 30% (master ↔ slaves) | PASS (954 TPS) | No write impact |
+| 21 | Packet Duplicate 50% | PASS (948 TPS) | No impact |
+| 22 | Packet Corrupt 50% | PASS (1156 TPS) | No impact (contrast: 50% corrupt causes Galera outage) |
+| 23 | Bandwidth 1 Mbps on Master | PASS (21 TPS) | -97% TPS, 0 errors, stable |
+| 24 | DNS Error on Master | PASS (956 TPS) | No impact |
+| 25 | Clock Skew (-5 min) on Master | PASS (879 TPS) | Minor dip |
+| 26 | Full MariaDB cluster kill (all 3 pods) | PASS | Recovery ~75s, 12/12 markers preserved |
+| 27 | Full MaxScale kill (all 3 MaxScale pods) | PASS (955 TPS after) | ~3 min client outage, full recovery |
+| 28 | Compound: Master + all MaxScale kill | PASS | Recovery ~90s, master re-elected, 14/14 markers |
+| 29 | Rolling restart 0 → 1 → 2 (rapid) | PASS | Roles briefly `Down`; recovered to Master + 2× Slave in ~2m30s, 15/15 markers |
 
-**18/18 experiments passed with zero data loss.** All 25/25 tracking markers preserved.
+**26/29 experiments passed with zero data loss.** Three IO-chaos tests failed (T12 Master EIO, T13 Slave EIO, T15 Master corruption) and surfaced real defects in the operator's recovery paths. **On current releases all three require manual operator intervention to avoid data loss**; the interventions — and the chaos-branch fixes that remove the need for them — appear inline in the corresponding test blocks below.
+
+### Replication Chaos Test Details
+
+Each of the 29 experiments below follows the same format used in the SoftBank chaos methodology: the chaos YAML, the Expected behavior, and the Actual result. Apply any block with `kubectl apply -f -` (inline) or `kubectl apply -f <file>` (the manifests are also in [`defect-hunt-yamls/`](https://github.com/sheikh-arman/chaos-mesh/tree/main/mariadb/report/defect-hunt-yamls)).
+
+#### Verification methodology (shared across all 29 tests)
+
+Every test was executed with **continuous write load through MaxScale** so we can observe behaviour during the chaos window and verify data integrity after recovery. Three signals were captured for every experiment:
+
+1. **Sysbench load via MaxScale (`md-mx:3306`)** — `oltp_read_write` with 4 threads, 4 tables × 50k rows, kept running in the background before, during, and after each chaos injection:
+
+   ```bash
+   export PASS=$(kubectl get secret md-auth -n demo -o jsonpath='{.data.password}' | base64 -d)
+   kubectl exec -n demo $(kubectl get pods -n demo -l app=sysbench -o jsonpath='{.items[0].metadata.name}') -- \
+     sysbench oltp_read_write \
+       --mysql-host=md-mx --mysql-port=3306 \
+       --mysql-user=root --mysql-password=$PASS \
+       --mysql-db=sbtest --tables=4 --table-size=50000 \
+       --threads=4 --time=300 run
+   ```
+   Writes route to the Master, reads distribute to the Slaves. A PASS requires that sysbench tolerates the chaos — transient TPS drops or automatic reconnects are acceptable; uncaught client errors during a pass window are not.
+
+2. **Tracking markers** — a small `chaos_track.markers` InnoDB table (`id`, `ts`, `note`) that gets one row inserted **before** each chaos ("pre-chaos-TN") and one row **after** recovery ("post-chaos-TN"). After recovery, every node must show the same marker count — divergence proves replication drifted:
+
+   ```bash
+   # Pre-chaos
+   kubectl exec -n demo md-0 -c mariadb -- mariadb -uroot -p"$PASS" \
+       -e "INSERT INTO chaos_track.markers(note) VALUES ('pre-chaos-T<n>');"
+   # ... apply chaos, wait to clear ...
+   # Post-chaos
+   kubectl exec -n demo md-0 -c mariadb -- mariadb -uroot -p"$PASS" \
+       -e "INSERT INTO chaos_track.markers(note) VALUES ('post-chaos-T<n>');"
+   # Verify on every node
+   for pod in md-0 md-1 md-2; do
+     kubectl exec -n demo $pod -c mariadb -- mariadb -uroot -p"$PASS" -e \
+         'SELECT COUNT(*) AS markers FROM chaos_track.markers;'
+   done
+   ```
+
+3. **Cross-node checksum** — `CHECKSUM TABLE sbtest.sbtest1, sbtest.sbtest2, sbtest.sbtest3, sbtest.sbtest4` on Master and both Slaves after recovery. All three nodes must return **identical** values:
+
+   ```bash
+   for pod in md-0 md-1 md-2; do
+     echo "=== $pod ==="
+     kubectl exec -n demo $pod -c mariadb -- mariadb -uroot -p"$PASS" -e \
+         'CHECKSUM TABLE sbtest.sbtest1, sbtest.sbtest2, sbtest.sbtest3, sbtest.sbtest4;'
+   done
+   ```
+   Example of a PASS (all three checksums match across nodes after Chaos#1):
+
+   ```
+   === md-0 (Master) === sbtest1=535950349 sbtest2=3705067580 sbtest3=4286005503 sbtest4=2381007598
+   === md-1 (Slave)  === sbtest1=535950349 sbtest2=3705067580 sbtest3=4286005503 sbtest4=2381007598
+   === md-2 (Slave)  === sbtest1=535950349 sbtest2=3705067580 sbtest3=4286005503 sbtest4=2381007598
+   ```
+
+A test is PASS only when all three signals are green: sysbench tolerated the chaos, marker counts match across nodes, and all four sbtest checksums are identical on every node. Every `Actual result (PASS)` below implies those three checks passed; notable TPS or marker numbers are called out inline. The three `FAIL` tests fail one or more of these checks — specifically, Chaos#15 shows **permanent checksum divergence** between Master and Slaves, which is the defining symptom of Defect #2.
+
+#### Chaos#1: Pod Kill — Master
+- Force-delete the Master pod to verify MaxScale-driven failover.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: md-master-pod-kill
+  namespace: chaos-mesh
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  gracePeriod: 0
+```
+
+- **Expected behavior:** Master pod deleted → MaxScale detects loss → one Slave promoted to Master → killed pod recreated and rejoins as Slave → cluster returns to `Ready` with zero data loss.
+- **Actual result (PASS):** Failover md-2 → md-0 in ~5s. Sysbench continued at **1043 TPS**, 0 reconnects. All 3 nodes show identical `CHECKSUM TABLE` values post-chaos. MariaDB CR stayed `Ready` throughout — MaxScale kept serving.
+
+#### Chaos#2: Pod Kill — Slave
+- Kill one Slave pod; verify it's recreated and rejoins replication automatically.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: md-slave-pod-kill
+  namespace: chaos-mesh
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Slave
+  gracePeriod: 0
+```
+
+- **Expected behavior:** Slave killed → pod recreated → `CHANGE MASTER TO` completes → `Slave_IO_Running=Yes`, `Slave_SQL_Running=Yes`. Writes on master continue via MaxScale.
+- **Actual result (PASS):** Sysbench maintained **1125 TPS** throughout — zero write impact. Slave back to `Slave_IO_Running=Yes` in ~30s. Checksums match across 3 nodes.
+
+#### Chaos#3: Pod Kill — MaxScale
+- Kill one MaxScale proxy pod; remaining MaxScale pods should keep serving.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: md-maxscale-pod-kill
+  namespace: chaos-mesh
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md-mx
+  gracePeriod: 0
+```
+
+- **Expected behavior:** One MaxScale pod dies → kubernetes Service re-routes client traffic to the surviving 2 MaxScale pods → at most a transient blip.
+- **Actual result (PASS):** md-mx-0 restarted. Sysbench continued at **898 TPS** via the remaining 2 MaxScale pods. No client reconnects.
+
+#### Chaos#4: Container Kill — `mariadb` on Master
+- Kill the `mariadb` container (not the whole pod) on Master to simulate a process crash.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: md-container-kill-mariadb
+  namespace: chaos-mesh
+spec:
+  action: container-kill
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  containerNames: [mariadb]
+  duration: "30s"
+```
+
+- **Expected behavior:** `mariadb` container SIGKILLed → kubelet restarts the container → MaxScale briefly re-routes to a Slave promoted as new Master → original pod rejoins as Slave.
+- **Actual result (PASS):** Failover md-0 → md-1 completed. Sysbench dropped briefly then recovered. Steady state in ~30s, checksums match.
+
+#### Chaos#5: Pod Failure (90s freeze) — Master
+- Freeze the Master pod for 90 seconds to simulate kernel hang or long GC pause.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: md-master-pod-failure
+  namespace: chaos-mesh
+spec:
+  action: pod-failure
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  duration: "90s"
+```
+
+- **Expected behavior:** Master unresponsive → MaxScale detects failure and promotes a Slave → frozen pod killed by kubelet mid-freeze → recreated, rejoins as Slave.
+- **Actual result (PASS):** Kubelet killed the container 4× during the freeze (restart count reached 4 on md-1). Failover completed, sysbench ranged **750–1127 TPS** during chaos, checksums match post-chaos.
+
+#### Chaos#6: Memory Stress (1400MB) — Master
+- Drive 1400MB of memory pressure against Master (1.5Gi limit) to trigger OOMKill.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: md-master-memory-stress
+  namespace: chaos-mesh
+spec:
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  stressors:
+    memory:
+      workers: 2
+      size: "1400MB"
+  duration: "3m"
+```
+
+- **Expected behavior:** OOMKiller fires → mariadb killed → MaxScale fails over to a Slave → killed pod recreated, rejoins as Slave.
+- **Actual result (PASS):** Failover md-0 → md-1 triggered by OOMKill. Sysbench **775–950 TPS**. Rejoined cluster after stress cleared; checksums match.
+
+#### Chaos#7: Memory Stress (1400MB) — Slave
+- Same stressor against a Slave — verify write path stays healthy.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: md-slave-memory-stress
+  namespace: chaos-mesh
+spec:
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Slave
+  stressors:
+    memory:
+      workers: 2
+      size: "1400MB"
+  duration: "2m"
+```
+
+- **Expected behavior:** Slave OOMKilled → pod recreated → rejoins replication. No write impact (writes only go to master).
+- **Actual result (PASS):** **1138 TPS** maintained throughout — slave OOM completely invisible to writers via MaxScale. Slave caught up after restart; checksums match.
+
+#### Chaos#8: CPU Stress (98%) — Master
+- Peg Master CPU at 98%; verify it stays stable without failover.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: md-master-cpu-stress
+  namespace: chaos-mesh
+spec:
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  stressors:
+    cpu:
+      workers: 2
+      load: 98
+  duration: "90s"
+```
+
+- **Expected behavior:** Master CPU saturated → TPS degrades but no restart, no failover.
+- **Actual result (PASS):** Sysbench **867–950 TPS** during chaos (vs 926 baseline — <10% drop). No failover. Post-chaos checksums match.
+
+#### Chaos#9: Combined Memory + CPU Stress — Master
+- Simultaneous 1200MB memory + 90% CPU stress on Master.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: md-master-combined-stress
+  namespace: chaos-mesh
+spec:
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  stressors:
+    memory:
+      workers: 2
+      size: "1200MB"
+    cpu:
+      workers: 2
+      load: 90
+  duration: "2m"
+```
+
+- **Expected behavior:** Degraded but stable; no OOMKill (below the 1400MB threshold from Chaos#6), no failover.
+- **Actual result (PASS):** **749–958 TPS**, no restart, no failover. Checksums match post-chaos.
+
+#### Chaos#10: IO Latency (100ms) — Master
+- Inject 100ms disk latency on Master's datadir; expect TPS to collapse (single-master write bottleneck).
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: md-master-io-latency
+  namespace: chaos-mesh
+spec:
+  action: latency
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  volumePath: /var/lib/mysql
+  path: "/**"
+  delay: "100ms"
+  percent: 100
+  duration: "2m"
+  containerNames: [mariadb]
+```
+
+- **Expected behavior:** Master disk-bound → TPS drops severely → no failover (disk still functional, just slow) → recovery when chaos expires.
+- **Actual result (PASS):** TPS dropped to **5** (vs 926 baseline — extreme single-master bottleneck), 0 errors, no failover. Recovered within seconds of chaos clearing.
+
+#### Chaos#11: IO Latency (100ms) — Slave
+- Same latency but on Slave; expect write path unaffected.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: md-slave-io-latency
+  namespace: chaos-mesh
+spec:
+  action: latency
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Slave
+  volumePath: /var/lib/mysql
+  path: "/**"
+  delay: "100ms"
+  percent: 100
+  duration: "2m"
+  containerNames: [mariadb]
+```
+
+- **Expected behavior:** Slave falls behind but writes continue via MaxScale → master unaffected → slave catches up after chaos.
+- **Actual result (PASS):** **1131 TPS** maintained. Slave's `Seconds_Behind_Master` grew during chaos and caught up after chaos cleared.
+
+#### Chaos#12: IOChaos `fault` (EIO 50%) — Master — **FAIL, Defect #1 (High)**
+- Return EIO on 50% of file operations against Master's datadir for 2 minutes.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: md-master-io-fault
+  namespace: chaos-mesh
+spec:
+  action: fault
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  volumePath: /var/lib/mysql
+  path: "/**"
+  errno: 5
+  percent: 50
+  duration: "2m"
+  containerNames: [mariadb]
+```
+
+- **Expected behavior:** Master crashes on first EIO → MaxScale fails over to a Slave → killed container restarted by kubelet → old master rejoins as Slave.
+- **Actual result (FAIL — Defect #1):** mariadbd crashes as expected, but the init script (`run-on-present.sh`) stays alive in a 900-attempt ping loop and never restarts `mariadbd`. Pod reports `2/2 Ready` (tini is PID 1) but no `mariadbd` in the process tree:
+
+  ```
+  mysql    1   0  /scripts/tini -g -- /scripts/std-replication-run.sh
+  mysql   14   1  bash /scripts/std-replication-run.sh
+  mysql   20  14  bash ./scripts/std-replication-on-start.sh
+  mysql  120  20  bash ./run-script/run-on-present.sh
+  # no mariadbd
+  ```
+
+  MariaDB CR stays `Critical`, role label `Down`. Cluster stays broken ~15 minutes until the init-script timeout forces container restart.
+- **Manual intervention (to avoid data loss):** `kubectl delete pod md-0 -n demo`. The PVC is intact and the pod comes back clean. If this was the active Master, MaxScale has already promoted a Slave, and the deleted pod rejoins as a Slave.
+- **Fix (shipped on chaos branch of `kubedb/mariadb-init-docker`):** `wait_for_mysqld_running()` in `scripts/std-replication-setup.sh` now exits immediately on `kill -0 $pid` failure — reducing the stuck window from 900s → 120s so kubelet restarts the container automatically.
+
+#### Chaos#13: IOChaos `fault` (EIO 50%) — Slave — **FAIL, Defect #1 repro**
+- Same EIO fault injection targeting a Slave; confirms Defect #1 is role-independent.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: md-slave-io-fault
+  namespace: chaos-mesh
+spec:
+  action: fault
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Slave
+  volumePath: /var/lib/mysql
+  path: "/**"
+  errno: 5
+  percent: 50
+  duration: "2m"
+  containerNames: [mariadb]
+```
+
+- **Expected behavior:** Slave's mariadbd crashes, pod recreated, rejoins. Zero write impact on master.
+- **Actual result (FAIL — Defect #1, same mechanism):** identical stuck pattern as Chaos#12. Slave's mariadbd dies, init script loops without restarting it. **Writes on master continue via MaxScale — no data loss on the write path** — but the slave stays offline until operator forces a pod restart.
+- **Manual intervention:** same as Chaos#12 — `kubectl delete pod <stuck-slave> -n demo`.
+- **Fix:** same chaos-branch fix as Chaos#12.
+
+#### Chaos#14: IO AttrOverride (read-only datadir) — Master
+- Force read-only (0444) file permissions on datadir for 3 minutes.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: md-master-io-attr-override
+  namespace: chaos-mesh
+spec:
+  action: attrOverride
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  volumePath: /var/lib/mysql
+  path: /var/lib/mysql/**/*
+  attr:
+    perm: 444
+  percent: 100
+  duration: "3m"
+  containerNames: [mariadb]
+```
+
+- **Expected behavior:** Writes fail with EACCES → mariadbd either crashes or goes degraded → recovery after chaos clears and permissions are restored.
+- **Actual result (PASS):** TPS dropped to **656**, 0 errors visible to clients, no crash. Permissions restored post-chaos, full recovery. Checksums match across 3 nodes.
+
+#### Chaos#15: IOChaos `mistake` (random corruption 50%) — Master — **FAIL, Defect #2 (Critical)**
+- Write random bytes into files under `/var/lib/mysql` on Master for 2 minutes — the highest-severity fault in the suite.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: md-master-io-mistake
+  namespace: chaos-mesh
+spec:
+  action: mistake
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  volumePath: /var/lib/mysql
+  path: /var/lib/mysql/**/*
+  mistake:
+    filling: random
+    maxOccurrences: 10
+    maxLength: 100
+  percent: 50
+  duration: "2m"
+  containerNames: [mariadb]
+```
+
+- **Expected behavior:** Some files bit-flipped → mariadbd detects corruption (InnoDB checksum failure or binlog parse error) → node flagged, cluster recovers after operator intervention.
+- **Actual result (FAIL — Defect #2):** active binary log corrupted — replication breaks permanently on both slaves:
+
+  ```
+  Slave_IO_Running: No
+  Last_IO_Error: Got fatal error 1236 ... log event entry exceeded max_allowed_packet
+  ```
+
+  `mariadb-binlog` confirms binlog garbage past the corruption offset (`event_type: 232`, invalid — valid types cap near ~165). Checksums diverge permanently between master and slaves. In worst-case runs, corruption lands on `undo003` and mariadbd refuses to restart:
+
+  ```
+  [ERROR] InnoDB: Failed to read page 3 from file './/undo003':
+                  Page read from tablespace is corrupted.
+  ```
+
+  KubeDB flips slave role labels to `Unknown` but does not auto-repair; MaxScale may silently serve stale reads from frozen slaves.
+
+- **Manual intervention (to avoid data loss):**
+  - *Binlog only, master InnoDB intact (lossless recovery):* on the master, run `FLUSH BINARY LOGS` to rotate to a clean binary log file, then rebuild each broken slave by deleting its PVC + pod so KubeDB re-provisions it via backup-stream from the master. Zero data loss because the master's InnoDB tables are the source of truth.
+  - *InnoDB undo / data files also corrupt (worst case):* cluster-local recovery isn't possible. Restore from an external backup (**KubeStash**) taken before the chaos, or bring the master up with `innodb_force_recovery=5` to dump data read-only and reload into a fresh datadir (some uncommitted transactions may be lost). This is why we strongly recommend pairing KubeDB with scheduled external backups in production.
+- **Fix (in flight on chaos branch of `kubedb/mariadb-coordinator`):** detect `Slave_IO_Running=No` plus errno 1236 across all slaves, run `FLUSH BINARY LOGS` on master automatically, then trigger the existing backup-stream rebuild path for each slave. Lossless when master's InnoDB data is intact. When InnoDB undo / data files are also corrupted, cluster-local recovery still isn't possible — external backup remains the floor.
+
+#### Chaos#16: Network Partition — Master ↔ Slaves
+- Cut network between Master and the two Slaves for 90 seconds.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: md-master-slaves-partition
+  namespace: chaos-mesh
+spec:
+  action: partition
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  target:
+    mode: all
+    selector:
+      namespaces: [demo]
+      labelSelectors:
+        app.kubernetes.io/instance: md
+        kubedb.com/role: Slave
+  direction: both
+  duration: "90s"
+```
+
+- **Expected behavior:** Async replication lag grows on both slaves → no failover (master keeps accepting writes) → replication catches up after partition clears.
+- **Actual result (PASS):** **1122 TPS** maintained — master writes unaffected (async replication). Slaves' `Seconds_Behind_Master` grew during partition, dropped to 0 after chaos cleared. Checksums match post-chaos.
+
+#### Chaos#17: Network Partition — Slave isolated
+- Isolate one Slave from the rest of the cluster for 90 seconds.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: md-slave-isolated
+  namespace: chaos-mesh
+spec:
+  action: partition
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Slave
+  target:
+    mode: all
+    selector:
+      namespaces: [demo]
+      labelSelectors:
+        app.kubernetes.io/instance: md
+  direction: both
+  duration: "90s"
+```
+
+- **Expected behavior:** Isolated slave falls behind, MaxScale stops routing reads to it → master + other slave continue serving → slave catches up after chaos.
+- **Actual result (PASS):** **964 TPS** — no write impact. Isolated slave lag grew, then caught up after partition cleared.
+
+#### Chaos#18: Network Partition — MaxScale ↔ MariaDB
+- Cut network between all MaxScale pods and all MariaDB pods for 60 seconds.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: mx-md-partition
+  namespace: chaos-mesh
+spec:
+  action: partition
+  mode: all
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md-mx
+  target:
+    mode: all
+    selector:
+      namespaces: [demo]
+      labelSelectors:
+        app.kubernetes.io/instance: md
+  direction: both
+  duration: "60s"
+```
+
+- **Expected behavior:** Clients lose connection (MaxScale can't reach backends) → no writes during partition → MaxScale reconnects when partition clears → full recovery.
+- **Actual result (PASS):** TPS dropped to **0** during chaos (sysbench lost connections as expected). After partition cleared, sysbench reconnected and recovered to **955 TPS**. Checksums match.
+
+#### Chaos#19: Network Latency (1s) — Master ↔ Slaves
+- Add 1 second of latency between Master and Slaves for 60 seconds.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: md-net-latency-1s
+  namespace: chaos-mesh
+spec:
+  action: delay
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  target:
+    mode: all
+    selector:
+      namespaces: [demo]
+      labelSelectors:
+        app.kubernetes.io/instance: md
+        kubedb.com/role: Slave
+  delay:
+    latency: "1s"
+    jitter: "50ms"
+  duration: "60s"
+  direction: both
+```
+
+- **Expected behavior:** Slaves lag by ~1s, master unaffected (async replication doesn't wait for slave ack).
+- **Actual result (PASS):** **1148 TPS** — zero impact. Key contrast: the same test on Galera tanks TPS to ~3 TPS because synchronous certification requires slave acknowledgment.
+
+#### Chaos#20: Packet Loss (30%)
+- Drop 30% of packets between Master and Slaves for 60 seconds.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: md-packet-loss
+  namespace: chaos-mesh
+spec:
+  action: loss
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  target:
+    mode: all
+    selector:
+      namespaces: [demo]
+      labelSelectors:
+        app.kubernetes.io/instance: md
+  loss:
+    loss: "30"
+    correlation: "25"
+  duration: "60s"
+  direction: both
+```
+
+- **Expected behavior:** Master-slave replication slows due to TCP retransmits; master unaffected.
+- **Actual result (PASS):** **954 TPS** — no write impact. Slave lag grew, recovered after chaos.
+
+#### Chaos#21: Packet Duplicate (50%)
+- Duplicate 50% of packets between master and slaves.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: md-packet-duplicate
+  namespace: chaos-mesh
+spec:
+  action: duplicate
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  target:
+    mode: all
+    selector:
+      namespaces: [demo]
+      labelSelectors:
+        app.kubernetes.io/instance: md
+  duplicate:
+    duplicate: "50"
+    correlation: "25"
+  duration: "45s"
+  direction: both
+```
+
+- **Expected behavior:** TCP handles duplicate packets transparently → no impact.
+- **Actual result (PASS):** **948 TPS**, no impact as expected.
+
+#### Chaos#22: Packet Corrupt (50%)
+- Corrupt 50% of packets (bit-flip) between master and slaves.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: md-packet-corrupt
+  namespace: chaos-mesh
+spec:
+  action: corrupt
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  target:
+    mode: all
+    selector:
+      namespaces: [demo]
+      labelSelectors:
+        app.kubernetes.io/instance: md
+  corrupt:
+    corrupt: "50"
+    correlation: "25"
+  duration: "45s"
+  direction: both
+```
+
+- **Expected behavior:** TCP checksums drop corrupt packets → retransmitted → replication slightly slower, master unaffected.
+- **Actual result (PASS):** **1156 TPS** — no impact. Stark contrast with Galera, where the same test causes complete outage because wsrep requires valid certification packets.
+
+#### Chaos#23: Bandwidth 1 Mbps — Master
+- Throttle Master's network to 1 Mbps for 60 seconds.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: md-bandwidth-1mbps
+  namespace: chaos-mesh
+spec:
+  action: bandwidth
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  bandwidth:
+    rate: "1mbps"
+    limit: 20971520
+    buffer: 10000
+  duration: "60s"
+```
+
+- **Expected behavior:** Severely throttled TPS, 0 errors, instant recovery after chaos.
+- **Actual result (PASS):** TPS dropped to **21** (-97%) — all clients connected, 0 errors. Recovered instantly after chaos cleared.
+
+#### Chaos#24: DNS Error — Master
+- Inject DNS resolution errors on Master for 60 seconds.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: DNSChaos
+metadata:
+  name: md-dns-error
+  namespace: chaos-mesh
+spec:
+  action: error
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  duration: "60s"
+```
+
+- **Expected behavior:** No impact — MariaDB uses cached/resolved IPs for peer connections.
+- **Actual result (PASS):** **956 TPS** — completely unaffected.
+
+#### Chaos#25: Clock Skew (-5 min) — Master
+- Set Master's clock back 5 minutes for 60 seconds.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: TimeChaos
+metadata:
+  name: md-clock-skew
+  namespace: chaos-mesh
+spec:
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  timeOffset: "-5m"
+  duration: "60s"
+```
+
+- **Expected behavior:** Timestamps mildly affected, replication continues.
+- **Actual result (PASS):** **879 TPS** (minor dip from 926). No replication errors.
+
+#### Chaos#26: Full MariaDB Cluster Kill
+- Kill all 3 MariaDB pods simultaneously to test full-outage recovery.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: md-full-cluster-kill
+  namespace: chaos-mesh
+spec:
+  action: pod-kill
+  mode: all
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+  gracePeriod: 0
+```
+
+- **Expected behavior:** All 3 pods killed and recreated → KubeDB coordinator identifies the most up-to-date node and bootstraps the cluster → replication re-established.
+- **Actual result (PASS):** Recovery ~75s. Coordinator bootstrapped the correct node, re-established master/slaves. 12/12 tracking markers preserved.
+
+#### Chaos#27: Full MaxScale Kill
+- Kill all 3 MaxScale pods simultaneously.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: md-mx-full-kill
+  namespace: chaos-mesh
+spec:
+  action: pod-kill
+  mode: all
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md-mx
+  gracePeriod: 0
+```
+
+- **Expected behavior:** All MaxScale pods killed, clients lose access, recover when MaxScale pods come back. MariaDB cluster itself unaffected.
+- **Actual result (PASS):** ~3-minute client outage (MaxScale pods restarted sequentially). After recovery, sysbench resumed at **955 TPS**. Master/slaves unaffected during the outage; checksums match.
+
+#### Chaos#28: Compound — Master + all MaxScale kill
+- Simultaneously kill Master and all 3 MaxScale pods.
+
+```yaml
+kubectl apply -f - <<'EOF'
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: md-master-compound-kill
+  namespace: chaos-mesh
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md
+      kubedb.com/role: Master
+  gracePeriod: 0
+---
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: md-mx-compound-kill
+  namespace: chaos-mesh
+spec:
+  action: pod-kill
+  mode: all
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/instance: md-mx
+  gracePeriod: 0
+EOF
+```
+
+- **Expected behavior:** Both Master and MaxScale path broken → full outage → MaxScale restarts, Slave promoted to Master, recovery.
+- **Actual result (PASS):** Recovery ~90s. md-0 re-elected Master. 14/14 tracking markers preserved.
+
+#### Chaos#29: Rolling Restart (0 → 1 → 2, rapid)
+- Delete md-0, md-1, md-2 sequentially with ~40s gaps (faster than KubeDB's internal convergence).
+
+```bash
+kubectl delete pod md-0 -n demo --grace-period=0 --force
+sleep 40
+kubectl delete pod md-1 -n demo --grace-period=0 --force
+sleep 40
+kubectl delete pod md-2 -n demo --grace-period=0 --force
+```
+
+- **Expected behavior:** Each pod restarts and rejoins the cluster. May briefly show roles `Down` during rapid succession; eventually converges.
+- **Actual result (PASS):** All 3 roles briefly showed `Down` during the rapid sequence (kubelet didn't have time to settle between deletes). Cluster recovered to Master + 2× Slave in ~2m30s. 15/15 tracking markers preserved. Coordinator handled the unusual sequence correctly.
 
 ---
 
 ## Chaos Testing Results Summary
 
-### Combined Results: 36/36 Experiments PASS
+### Combined Results: 44/47 PASS, 3 IO-Chaos Failures (Manual Intervention Required on Current Releases)
 
-We ran **36 chaos experiments** across **2 MariaDB topologies** — all with **zero data loss**.
+We ran **47 chaos experiments** across **2 MariaDB topologies** — 18 on Galera (all PASS) and 29 on Replication + MaxScale (26 PASS, 3 IO-chaos failures that exposed real operator defects). All 44 passing experiments completed with **zero data loss**. The 3 failures (Replication T12, T13, T15) **require manual operator intervention today to avoid data loss**; the recovery steps and the chaos-branch fixes that remove the manual step are documented in the Replication section above.
 
 ### Galera Cluster Results (18 experiments, baseline ~1039 TPS)
 
@@ -2115,28 +3003,39 @@ We ran **36 chaos experiments** across **2 MariaDB topologies** — all with **z
 | 17 | IO Attr Override (r/o) | 1388 (2 nodes) | Node crash | Coordinator | 25/25 |
 | 18 | IO Mistake (corruption) | 1380 (2 nodes) | Node crash | SST recovery | 25/25 |
 
-### Replication + MaxScale Results (18 experiments, baseline ~926 TPS)
+### Replication + MaxScale Results (29 experiments, baseline ~926 TPS)
 
-| # | Experiment | TPS During | Impact | Recovery | Data |
-|---|---|---|---|---|---|
-| 1 | Kill Master Pod | 958 | Failover ~10s | MaxScale re-route | 25/25 |
-| 2 | OOMKill (1200MB) | 946 | None (survived) | N/A | 25/25 |
-| 3 | Network Partition | 939 | No failover needed | N/A | 25/25 |
-| 4 | IO Latency (100ms) | 5 (-99%) | Single-Master bottleneck | After expiry | 25/25 |
-| 5 | Network Latency (1s) | 941 | No impact (async!) | N/A | 25/25 |
-| 6 | CPU Stress (98%) | 933 | Negligible | N/A | 25/25 |
-| 7 | Packet Loss (30%) | 1.9 | Severe | After expiry | 25/25 |
-| 8 | Full Cluster Kill | 951 | Total outage ~3 min | MaxScale bootstrap | 25/25 |
-| 9 | DNS Error | 945 | None | N/A | 25/25 |
-| 10 | IO Fault (EIO 50%) | 0 (down) | Master crashed | Recovery | 25/25 |
-| 11 | Clock Skew (-5 min) | 865 (-7%) | Minor | Instant | 25/25 |
-| 12 | Bandwidth Throttle | 22 (-97%) | Severe | Instant | 25/25 |
-| 13 | Pod Failure (freeze) | 1104 | Failover triggered | Automatic | 25/25 |
-| 14 | Container Kill | 1163 | Failover triggered | Automatic | 25/25 |
-| 15 | Packet Duplicate (50%) | 926 | None | N/A | 25/25 |
-| 16 | Packet Corrupt (50%) | 967 | None | N/A | 25/25 |
-| 17 | IO Attr Override (r/o) | 870 | Status Critical | Automatic | 25/25 |
-| 18 | IO Mistake (corruption) | 964 | None | N/A | 25/25 |
+| # | Experiment | Result | TPS During | Notes |
+|---|---|---|---|---|
+| 1 | Pod Kill — Master | PASS | 1043 | Failover md-2 → md-0, rejoin as Slave |
+| 2 | Pod Kill — Slave | PASS | 1125 | Zero write impact |
+| 3 | Pod Kill — MaxScale | PASS | 898 | Routing kept via remaining MaxScale pods |
+| 4 | Container Kill — mariadb on Master | PASS | — | Failover, ~30s to steady state |
+| 5 | Pod Failure (90s freeze) on Master | PASS | 750–1127 | Kubelet killed container 4× during freeze |
+| 6 | Memory stress (1400MB) on Master | PASS | 775–950 | OOMKilled, failover, rejoined |
+| 7 | Memory stress (1400MB) on Slave | PASS | 1138 | Writes via MaxScale → master unaffected |
+| 8 | CPU stress 98% on Master | PASS | 867–950 | No failover, stable |
+| 9 | Combined Memory + CPU on Master | PASS | 749–958 | Survived |
+| 10 | IO Latency (100ms) on Master | PASS | 5 | Severe throttle, 0 errors |
+| 11 | IO Latency (100ms) on Slave | PASS | 1131 | Writes unaffected |
+| 12 | **IOChaos `fault` (EIO 50%) on Master** | **FAIL — Defect #1** | — | mariadbd dies; init-script ping loop. Fixed on chaos branch. |
+| 13 | **IOChaos `fault` (EIO 50%) on Slave** | **FAIL — Defect #1** | — | Same stuck pattern — role-independent. |
+| 14 | IO AttrOverride (read-only) on Master | PASS | 656 | Degraded, no crash, auto-recovered |
+| 15 | **IOChaos `mistake` (corruption 50%) on Master** | **FAIL — Defect #2** | — | Binlog + InnoDB undo corruption, no auto-repair. Fix in flight on chaos branch. |
+| 16 | Network Partition (Master ↔ Slaves, 90s) | PASS | 1122 | No failover (async replication) |
+| 17 | Network Partition (Slave isolated, 90s) | PASS | 964 | No write impact |
+| 18 | Network Partition (MaxScale ↔ MariaDB, 60s) | PASS | 0 / 955 | Lost conn during, full recovery after |
+| 19 | Network Latency 1s | PASS | 1148 | Zero impact (async) |
+| 20 | Packet Loss 30% | PASS | 954 | No write impact |
+| 21 | Packet Duplicate 50% | PASS | 948 | No impact |
+| 22 | Packet Corrupt 50% | PASS | 1156 | No impact |
+| 23 | Bandwidth 1 Mbps on Master | PASS | 21 | -97% TPS, 0 errors |
+| 24 | DNS Error on Master | PASS | 956 | No impact |
+| 25 | Clock Skew (-5 min) on Master | PASS | 879 | Minor dip |
+| 26 | Full cluster kill (3 pods) | PASS | — | Recovery ~75s |
+| 27 | Full MaxScale kill (3 pods) | PASS | 955 after | ~3 min client outage |
+| 28 | Compound: Master + all MaxScale kill | PASS | — | Recovery ~90s |
+| 29 | Rolling restart 0 → 1 → 2 | PASS | — | Recovery ~2m30s |
 
 ## Key Findings
 
@@ -2168,7 +3067,7 @@ We ran **36 chaos experiments** across **2 MariaDB topologies** — all with **z
 
 ### Conclusion
 
-The KubeDB operator demonstrated excellent recovery capabilities across **36 chaos experiments** on **2 MariaDB topologies** — Galera Cluster and Replication with MaxScale. **Zero data loss** in every experiment across both topologies.
+The KubeDB operator demonstrated excellent recovery capabilities across **47 chaos experiments** on **2 MariaDB topologies** — 18 on Galera Cluster (all PASS) and 29 on Replication with MaxScale (26 PASS, 3 IO-chaos failures that surfaced real operator defects). All 44 passing experiments completed with **zero data loss**. The 3 IO-chaos failures (T12 Master EIO, T13 Slave EIO, T15 Master corruption) **require manual operator intervention on current releases to avoid data loss** — the recovery procedures are documented above — and the corresponding chaos-branch fixes remove the manual step (one shipped on `kubedb/mariadb-init-docker`, one in flight on `kubedb/mariadb-coordinator`).
 
 The operator handled every failure scenario we threw at it:
 
@@ -2176,14 +3075,15 @@ The operator handled every failure scenario we threw at it:
 |---|---|---|
 | **Failure detection** | Pod kill, container kill, pod freeze, IO crash, segfault | Coordinator detected all failures within seconds |
 | **Automatic failover** | Kill master/primary during active writes | New master elected, replication reconfigured, MaxScale re-routed — all automatically |
-| **Pod recovery** | OOMKill, IO faults, IO corruption, read-only filesystem | Crashed pods restarted, rejoined cluster via IST/SST, data fully restored |
+| **Pod recovery** | OOMKill, IO latency, read-only filesystem, clean pod kill | Crashed pods restarted, rejoined cluster via IST/SST, data fully restored |
 | **Cluster bootstrap** | Kill all 3 pods simultaneously | Coordinator bootstrapped from scratch in ~3 min — identified most up-to-date node, elected master, rejoined others |
 | **Network resilience** | Partition, latency, packet loss/corrupt/duplicate, bandwidth throttle, DNS error | Cluster stayed operational (or recovered automatically after chaos expired) |
-| **MaxScale integration** | All 18 replication experiments via MaxScale proxy | MaxScale detected every topology change and re-routed traffic automatically |
+| **MaxScale integration** | All 29 replication experiments via MaxScale proxy | MaxScale detected every topology change and re-routed traffic automatically |
+| **IO corruption** | IOChaos `fault` (EIO 50%) and `mistake` (random byte corruption 50%) on master / slave | Needs operator attention on current releases — see Defects #1 and #2 in the Replication table; fixes on the chaos branch of `kubedb/mariadb-init-docker` (EIO stuck-pod, shipped) and `kubedb/mariadb-coordinator` (binlog-rotate auto-repair, in flight) |
 
-**The KubeDB operator is the reason these chaos tests pass.** MariaDB itself doesn't know how to bootstrap a Galera cluster from a total outage, elect a new replication master, or reconfigure MaxScale routing. The operator's coordinator sidecar handles all of this — making KubeDB MariaDB truly self-healing on Kubernetes.
+**The KubeDB operator is the reason these chaos tests pass.** MariaDB itself doesn't know how to bootstrap a Galera cluster from a total outage, elect a new replication master, or reconfigure MaxScale routing. The operator's coordinator sidecar handles all of this — making KubeDB MariaDB truly self-healing on Kubernetes for the pod / stress / network / time fault families.
 
-Both topologies achieve production-grade reliability, making them suitable for workloads that demand zero data loss and automatic recovery without manual intervention.
+For the IO-chaos family, recovery from latency, read-only filesystems, and clean pod kill works today; random bit-level corruption and EIO faults are where the chaos-branch fixes focus. If your workload is sensitive to silent storage corruption, pair KubeDB with an external backup (e.g. KubeStash) until the chaos-branch fixes land in a tagged release. Both topologies already achieve production-grade reliability for the much larger class of non-corruption faults that dominate real-world incidents.
 
 ## What Next?
 
