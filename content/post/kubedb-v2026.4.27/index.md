@@ -1,6 +1,6 @@
 ---
-title: Announcing KubeDB v2026.4.22
-date: "2026-04-22"
+title: Announcing KubeDB v2026.4.27
+date: "2026-04-24"
 weight: 15
 authors:
 - Saurov Chandra Biswas
@@ -26,7 +26,7 @@ tags:
 - weaviate
 ---
 
-KubeDB **v2026.4.22** focuses on **horizontal scalability, operational reliability, and database ecosystem expansion**. This release introduces sharding support for the KubeDB Autoscaler operator, new OpsRequest capabilities for Neo4j, Qdrant, and other databases, and enhanced GitOps workflows.
+KubeDB **v2026.4.27** focuses on **horizontal scalability, operational reliability, and database ecosystem expansion**. This release introduces sharding support for the KubeDB Autoscaler operator, new OpsRequest capabilities for Neo4j, Qdrant, and other databases, and enhanced GitOps workflows.
 
 This release brings **SQL Server vertical scaling** for additional components, **Oracle custom configuration and initialization**, **DocumentDB standalone support**, **ClickHouse backup/restore**, and improved monitoring for **Milvus** and **HanaDB**.
 
