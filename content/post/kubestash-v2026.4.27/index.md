@@ -85,9 +85,11 @@ To overcome this constraint, KubeStash now creates IAM roles dynamically using a
 
 **How it works**
 
-1. The KubeStash operator attaches a `go.klusters.dev/seed-role-name` annotation to each backup job's service account, pointing to the seed role ARN.
-2. The credential manager reads that annotation, copies the OIDC provider configuration and permissions from the seed role, and creates a new IAM role with a numeric suffix.
-3. The default role creation limit is `100`; this can be customized via the `roleCreationLimit` flag.
+1. The KubeStash operator annotates each backup job's service account with `go.klusters.dev/seed-role-name`, pointing to the seed role ARN (e.g., `go.klusters.dev/seed-role-name: arn:aws:iam::748392615204:role/kubestash-selfhost`).
+2. The credential manager checks whether any existing derived role has capacity to accommodate the new service account.
+3. If none does, it creates a new derived role cloned from the seed role—same OIDC provider and permissions—with a numeric suffix (e.g., `kubestash-selfhost-7`).
+4. The new service account is added to that derived role's trust policy and annotated with the assigned role ARN (e.g., `eks.amazonaws.com/role-arn: arn:aws:iam::748392615204:role/kubestash-selfhost-7`).
+5. By default, at most `100` derived roles can be created from a single seed; this ceiling is configurable via the `roleCreationLimit` flag.
 
 This strategy scales credential-less backup to production clusters with hundreds of `BackupConfiguration` resources without hitting the trust policy character quota.
 
