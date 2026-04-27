@@ -21,6 +21,8 @@ We are pleased to announce the release of [KubeStash v2026.4.27](https://kubesta
 - Extended AWS credential-less mode with dynamically created IAM roles to overcome the trust policy character quota limit on production clusters.
 - Added job suspension via webhook to prevent backup jobs from running before AWS IAM permissions are fully propagated.
 - Introduced Azure credential-less backup & restore on AKS using Azure's Identity Binding feature to overcome the 20 federated credential limit.
+- Manually fetch and inject AWS credentials in IRSA-enabled clusters to ensure restic can access S3 reliably.
+- Fixed `BackupSession` status remaining stuck in `Running` state on retention job failure.
 
 ---
 
@@ -200,6 +202,28 @@ $ kubectl get pod <kubestash-operator-pod> -n <kubestash-namespace> -o yaml | gr
       - name: AZURE_KUBERNETES_SNI_NAME
       - name: AZURE_KUBERNETES_CA_FILE
 ```
+
+---
+
+## Bug Fix and Improvements
+
+### Manually Set AWS Credentials in IRSA-enabled Clusters**
+
+In IRSA-enabled clusters, restic may fail to fetch credentials from the service account token, causing errors like:
+`s3.getCredentials: no credentials found`.
+
+Since restic relies on `minio-go-client` instead of the official AWS SDK, fixing this at the source is complex. As a workaround, we now manually retrieve and inject AWS credentials (with retries) so restic can reliably access S3.
+
+PR Link: https://github.com/kubestash/apimachinery/commits/master/
+
+---
+
+### Fix BackupSession Status Running
+
+`BackupSession` could previously remain stuck in the `Running` state if the retention policy job failed.
+Now, on retention job failure, a condition is set with an appropriate message, allowing the `BackupSession` controller to correctly mark the status as `Failed`.
+
+PR Link: https://github.com/kubestash/kubestash/pull/353
 
 ---
 
