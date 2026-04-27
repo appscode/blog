@@ -207,12 +207,12 @@ $ kubectl get pod <kubestash-operator-pod> -n <kubestash-namespace> -o yaml | gr
 
 ## Bug Fix and Improvements
 
-### Manually Set AWS Credentials in IRSA-enabled Clusters**
+### Manually Set AWS Credentials in IRSA-enabled Clusters
 
 In IRSA-enabled clusters, restic may fail to fetch credentials from the service account token, causing errors like:
 `s3.getCredentials: no credentials found`.
 
-Since restic relies on `minio-go-client` instead of the official AWS SDK, fixing this at the source is complex. As a workaround, we now manually retrieve and inject AWS credentials (with retries) so restic can reliably access S3.
+Since restic relies on `minio-go-client` instead of the official `AWS SDK`, fixing this at the source is complex. As a workaround, we now manually retrieve and inject AWS credentials (with retries) so restic can reliably access S3.
 
 PR Link: https://github.com/kubestash/apimachinery/commits/master/
 
