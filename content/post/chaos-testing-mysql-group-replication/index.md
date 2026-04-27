@@ -1,6 +1,6 @@
 ---
 title: Chaos Engineering KubeDB MySQL Group Replication on Kubernetes, Testing Group Replication Cluster Resilience
-date: "2026-04-08"
+date: "2026-04-27"
 weight: 14
 authors:
 - SK Ali Arman
