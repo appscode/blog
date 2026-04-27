@@ -232,17 +232,23 @@ kubectl apply -f sysbench.yaml
 ### Step 6: Prepare sysbench Tables
 
 ```bash
+#!/bin/bash
+
 # Get the MySQL root password
 PASS=$(kubectl get secret mysql-ha-cluster-auth -n demo -o jsonpath='{.data.password}' | base64 -d)
 
+
+kubectl exec -n demo svc/mysql-ha-cluster -c mysql -- \
+  mysql -uroot -p"$PASS" -h mysql-ha-cluster.demo -e "DROP DATABASE IF EXISTS sbtest;"
+
 # Create the sbtest database
-kubectl exec -n demo mysql-ha-cluster-0 -c mysql -- \
-  mysql -uroot -p"$PASS" -e "CREATE DATABASE IF NOT EXISTS sbtest;"
+kubectl exec -n demo svc/mysql-ha-cluster -c mysql -- \
+  mysql -uroot -p"$PASS" -h mysql-ha-cluster.demo -e "CREATE DATABASE IF NOT EXISTS sbtest;"
 
 # Get the sysbench pod name
 SBPOD=$(kubectl get pods -n demo -l app=sysbench -o jsonpath='{.items[0].metadata.name}')
 
-# Prepare tables (12 tables x 100k rows)
+# Standard write load (used during most experiments)
 kubectl exec -n demo $SBPOD -- sysbench oltp_write_only \
   --mysql-host=mysql-ha-cluster --mysql-port=3306 \
   --mysql-user=root --mysql-password="$PASS" \
