@@ -95,6 +95,8 @@ To overcome this constraint, KubeStash now creates IAM roles dynamically using a
 
 This strategy scales credential-less backup to production clusters with hundreds of `BackupConfiguration` resources without hitting the trust policy character quota.
 
+PR Link: https://github.com/kluster-api/aws-credential-manager/pull/14
+
 ---
 
 #### Job Suspension
@@ -102,6 +104,8 @@ This strategy scales credential-less backup to production clusters with hundreds
 The AWS credential manager watches all jobs created by KubeStash (identified by the `"app.kubernetes.io/managed-by": "kubestash.com"` label). If a job's service account does not yet have the required IAM permissions at the time the job is created, the job is **suspended** via a webhook. Once the service account is granted the proper permissions, the job is automatically **unsuspended** and proceeds normally.
 
 This prevents a race condition where a backup job starts executing before its IAM role has been fully provisioned.
+
+PR Link: https://github.com/kubestash/kubestash/pull/343
 
 ---
 
@@ -202,6 +206,8 @@ $ kubectl get pod <kubestash-operator-pod> -n <kubestash-namespace> -o yaml | gr
       - name: AZURE_KUBERNETES_SNI_NAME
       - name: AZURE_KUBERNETES_CA_FILE
 ```
+
+PR Link: https://github.com/kluster-api/azure-credential-manager/pull/1
 
 ---
 
