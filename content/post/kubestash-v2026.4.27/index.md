@@ -159,7 +159,7 @@ azure.workload.identity/client-id: <MI_CLIENT_ID>
 azure.workload.identity/tenant-id: <MI_TENANT_ID>
 ```
 
-3. Adds the required labels and annotations to service accounts and job pod templates for identity binding:
+3. Adds the required labels and annotations to job pod templates for identity binding:
 
 ```yaml
 labels:
