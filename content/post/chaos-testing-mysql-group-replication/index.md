@@ -2404,6 +2404,99 @@ mysql-ha-cluster   8.4.8     Ready    17h
 ➤ kubectl delete stresschaos -n demo --all
 ```
 
+### Chaos#24: Bidirectional Network Partition Primary ↔ Secondaries (2 min)
+
+Cut bidirectional network communication between the current primary pod and both secondary pods for 2 minutes. The primary is left as a 1-member minority while the two secondaries form a 2-member majority — the textbook split-brain trigger that Group Replication's quorum / failure detector must resolve.
+
+- **Expected behavior:**
+  Primary can no longer commit (loses quorum) → cluster transitions `Ready` → `NotReady` → the secondaries form a quorum and elect a new primary → state moves to `Critical`. When the partition clears, the old primary rejoins as `SECONDARY` and the cluster returns to `Ready`. Zero data loss.
+
+- **Actual result:**
+  Cluster transitioned `Ready` → `NotReady` (+16s) → new primary elected (+29s) → `Critical` (+38s). After the 2-minute partition cleared, the old primary entered `RECOVERING` for ~7 minutes before reaching `ONLINE SECONDARY`. Cluster reached `Ready` ~12 minutes after chaos started. **Final GTIDs match exactly on all 3 nodes.** **PASS.**
+
+Save this yaml as `tests/24-network-partition-bidirectional.yaml`:
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: mysql-network-partition-primary
+  namespace: demo
+spec:
+  action: partition
+  mode: all
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      "app.kubernetes.io/instance": "mysql-ha-cluster"
+      "kubedb.com/role": "primary"
+  direction: both
+  duration: 2m
+  target:
+    mode: all
+    selector:
+      namespaces: [demo]
+      labelSelectors:
+        "app.kubernetes.io/instance": "mysql-ha-cluster"
+        "kubedb.com/role": "standby"
+```
+
+```shell
+➤ kubectl apply -f tests/24-network-partition-bidirectional.yaml
+networkchaos.chaos-mesh.org/mysql-network-partition-primary created
+
+➤ # ~30s into chaos: pod-2 promoted, old primary cannot commit
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS     AGE
+mysql-ha-cluster   8.4.8     Critical   17h
+
+➤ kubectl get pods -n demo -L kubedb.com/role
+NAME                 READY   STATUS    ROLE
+mysql-ha-cluster-0   2/2     Running   standby
+mysql-ha-cluster-1   2/2     Running   standby     # was primary, now isolated
+mysql-ha-cluster-2   2/2     Running   primary     # promoted
+
+➤ # sysbench during partition — error 3100 from before_commit hook
+FATAL: mysql_stmt_execute() returned error 3100 (Error on observer while running
+       replication hook 'before_commit.') for query 'COMMIT'
+
+➤ # After partition heals — old primary rejoins via incremental recovery
+➤ SELECT MEMBER_HOST, MEMBER_STATE, MEMBER_ROLE FROM performance_schema.replication_group_members;
+mysql-ha-cluster-2.…  ONLINE  PRIMARY
+mysql-ha-cluster-1.…  ONLINE  SECONDARY    # was RECOVERING for ~7 min
+mysql-ha-cluster-0.…  ONLINE  SECONDARY
+
+➤ # GTIDs match
+pod-0: b5a48606-…:1-476640:1000001-1527586
+pod-1: b5a48606-…:1-476640:1000001-1527586
+pod-2: b5a48606-…:1-476640:1000001-1527586
+
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS   AGE
+mysql-ha-cluster   8.4.8     Ready    17h
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 12:22:01 | — | Pre-chaos baseline (pod-1 = primary) | `Ready` |
+| 12:24:19 | 0s | `NetworkChaos` partition applied | `Ready` |
+| 12:24:35 | +16s | Primary unable to certify writes | `NotReady` |
+| 12:24:48 | +29s | pod-2 promoted PRIMARY (majority quorum) | `NotReady` |
+| 12:24:57 | +38s | Operator marks pod-1 unhealthy | `Critical` |
+| 12:26:19 | +2m00s | Chaos auto-recovered, partition cleared | `Critical` |
+| ~12:30 | +5–6m | pod-1 enters GR `RECOVERING` | `Critical` |
+| ~12:34 | +9–10m | pod-1 reaches `ONLINE` `SECONDARY` | `Ready` |
+
+**Note on writes during partition** — the new primary on the majority side accepts writes immediately after election; the old primary returns error 3100 (`Error on observer while running replication hook 'before_commit'`) until the partition clears. This is GR doing exactly what it should: refusing to commit on a member that has lost quorum.
+
+**Result: PASS** — split-brain prevented (only the majority side accepts writes), failover completed in 29 s, old primary rejoined cleanly after partition cleared, all GTIDs reconciled. Zero data loss.
+
+```shell
+➤ kubectl delete -f tests/24-network-partition-bidirectional.yaml
+```
+
 ## Chaos Testing Results Summary
 
 | # | Experiment | Failover | TPS Impact | Data Loss | Verdict |
