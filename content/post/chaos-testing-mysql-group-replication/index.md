@@ -2982,6 +2982,89 @@ mysql-ha-cluster   8.4.8     Ready    126m
 ➤ kubectl delete -f tests/30-io-fault-eio.yaml
 ```
 
+### Chaos#31: File Attribute Override on Primary's Data Directory (5 min)
+
+Use Chaos Mesh's `IOChaos.attrOverride` to overwrite the file attributes (mode bits) of every file under `/var/lib/mysql` on the primary pod for 5 minutes. With `perm: 72` (octal `0110` — execute-only, no read or write), mysqld immediately loses access to its own data files even though the files themselves are intact.
+
+- **Expected behavior:**
+  Mysqld can no longer read or write its data files → it errors out and likely shuts down. Cluster transitions `Ready` → `NotReady` → `Critical`. Secondaries elect a new primary. After chaos clears (5 min), the original file attributes return, mysqld restarts cleanly, and the pod rejoins as `SECONDARY`. Zero data loss.
+
+- **Actual result:**
+  Cluster transitioned `Ready` → `NotReady` (+6s) → pod-2 promoted PRIMARY (+28s) → `Critical` (+34s). After the 5-minute attr-override window cleared, pod-1 took a few extra minutes to fully restart and rejoin (mysqld had to re-open files whose mode bits had just flipped back). **Final GTIDs match exactly on all 3 nodes (`1-884692`).** Total recovery ~21 minutes from chaos start. **PASS.**
+
+Save this yaml as `tests/31-io-attroverride.yaml`:
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: mysql-io-attroverride-primary
+  namespace: demo
+spec:
+  action: attrOverride
+  mode: all
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      "app.kubernetes.io/instance": "mysql-ha-cluster"
+      "kubedb.com/role": "primary"
+  volumePath: /var/lib/mysql
+  path: '/var/lib/mysql/**/*'
+  attr:
+    perm: 72
+  percent: 100
+  duration: 5m
+```
+
+```shell
+➤ kubectl apply -f tests/31-io-attroverride.yaml
+iochaos.chaos-mesh.org/mysql-io-attroverride-primary created
+
+➤ # During chaos — primary cannot access its own files
+➤ kubectl exec -it mysql-ha-cluster-1 -c mysql -- mysql -uroot -p$PASS
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket
+       '/var/run/mysqld/mysqld.sock' (111)
+
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS     AGE
+mysql-ha-cluster   8.4.8     Critical   128m
+
+➤ kubectl get pods -n demo -L kubedb.com/role
+NAME                 READY   STATUS    ROLE
+mysql-ha-cluster-0   2/2     Running   standby
+mysql-ha-cluster-1   2/2     Running   standby    # was primary, file perms broken
+mysql-ha-cluster-2   2/2     Running   primary    # promoted
+
+➤ # After 5-min chaos duration cleared and pod-1 rejoined
+➤ SELECT MEMBER_HOST, MEMBER_STATE, MEMBER_ROLE FROM performance_schema.replication_group_members;
+mysql-ha-cluster-2.…  ONLINE  PRIMARY
+mysql-ha-cluster-1.…  ONLINE  SECONDARY
+mysql-ha-cluster-0.…  ONLINE  SECONDARY
+
+➤ # GTIDs match
+pod-0: 32ee0840-…:1-884692:1000004-1271273
+pod-1: 32ee0840-…:1-884692:1000004-1271273
+pod-2: 32ee0840-…:1-884692:1000004-1271273
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 15:22:10 | — | Pre-chaos baseline (pod-1 = primary) | `Ready` |
+| 15:22:11 | 0s | `IOChaos.attrOverride` (perm=72) applied to pod-1 | `Ready` |
+| 15:22:17 | +6s | mysqld lost access to its files | `NotReady` |
+| 15:22:39 | +28s | pod-2 promoted PRIMARY | `NotReady` |
+| 15:22:45 | +34s | Operator marks pod-1 unhealthy | `Critical` |
+| 15:27:11 | +5m00s | Chaos auto-recovered, file perms restored | `Critical` |
+| ~15:43 | +21m | pod-1 fully rejoined as `ONLINE SECONDARY` | `Ready` |
+
+**Result: PASS** — failover handled cleanly even when the underlying filesystem made the data files unreadable. Once normal permissions returned, the affected pod rejoined automatically. Zero data loss.
+
+```shell
+➤ kubectl delete -f tests/31-io-attroverride.yaml
+```
+
 ## Chaos Testing Results Summary
 
 | # | Experiment | Failover | TPS Impact | Data Loss | Verdict |
