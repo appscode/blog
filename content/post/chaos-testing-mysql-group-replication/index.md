@@ -17,7 +17,7 @@ tags:
 
 ## Overview
 
-We conducted **60+ chaos experiments** across **3 MySQL versions** (8.0.36, 8.4.8, 9.6.0) and **2 Group Replication topologies** (Single-Primary and Multi-Primary) on KubeDB-managed 3-node clusters. The goal: validate that KubeDB MySQL delivers **zero data loss**, **automatic failover**, and **self-healing recovery** under realistic failure conditions with production-level write loads.
+We conducted **70+ chaos experiments** across **3 MySQL versions** (8.0.36, 8.4.8, 9.6.0) and **2 Group Replication topologies** (Single-Primary and Multi-Primary) on KubeDB-managed 3-node clusters. The goal: validate that KubeDB MySQL delivers **zero data loss**, **automatic failover**, and **self-healing recovery** under realistic failure conditions with production-level write loads.
 
 **The result: every experiment passed with zero data loss, zero split-brain, and zero errant GTIDs.**
 
@@ -2404,100 +2404,7 @@ mysql-ha-cluster   8.4.8     Ready    17h
 ➤ kubectl delete stresschaos -n demo --all
 ```
 
-### Chaos#24: Bidirectional Network Partition Primary ↔ Secondaries (2 min)
-
-Cut bidirectional network communication between the current primary pod and both secondary pods for 2 minutes. The primary is left as a 1-member minority while the two secondaries form a 2-member majority — the textbook split-brain trigger that Group Replication's quorum / failure detector must resolve.
-
-- **Expected behavior:**
-  Primary can no longer commit (loses quorum) → cluster transitions `Ready` → `NotReady` → the secondaries form a quorum and elect a new primary → state moves to `Critical`. When the partition clears, the old primary rejoins as `SECONDARY` and the cluster returns to `Ready`. Zero data loss.
-
-- **Actual result:**
-  Cluster transitioned `Ready` → `NotReady` (+16s) → new primary elected (+29s) → `Critical` (+38s). After the 2-minute partition cleared, the old primary entered `RECOVERING` for ~7 minutes before reaching `ONLINE SECONDARY`. Cluster reached `Ready` ~12 minutes after chaos started. **Final GTIDs match exactly on all 3 nodes.** **PASS.**
-
-Save this yaml as `tests/24-network-partition-bidirectional.yaml`:
-
-```yaml
-apiVersion: chaos-mesh.org/v1alpha1
-kind: NetworkChaos
-metadata:
-  name: mysql-network-partition-primary
-  namespace: demo
-spec:
-  action: partition
-  mode: all
-  selector:
-    namespaces: [demo]
-    labelSelectors:
-      "app.kubernetes.io/instance": "mysql-ha-cluster"
-      "kubedb.com/role": "primary"
-  direction: both
-  duration: 2m
-  target:
-    mode: all
-    selector:
-      namespaces: [demo]
-      labelSelectors:
-        "app.kubernetes.io/instance": "mysql-ha-cluster"
-        "kubedb.com/role": "standby"
-```
-
-```shell
-➤ kubectl apply -f tests/24-network-partition-bidirectional.yaml
-networkchaos.chaos-mesh.org/mysql-network-partition-primary created
-
-➤ # ~30s into chaos: pod-2 promoted, old primary cannot commit
-➤ kubectl get mysql -n demo
-NAME               VERSION   STATUS     AGE
-mysql-ha-cluster   8.4.8     Critical   17h
-
-➤ kubectl get pods -n demo -L kubedb.com/role
-NAME                 READY   STATUS    ROLE
-mysql-ha-cluster-0   2/2     Running   standby
-mysql-ha-cluster-1   2/2     Running   standby     # was primary, now isolated
-mysql-ha-cluster-2   2/2     Running   primary     # promoted
-
-➤ # sysbench during partition — error 3100 from before_commit hook
-FATAL: mysql_stmt_execute() returned error 3100 (Error on observer while running
-       replication hook 'before_commit.') for query 'COMMIT'
-
-➤ # After partition heals — old primary rejoins via incremental recovery
-➤ SELECT MEMBER_HOST, MEMBER_STATE, MEMBER_ROLE FROM performance_schema.replication_group_members;
-mysql-ha-cluster-2.…  ONLINE  PRIMARY
-mysql-ha-cluster-1.…  ONLINE  SECONDARY    # was RECOVERING for ~7 min
-mysql-ha-cluster-0.…  ONLINE  SECONDARY
-
-➤ # GTIDs match
-pod-0: b5a48606-…:1-476640:1000001-1527586
-pod-1: b5a48606-…:1-476640:1000001-1527586
-pod-2: b5a48606-…:1-476640:1000001-1527586
-
-➤ kubectl get mysql -n demo
-NAME               VERSION   STATUS   AGE
-mysql-ha-cluster   8.4.8     Ready    17h
-```
-
-**Observed timeline:**
-
-| Wall-clock | Δ from chaos | Event | DB Status |
-|---|---|---|---|
-| 12:22:01 | — | Pre-chaos baseline (pod-1 = primary) | `Ready` |
-| 12:24:19 | 0s | `NetworkChaos` partition applied | `Ready` |
-| 12:24:35 | +16s | Primary unable to certify writes | `NotReady` |
-| 12:24:48 | +29s | pod-2 promoted PRIMARY (majority quorum) | `NotReady` |
-| 12:24:57 | +38s | Operator marks pod-1 unhealthy | `Critical` |
-| 12:26:19 | +2m00s | Chaos auto-recovered, partition cleared | `Critical` |
-| ~12:30 | +5–6m | pod-1 enters GR `RECOVERING` | `Critical` |
-| ~12:34 | +9–10m | pod-1 reaches `ONLINE` `SECONDARY` | `Ready` |
-
-**Note on writes during partition** — the new primary on the majority side accepts writes immediately after election; the old primary returns error 3100 (`Error on observer while running replication hook 'before_commit'`) until the partition clears. This is GR doing exactly what it should: refusing to commit on a member that has lost quorum.
-
-**Result: PASS** — split-brain prevented (only the majority side accepts writes), failover completed in 29 s, old primary rejoined cleanly after partition cleared, all GTIDs reconciled. Zero data loss.
-
-```shell
-➤ kubectl delete -f tests/24-network-partition-bidirectional.yaml
-```
-
-### Chaos#25: Extreme Bandwidth Throttle on Primary (1 bps, 2 min)
+### Chaos#24: Extreme Bandwidth Throttle on Primary (1 bps, 2 min)
 
 Push the bandwidth throttle to its absolute limit — 1 bit per second on the primary's outbound traffic for 2 minutes. At this rate Group Replication can transmit no useful data, effectively isolating the primary from its quorum partners while leaving the pod itself responsive on the local socket. This stresses how the cluster behaves when a primary is "alive but useless."
 
@@ -2507,7 +2414,7 @@ Push the bandwidth throttle to its absolute limit — 1 bit per second on the pr
 - **Actual result:**
   Cluster transitioned `Ready` → `Critical` (+44s) → `NotReady` (+48s) → back to `Critical`. Failover to a healthy secondary occurred while the throttle was active. After the throttle cleared at +2 min, the old primary rejoined and the cluster returned to `Ready` ~21 minutes after chaos started (the throttled primary needed several recovery cycles before its outbound channel cleared and it could rejoin GR). **Final GTIDs match exactly on all 3 nodes (`1-562731`).** **PASS.**
 
-Save this yaml as `tests/25-bandwidth-1bps.yaml`:
+Save this yaml as `tests/24-bandwidth-1bps.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -2531,7 +2438,7 @@ spec:
 ```
 
 ```shell
-➤ kubectl apply -f tests/25-bandwidth-1bps.yaml
+➤ kubectl apply -f tests/24-bandwidth-1bps.yaml
 networkchaos.chaos-mesh.org/mysql-bandwidth-1bps-primary created
 
 ➤ # During chaos — failover triggered, old primary cannot communicate
@@ -2581,94 +2488,10 @@ mysql-ha-cluster   8.4.8     Ready    17h
 **Result: PASS** — failover completed even under the harshest bandwidth condition, no writes accepted on the throttled side (no split-brain at the data layer), and the cluster fully reconverged after the throttle cleared. Zero data loss.
 
 ```shell
-➤ kubectl delete -f tests/25-bandwidth-1bps.yaml
+➤ kubectl delete -f tests/24-bandwidth-1bps.yaml
 ```
 
-### Chaos#26: Network Delay 2s on Primary (2 min)
-
-Inject a fixed 2-second outbound delay on the primary's network for 2 minutes — simulating a congested or jittery cross-AZ link. Unlike the bandwidth test, packets still flow, just slowly. The interesting question is whether GR's failure detector trips and triggers a failover, or whether the cluster simply absorbs the latency.
-
-- **Expected behavior:**
-  Primary's outbound packets delayed 2s → replication lag and operator probes time out → cluster transitions `Ready` → `NotReady` while the operator considers the primary unreachable. The 2-second delay is below GR's default `group_replication_member_expel_timeout` window, so no failover should occur. After the delay clears, the operator's probes succeed again and the cluster returns to `Ready`. Zero data loss.
-
-- **Actual result:**
-  Cluster transitioned `Ready` → `NotReady` (+16s, operator probe timed out) → stayed `NotReady` for the rest of the 2-minute window → **no failover** — pod-0 remained PRIMARY throughout → returned to `Ready` 7s after chaos auto-cleared. **PASS.**
-
-Save this yaml as `tests/26-network-delay-2s.yaml`:
-
-```yaml
-apiVersion: chaos-mesh.org/v1alpha1
-kind: NetworkChaos
-metadata:
-  name: mysql-network-delay-primary
-  namespace: demo
-spec:
-  selector:
-    namespaces: [demo]
-    labelSelectors:
-      "app.kubernetes.io/instance": "mysql-ha-cluster"
-      "kubedb.com/role": "primary"
-  mode: all
-  action: delay
-  delay:
-    latency: 2000ms
-    correlation: '100'
-    jitter: 0ms
-  direction: to
-  duration: 2m
-```
-
-```shell
-➤ kubectl apply -f tests/26-network-delay-2s.yaml
-networkchaos.chaos-mesh.org/mysql-network-delay-primary created
-
-➤ kubectl get mysql -n demo
-NAME               VERSION   STATUS     AGE
-mysql-ha-cluster   8.4.8     NotReady   8m
-
-➤ # primary unchanged — no failover, GR tolerated the 2s delay
-➤ kubectl get pods -n demo -L kubedb.com/role
-NAME                 READY   STATUS    ROLE
-mysql-ha-cluster-0   2/2     Running   primary
-mysql-ha-cluster-1   2/2     Running   standby
-mysql-ha-cluster-2   2/2     Running   standby
-
-➤ # sysbench during delay — TPS varies but no errors
-[190s ] thds: 8 tps: 410.70 lat (ms,95%):  62.19 err/s: 0.00
-[210s ] thds: 8 tps: 593.00 lat (ms,95%):  46.63 err/s: 0.00
-[260s ] thds: 8 tps: 173.10 lat (ms,95%): 153.02 err/s: 0.00
-[280s ] thds: 8 tps: 454.40 lat (ms,95%):  47.47 err/s: 0.00
-
-➤ # After 2-min duration — chaos auto-recovered
-➤ SELECT MEMBER_HOST, MEMBER_STATE, MEMBER_ROLE FROM performance_schema.replication_group_members;
-mysql-ha-cluster-0.…  ONLINE  PRIMARY
-mysql-ha-cluster-1.…  ONLINE  SECONDARY
-mysql-ha-cluster-2.…  ONLINE  SECONDARY
-
-➤ kubectl get mysql -n demo
-NAME               VERSION   STATUS   AGE
-mysql-ha-cluster   8.4.8     Ready    9m
-```
-
-**Observed timeline:**
-
-| Wall-clock | Δ from chaos | Event | DB Status |
-|---|---|---|---|
-| 13:16:46 | — | Pre-chaos baseline (pod-0 = primary) | `Ready` |
-| 13:17:21 | 0s | Delay chaos applied (2 s on pod-0 outbound) | `Ready` |
-| 13:17:37 | +16s | Operator probe times out → status flipped | `NotReady` |
-| 13:19:21 | +2m00s | Chaos auto-recovered, delay cleared | `NotReady` |
-| 13:19:28 | +2m07s | Operator probes succeed again | `Ready` |
-
-**Note** — the cluster stayed `NotReady` rather than `Critical` because no replica was ever marked unhealthy. Group Replication itself never expelled the primary; the status flip is the operator's external probe perspective, not GR's. The data plane kept committing throughout (no `error 3100`).
-
-**Result: PASS** — 2-second delay was absorbed without failover, no errors raised at the SQL layer, primary unchanged, full recovery in 7 s after chaos cleared. Zero data loss.
-
-```shell
-➤ kubectl delete -f tests/26-network-delay-2s.yaml
-```
-
-### Chaos#27: 100% Outbound Packet Loss on Primary (2 min)
+### Chaos#25: 100% Outbound Packet Loss on Primary (2 min)
 
 Drop 100% of outbound packets from the primary for 2 minutes — the primary is alive, accepting reads, but cannot ship anything to the secondaries (heartbeats, binlog events, GR Paxos messages all dropped). This is the network equivalent of a one-way mute and is one of the harshest single-node faults you can inject without killing the process.
 
@@ -2678,7 +2501,7 @@ Drop 100% of outbound packets from the primary for 2 minutes — the primary is 
 - **Actual result:**
   Cluster transitioned `Ready` → `Critical` (+1m23s) → `NotReady` (+1m42s) → new primary elected (+2m01s, just after chaos cleared) → `Critical` (+2m10s) → `Ready` (+2m29s). Failover happened cleanly to one of the secondaries, old primary rejoined incrementally. **Final GTIDs match exactly on all 3 nodes (`1-148930`).** **PASS.**
 
-Save this yaml as `tests/27-packet-loss-100.yaml`:
+Save this yaml as `tests/25-packet-loss-100.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -2702,7 +2525,7 @@ spec:
 ```
 
 ```shell
-➤ kubectl apply -f tests/27-packet-loss-100.yaml
+➤ kubectl apply -f tests/25-packet-loss-100.yaml
 networkchaos.chaos-mesh.org/mysql-packet-loss-primary created
 
 ➤ # During chaos — primary in ERROR state in its own GR view
@@ -2756,10 +2579,10 @@ mysql-ha-cluster   8.4.8     Ready    14m
 **Result: PASS** — failover and recovery completed in 2 m 29 s end-to-end, faster than the bandwidth-throttle case because once the loss cleared, normal binlog shipping resumed instantly. Zero data loss, GTIDs perfectly aligned across all 3 nodes.
 
 ```shell
-➤ kubectl delete -f tests/27-packet-loss-100.yaml
+➤ kubectl delete -f tests/25-packet-loss-100.yaml
 ```
 
-### Chaos#28: 100% Packet Duplication on Primary (2 min)
+### Chaos#26: 100% Packet Duplication on Primary (2 min)
 
 Make every outbound packet from the primary go out twice for 2 minutes. The duplicates are valid bytes — TCP simply discards them on receipt — so this is a relatively benign perturbation that mainly stresses the network stack and any application-level deduplication.
 
@@ -2769,7 +2592,7 @@ Make every outbound packet from the primary go out twice for 2 minutes. The dupl
 - **Actual result:**
   Cluster status never changed — stayed `Ready` for the entire 2-minute window. Sysbench TPS bounced between 181–616 (some natural variance under write load) with **zero errors and no reconnects**. **PASS.**
 
-Save this yaml as `tests/28-packet-duplicate-100.yaml`:
+Save this yaml as `tests/26-packet-duplicate-100.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -2793,7 +2616,7 @@ spec:
 ```
 
 ```shell
-➤ kubectl apply -f tests/28-packet-duplicate-100.yaml
+➤ kubectl apply -f tests/26-packet-duplicate-100.yaml
 networkchaos.chaos-mesh.org/mysql-packet-duplicate-primary created
 
 ➤ # During chaos — cluster never leaves Ready
@@ -2831,10 +2654,10 @@ mysql-ha-cluster-0.…  ONLINE  SECONDARY
 **Result: PASS** — cluster fully tolerated 100% packet duplication, zero status changes, zero errors. This validates that GR's reliance on TCP for binlog shipping handles duplicate packets transparently.
 
 ```shell
-➤ kubectl delete -f tests/28-packet-duplicate-100.yaml
+➤ kubectl delete -f tests/26-packet-duplicate-100.yaml
 ```
 
-### Chaos#29: 100% Packet Corruption on Primary (2 min)
+### Chaos#27: 100% Packet Corruption on Primary (2 min)
 
 Flip random bits in 100% of outbound packets from the primary for 2 minutes. Unlike duplication, every corrupted packet fails its TCP checksum on receipt — the receiver discards it and waits for a retransmit, but the retransmit is also corrupted, and so on. Effectively the primary cannot deliver any meaningful traffic to the secondaries: a slower-burning version of 100% packet loss.
 
@@ -2844,7 +2667,7 @@ Flip random bits in 100% of outbound packets from the primary for 2 minutes. Unl
 - **Actual result:**
   Cluster transitioned `Ready` → dual-primary label transient at +26s (old primary's local view stale) → `NotReady` (+2m14s) → new primary elected (+2m17s) → `Critical` briefly → `Ready` (+3m08s). Recovery was faster than the loss case because once corruption cleared, GR's failure detector noticed the old primary recovered before secondary expulsion fully completed. **Final GTIDs converging under live writes; lag fully closes within seconds of the test ending.** **PASS.**
 
-Save this yaml as `tests/29-packet-corrupt-100.yaml`:
+Save this yaml as `tests/27-packet-corrupt-100.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -2868,7 +2691,7 @@ spec:
 ```
 
 ```shell
-➤ kubectl apply -f tests/29-packet-corrupt-100.yaml
+➤ kubectl apply -f tests/27-packet-corrupt-100.yaml
 networkchaos.chaos-mesh.org/mysql-packet-corrupt-primary created
 
 ➤ # During chaos — failover triggered
@@ -2913,7 +2736,7 @@ mysql-ha-cluster   8.4.8     Ready    77m
 **Result: PASS** — failover handled cleanly even when the primary's outbound traffic was completely garbled, no SQL-level errors leaked through (TCP layer rejected every corrupted segment). Recovery completed in 3 m 08 s with zero data loss.
 
 ```shell
-➤ kubectl delete -f tests/29-packet-corrupt-100.yaml
+➤ kubectl delete -f tests/27-packet-corrupt-100.yaml
 ```
 
 ## Chaos Testing Results Summary
@@ -2941,16 +2764,20 @@ mysql-ha-cluster   8.4.8     Ready    77m
 | 19 | IO Fault (EIO 50%) | Yes (crash) | Connection lost | Zero | **PASS** |
 | 20 | Clock Skew (-5 min) | No | 618→359 (~39%) | Zero | **PASS** |
 | 21 | Bandwidth Throttle (1mbps) | No | 618→136 (~80%) | Zero | **PASS** |
+| 22 | Pod Failure (5 min) | Yes (8s) | Connection lost | Zero | **PASS** |
+| 23 | Continuous OOM Loop (15× 30s) | Yes | 1012→0 then recovered | Zero | **PASS** |
+| 24 | Bandwidth Throttle (1 bps) | Yes | TPS collapsed | Zero | **PASS** |
+| 25 | Packet Loss (100%) | Yes | TPS collapsed | Zero | **PASS** |
+| 26 | Packet Duplication (100%) | No | Minor variance only | Zero | **PASS** |
+| 27 | Packet Corruption (100%) | Yes | TPS collapsed | Zero | **PASS** |
 
 *Exp 7: UNREACHABLE member state observed but no failover triggered.
 
-**All 21 Group Replication experiments PASSED with zero data loss, zero errant GTIDs, and full data consistency across all 3 nodes.**
+**All 27 Group Replication experiments PASSED with zero data loss, zero errant GTIDs, and full data consistency across all 3 nodes.**
 
-## The 21-Experiment Matrix
+## The 27-Experiment Matrix
 
 Every MySQL version and topology was tested against a comprehensive experiment matrix covering single-node failures, resource exhaustion, network degradation, I/O faults, multi-fault scenarios, and advanced recovery tests:
-
-### Core Experiments (1-12)
 
 | # | Experiment | Chaos Type | What It Tests |
 |---|---|---|---|
@@ -2966,11 +2793,6 @@ Every MySQL version and topology was tested against a comprehensive experiment m
 | 10 | OOMKill Natural | Load | 128-thread queries to exhaust memory |
 | 11 | Scheduled Pod Kill | Schedule | Repeated kills every 30s-1min |
 | 12 | Degraded Failover | Workflow | IO latency + pod kill in sequence |
-
-### Extended Experiments (13-21)
-
-| # | Experiment | Chaos Type | What It Tests |
-|---|---|---|---|
 | 13 | Double Primary Kill | kubectl delete x2 | Kill primary, then immediately kill newly elected primary |
 | 14 | Rolling Restart | kubectl delete x3 | Delete pods one at a time (0→1→2) under write load |
 | 15 | Coordinator Crash | kill PID 1 | Kill coordinator sidecar, MySQL process stays running |
@@ -2980,6 +2802,12 @@ Every MySQL version and topology was tested against a comprehensive experiment m
 | 19 | IO Fault (EIO errors) | IOChaos | 50% of disk I/O operations return EIO errors |
 | 20 | Clock Skew (-5 min) | TimeChaos | Shift primary's system clock back 5 minutes |
 | 21 | Bandwidth Throttle (1mbps) | NetworkChaos | Limit primary's network bandwidth to 1mbps |
+| 22 | Pod Failure (5 min) | PodChaos | Long-duration container failure (different from pod-kill — pod stays in place) |
+| 23 | Continuous OOM Loop | StressChaos x15 | Repeated OOMKills under sustained write load — surfaces errant-GTID handling |
+| 24 | Bandwidth Throttle (1 bps) | NetworkChaos | Extreme bandwidth limit — primary becomes effectively mute |
+| 25 | Packet Loss (100%) | NetworkChaos | Drop every outbound packet from primary |
+| 26 | Packet Duplication (100%) | NetworkChaos | Send every primary outbound packet twice (TCP discards duplicates) |
+| 27 | Packet Corruption (100%) | NetworkChaos | Bit-flip every outbound packet (TCP rejects via checksum) |
 
 ## Data Integrity Validation
 
@@ -3009,7 +2837,7 @@ Every experiment verified data integrity through **4 checks** across all 3 nodes
 | 11 | Scheduled Replica Kill | Multiple | Zero | 0 | **PASS** |
 | 12 | Degraded Failover | Yes | Zero | 0 | **PASS** |
 
-### MySQL 8.4.8 — All 21 PASSED (12 core + 9 extended)
+### MySQL 8.4.8 — All 27 PASSED
 
 | # | Experiment | Failover | Data Loss | Errant GTIDs | Verdict |
 |---|---|---|---|---|---|
