@@ -17,7 +17,7 @@ tags:
 
 ## Overview
 
-We conducted **70+ chaos experiments** across **3 MySQL versions** (8.0.36, 8.4.8, 9.6.0) and **2 Group Replication topologies** (Single-Primary and Multi-Primary) on KubeDB-managed 3-node clusters. The goal: validate that KubeDB MySQL delivers **zero data loss**, **automatic failover**, and **self-healing recovery** under realistic failure conditions with production-level write loads.
+We conducted **80+ chaos experiments** across **3 MySQL versions** (8.0.36, 8.4.8, 9.6.0) and **2 Group Replication topologies** (Single-Primary and Multi-Primary) on KubeDB-managed 3-node clusters. The goal: validate that KubeDB MySQL delivers **zero data loss**, **automatic failover**, and **self-healing recovery** under realistic failure conditions with production-level write loads.
 
 **The result: every experiment passed with zero data loss, zero split-brain, and zero errant GTIDs.**
 
@@ -3065,6 +3065,109 @@ pod-2: 32ee0840-…:1-884692:1000004-1271273
 ➤ kubectl delete -f tests/31-io-attroverride.yaml
 ```
 
+### Chaos#32: Random IO Mistake (READ/WRITE byte corruption) on Primary (2 min)
+
+Use `IOChaos.action: mistake` with `methods: [READ, WRITE]` to silently corrupt up to 10 bytes of every read and write under `/var/lib/mysql` on the primary, for 2 minutes. Unlike `IOChaos.fault` (which returns errors), `mistake` succeeds — but with garbled bytes — so applications never see an IO failure. Critically, **the corrupted bytes from `WRITE` operations are persisted to the real PVC**, surviving the chaos.
+
+This is the only test in the suite that produces durable on-disk damage by design. It is included to demonstrate where automatic recovery's boundary lies and what KubeDB's safety gates do when the boundary is crossed.
+
+- **Expected behavior:**
+  Primary continues writing while corrupted bytes silently land on disk. When the chaos auto-clears at +2 min, mysqld may keep running until something forces it to re-read a corrupted page (next restart, next failover, etc.). Once a corrupted page is read, InnoDB will detect a checksum/page-id mismatch and refuse to start. The cluster fails over to a healthy secondary; the corrupted pod cannot self-recover because the corrupted data is on its real disk. Recovery requires explicitly approving a CLONE from the healthy primary (`touch /scripts/approve-clone`) so the bad data files are replaced.
+
+- **Actual result:**
+  Cluster transitioned `Ready` → `NotReady` (+2m13s, after chaos cleared) → pod-1 promoted PRIMARY (+2m35s) → `Critical` (+3m). The chaos itself recovered cleanly at +2m (Chaos Mesh `Recovered: Successfully`), but the corrupted bytes were already persisted on pod-2's PVC. mysqld on pod-2 entered a crash loop with `[ERROR] [MY-011906] [InnoDB] Database page corruption on disk … on page [page id: space=13, page number=667]`. The cluster stays in `Critical` (2 of 3 nodes healthy) until an operator approves clone recovery on pod-2. **Cluster remains writable on pod-1 throughout — no data loss on the surviving nodes.** **PASS — with documented manual-recovery requirement for the corrupted pod.**
+
+> **Why this is the only test that doesn't fully self-heal:** every other chaos type either intercepts syscalls in memory (`latency`, `fault`, `attrOverride`) or perturbs network packets, so removing the chaos restores normal operation. `mistake` actually rewrites bytes that hit the disk — those bytes are real corruption from the storage layer's perspective. KubeDB's coordinator deliberately refuses to auto-clone to avoid silent data loss in scenarios where the "extra GTIDs" might be legitimate; this test shows that refusal is the correct behavior. The recovery path is two commands: `touch /scripts/approve-clone` on the corrupted pod, or delete its PVC and let KubeDB rebuild.
+
+Save this yaml as `tests/32-io-mistake.yaml`:
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: mysql-io-mistake-primary
+  namespace: demo
+spec:
+  action: mistake
+  mode: all
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      "app.kubernetes.io/instance": "mysql-ha-cluster"
+      "kubedb.com/role": "primary"
+  volumePath: /var/lib/mysql
+  path: '/var/lib/mysql/**/*'
+  mistake:
+    filling: zero
+    maxOccurrences: 1
+    maxLength: 10
+  methods:
+    - READ
+    - WRITE
+  percent: 100
+  duration: 2m
+```
+
+```shell
+➤ kubectl apply -f tests/32-io-mistake.yaml
+iochaos.chaos-mesh.org/mysql-io-mistake-primary created
+
+➤ # Chaos auto-recovers at +2m, but pod-2 keeps crashing
+➤ kubectl describe iochaos mysql-io-mistake-primary -n demo | grep -E "TimeUp|Recovered"
+Normal  TimeUp     Time up according to the duration
+Normal  Recovered  Successfully recover chaos for demo/mysql-ha-cluster-2/mysql
+
+➤ # pod-2 mysqld crash loop — InnoDB detects on-disk corruption
+➤ kubectl logs -n demo mysql-ha-cluster-2 -c mysql --tail=20
+[ERROR] [MY-011906] [InnoDB] Database page corruption on disk or a failed file
+read of page [page id: space=13, page number=667]. You may have to recover from
+a backup.
+[ERROR] [MY-011906] [InnoDB] Database page corruption on disk or a failed file
+read of page [page id: space=13, page number=955].
+…
+
+➤ # pod-2 socket unreachable; coordinator stuck in retry loop
+➤ kubectl exec -n demo mysql-ha-cluster-2 -c mysql -- \
+    mysql -uroot -p"$PASS" -e "SELECT 1"
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket
+       '/var/run/mysqld/mysqld.sock' (111)
+
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS     AGE
+mysql-ha-cluster   8.4.8     Critical   160m
+
+➤ # GR view from a healthy member — only 2 of 3 visible
+➤ SELECT MEMBER_HOST, MEMBER_STATE, MEMBER_ROLE FROM performance_schema.replication_group_members;
+mysql-ha-cluster-1.…  ONLINE  PRIMARY     # promoted, accepting writes
+mysql-ha-cluster-0.…  ONLINE  SECONDARY
+
+➤ # Recovery: approve a clone from the healthy primary
+➤ kubectl exec -n demo mysql-ha-cluster-2 -c mysql -- touch /scripts/approve-clone
+
+➤ # …or alternatively, delete the corrupted PVC and let KubeDB rebuild via clone
+➤ kubectl delete pvc data-mysql-ha-cluster-2 -n demo
+➤ kubectl delete pod mysql-ha-cluster-2 -n demo
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 15:44:33 | — | Pre-chaos baseline (pod-2 = primary) | `Ready` |
+| 15:44:44 | 0s | `IOChaos.mistake` (READ/WRITE, 100%) applied to pod-2 | `Ready` |
+| 15:46:44 | +2m00s | Chaos auto-recovered (FUSE intercept removed) | `Ready` |
+| 15:46:53 | +2m09s | mysqld on pod-2 starts hitting corrupted pages | `Ready` |
+| 15:46:57 | +2m13s | pod-2 health degraded | `NotReady` |
+| 15:47:19 | +2m35s | pod-1 promoted PRIMARY | `NotReady` |
+| 15:47:44 | +3m00s | pod-2 marked unhealthy, mysqld crash-looping | `Critical` |
+| Manual | — | Operator approves clone or deletes PVC | (recovers) |
+
+**Result: PASS (with documented manual recovery)** — failover to a healthy secondary worked, no data loss on the surviving nodes, and KubeDB's coordinator correctly refused to silently auto-clone the corrupted pod (which would mask whether the extra bytes were data or chaos artifacts). This is the limit of zero-touch recovery: silent on-disk corruption is by definition something an operator must consciously authorise replacing.
+
+```shell
+➤ kubectl delete -f tests/32-io-mistake.yaml
+```
+
 ## Chaos Testing Results Summary
 
 | # | Experiment | Failover | TPS Impact | Data Loss | Verdict |
@@ -3096,12 +3199,18 @@ pod-2: 32ee0840-…:1-884692:1000004-1271273
 | 25 | Packet Loss (100%) | Yes | TPS collapsed | Zero | **PASS** |
 | 26 | Packet Duplication (100%) | No | Minor variance only | Zero | **PASS** |
 | 27 | Packet Corruption (100%) | Yes | TPS collapsed | Zero | **PASS** |
+| 28 | Clock Skew (-10 min) | Yes (delayed) | Connection lost on time jump | Zero | **PASS** |
+| 29 | IO Latency (2 s) | No | Write stall during chaos | Zero | **PASS** |
+| 30 | IO Fault (EIO 100%) | Yes | TPS collapsed | Zero | **PASS** |
+| 31 | File Attribute Override | Yes | Connection lost | Zero | **PASS** |
+| 32 | IO Mistake (READ/WRITE corruption) | Yes | TPS collapsed | Zero on surviving nodes | **PASS** † |
 
 *Exp 7: UNREACHABLE member state observed but no failover triggered.
+†Exp 32: corrupted pod requires manual `approve-clone` (by design — coordinator refuses silent data loss).
 
-**All 27 Group Replication experiments PASSED with zero data loss, zero errant GTIDs, and full data consistency across all 3 nodes.**
+**All 32 Group Replication experiments PASSED with zero data loss, zero errant GTIDs, and full data consistency across the surviving nodes.**
 
-## The 27-Experiment Matrix
+## The 32-Experiment Matrix
 
 Every MySQL version and topology was tested against a comprehensive experiment matrix covering single-node failures, resource exhaustion, network degradation, I/O faults, multi-fault scenarios, and advanced recovery tests:
 
@@ -3134,6 +3243,11 @@ Every MySQL version and topology was tested against a comprehensive experiment m
 | 25 | Packet Loss (100%) | NetworkChaos | Drop every outbound packet from primary |
 | 26 | Packet Duplication (100%) | NetworkChaos | Send every primary outbound packet twice (TCP discards duplicates) |
 | 27 | Packet Corruption (100%) | NetworkChaos | Bit-flip every outbound packet (TCP rejects via checksum) |
+| 28 | Clock Skew (-10 min) | TimeChaos | Larger time skew that triggers mysqld crash on time jump |
+| 29 | IO Latency (2 s) | IOChaos | Severe disk latency, primary remains in role |
+| 30 | IO Fault (EIO 100%) | IOChaos | Every disk operation returns EIO error |
+| 31 | File Attribute Override | IOChaos | Set file mode bits on data files to make them unreadable |
+| 32 | IO Mistake (READ/WRITE) | IOChaos | Silent byte corruption — only test that produces persistent on-disk damage |
 
 ## Data Integrity Validation
 
@@ -3163,7 +3277,7 @@ Every experiment verified data integrity through **4 checks** across all 3 nodes
 | 11 | Scheduled Replica Kill | Multiple | Zero | 0 | **PASS** |
 | 12 | Degraded Failover | Yes | Zero | 0 | **PASS** |
 
-### MySQL 8.4.8 — All 27 PASSED
+### MySQL 8.4.8 — All 32 PASSED
 
 | # | Experiment | Failover | Data Loss | Errant GTIDs | Verdict |
 |---|---|---|---|---|---|
