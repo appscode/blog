@@ -1390,7 +1390,7 @@ mysql-ha-cluster   8.4.8     Ready    17h
 | 12:18+ | +9–12m | Coordinator logs errant-GTID warning every 10 s | `Critical` |
 | 12:20:41 | +12m6s | pod-2 reaches `ONLINE` `SECONDARY`, GTIDs match | `Ready` |
 
-**Notable safety behavior** — the KubeDB coordinator (`mysql.go:895`) explicitly refuses to auto-clone the recovering pod when it detects extra GTIDs that don't exist on the primary (these are local transactions committed before the OOM crash that never replicated). Cloning would silently discard those transactions. Operator approval (`touch /scripts/approve-clone`) is required for that destructive action; without it the pod still rejoins through GR's distributed-recovery channel and the cluster converges. **Zero silent data loss.**
+**Notable safety behavior** — the KubeDB coordinator explicitly refuses to auto-clone the recovering pod when it detects extra GTIDs that don't exist on the primary (these are local transactions committed before the OOM crash that never replicated). Cloning would silently discard those transactions. Operator approval (`touch /scripts/approve-clone`) is required for that destructive action; without it the pod still rejoins through GR's distributed-recovery channel and the cluster converges. **Zero silent data loss.**
 
 **Result: PASS** — Group Replication failed over to a healthy secondary, sysbench survived (with one ~30 s zero-TPS window during failover), and the cluster fully reconverged after OOM pressure cleared. The coordinator's errant-GTID gate prevented destructive auto-clone — a deliberate safety choice that surfaces in this scenario.
 
