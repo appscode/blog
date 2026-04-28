@@ -91,10 +91,11 @@ Let's upgrade our KubeDB installation to enable sharding and scale our autoscale
 
 ```bash
 helm upgrade -i kubedb oci://ghcr.io/appscode-charts/kubedb \
-  --version v2025.3.24 \
+  --version v2026.4.27 \
   --namespace kubedb --create-namespace \
   --set operator-shard-manager.enabled=true \
   --set kubedb-autoscaler.replicaCount=3 \
+  --set global.featureGates.MSSQLServer=true \ 
   --set-file global.license=license.txt \
   --wait --burst-limit=10000 --debug
 ```
@@ -103,18 +104,9 @@ helm upgrade -i kubedb oci://ghcr.io/appscode-charts/kubedb \
 - `--set operator-shard-manager.enabled=true` installs the Operator Shard Manager.
 - `--set kubedb-autoscaler.replicaCount=3` creates 3 autoscaler operator pods (`0`, `1`, and `2`).
 
+
+
 Once the upgrade completes, a `ShardConfiguration` object for the autoscaler is automatically created:
-
-
-
-
-
-UPDATE HERE. *******************
-
-
-
-
-
 ```bash
 kubectl get shardconfiguration kubedb-autoscaler -oyaml
 ```
@@ -127,7 +119,7 @@ spec:
   controllers:
   - apiGroup: apps
     kind: StatefulSet
-    name: kubedb-autoscaler
+    name: kubedb-kubedb-autoscaler
     namespace: kubedb
   resources:
   - apiGroup: autoscaling.kubedb.com
@@ -135,16 +127,25 @@ status:
   controllers:
   - apiGroup: apps
     kind: StatefulSet
-    name: kubedb-autoscaler
+    name: kubedb-kubedb-autoscaler
     namespace: kubedb
+    pods:
+    - kubedb-kubedb-autoscaler-0
+    - kubedb-kubedb-autoscaler-1
+    - kubedb-kubedb-autoscaler-2
 ```
-*Notice how omitting the `kind` under `resources` means the manager automatically shards **ALL** autoscaler types (Postgres, MSSQL, MongoDB, etc.) under the `autoscaling.kubedb.com` API group!*
+*Notice how omitting the `kind` under `resources` means the manager automatically shards **ALL** autoscaler types (Postgres, MSSQLServer, MongoDB, etc.) under the `autoscaling.kubedb.com` API group!*
 
 ---
 
+
+## Deploy the Databases 
+
+Create your databases like PostgreSQL, MongoDB, MSSQLServer following the kubedb documentation. In this blog, we are focusing on the autoscaler sharding only. 
+
 ## **Seeing Sharding in Action**
 
-Let's create two `MSSQLServerAutoscaler` custom resources to see how they get distributed.
+Let's create 3 `MSSQLServerAutoscaler` custom resources to see how they get distributed.
 
 ### **Creating Autoscaler CRs**
 
@@ -152,7 +153,7 @@ Let's create two `MSSQLServerAutoscaler` custom resources to see how they get di
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: MSSQLServerAutoscaler
 metadata:
-  name: mssql-autoscaler-1
+  name: first-mssql-autoscaler-first
   namespace: demo
 spec:
   databaseRef:
@@ -163,10 +164,10 @@ spec:
       podLifeTimeThreshold: 5m
       resourceDiffPercentage: 10
       minAllowed:
-        cpu: 800m
-        memory: 2Gi
+        cpu: 2000m
+        memory: 3Gi
       maxAllowed:
-        cpu: 2
+        cpu: 3000m
         memory: 4Gi
       containerControlledValues: "RequestsAndLimits"
       controlledResources: [ "cpu", "memory" ]
@@ -174,7 +175,29 @@ spec:
 apiVersion: autoscaling.kubedb.com/v1alpha1
 kind: MSSQLServerAutoscaler
 metadata:
-  name: mssql-autoscaler-2
+  name: ms-auto-scaler-2
+  namespace: demo
+spec:
+  databaseRef:
+    name: mssql-std
+  compute:
+    mssqlserver:
+      trigger: "On"
+      podLifeTimeThreshold: 5m
+      resourceDiffPercentage: 10
+      minAllowed:
+        cpu: 2000m
+        memory: 3Gi
+      maxAllowed:
+        cpu: 3000m
+        memory: 4Gi
+      containerControlledValues: "RequestsAndLimits"
+      controlledResources: [ "cpu", "memory" ]
+---
+apiVersion: autoscaling.kubedb.com/v1alpha1
+kind: MSSQLServerAutoscaler
+metadata:
+  name: third-mssqlserver-autoscaler
   namespace: demo
 spec:
   databaseRef:
@@ -182,14 +205,24 @@ spec:
   compute:
     mssqlserver:
       trigger: "On"
-      # ... (same compute spec)
+      podLifeTimeThreshold: 5m
+      resourceDiffPercentage: 10
+      minAllowed:
+        cpu: 2000m
+        memory: 3Gi
+      maxAllowed:
+        cpu: 3000m
+        memory: 4Gi
+      containerControlledValues: "RequestsAndLimits"
+      controlledResources: ["cpu", "memory"]
 ```
 
 Apply the resources:
 ```bash
 ➤ kubectl apply -f mssql-autoscalers.yaml
-mssqlserverautoscaler.autoscaling.kubedb.com/mssql-autoscaler-1 created
-mssqlserverautoscaler.autoscaling.kubedb.com/mssql-autoscaler-2 created
+mssqlserverautoscaler.autoscaling.kubedb.com/first-mssql-autoscaler-first created
+mssqlserverautoscaler.autoscaling.kubedb.com/ms-auto-scaler-2 created
+mssqlserverautoscaler.autoscaling.kubedb.com/third-mssqlserver-autoscaler created
 ```
 
 ### **Checking the Shard Labels**
@@ -200,25 +233,37 @@ The Operator Shard Manager automatically injects a label into the resources to a
 ➤ kubectl get mssqlserverautoscaler -n demo --show-labels
 ```
 ```text
-NAME                 LABELS
-mssql-autoscaler-1   shard.operator.k8s.appscode.com/kubedb-autoscaler=0
-mssql-autoscaler-2   shard.operator.k8s.appscode.com/kubedb-autoscaler=1
+NAME                           AGE   LABELS
+first-mssql-autoscaler-first   4s    shard.operator.k8s.appscode.com/kubedb-autoscaler=2
+ms-auto-scaler-2               4s    shard.operator.k8s.appscode.com/kubedb-autoscaler=0
+third-mssqlserver-autoscaler   4s    shard.operator.k8s.appscode.com/kubedb-autoscaler=1
 ```
 
 Here:
-- `mssql-autoscaler-1` is assigned to index `0` (`kubedb-kubedb-autoscaler-0`).
-- `mssql-autoscaler-2` is assigned to index `1` (`kubedb-kubedb-autoscaler-1`).
+- `first-mssql-autoscaler-first` is assigned to index `2` (`kubedb-kubedb-autoscaler-2`).
+- `ms-auto-scaler-2` is assigned to index `0` (`kubedb-kubedb-autoscaler-0`).
+- `third-mssqlserver-autoscaler` is assigned to index `1` (`kubedb-kubedb-autoscaler-1`).
+
+
+
+
+
+a;ldfja;ldfa;lsdkfas;ldfjasl
+START FROM HERE. 
+
+
+
 
 ### **Verifying Operator Logs**
 
 We can verify that the pods are aware of their shard assignments:
 
 ```bash
-➤ kubectl logs -n kubedb kubedb-kubedb-autoscaler-0 | grep -i shard
-Running with shard configuration config=kubedb-autoscaler shard=0
+$ kubectl logs -n kubedb kubedb-kubedb-autoscaler-0 | grep -i ms-auto-scaler-2
+"msg"="Reconcile successful" "MSSQLServerAutoscaler"={"name":"ms-auto-scaler-2","namespace":"demo"} "controller"="mssqlserverautoscaler" "controllerGroup"="autoscaling.kubedb.com" "controllerKind"="MSSQLServerAutoscaler" "name"="ms-auto-scaler-2" "namespace"="demo"
 
-➤ kubectl logs -n kubedb kubedb-kubedb-autoscaler-1 | grep -i shard
-Running with shard configuration config=kubedb-autoscaler shard=1
+$ kubectl logs -n kubedb kubedb-kubedb-autoscaler-1 | grep -i third-mssqlserver-autoscaler
+
 ```
 
 ---
