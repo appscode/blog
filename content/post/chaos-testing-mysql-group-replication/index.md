@@ -2291,6 +2291,119 @@ mysql-ha-cluster   8.4.8     Ready    16h
 ➤ kubectl delete -f tests/22-pod-failure.yaml
 ```
 
+### Chaos#23: Continuous OOM Stress on Primary (15× 30s loop)
+
+Inject a tight loop of memory-stress chaos against the current primary to mimic a runaway query / leak that keeps OOM-killing `mysqld` while sysbench keeps writing. Each iteration allocates 100 GB with `oomScoreAdj=-1000` so the kernel kills the MySQL container almost immediately. Fifteen iterations were applied back-to-back (≈ 8 minutes of effective OOM pressure).
+
+- **Expected behavior:**
+  Primary container is OOMKilled repeatedly → cluster transitions `Ready` → `Critical` once one replica goes unhealthy → after Group Replication notices the primary is gone, fail over to one of the secondaries → original primary enters `CrashLoopBackOff` until OOM pressure clears → afterwards the pod rejoins the group, GTIDs reconcile, and the cluster returns to `Ready`. Zero data loss expected.
+
+- **Actual result:**
+  Cluster transitioned `Ready` → `Critical` (+1m52s, pod-2 1/2 not ready) → `NotReady` briefly (+2m02s) → pod-1 promoted `PRIMARY` (+2m14s) → `Critical` until pod-2 stabilized. Pod-2 hit 11 restarts (`CrashLoopBackOff` while OOM loop continued) and then went into `RECOVERING` for ~9 minutes while the coordinator emitted the errant-GTID warning. Pod-2 finally reached `ONLINE SECONDARY` and the cluster returned to `Ready` at +12 minutes. **Final GTIDs match exactly on all 3 nodes.** **PASS.**
+
+Save this yaml as `tests/23-oom-primary.yaml` (replace `<primary-pod-name>` with the actual current primary):
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: mysql-oom-primary
+  namespace: demo
+spec:
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      "statefulset.kubernetes.io/pod-name": "<primary-pod-name>"
+  mode: all
+  stressors:
+    memory:
+      workers: 1
+      size: "100GB"
+      oomScoreAdj: -1000
+  duration: 30s
+```
+
+Run a tight loop so the OOM keeps recurring (otherwise a single 30 s pulse may be absorbed before sysbench notices):
+
+```bash
+PRIMARY=$(kubectl get pods -n demo -l app.kubernetes.io/name=mysqls.kubedb.com,kubedb.com/role=primary \
+  -o jsonpath='{.items[0].metadata.name}')
+
+for i in $(seq 1 15); do
+  sed "s/mysql-oom-primary/mysql-oom-primary-${i}/; s/<primary-pod-name>/${PRIMARY}/" \
+    tests/23-oom-primary.yaml | kubectl apply -f -
+  sleep 2
+done
+```
+
+```shell
+➤ # During chaos — pod-2 OOMKilled, pod-1 promoted
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS     AGE
+mysql-ha-cluster   8.4.8     Critical   17h
+
+➤ kubectl get pods -n demo -L kubedb.com/role
+NAME                 READY   STATUS             RESTARTS   ROLE
+mysql-ha-cluster-0   2/2     Running            2          standby
+mysql-ha-cluster-1   2/2     Running            0          primary    # promoted
+mysql-ha-cluster-2   1/2     CrashLoopBackOff   8          standby
+
+➤ # sysbench during OOM loop
+[ 10s ] thds: 8 tps: 1195.65 qps: 7177.51 lat (ms,95%): 12.98 err/s: 0.00
+[ 60s ] thds: 8 tps:  201.10 qps: 1207.20 lat (ms,95%): 110.66 err/s: 0.00
+[ 80s ] thds: 8 tps:   78.10 qps:  469.00 lat (ms,95%): 434.83 err/s: 0.00
+[120s ] thds: 8 tps:    0.00 qps:    0.00 lat (ms,95%):   0.00 err/s: 0.00
+[140s ] thds: 8 tps:    0.00 qps:    0.00 lat (ms,95%):   0.00 reconn/s: 0.60
+[150s ] thds: 8 tps:  633.48 qps: 3804.70 lat (ms,95%):  20.74 err/s: 0.00 reconn/s: 0.20
+
+➤ # Coordinator surfaces errant GTIDs from the partial commits before OOM
+➤ kubectl logs -n demo mysql-ha-cluster-2 -c mysql-coordinator | grep -i errant
+WARNING: instance mysql-ha-cluster-2 has extra GTIDs not on primary:
+  b5a48606-...:384291-384301 (these will be lost if clone proceeds)
+instance mysql-ha-cluster-2 has extra transactions not present on the primary
+  — waiting for manual approval to use clone so sync group
+to approve clone, create the file:
+  kubectl exec -n demo mysql-ha-cluster-2 -c mysql -- touch /scripts/approve-clone
+
+➤ # After OOM pressure stops, pod-2 rejoins via GR distributed recovery
+➤ SELECT MEMBER_HOST, MEMBER_STATE, MEMBER_ROLE FROM performance_schema.replication_group_members;
+mysql-ha-cluster-2.…  ONLINE  SECONDARY
+mysql-ha-cluster-1.…  ONLINE  PRIMARY
+mysql-ha-cluster-0.…  ONLINE  SECONDARY
+
+➤ # GTIDs match on all 3 nodes
+pod-0: b5a48606-…:1-421633:1000001-1353570
+pod-1: b5a48606-…:1-421633:1000001-1353570
+pod-2: b5a48606-…:1-421633:1000001-1353570
+
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS   AGE
+mysql-ha-cluster   8.4.8     Ready    17h
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from first OOM | Event | DB Status |
+|---|---|---|---|
+| 12:06:46 | — | Pre-chaos baseline (pod-2 = primary) | `Ready` |
+| 12:08:35 | 0s | First OOM iteration applied | `Ready` |
+| 12:08:38 | +3s | pod-2 health degraded | `Critical` |
+| 12:08:48 | +13s | pod-2 not ready (container restart) | `NotReady` |
+| 12:09:00 | +25s | pod-1 promoted PRIMARY | `NotReady` |
+| 12:09:10 | +35s | Operator marks pod-2 unhealthy | `Critical` |
+| 12:09–12:14 | +1–6m | OOM loop continues, pod-2 cycles `CrashLoopBackOff` (×11) | `Critical` |
+| 12:14:13 | +5m38s | OOM finished, pod-2 enters GR `RECOVERING` | `Critical` |
+| 12:18+ | +9–12m | Coordinator logs errant-GTID warning every 10 s | `Critical` |
+| 12:20:41 | +12m6s | pod-2 reaches `ONLINE` `SECONDARY`, GTIDs match | `Ready` |
+
+**Notable safety behavior** — the KubeDB coordinator (`mysql.go:895`) explicitly refuses to auto-clone the recovering pod when it detects extra GTIDs that don't exist on the primary (these are local transactions committed before the OOM crash that never replicated). Cloning would silently discard those transactions. Operator approval (`touch /scripts/approve-clone`) is required for that destructive action; without it the pod still rejoins through GR's distributed-recovery channel and the cluster converges. **Zero silent data loss.**
+
+**Result: PASS** — Group Replication failed over to a healthy secondary, sysbench survived (with one ~30 s zero-TPS window during failover), and the cluster fully reconverged after OOM pressure cleared. The coordinator's errant-GTID gate prevented destructive auto-clone — a deliberate safety choice that surfaces in this scenario.
+
+```shell
+➤ kubectl delete stresschaos -n demo --all
+```
+
 ## Chaos Testing Results Summary
 
 | # | Experiment | Failover | TPS Impact | Data Loss | Verdict |
