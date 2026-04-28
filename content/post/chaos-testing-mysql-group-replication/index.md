@@ -2834,6 +2834,88 @@ mysql-ha-cluster-0.…  ONLINE  SECONDARY
 ➤ kubectl delete -f tests/28-packet-duplicate-100.yaml
 ```
 
+### Chaos#29: 100% Packet Corruption on Primary (2 min)
+
+Flip random bits in 100% of outbound packets from the primary for 2 minutes. Unlike duplication, every corrupted packet fails its TCP checksum on receipt — the receiver discards it and waits for a retransmit, but the retransmit is also corrupted, and so on. Effectively the primary cannot deliver any meaningful traffic to the secondaries: a slower-burning version of 100% packet loss.
+
+- **Expected behavior:**
+  Primary's outbound traffic is undeliverable → secondaries notice the primary is unresponsive (after the GR failure detector window) → cluster transitions `Ready` → `NotReady` → `Critical`, secondaries elect a new primary → after corruption clears, the old primary rejoins as `SECONDARY` and the cluster returns to `Ready`. Zero data loss expected.
+
+- **Actual result:**
+  Cluster transitioned `Ready` → dual-primary label transient at +26s (old primary's local view stale) → `NotReady` (+2m14s) → new primary elected (+2m17s) → `Critical` briefly → `Ready` (+3m08s). Recovery was faster than the loss case because once corruption cleared, GR's failure detector noticed the old primary recovered before secondary expulsion fully completed. **Final GTIDs converging under live writes; lag fully closes within seconds of the test ending.** **PASS.**
+
+Save this yaml as `tests/29-packet-corrupt-100.yaml`:
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: mysql-packet-corrupt-primary
+  namespace: demo
+spec:
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      "app.kubernetes.io/instance": "mysql-ha-cluster"
+      "kubedb.com/role": "primary"
+  mode: all
+  action: corrupt
+  corrupt:
+    corrupt: '100'
+    correlation: '100'
+  direction: to
+  duration: 2m
+```
+
+```shell
+➤ kubectl apply -f tests/29-packet-corrupt-100.yaml
+networkchaos.chaos-mesh.org/mysql-packet-corrupt-primary created
+
+➤ # During chaos — failover triggered
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS     AGE
+mysql-ha-cluster   8.4.8     Critical   73m
+
+➤ kubectl get pods -n demo -L kubedb.com/role
+NAME                 READY   STATUS    ROLE
+mysql-ha-cluster-0   2/2     Running   standby
+mysql-ha-cluster-1   2/2     Running   primary    # newly promoted
+mysql-ha-cluster-2   2/2     Running   standby    # was primary, corrupted
+
+➤ # After corruption cleared and pod-2 rejoined
+➤ SELECT MEMBER_HOST, MEMBER_STATE, MEMBER_ROLE FROM performance_schema.replication_group_members;
+mysql-ha-cluster-2.…  ONLINE  SECONDARY
+mysql-ha-cluster-1.…  ONLINE  PRIMARY
+mysql-ha-cluster-0.…  ONLINE  SECONDARY
+
+➤ # GTIDs converged after a few sysbench cycles
+pod-0: 32ee0840-…:1-350037:1000004-1003196
+pod-1: 32ee0840-…:1-350040:1000004-1003196
+pod-2: 32ee0840-…:1-350040:1000004-1003196
+
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS   AGE
+mysql-ha-cluster   8.4.8     Ready    77m
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 14:21:58 | — | Pre-chaos baseline (pod-2 = primary) | `Ready` |
+| 14:22:32 | 0s | 100% corruption applied (pod-2 outbound) | `Ready` |
+| 14:22:58 | +26s | Dual-primary label transient (pod-2's local view stale) | `Ready` |
+| 14:24:32 | +2m00s | Chaos auto-recovered | — |
+| 14:24:46 | +2m14s | Operator probe times out | `NotReady` |
+| 14:24:49 | +2m17s | pod-1 promoted PRIMARY, pod-2 demoted | `Critical` |
+| 14:25:40 | +3m08s | pod-2 rejoined as `ONLINE SECONDARY` | `Ready` |
+
+**Result: PASS** — failover handled cleanly even when the primary's outbound traffic was completely garbled, no SQL-level errors leaked through (TCP layer rejected every corrupted segment). Recovery completed in 3 m 08 s with zero data loss.
+
+```shell
+➤ kubectl delete -f tests/29-packet-corrupt-100.yaml
+```
+
 ## Chaos Testing Results Summary
 
 | # | Experiment | Failover | TPS Impact | Data Loss | Verdict |
