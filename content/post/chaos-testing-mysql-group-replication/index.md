@@ -2759,6 +2759,81 @@ mysql-ha-cluster   8.4.8     Ready    14m
 ➤ kubectl delete -f tests/27-packet-loss-100.yaml
 ```
 
+### Chaos#28: 100% Packet Duplication on Primary (2 min)
+
+Make every outbound packet from the primary go out twice for 2 minutes. The duplicates are valid bytes — TCP simply discards them on receipt — so this is a relatively benign perturbation that mainly stresses the network stack and any application-level deduplication.
+
+- **Expected behavior:**
+  TCP-level duplicate detection silently discards the extra packets; GR Paxos carries on normally. Cluster should stay `Ready`, with at most a small TPS dip from the doubled outbound bandwidth.
+
+- **Actual result:**
+  Cluster status never changed — stayed `Ready` for the entire 2-minute window. Sysbench TPS bounced between 181–616 (some natural variance under write load) with **zero errors and no reconnects**. **PASS.**
+
+Save this yaml as `tests/28-packet-duplicate-100.yaml`:
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: mysql-packet-duplicate-primary
+  namespace: demo
+spec:
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      "app.kubernetes.io/instance": "mysql-ha-cluster"
+      "kubedb.com/role": "primary"
+  mode: all
+  action: duplicate
+  duplicate:
+    duplicate: '100'
+    correlation: '100'
+  direction: to
+  duration: 2m
+```
+
+```shell
+➤ kubectl apply -f tests/28-packet-duplicate-100.yaml
+networkchaos.chaos-mesh.org/mysql-packet-duplicate-primary created
+
+➤ # During chaos — cluster never leaves Ready
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS   AGE
+mysql-ha-cluster   8.4.8     Ready    67m
+
+➤ kubectl get pods -n demo -L kubedb.com/role
+NAME                 READY   STATUS    ROLE
+mysql-ha-cluster-0   2/2     Running   standby
+mysql-ha-cluster-1   2/2     Running   standby
+mysql-ha-cluster-2   2/2     Running   primary
+
+➤ # sysbench during duplication — minor TPS variance, no errors
+[190s ] thds: 8 tps: 597.01 lat (ms,95%): 42.61 err/s: 0.00 reconn/s: 0.00
+[210s ] thds: 8 tps: 616.10 lat (ms,95%): 41.10 err/s: 0.00 reconn/s: 0.00
+[220s ] thds: 8 tps: 181.00 lat (ms,95%): 114.72 err/s: 0.00 reconn/s: 0.00
+[260s ] thds: 8 tps: 393.70 lat (ms,95%):  86.00 err/s: 0.00 reconn/s: 0.00
+
+➤ SELECT MEMBER_HOST, MEMBER_STATE, MEMBER_ROLE FROM performance_schema.replication_group_members;
+mysql-ha-cluster-2.…  ONLINE  PRIMARY
+mysql-ha-cluster-1.…  ONLINE  SECONDARY
+mysql-ha-cluster-0.…  ONLINE  SECONDARY
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 14:16:46 | — | Pre-chaos baseline (pod-2 = primary) | `Ready` |
+| 14:16:54 | 0s | Duplicate chaos applied | `Ready` |
+| 14:18:54 | +2m00s | Chaos auto-recovered | `Ready` |
+| 14:21:15 | +4m21s | Confirmed steady state | `Ready` |
+
+**Result: PASS** — cluster fully tolerated 100% packet duplication, zero status changes, zero errors. This validates that GR's reliance on TCP for binlog shipping handles duplicate packets transparently.
+
+```shell
+➤ kubectl delete -f tests/28-packet-duplicate-100.yaml
+```
+
 ## Chaos Testing Results Summary
 
 | # | Experiment | Failover | TPS Impact | Data Loss | Verdict |
