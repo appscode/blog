@@ -336,7 +336,7 @@ spec:
   Primary pod is killed → cluster transitions `Ready` → `Critical` (1 replica missing after failover to a standby) → when the killed pod rejoins as standby, cluster returns to `Ready`. Zero data loss, GTIDs and checksums consistent across all 3 nodes.
 
 - **Actual result:**
-  Pod-0 killed → pod-2 elected as new primary in ~5 seconds → pod-0 rejoined as standby ~30s later → cluster returned to `Ready`. All 3 members `ONLINE` in GR, GTIDs match across nodes, checksums match on every sysbench table. **PASS.**
+  Pod-0 killed → pod-2 elected as new primary in ~1 seconds → pod-0 rejoined as standby ~30s later → cluster returned to `Ready`. All 3 members `ONLINE` in GR, GTIDs match across nodes, checksums match on every sysbench table. **PASS.**
 
 Before running, let's see who is the primary:
 
@@ -2206,6 +2206,89 @@ pod-2: 65a93aae-...:1-200129:1000001-1000236
 
 ```shell
 ➤ kubectl delete -f tests/21-bandwidth-throttle.yaml
+```
+
+### Chaos#22: Pod Failure on Primary (5 min)
+
+Inject a 5-minute `pod-failure` fault into the current primary pod — Chaos Mesh keeps the container in a failed state for the entire duration before clearing the fault. Unlike `pod-kill` (Chaos#1), the pod is not deleted and rescheduled — it stays in place but its container is unavailable, exercising long-duration primary unreachability and the operator's clone-vs-incremental rejoin logic.
+
+- **Expected behavior:**
+  Primary container becomes unavailable → cluster transitions `Ready` → `NotReady` → Group Replication elects a new primary and the operator marks the failed pod unhealthy → state moves to `Critical`. When the 5-minute fault clears, the old primary container restarts, rejoins as `SECONDARY`, and the cluster returns to `Ready`. Zero data loss.
+
+- **Actual result:**
+  Failover completed in 8 s. Cluster transitioned `Ready` → `NotReady` (+5s) → `Critical` (+21s). Old primary auto-recovered after the 5-min duration and rejoined via incremental recovery; cluster reached `Ready` ~9–13 min after chaos cleared. Zero errors after sysbench reconnect, zero data loss, zero errant GTIDs. **PASS.**
+
+Save this yaml as `tests/22-pod-failure.yaml`:
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: mysql-pod-failure-primary
+  namespace: demo
+spec:
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      "app.kubernetes.io/instance": "mysql-ha-cluster"
+      "kubedb.com/role": "primary"
+  mode: all
+  action: pod-failure
+  duration: 5m
+```
+
+```shell
+➤ kubectl apply -f tests/22-pod-failure.yaml
+podchaos.chaos-mesh.org/mysql-pod-failure-primary created
+
+➤ # During chaos — pod-1 promoted, pod-2 stuck failed
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS     AGE
+mysql-ha-cluster   8.4.8     Critical   16h
+
+➤ kubectl get pods -n demo -L kubedb.com/role
+NAME                 READY   STATUS    RESTARTS   ROLE
+mysql-ha-cluster-0   2/2     Running   2          standby
+mysql-ha-cluster-1   2/2     Running   2          primary    # promoted (was standby)
+mysql-ha-cluster-2   2/2     Running   4          standby    # under chaos
+
+➤ # sysbench during failover
+[ 10s ] thds: 8 tps: 1012.65 qps: 6079.89 lat (ms,95%): 16.41 err/s: 0.00
+[ 20s ] thds: 8 tps:  577.40 qps: 3464.41 lat (ms,95%): 37.56 err/s: 0.00
+[ 30s ] thds: 8 tps:  399.20 qps: 2394.80 lat (ms,95%): 45.79 err/s: 0.00
+[ 40s ] thds: 8 tps:  314.70 qps: 1888.58 lat (ms,95%): 64.47 err/s: 0.00
+[ 60s ] thds: 8 tps: 1007.99 qps: 6048.34 lat (ms,95%): 21.11 err/s: 0.00
+
+➤ # After 5-min duration — chaos auto-recovered, pod-2 rejoins
+➤ SELECT MEMBER_HOST, MEMBER_STATE, MEMBER_ROLE FROM performance_schema.replication_group_members;
+mysql-ha-cluster-2.…  ONLINE  SECONDARY
+mysql-ha-cluster-1.…  ONLINE  PRIMARY
+mysql-ha-cluster-0.…  ONLINE  SECONDARY
+
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS   AGE
+mysql-ha-cluster   8.4.8     Ready    16h
+
+➤ SELECT COUNT(*) FROM sbtest.sbtest1;   # 100000 — intact
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 11:39:00 | — | Pre-chaos baseline (pod-2 = primary, all 3 ONLINE) | `Ready` |
+| 11:39:21 | 0s | `PodChaos` applied (pod-2 targeted) | `Ready` |
+| 11:39:26 | +5s | Primary unreachable detected | `NotReady` |
+| 11:39:29 | +8s | Group Replication promotes pod-1 → PRIMARY | `NotReady` |
+| 11:39:42 | +21s | Operator marks pod-2 unhealthy | `Critical` |
+| 11:44:21 | +5m00s | Chaos auto-recovered, pod-2 container restarts | `Critical` |
+| 11:45:40 | +6m19s | pod-2 in `RECOVERING` (incremental catch-up) | `Critical` |
+| ~11:48–52 | ~+9–13m | pod-2 reaches `ONLINE` `SECONDARY` | `Ready` |
+
+**Result: PASS** — Group Replication failed over in 8 s, sysbench recovered to ~1000 TPS on the new primary, and the chaos-impacted pod rejoined the group automatically once the fault expired. Zero data loss, zero errant GTIDs across all 3 nodes.
+
+```shell
+➤ kubectl delete -f tests/22-pod-failure.yaml
 ```
 
 ## Chaos Testing Results Summary
