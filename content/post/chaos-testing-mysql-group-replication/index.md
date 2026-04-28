@@ -2497,6 +2497,93 @@ mysql-ha-cluster   8.4.8     Ready    17h
 ➤ kubectl delete -f tests/24-network-partition-bidirectional.yaml
 ```
 
+### Chaos#25: Extreme Bandwidth Throttle on Primary (1 bps, 2 min)
+
+Push the bandwidth throttle to its absolute limit — 1 bit per second on the primary's outbound traffic for 2 minutes. At this rate Group Replication can transmit no useful data, effectively isolating the primary from its quorum partners while leaving the pod itself responsive on the local socket. This stresses how the cluster behaves when a primary is "alive but useless."
+
+- **Expected behavior:**
+  Primary is unable to ship binlog events or send GR heartbeats → cluster transitions `Ready` → `Critical` once the secondaries notice the primary is unresponsive → the secondaries form a quorum and elect a new primary → state may briefly become `NotReady` during the role flip → after the throttle clears, the old primary rejoins as `SECONDARY` and the cluster returns to `Ready`. Zero data loss.
+
+- **Actual result:**
+  Cluster transitioned `Ready` → `Critical` (+44s) → `NotReady` (+48s) → back to `Critical`. Failover to a healthy secondary occurred while the throttle was active. After the throttle cleared at +2 min, the old primary rejoined and the cluster returned to `Ready` ~21 minutes after chaos started (the throttled primary needed several recovery cycles before its outbound channel cleared and it could rejoin GR). **Final GTIDs match exactly on all 3 nodes (`1-562731`).** **PASS.**
+
+Save this yaml as `tests/25-bandwidth-1bps.yaml`:
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: mysql-bandwidth-1bps-primary
+  namespace: demo
+spec:
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      "app.kubernetes.io/instance": "mysql-ha-cluster"
+      "kubedb.com/role": "primary"
+  action: bandwidth
+  mode: all
+  bandwidth:
+    rate: '1bps'
+    limit: 20971520
+    buffer: 10000
+  duration: 2m
+```
+
+```shell
+➤ kubectl apply -f tests/25-bandwidth-1bps.yaml
+networkchaos.chaos-mesh.org/mysql-bandwidth-1bps-primary created
+
+➤ # During chaos — failover triggered, old primary cannot communicate
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS     AGE
+mysql-ha-cluster   8.4.8     Critical   17h
+
+➤ # sysbench survived with brief latency spikes (longest single COMMIT > 230 s
+➤ # while the in-flight transaction waited for the primary to time out)
+[ 60s ] thds: 8 tps:  840.30 lat (ms,95%):  20.74 err/s: 0.00
+[ 90s ] thds: 8 tps:    0.00 lat (ms,95%):   0.00 err/s: 0.00
+[120s ] thds: 8 tps:  120.40 lat (ms,95%):  77.19 err/s: 0.00 reconn/s: 0.20
+[150s ] thds: 8 tps:  802.10 lat (ms,95%):  21.89 err/s: 0.00
+
+➤ # After throttle cleared and old primary rejoined
+➤ SELECT MEMBER_HOST, MEMBER_STATE, MEMBER_ROLE FROM performance_schema.replication_group_members;
+mysql-ha-cluster-2.…  ONLINE  SECONDARY    # was primary, throttled
+mysql-ha-cluster-1.…  ONLINE  PRIMARY      # promoted
+mysql-ha-cluster-0.…  ONLINE  SECONDARY
+
+➤ # GTIDs match
+pod-0: b5a48606-…:1-562731:1000001-1541180
+pod-1: b5a48606-…:1-562731:1000001-1541180
+pod-2: b5a48606-…:1-562731:1000001-1541180
+
+➤ kubectl get mysql -n demo
+NAME               VERSION   STATUS   AGE
+mysql-ha-cluster   8.4.8     Ready    17h
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 12:36:56 | — | Pre-chaos baseline (pod-2 = primary) | `Ready` |
+| 12:39:52 | 0s | Bandwidth chaos applied (1 bps on pod-2) | `Ready` |
+| 12:40:21 | +29s | Old primary still labelled primary in its isolated view | `Ready` |
+| 12:40:36 | +44s | Operator detects primary unresponsive | `Critical` |
+| 12:40:40 | +48s | Role rebalancing | `NotReady` |
+| 12:40:55 | +1m03s | New primary (pod-1) holds; old primary still labelled primary locally | `Critical` |
+| 12:41:52 | +2m00s | Chaos auto-recovered, throttle cleared | `Critical` |
+| 12:41:55 | +2m03s | Old primary's local view catches up — label corrected to standby | `Critical` |
+| ~13:00 | +20m | Old primary fully rejoined as `ONLINE SECONDARY` | `Ready` |
+
+**Note on "two primary labels"** — for the ~95 s window between chaos applied and the old primary's local view converging, both the new primary (pod-1) and the throttled pod (pod-2) reported `kubedb.com/role=primary` because each one still saw itself as PRIMARY in its own local copy of `performance_schema.replication_group_members`. Group Replication itself remained Single-Primary (only the majority partition could commit) — this label transient is a side effect of each pod independently reading its local GR view during a network isolation and resolves once the isolated pod's view converges.
+
+**Result: PASS** — failover completed even under the harshest bandwidth condition, no writes accepted on the throttled side (no split-brain at the data layer), and the cluster fully reconverged after the throttle cleared. Zero data loss.
+
+```shell
+➤ kubectl delete -f tests/25-bandwidth-1bps.yaml
+```
+
 ## Chaos Testing Results Summary
 
 | # | Experiment | Failover | TPS Impact | Data Loss | Verdict |
