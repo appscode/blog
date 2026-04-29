@@ -246,25 +246,37 @@ Here:
 
 
 
-
-
-a;ldfja;ldfa;lsdkfas;ldfjasl
-START FROM HERE. 
-
-
-
-
 ### **Verifying Operator Logs**
 
 We can verify that the pods are aware of their shard assignments:
-
 ```bash
 $ kubectl logs -n kubedb kubedb-kubedb-autoscaler-0 | grep -i ms-auto-scaler-2
 "msg"="Reconcile successful" "MSSQLServerAutoscaler"={"name":"ms-auto-scaler-2","namespace":"demo"} "controller"="mssqlserverautoscaler" "controllerGroup"="autoscaling.kubedb.com" "controllerKind"="MSSQLServerAutoscaler" "name"="ms-auto-scaler-2" "namespace"="demo"
 
 $ kubectl logs -n kubedb kubedb-kubedb-autoscaler-1 | grep -i third-mssqlserver-autoscaler
+"msg"="Reconcile successful" "MSSQLServerAutoscaler"={"name":"third-mssqlserver-autoscaler","namespace":"demo"} "controller"="mssqlserverautoscaler" "controllerGroup"="autoscaling.kubedb.com" "controllerKind"="MSSQLServerAutoscaler" "name"="third-mssqlserver-autoscaler" "namespace"="demo" 
 
+$ kubectl logs -n kubedb kubedb-kubedb-autoscaler-2 | grep -i first-mssql-autoscaler-first
+"msg"="Reconcile successful" "MSSQLServerAutoscaler"={"name":"first-mssql-autoscaler-first","namespace":"demo"} "controller"="mssqlserverautoscaler" "controllerGroup"="autoscaling.kubedb.com" "controllerKind"="MSSQLServerAutoscaler" "name"="first-mssql-autoscaler-first" "namespace"="demo"
+
+
+$ kubectl logs -f -n kubedb kubedb-kubedb-autoscaler-0 | grep -i "Recommender running with"
+I0429 13:14:32.945873       1 controller.go:134] Recommender running with shard filtering: shard.operator.k8s.appscode.com/kubedb-autoscaler=0
+
+
+$ kubectl logs -f -n kubedb kubedb-kubedb-autoscaler-1 | grep -i "Recommender running with"
+I0429 13:19:07.162001       1 controller.go:134] Recommender running with shard filtering: shard.operator.k8s.appscode.com/kubedb-autoscaler=1
+
+$ kubectl logs -f -n kubedb kubedb-kubedb-autoscaler-2 | grep -i "Recommender running with"
+I0429 13:16:40.158331       1 controller.go:134] Recommender running with shard filtering: shard.operator.k8s.appscode.com/kubedb-autoscaler=2
 ```
+
+
+
+START FROM HERE 
+
+
+
 
 ---
 
