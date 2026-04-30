@@ -1006,10 +1006,9 @@ podchaos.chaos-mesh.org "pg-primary-pod-failure" deleted
 
 ###  Chaos#5: Network Partition Primary Pod
 
-> **NOTE**: The only possible way to avoid data loss in the network partition case is to use synchronous replication. You can do this by changing `db.spec.streamingMode: Synchronous`. In this case, there won't be any data loss.
+> **NOTE**: In a Network Partition, no vendor can provide both **High Availability** and **Consistency** together. Same for us. If you want **HA**, you can't expect **Data Integrity**. But if you want **Data Integrity**, we can provide it in both **Asynchronous** and **Synchronous** mode.
 
-> **Caution**: This experiment can cause data loss if you are using asynchronous replication. So use this experiment with caution and only on non-production environments.
-
+> **Caution**: This experiment can cause data loss if you are using asynchronous replication as we are focusing on **HA** here not in **Consistency**. So use this experiment with caution and only on non-production environments.
 
 In this experiment, we simulate a network partition affecting the primary pod in a PostgreSQL cluster.
 
@@ -1042,7 +1041,7 @@ Partition Check
 | Partition B  | Nodes: 2 |  Has quorum |
 ```
 
-We will detect this situation and will shutdown the primary in the minority partition to avoid data loss as much as possible.
+We will detect this situation and will shut down the primary in the minority partition to avoid data loss as much as possible. As we are preferring `HA` here, we will see a failover despite data loss probability.
 
 ```shell
 Safe Outcome
@@ -1383,7 +1382,7 @@ Now apply the experiment again.
 ➤ kubectl apply -f tests/05-network-partition.yaml
 networkchaos.chaos-mesh.org/pg-primary-network-partition created
 ```
-You should experience the same scenario as before, but this time there won't be any data loss as we are using synchronous replication.
+You should experience the same scenario as before, but this time **there won't be any data loss as we are using synchronous replication**.
 
 
 Let's wait and verify the logs from the load test job once the test is completed.
@@ -1442,7 +1441,7 @@ I0406 07:45:57.178359       1 load_generator_v2.go:556] totalRows in LoadGenerat
 
 ```
 
-See this time there is `no data loss`.
+**See this time there is no data loss**.
 
 Clean up the chaos experiment.
 
@@ -1626,15 +1625,15 @@ Performance Summary:
 Checking for Data Loss...
 =================================================================
 I0406 11:14:41.761915       1 load_generator_v2.go:555] Total records in table: 1014600
-I0406 11:14:41.761938       1 load_generator_v2.go:556] totalRows in LoadGenerator: 1010600
+I0406 11:14:41.761938       1 load_generator_v2.go:556] totalRows in LoadGenerator: 1014600
 
 =================================================================
 Data Loss Report:
 -----------------------------------------------------------------
   Total Records Inserted: 1014600
-  Records Found in DB: 1018600
-  Records Lost: -4000
-  Data Loss Percentage: -0.39%
+  Records Found in DB: 1014600
+  Records Lost: 0
+  Data Loss Percentage: 0%
 =================================================================
 
  No data loss detected - all inserted records are present in database
@@ -1642,8 +1641,6 @@ Data Loss Report:
 ```
 
 Cleanup the chaos experiment.
-
-Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/06-bandwidth-limit.yaml
@@ -3606,7 +3603,7 @@ iochaos.chaos-mesh.org "pg-primary-io-mistake" deleted
 ### IO Chaos Tests Without Force Failover
 
 We have seen data losses in chaos tests with `forceFailoverAcceptingDataLossAfter: 30s` api, so we will now try the same chaos,
-but without this api.
+but without this api so that we don't incur data loss. In this case, we will see the database is in `NotReady` state during the chaos, but it will be back to `Ready` state after the chaos is recovered.
 
 Now save this yaml at `setup/pg-ha-cluster.yaml`
 ```yaml
@@ -4094,24 +4091,24 @@ Below is a comprehensive summary of all chaos engineering experiments conducted 
 
 > Note: You might see different results if you have tested under no read/write load.
 
-| # | Experiment | Failure Mode | Failover Time | Data Loss | Downtime | Notes |
-|---|---|---|---|---|---|---|
-| 1 | Kill Primary Pod | Pod termination | **With**: ~8s  **Without**: ~8s | **With**:  0 / **Without**:  0 | **With**: Minimal / **Without**: Minimal | Immediate failover works in both cases |
-| 2 | OOMKill Primary Pod | Memory exhaustion | **With**: ~3s / **Without**: ~3s | **With**:  0 / **Without**:  0 | **With**: Minimal / **Without**: Minimal | Rapid failover, 4.1M rows inserted |
-| 3 | Kill Postgres Process | Process crash | **With**: ~30s / **Without**: ~30s+ | **With**:  0 / **Without**:  0 | **With**: ~30s / **Without**: 40s | Blocks failover to prevent data loss in both cases |
-| 4 | Primary Pod Failure | Network isolation | **With**: ~10s / **Without**: ~10s | **With**:  0 / **Without**:  0 | **With**: Minimal / **Without**: Minimal | Split-brain handled well |
-| 5 | Network Partition | Complete isolation | **With**: ~30s / **Without**: ~30s+ | **With**: ⚠️ Possible / **Without**: ⚠️ Possible | **With**: Brief / **Without**: Extended | Split-brain scenario, data safety challenge in both |
-| 6 | Bandwidth Limit (1 Mbps) | Slow network | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: 0s / **Without**: 0s | 2.3M rows inserted, high latency tolerated |
-| 7 | Network Delay (500ms) | High latency | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: 0s / **Without**: 0s | 2.5M rows inserted, consistency maintained |
-| 8 | Network Loss (100%) | Packet drop | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: 0s / **Without**: 0s | 2.3M rows inserted, no data loss |
-| 9 | Network Duplicate (50%) | Redundant traffic | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: 0s / **Without**: 0s | 2.2M rows inserted, gracefully handled |
-| 10 | Network Corruption (50%) | Corrupted packets | **With**: ~15s / **Without**: ~15s | **With**:  0 / **Without**:  0 | **With**: ~30s / **Without**: ~30s | 2.1M rows inserted, checksums fail |
-| 11 | Time Offset & DNS Error | System time shift | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: 0s / **Without**: 0s | 2.0M rows inserted |
+| # | Experiment | Failure Mode | Failover Time | Data Loss                                     | Downtime | Notes |
+|---|---|---|---|-----------------------------------------------|---|---|
+| 1 | Kill Primary Pod | Pod termination | **With**: ~8s  **Without**: ~8s | **With**:  0 / **Without**:  0                | **With**: Minimal / **Without**: Minimal | Immediate failover works in both cases |
+| 2 | OOMKill Primary Pod | Memory exhaustion | **With**: ~3s / **Without**: ~3s | **With**:  0 / **Without**:  0                | **With**: Minimal / **Without**: Minimal | Rapid failover, 4.1M rows inserted |
+| 3 | Kill Postgres Process | Process crash | **With**: ~30s / **Without**: ~30s+ | **With**:  0 / **Without**:  0                | **With**: ~30s / **Without**: 40s | Blocks failover to prevent data loss in both cases |
+| 4 | Primary Pod Failure | Network isolation | **With**: ~10s / **Without**: ~10s | **With**:  0 / **Without**:  0                | **With**: Minimal / **Without**: Minimal | Split-brain handled well |
+| 5 | Network Partition | Complete isolation | **With**: ~30s / **Without**: ~30s+ | **With**: ⚠️ Possible / **Without**: 0        | **With**: Brief / **Without**: Extended | Split-brain scenario, data safety challenge in both |
+| 6 | Bandwidth Limit (1 Mbps) | Slow network | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0                | **With**: 0s / **Without**: 0s | 2.3M rows inserted, high latency tolerated |
+| 7 | Network Delay (500ms) | High latency | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0                | **With**: 0s / **Without**: 0s | 2.5M rows inserted, consistency maintained |
+| 8 | Network Loss (100%) | Packet drop | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0                | **With**: 0s / **Without**: 0s | 2.3M rows inserted, no data loss |
+| 9 | Network Duplicate (50%) | Redundant traffic | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0                | **With**: 0s / **Without**: 0s | 2.2M rows inserted, gracefully handled |
+| 10 | Network Corruption (50%) | Corrupted packets | **With**: ~15s / **Without**: ~15s | **With**:  0 / **Without**:  0                | **With**: ~30s / **Without**: ~30s | 2.1M rows inserted, checksums fail |
+| 11 | Time Offset & DNS Error | System time shift | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0                | **With**: 0s / **Without**: 0s | 2.0M rows inserted |
 | 12 | IO Latency | Disk I/O delay | **With**: ~30s / **Without**: No failover | **With**: ⚠️ ~1 insert loss / **Without**:  0 | **With**: Brief / **Without**: Extended | Critical difference: force failover causes ~1 insert loss |
-| 13 | IO Fault (50%) | I/O errors | **With**: ~30s / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: Brief / **Without**: Extended | 2.6M rows inserted, 25GB transferred |
-| 14 | IO Attribute Override | Filesystem attr change | **With**: ~30s / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: Brief / **Without**: Extended | 2.5M rows inserted, 23GB transferred |
-| 15 | IO Mistake | Random I/O faults | **With**: ~30s / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: Brief / **Without**: Extended | 2.5M rows inserted, 23GB transferred |
-| 16 | Node Reboot (All Pods) | Complete node failure | **With**: ~30s / **Without**: ~30s+ | **With**:  0 / **Without**:  0 | **With**: Extended / **Without**: Extended | 3.2M rows inserted, full cluster restart |
+| 13 | IO Fault (50%) | I/O errors | **With**: ~30s / **Without**: No failover | **With**:  0 / **Without**:  0                | **With**: Brief / **Without**: Extended | 2.6M rows inserted, 25GB transferred |
+| 14 | IO Attribute Override | Filesystem attr change | **With**: ~30s / **Without**: No failover | **With**:  0 / **Without**:  0                | **With**: Brief / **Without**: Extended | 2.5M rows inserted, 23GB transferred |
+| 15 | IO Mistake | Random I/O faults | **With**: ~30s / **Without**: No failover | **With**:  0 / **Without**:  0                | **With**: Brief / **Without**: Extended | 2.5M rows inserted, 23GB transferred |
+| 16 | Node Reboot (All Pods) | Complete node failure | **With**: ~30s / **Without**: ~30s+ | **With**:  0 / **Without**:  0                | **With**: Extended / **Without**: Extended | 3.2M rows inserted, full cluster restart |
 
 > Note: `Extended` means as long as the chaos runs.
 
@@ -4119,12 +4116,12 @@ Below is a comprehensive summary of all chaos engineering experiments conducted 
 
 #### Replication Strategy Impact
 
-| Scenario | With Force Failover (30s) | Without Force Failover | Winner |
-|---|---|---|---|
-| **Availability** | High - immediate failover | Lower - waits for consistency | 
-| **Data Loss Risk** | Low-Medium |  Zero Risk 
-| **IO Chaos Tests** | ⚠️ 1 insert lost (rare) |  0 insert lost | 
-| **Failover Time** | 30 seconds or less | Variable (extended if unsafe) |
+| Scenario | With Force Failover (30s)  | Without Force Failover | Winner |
+|---|----------------------------|---|---|
+| **Availability** | High - immediate failover  | Lower - waits for consistency | 
+| **Data Loss Risk** | Low                        |  Zero Risk 
+| **IO Chaos Tests** | ⚠️ 1 insert lost (rare)    |  0 insert lost | 
+| **Failover Time** | 30 seconds or less         | Variable (extended if unsafe) |
 | **Use Case** | High-availability priority | Data integrity priority | 
 
 #### Chaos Test Categories
@@ -4152,23 +4149,6 @@ Below is a comprehensive summary of all chaos engineering experiments conducted 
 - **Data Loss**: Zero across all tests
 - **Downtime**: Extended (until chaos clears or manual intervention)
 - **Trade-off**: Prioritizes data safety over availability
-
-### Replication Configuration Recommendations
-
-**Choose WITH `forceFailoverAcceptingDataLossAfter: 30s` if:**
-- Your application requires high availability
-- You can tolerate rare events of < 0.01% data loss
-- Your database serves real-time or customer-facing services
-
-**Choose WITHOUT `forceFailoverAcceptingDataLossAfter` if:**
-- Data integrity is fine, but not critical
-- You can tolerate extended downtime during node failures
-- Your database serves compliance-sensitive operations
-
-**Choose WITHOUT `streamingMode: Synchronous` if:**
-- Data integrity is absolutely critical
-- You want high availability
-- Your database serves compliance-sensitive operations
 
 ### Performance Metrics Summary in chaos cases
 
