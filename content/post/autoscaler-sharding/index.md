@@ -314,10 +314,10 @@ Supported databases include, but are not limited to:
 
 ## **Summary**
 
-With Autoscaler Sharding:
-✅ **Horizontal scalability** is now possible for autoscaler operator with continuous database recommendation workloads.
-✅ **Better performance** as each pod manages fewer autoscalers.
-✅ **No changes** required to your existing Autoscaler CRs.
+With Autoscaler Sharding:     
+✅ **Horizontal scalability** is now possible for autoscaler operator with continuous database recommendation workloads.   
+✅ **Better performance** as each pod manages fewer autoscalers.   
+✅ **No changes** required to your existing Autoscaler CRs.  
 
 ## Support
 
