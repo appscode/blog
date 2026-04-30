@@ -271,13 +271,6 @@ $ kubectl logs -f -n kubedb kubedb-kubedb-autoscaler-2 | grep -i "Recommender ru
 I0429 13:16:40.158331       1 controller.go:134] Recommender running with shard filtering: shard.operator.k8s.appscode.com/kubedb-autoscaler=2
 ```
 
-
-
-START FROM HERE 
-
-
-
-
 ---
 
 ## **Under the Hood: Making the Recommender Shard-Aware**
@@ -297,16 +290,8 @@ When `kubedb-kubedb-autoscaler-1` runs its periodic loop, the API server nativel
 
 ## **Scaling Operations and Consistent Hashing**
 
-What happens if 3 replicas aren't enough and you scale to 5?
-
-```bash
-kubectl scale StatefulSet kubedb-kubedb-autoscaler -n kubedb --replicas=5
-```
-
-1. Pods `...-autoscaler-3` and `...-autoscaler-4` start.
-2. The Shard Manager detects the new pods.
-3. Because we use **consistent hashing**, only ~20% of the autoscalers are relabeled and moved to the new pods. The remaining 80% stay exactly where they are.
-4. Minimal resource movement ensures that metrics history and internal caches remain warm, avoiding sudden API traffic spikes.
+What happens if 3 replicas aren't enough, and you scale to 5?
+The Shard Manager detects the new pods, Because we use **consistent hashing**, only ~40% of the autoscalers are relabeled and moved to the new pods. The remaining 60% stay exactly where they are. Minimal resource movement ensures that metrics history and internal caches remain warm, avoiding sudden API traffic spikes.
 
 ---
 
@@ -330,9 +315,8 @@ Supported databases include, but are not limited to:
 ## **Summary**
 
 With Autoscaler Sharding:
-✅ **Horizontal scalability** is now possible for continuous database recommendation workloads.
+✅ **Horizontal scalability** is now possible for autoscaler operator with continuous database recommendation workloads.
 ✅ **Better performance** as each pod manages fewer autoscalers.
-✅ **Zero downtime** with graceful handoffs during scaling operations.
 ✅ **No changes** required to your existing Autoscaler CRs.
 
 ## Support
