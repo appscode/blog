@@ -1041,7 +1041,7 @@ Partition Check
 | Partition B  | Nodes: 2 |  Has quorum |
 ```
 
-We will detect this situation and will shutdown the primary in the minority partition to avoid data loss as much as possibl. As we are preferring `HA` here, we will see a failover despite data loss probability.
+We will detect this situation and will shut down the primary in the minority partition to avoid data loss as much as possible. As we are preferring `HA` here, we will see a failover despite data loss probability.
 
 ```shell
 Safe Outcome
