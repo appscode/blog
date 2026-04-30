@@ -25,7 +25,7 @@ tags:
 - scaling
 ---
 
-# **Sharding KubeDB Autoscaler**
+# **Sharding KubeDB Autoscaler** (Introduced in `2026.4.27`)
 
 ## **Use Case**
 
