@@ -284,7 +284,7 @@ Instead of fetching all VPAs and then filtering them in memory (which still load
 shardListOpts = [MatchingLabels{"shard.operator.k8s.appscode.com/kubedb-autoscaler": "1"}]
 ```
 
-When `kubedb-kubedb-autoscaler-1` runs its periodic loop, the API server natively filters and returns *only* the autoscalers labeled with `1`. This guarantees that if you scale to 5 operator pods, each pod does exactly ~20% of the work, heavily optimizing CPU, Memory, and Network I/O.
+When `kubedb-kubedb-autoscaler-1` runs its periodic loop, the API server natively filters and returns *only* the autoscalers related objects labeled with `1`. This guarantees that if you scale to 5 operator pods, each pod does exactly ~20% of the work, heavily optimizing CPU, Memory, and Network I/O.
 
 ---
 
