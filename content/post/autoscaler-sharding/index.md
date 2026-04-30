@@ -1,9 +1,9 @@
 ---
-title: "Scaling KubeDB: Announcing Autoscaler Sharding Support"
+title: 'Scaling KubeDB: Announcing Autoscaler Sharding Support'
 date: "2026-04-27"
 weight: 15
 authors:
-- Neaj Morshad 
+- Neaj Morshad
 tags:
 - autoscaler
 - cassandra
@@ -17,12 +17,12 @@ tags:
 - memcached
 - mongodb
 - mssqlserver
+- operators
 - postgres
 - postgresql
 - rabbitmq
 - redis
 - scaling
-- operators
 ---
 
 # **Sharding KubeDB Autoscaler**
