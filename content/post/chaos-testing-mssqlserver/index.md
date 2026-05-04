@@ -1,6 +1,6 @@
 ---
 title: 'Building Resilient SQL Server Availability Group Clusters on KubeDB with Chaos Mesh'
-date: "2026-04-16"
+date: "2026-05-10"
 weight: 25
 authors:
 - Neaj Morshad
