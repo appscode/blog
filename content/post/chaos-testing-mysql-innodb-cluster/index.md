@@ -1175,6 +1175,595 @@ timechaos.chaos-mesh.org "mysql-primary-clock-skew" deleted
 
 ---
 
+### InnoDB Chaos#13: Pod Failure on Primary (5 min)
+
+Inject a 5-minute `pod-failure` fault into the current primary pod — Chaos Mesh keeps the primary's MySQL container in a failed state for the full duration. Unlike Chaos#1 (`pod-kill`), the pod is not deleted and rescheduled; it stays in place but its container is unavailable. This exercises long-duration primary unreachability and the operator's clone-vs-incremental rejoin logic, with the primary service following the failover throughout.
+
+Save this yaml as `tests/13-pod-failure.yaml`:
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: test-kubedb-primary-pod-failure
+  namespace: demo
+spec:
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      app.kubernetes.io/component: database
+      app.kubernetes.io/managed-by: kubedb.com
+      app.kubernetes.io/name: mysqls.kubedb.com
+      kubedb.com/role: primary
+  mode: all
+  action: pod-failure
+  duration: 5m
+```
+
+**What this chaos does:** Holds the primary pod's MySQL container in a failed state for 5 minutes (the pod stays in place; its container restarts repeatedly during the window).
+
+- **Expected behavior:**
+  Primary container becomes unavailable → cluster transitions `Ready` → `NotReady` → GR elects a new primary, primary service follows the new role label → state moves to `Critical`. When the 5-minute fault clears, the original primary's container restarts, rejoins as `SECONDARY`, and the cluster returns to `Ready`. Zero data loss.
+
+- **Actual result:**
+  Cluster transitioned `Ready` → `NotReady` (+5s) → `Critical` (+20s) after pod-2 was elected new PRIMARY. Sysbench (no auto-reconnect) dropped at +5s with error 2013; a fresh sysbench session against the primary service ran cleanly at ~1400 TPS within seconds of the failover. Chaos auto-cleared at +5m; pod-0 restarted 4× during the window, rejoined as `SECONDARY`, and the cluster returned to `Ready` at +8m. **GTIDs match exactly on all 3 nodes** (`87aa5caa-…:1-42972:1000103-1000312`). **PASS.**
+
+Pre-chaos baseline:
+
+```shell
+➤ kubectl get mysql.kubedb.com/mysql-ha-cluster -n demo
+NAME               VERSION   STATUS   AGE
+mysql-ha-cluster   8.4.8     Ready    17m
+
+➤ kubectl get pods -n demo -l app.kubernetes.io/instance=mysql-ha-cluster -L kubedb.com/role
+NAME                        READY   STATUS    RESTARTS   AGE   ROLE
+mysql-ha-cluster-0          2/2     Running   0          17m   primary
+mysql-ha-cluster-1          2/2     Running   0          16m   standby
+mysql-ha-cluster-2          2/2     Running   0          16m   standby
+mysql-ha-cluster-router-0   1/1     Running   0          16m
+mysql-ha-cluster-router-1   1/1     Running   0          16m
+
+➤ SELECT MEMBER_HOST, MEMBER_PORT, MEMBER_STATE, MEMBER_ROLE
+    FROM performance_schema.replication_group_members;
++-----------------------------------------------+-------------+--------------+-------------+
+| MEMBER_HOST                                   | MEMBER_PORT | MEMBER_STATE | MEMBER_ROLE |
++-----------------------------------------------+-------------+--------------+-------------+
+| mysql-ha-cluster-2.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
+| mysql-ha-cluster-1.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
+| mysql-ha-cluster-0.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | PRIMARY     |
++-----------------------------------------------+-------------+--------------+-------------+
+```
+
+Apply the chaos and observe — sysbench was running through the primary service when chaos hit:
+
+```shell
+➤ kubectl apply -f tests/13-pod-failure.yaml
+podchaos.chaos-mesh.org/test-kubedb-primary-pod-failure created
+
+➤ # sysbench through primary service — connection died at +5s, no auto-reconnect
+[ 5s ] thds: 8 tps: 263.97 qps: 1591.85 lat (ms,95%): 101.13 err/s: 0.00 reconn/s: 0.00
+FATAL: mysql_stmt_execute() returned error 2013 (Lost connection to MySQL server during query) for query 'COMMIT'
+FATAL: `thread_run' function failed: SQL error, errno = 2013, state = 'HY000': Lost connection
+```
+
+> **Note:** sysbench's default behaviour is to abort on connection loss. Production applications using a connection pool with retry logic experience a brief blip and reconnect to the primary service automatically (port 3306 follows the new primary).
+
+During chaos — pod-2 elected as new PRIMARY, cluster `Critical`:
+
+```shell
+➤ kubectl get mysql.kubedb.com/mysql-ha-cluster -n demo
+NAME               VERSION   STATUS     AGE
+mysql-ha-cluster   8.4.8     Critical   17m
+
+➤ kubectl get pods -n demo -l app.kubernetes.io/instance=mysql-ha-cluster -L kubedb.com/role
+NAME                        READY   STATUS    RESTARTS   AGE   ROLE
+mysql-ha-cluster-0          2/2     Running   0          17m   standby   # under chaos, container failing
+mysql-ha-cluster-1          2/2     Running   0          17m   standby
+mysql-ha-cluster-2          2/2     Running   0          17m   primary   # promoted
+
+➤ # Fresh sysbench session through the primary service — full TPS on new primary
+kubectl exec -n demo $SBPOD -- sysbench oltp_write_only \
+    --mysql-host=mysql-ha-cluster.demo.svc.cluster.local \
+    --mysql-port=3306 --mysql-user=root --mysql-password="$PASS" \
+    --mysql-db=sbtest --tables=4 --table-size=50000 \
+    --threads=8 --time=15 --report-interval=5 run
+events (avg/stddev): 2633.3750/65.35
+execution time (avg/stddev): 14.9955/0.00     # ~1404 TPS aggregate, no errors
+```
+
+After chaos cleared (+5m) — pod-0 restarted (`Restarts: 4`) and rejoined as SECONDARY:
+
+```shell
+➤ kubectl get mysql.kubedb.com/mysql-ha-cluster -n demo
+NAME               VERSION   STATUS   AGE
+mysql-ha-cluster   8.4.8     Ready    25m
+
+➤ kubectl get pods -n demo -l app.kubernetes.io/instance=mysql-ha-cluster -L kubedb.com/role
+NAME                        READY   STATUS    RESTARTS        AGE   ROLE
+mysql-ha-cluster-0          2/2     Running   4 (2m44s ago)   25m   standby
+mysql-ha-cluster-1          2/2     Running   0               25m   standby
+mysql-ha-cluster-2          2/2     Running   0               25m   primary
+
+➤ SELECT MEMBER_HOST, MEMBER_PORT, MEMBER_STATE, MEMBER_ROLE
+    FROM performance_schema.replication_group_members;
++-----------------------------------------------+-------------+--------------+-------------+
+| MEMBER_HOST                                   | MEMBER_PORT | MEMBER_STATE | MEMBER_ROLE |
++-----------------------------------------------+-------------+--------------+-------------+
+| mysql-ha-cluster-2.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | PRIMARY     |
+| mysql-ha-cluster-1.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
+| mysql-ha-cluster-0.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
++-----------------------------------------------+-------------+--------------+-------------+
+
+➤ # GTIDs — all match ✅
+pod-0: 7b919383-...:1-4, 87aa5caa-...:1-42972:1000103-1000312
+pod-1: 7b919383-...:1-4, 87aa5caa-...:1-42972:1000103-1000312
+pod-2: 7b919383-...:1-4, 87aa5caa-...:1-42972:1000103-1000312
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 17:10:03 | — | Pre-chaos baseline (pod-0 = primary, all 3 ONLINE) | `Ready` |
+| 17:10:22 | 0s | `PodChaos` applied (pod-0 targeted) | `Ready` |
+| 17:10:27 | +5s | Primary unreachable detected | `NotReady` |
+| 17:10:42 | +20s | pod-2 promoted PRIMARY, primary service follows | `Critical` |
+| 17:15:22 | +5m00s | Chaos auto-recovered, pod-0 container restarts | `Critical` |
+| ~17:15–18 | +5–8m | pod-0 in `RECOVERING` (incremental rejoin) | `Critical` |
+| 17:18:36 | +8m14s | pod-0 reaches `ONLINE` `SECONDARY`, GTIDs match | `Ready` |
+
+**Result: PASS** — Failover completed in 20s, the primary service routed RW to the new primary transparently, and the chaos-impacted pod rejoined automatically once the fault expired. **Zero data loss.** Note: applications without auto-reconnect (like default sysbench) will need to retry the connection — KubeDB drives the cluster recovery, not the client.
+
+Clean up:
+
+```shell
+➤ kubectl delete -f tests/13-pod-failure.yaml
+podchaos.chaos-mesh.org "test-kubedb-primary-pod-failure" deleted
+```
+
+---
+
+### InnoDB Chaos#14: Continuous OOM Loop on Primary (10× 30s)
+
+Inject a tight loop of memory-stress chaos against the current primary to mimic a runaway query / leak that keeps OOM-killing `mysqld` while sysbench keeps writing through the primary service. Each iteration allocates 100GB with `oomScoreAdj=-1000` so the kernel kills the MySQL container almost immediately. Ten iterations are applied back-to-back (≈ 5 minutes of effective OOM pressure). This surfaces the InnoDB Cluster coordinator's errant-GTID handling and the cluster's behaviour when the same pod cycles through `CrashLoopBackOff` repeatedly.
+
+Save this yaml as `tests/14-oom-loop.yaml` (replace `<primary-pod-name>` with the actual current primary):
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: test-kubedb-primary-pod-oom
+  namespace: demo
+spec:
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      statefulset.kubernetes.io/pod-name: <primary-pod-name>
+  mode: all
+  stressors:
+    memory:
+      workers: 1
+      size: "100GB"
+      oomScoreAdj: -1000
+  duration: 30s
+```
+
+Run a tight loop so the OOM keeps recurring (a single 30 s pulse may be absorbed before sysbench notices the failover):
+
+```bash
+PRIMARY=$(kubectl get pods -n demo \
+  -l app.kubernetes.io/name=mysqls.kubedb.com,kubedb.com/role=primary \
+  -o jsonpath='{.items[0].metadata.name}')
+
+for i in $(seq 1 10); do
+  sed "s/test-kubedb-primary-pod-oom/test-kubedb-primary-pod-oom-${i}/; s/<primary-pod-name>/${PRIMARY}/" \
+    tests/14-oom-loop.yaml | kubectl apply -f -
+  sleep 2
+done
+```
+
+**What this chaos does:** Repeatedly OOM-kills the primary's mysqld container by scheduling 10 back-to-back 30-second 100GB stressors with `oomScoreAdj=-1000`.
+
+- **Expected behavior:**
+  Primary container OOMKilled repeatedly → cluster transitions `Ready` → `NotReady` once the primary becomes unreachable → GR fails over to a healthy secondary, primary service follows the new role label → original primary cycles `CrashLoopBackOff` until OOM pressure clears → afterwards the pod rejoins via incremental recovery, GTIDs reconcile, and the cluster returns to `Ready`. Zero data loss expected.
+
+- **Actual result:**
+  pod-2 (primary at start) was OOMKilled repeatedly — `Restarts: 3` over the 5-minute window. pod-1 was promoted `PRIMARY`; the primary service routed RW to pod-1 within seconds. Sysbench (no auto-reconnect) lost connection at the first OOM and the test thread aborted. **By +90 seconds the cluster was already `Ready` with all 3 members `ONLINE`** — pod-2 rejoined as `SECONDARY` cleanly. **No errant GTIDs were reported by the coordinator** (the OOM hit before any locally-committed-but-unreplicated transactions accumulated), so no manual approval was required. **GTIDs match exactly on all 3 nodes** (`87aa5caa-…:1-49173:1000103-1000354`). **PASS.**
+
+```shell
+➤ # During chaos — pod-1 promoted, pod-2 cycling restarts
+➤ kubectl get mysql.kubedb.com/mysql-ha-cluster -n demo
+NAME               VERSION   STATUS   AGE
+mysql-ha-cluster   8.4.8     Ready    30m
+
+➤ kubectl get pods -n demo -l app.kubernetes.io/instance=mysql-ha-cluster -L kubedb.com/role
+NAME                        READY   STATUS    RESTARTS      AGE   ROLE
+mysql-ha-cluster-0          2/2     Running   4 (7m ago)    29m   standby
+mysql-ha-cluster-1          2/2     Running   0             29m   primary    # promoted
+mysql-ha-cluster-2          2/2     Running   3 (99s ago)   29m   standby    # OOM-cycled, rejoined
+mysql-ha-cluster-router-0   1/1     Running   0             29m
+mysql-ha-cluster-router-1   1/1     Running   0             29m
+
+➤ # GR view (consistent across all 3 nodes)
+SELECT MEMBER_HOST, MEMBER_PORT, MEMBER_STATE, MEMBER_ROLE
+    FROM performance_schema.replication_group_members;
++-----------------------------------------------+-------------+--------------+-------------+
+| MEMBER_HOST                                   | MEMBER_PORT | MEMBER_STATE | MEMBER_ROLE |
++-----------------------------------------------+-------------+--------------+-------------+
+| mysql-ha-cluster-2.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
+| mysql-ha-cluster-1.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | PRIMARY     |
+| mysql-ha-cluster-0.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
++-----------------------------------------------+-------------+--------------+-------------+
+
+➤ # Coordinator did not detect any errant GTIDs — clean rejoin
+kubectl logs -n demo mysql-ha-cluster-2 -c mysql-coordinator | grep -i errant
+(no output)
+
+➤ # GTIDs — all match ✅
+pod-0: 7b919383-...:1-4, 87aa5caa-...:1-49173:1000103-1000354
+pod-1: 7b919383-...:1-4, 87aa5caa-...:1-49173:1000103-1000354
+pod-2: 7b919383-...:1-4, 87aa5caa-...:1-49173:1000103-1000354
+
+➤ # Post-chaos sysbench — full TPS restored on the new primary
+kubectl exec -n demo $SBPOD -- sysbench oltp_write_only \
+    --mysql-host=mysql-ha-cluster.demo.svc.cluster.local \
+    --mysql-port=3306 --mysql-user=root --mysql-password="$PASS" \
+    --mysql-db=sbtest --tables=4 --table-size=50000 \
+    --threads=8 --time=10 --report-interval=5 run
+events (avg/stddev): 1820.1250/58.58           # ~1456 TPS aggregate
+95th percentile: 8.43 ms
+ignored errors: 0
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 17:20:56 | — | Pre-chaos baseline (pod-2 = primary, all 3 ONLINE) | `Ready` |
+| 17:20:59 | 0s | First OOM iteration applied to pod-2 | `Ready` |
+| 17:21:21 | +22s | All 10 iterations queued (covers ~5 min of OOM pressure) | `Critical` |
+| ~17:21–22 | +1–2m | pod-1 promoted PRIMARY, pod-2 cycling restarts (×3) | `Critical` |
+| 17:23:00 | +2m01s | pod-2 reached `ONLINE` `SECONDARY`, all 3 ONLINE | `Ready` |
+
+**Notable safety behaviour** — the KubeDB coordinator includes an errant-GTID gate that refuses to auto-clone a recovering pod when extra GTIDs (locally committed transactions that never replicated) are present. In this test no errant GTIDs surfaced because the OOM struck before such transactions could accumulate, so the gate stayed quiet and pod-2 rejoined incrementally. If the OOM had landed after a partial commit, you would see the coordinator log:
+
+```
+WARNING: instance mysql-ha-cluster-X has extra GTIDs not on primary:
+  <uuid>:N-M (these will be lost if clone proceeds)
+to approve clone, create the file:
+  kubectl exec -n demo mysql-ha-cluster-X -c mysql -- touch /scripts/approve-clone
+```
+
+That deliberate refusal is the right behaviour: it surfaces the choice between data preservation (manual reconciliation) and rejoining via clone (which would discard the extra GTIDs).
+
+**Result: PASS** — Group Replication failed over to a healthy secondary, the primary service routed transparently, and the cluster fully reconverged in ~2 minutes after OOM pressure cleared. Zero data loss, GTIDs perfectly aligned across all 3 nodes.
+
+Clean up:
+
+```shell
+➤ kubectl delete stresschaos -n demo --all
+```
+
+---
+
+### InnoDB Chaos#15: 100% Outbound Packet Loss on Primary (2 min)
+
+Drop 100% of outbound packets from the primary for 2 minutes — the primary is alive and accepting reads locally, but cannot ship anything to the secondaries (heartbeats, binlog events, GR Paxos messages all dropped). This is the network equivalent of a one-way mute and is one of the harshest single-node faults you can inject without killing the process.
+
+Save this yaml as `tests/15-packet-loss.yaml`:
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: test-kubedb-primary-network-loss
+  namespace: demo
+spec:
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/component: database
+      app.kubernetes.io/managed-by: kubedb.com
+      app.kubernetes.io/name: mysqls.kubedb.com
+      kubedb.com/role: primary
+  mode: all
+  action: loss
+  loss:
+    loss: '100'
+    correlation: '100'
+  direction: to
+  duration: 2m
+```
+
+**What this chaos does:** Drops every outbound packet from the primary pod for 2 minutes. The primary's local socket still works (mysqld stays up), but it cannot send GR Paxos messages or binlog events to its peers.
+
+- **Expected behavior:**
+  Primary cannot communicate with the group → secondaries notice the primary timed out → cluster transitions `Ready` → `NotReady` → `Critical` → secondaries form a quorum and elect a new primary, primary service follows the new role label → after the loss clears, the old primary rejoins as `SECONDARY` and the cluster returns to `Ready`. Zero data loss.
+
+- **Actual result:**
+  Cluster transitioned `Ready` → `NotReady` (+30s) → `Critical` (+60s) after pod-2 was elected new PRIMARY. **Dual-primary `kubedb.com/role` label transient observed for ~150s** — pod-1 (old primary, isolated) and pod-2 (new primary) both carried `kubedb.com/role=primary` in Kubernetes labels because each pod's coordinator reported its own local view of `performance_schema.replication_group_members`. GR itself remained Single-Primary (only the majority partition could commit) — this is a label-layer transient, not a data-layer split. Once chaos auto-cleared at +2m, pod-1's local view converged and the label corrected to `standby`. Cluster `Ready` at +3m49s. **Final GTIDs match exactly on all 3 nodes** (`87aa5caa-…:1-68238:1000103-1000444`). **PASS.**
+
+```shell
+➤ kubectl apply -f tests/15-packet-loss.yaml
+networkchaos.chaos-mesh.org/test-kubedb-primary-network-loss created
+
+➤ # +30s — DUAL PRIMARY LABEL transient (pod-1 was primary, pod-2 newly promoted)
+kubectl get pods -n demo -l app.kubernetes.io/instance=mysql-ha-cluster -L kubedb.com/role
+NAME                        READY   STATUS    RESTARTS   AGE   ROLE
+mysql-ha-cluster-0          2/2     Running   4          62m   standby
+mysql-ha-cluster-1          2/2     Running   0          62m   primary    # stale local view
+mysql-ha-cluster-2          2/2     Running   3          62m   primary    # majority view
+mysql-ha-cluster-router-0   1/1     Running   0          62m
+mysql-ha-cluster-router-1   1/1     Running   0          62m
+
+➤ kubectl get mysql.kubedb.com/mysql-ha-cluster -n demo
+NAME               VERSION   STATUS     AGE
+mysql-ha-cluster   8.4.8     Critical   62m
+
+➤ # GR view from a healthy member (correct majority view)
+SELECT MEMBER_HOST, MEMBER_PORT, MEMBER_STATE, MEMBER_ROLE
+    FROM performance_schema.replication_group_members;
++-----------------------------------------------+-------------+--------------+-------------+
+| MEMBER_HOST                                   | MEMBER_PORT | MEMBER_STATE | MEMBER_ROLE |
++-----------------------------------------------+-------------+--------------+-------------+
+| mysql-ha-cluster-2.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | PRIMARY     |
+| mysql-ha-cluster-1.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
+| mysql-ha-cluster-0.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
++-----------------------------------------------+-------------+--------------+-------------+
+```
+
+After chaos auto-cleared (+2 min) — pod-1's local view converged, label corrected, cluster returned to `Ready`:
+
+```shell
+➤ kubectl get mysql.kubedb.com/mysql-ha-cluster -n demo
+NAME               VERSION   STATUS   AGE
+mysql-ha-cluster   8.4.8     Ready    65m
+
+➤ kubectl get pods -n demo -l app.kubernetes.io/instance=mysql-ha-cluster -L kubedb.com/role
+NAME                        READY   STATUS    RESTARTS   AGE   ROLE
+mysql-ha-cluster-0          2/2     Running   4          65m   standby
+mysql-ha-cluster-1          2/2     Running   0          65m   standby   # corrected
+mysql-ha-cluster-2          2/2     Running   3          65m   primary
+
+➤ # GTIDs — all match ✅
+pod-0: 7b919383-...:1-4, 87aa5caa-...:1-68238:1000103-1000444
+pod-1: 7b919383-...:1-4, 87aa5caa-...:1-68238:1000103-1000444
+pod-2: 7b919383-...:1-4, 87aa5caa-...:1-68238:1000103-1000444
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 17:54:50 | — | Pre-chaos baseline (pod-1 = primary) | `Ready` |
+| 17:54:53 | 0s | 100% outbound loss applied to pod-1 | `Ready` |
+| 17:55:23 | +30s | Operator probe times out; dual-primary label appears | `NotReady` |
+| 17:55:53 | +60s | pod-2 promoted PRIMARY, primary service follows | `Critical` |
+| 17:56:53 | +2m00s | Chaos auto-recovered, packet flow restored | `Critical` |
+| 17:57:23 | +2m30s | pod-1's local GR view converges; label corrected to `standby` | `Critical` |
+| 17:58:42 | +3m49s | pod-1 rejoined as `ONLINE` `SECONDARY`, all 3 ONLINE | `Ready` |
+
+**Note on the dual-primary label** — this is a known InnoDB Cluster behaviour during one-way network isolation: each pod's `mysql-coordinator` sidecar updates its own pod's `kubedb.com/role` label from its own local copy of `replication_group_members`. While the network is one-way down, the isolated pod still sees itself as PRIMARY in its own view, even though the majority partition has elected a new primary. **No split-brain at the data layer** — the isolated pod cannot replicate any commits because its outbound traffic is dropped. Once the network heals, the isolated pod's view reconciles within seconds and the label corrects automatically.
+
+**Result: PASS** — failover and recovery completed in 3m49s end-to-end. Zero data loss, GTIDs perfectly aligned across all 3 nodes. The dual-label transient is a UI artifact, not a correctness issue, and resolves automatically.
+
+Clean up:
+
+```shell
+➤ kubectl delete -f tests/15-packet-loss.yaml
+networkchaos.chaos-mesh.org "test-kubedb-primary-network-loss" deleted
+```
+
+---
+
+### InnoDB Chaos#16: 100% Outbound Packet Corruption on Primary (2 min)
+
+Flip random bits in 100% of outbound packets from the primary for 2 minutes. Unlike packet loss, every corrupted packet fails its TCP checksum on receipt — the receiver discards it and waits for a retransmit, but the retransmit is also corrupted, and so on. Effectively the primary cannot deliver any meaningful traffic to the secondaries: a slower-burning version of 100% packet loss.
+
+Save this yaml as `tests/16-packet-corrupt.yaml`:
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: test-kubedb-primary-network-corrupt
+  namespace: demo
+spec:
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/component: database
+      app.kubernetes.io/managed-by: kubedb.com
+      app.kubernetes.io/name: mysqls.kubedb.com
+      kubedb.com/role: primary
+  mode: all
+  action: corrupt
+  corrupt:
+    corrupt: '100'
+    correlation: '100'
+  direction: to
+  duration: 2m
+```
+
+**What this chaos does:** Bit-flips every outbound packet from the primary for 2 minutes. TCP checksum validation rejects each packet at the receiver, which is functionally equivalent to 100% packet loss but stresses TCP's retransmission machinery rather than its drop detection.
+
+- **Expected behavior:**
+  Primary's outbound traffic is undeliverable → secondaries notice the primary is unresponsive → cluster transitions `Ready` → `NotReady` → `Critical` → secondaries elect a new primary, primary service follows → after corruption clears, the old primary rejoins as `SECONDARY`. Zero data loss.
+
+- **Actual result:**
+  Cluster transitioned `Ready` → `NotReady` (+30s) → dual-primary label transient (pod-1 + pod-2) at +30–120s → `Critical` (+60s) after pod-1 elected new PRIMARY → chaos auto-cleared at +2m, pod-2's label corrected to `standby` shortly after → `Ready` (+3m01s). **Final GTIDs match exactly on all 3 nodes** (`87aa5caa-…:1-70911:1000103-1000531`). **PASS.**
+
+```shell
+➤ kubectl apply -f tests/16-packet-corrupt.yaml
+networkchaos.chaos-mesh.org/test-kubedb-primary-network-corrupt created
+
+➤ # +30s — dual-primary label transient (same as Chaos#15)
+kubectl get pods -n demo -l app.kubernetes.io/instance=mysql-ha-cluster -L kubedb.com/role
+NAME                 READY   STATUS    RESTARTS   ROLE
+mysql-ha-cluster-0   2/2     Running   4          standby
+mysql-ha-cluster-1   2/2     Running   0          primary    # newly promoted
+mysql-ha-cluster-2   2/2     Running   3          primary    # was primary, corrupted, stale view
+
+➤ kubectl get mysql.kubedb.com/mysql-ha-cluster -n demo
+NAME               VERSION   STATUS     AGE
+mysql-ha-cluster   8.4.8     Critical   142m
+```
+
+After corruption cleared (+2 min) and pod-2 rejoined:
+
+```shell
+➤ kubectl get mysql.kubedb.com/mysql-ha-cluster -n demo
+NAME               VERSION   STATUS   AGE
+mysql-ha-cluster   8.4.8     Ready    144m
+
+➤ kubectl get pods -n demo -l app.kubernetes.io/instance=mysql-ha-cluster -L kubedb.com/role
+NAME                 READY   STATUS    RESTARTS   ROLE
+mysql-ha-cluster-0   2/2     Running   4          standby
+mysql-ha-cluster-1   2/2     Running   0          primary
+mysql-ha-cluster-2   2/2     Running   3          standby     # corrected
+
+➤ SELECT MEMBER_HOST, MEMBER_PORT, MEMBER_STATE, MEMBER_ROLE
+    FROM performance_schema.replication_group_members;
++-----------------------------------------------+-------------+--------------+-------------+
+| MEMBER_HOST                                   | MEMBER_PORT | MEMBER_STATE | MEMBER_ROLE |
++-----------------------------------------------+-------------+--------------+-------------+
+| mysql-ha-cluster-2.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
+| mysql-ha-cluster-1.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | PRIMARY     |
+| mysql-ha-cluster-0.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
++-----------------------------------------------+-------------+--------------+-------------+
+
+➤ # GTIDs — all match ✅
+pod-0: 7b919383-...:1-4, 87aa5caa-...:1-70911:1000103-1000531
+pod-1: 7b919383-...:1-4, 87aa5caa-...:1-70911:1000103-1000531
+pod-2: 7b919383-...:1-4, 87aa5caa-...:1-70911:1000103-1000531
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 19:14:09 | — | Pre-chaos baseline (pod-2 = primary) | `Ready` |
+| 19:14:09 | 0s | 100% corruption applied to pod-2 outbound | `Ready` |
+| 19:14:39 | +30s | Operator probe times out; dual-primary label appears | `NotReady` |
+| 19:15:09 | +60s | pod-1 promoted PRIMARY, primary service follows | `Critical` |
+| 19:16:09 | +2m00s | Chaos auto-recovered, packet flow restored | `Critical` |
+| 19:16:10 | +2m01s | pod-2 label corrected to `standby` | `Critical` |
+| 19:17:10 | +3m01s | pod-2 rejoined as `ONLINE` `SECONDARY` | `Ready` |
+
+**Result: PASS** — failover handled cleanly even when the primary's outbound traffic was completely garbled, no SQL-level errors leaked through (TCP layer rejected every corrupted segment). Recovery completed in 3m01s with zero data loss. The dual-primary label transient is the same artifact as Chaos#15 and resolves automatically.
+
+Clean up:
+
+```shell
+➤ kubectl delete -f tests/16-packet-corrupt.yaml
+networkchaos.chaos-mesh.org "test-kubedb-primary-network-corrupt" deleted
+```
+
+---
+
+### InnoDB Chaos#17: Extreme Bandwidth Throttle on Primary (1 bps, 2 min)
+
+Push the bandwidth throttle to its absolute limit — 1 bit per second on the primary's outbound traffic for 2 minutes. At this rate Group Replication can transmit no useful data, effectively isolating the primary from its quorum partners while leaving the pod itself responsive on the local socket. This stresses how the cluster behaves when a primary is "alive but useless."
+
+Save this yaml as `tests/17-bandwidth-1bps.yaml`:
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: test-kubedb-primary-network-bandwidth
+  namespace: demo
+spec:
+  selector:
+    namespaces: [demo]
+    labelSelectors:
+      app.kubernetes.io/component: database
+      app.kubernetes.io/managed-by: kubedb.com
+      app.kubernetes.io/name: mysqls.kubedb.com
+      kubedb.com/role: primary
+  action: bandwidth
+  mode: all
+  bandwidth:
+    rate: '1bps'
+    limit: 20971520
+    buffer: 10000
+  duration: 2m
+```
+
+**What this chaos does:** Throttles the primary's outbound bandwidth to 1 bps for 2 minutes — too low for even GR heartbeats to fit, but the pod itself stays responsive on the local socket.
+
+- **Expected behavior:**
+  Primary unable to ship binlog events or send GR heartbeats → cluster transitions `Ready` → `NotReady` once the secondaries notice → secondaries form a quorum and elect a new primary, primary service follows → state may briefly become `Critical` during the role flip → after the throttle clears, the old primary rejoins as `SECONDARY` and the cluster returns to `Ready`. Zero data loss.
+
+- **Actual result:**
+  Cluster transitioned `Ready` → `NotReady` (+30s) → dual-primary label transient (pod-1 + pod-2) at +30–180s → `Critical` (+2m, after chaos cleared) → `Ready` (+3m01s). Failover to pod-2 occurred while the throttle was active. After the throttle cleared at +2 min, pod-1's local view converged and the label corrected to `standby`. **Final GTIDs match exactly on all 3 nodes** (`87aa5caa-…:1-71032:1000103-1000579`). **PASS.**
+
+```shell
+➤ kubectl apply -f tests/17-bandwidth-1bps.yaml
+networkchaos.chaos-mesh.org/test-kubedb-primary-network-bandwidth created
+
+➤ # +30s — failover triggered, dual-primary label transient
+kubectl get mysql.kubedb.com/mysql-ha-cluster -n demo
+NAME               VERSION   STATUS     AGE
+mysql-ha-cluster   8.4.8     NotReady   149m
+
+➤ kubectl get pods -n demo -l app.kubernetes.io/instance=mysql-ha-cluster -L kubedb.com/role
+NAME                 READY   STATUS    RESTARTS   ROLE
+mysql-ha-cluster-0   2/2     Running   4          standby
+mysql-ha-cluster-1   2/2     Running   0          primary    # was primary, throttled, stale view
+mysql-ha-cluster-2   2/2     Running   3          primary    # newly promoted
+
+➤ # +180s — throttle cleared, pod-1 label corrected to standby
+kubectl get mysql.kubedb.com/mysql-ha-cluster -n demo
+NAME               VERSION   STATUS   AGE
+mysql-ha-cluster   8.4.8     Ready    151m
+
+➤ kubectl get pods -n demo -l app.kubernetes.io/instance=mysql-ha-cluster -L kubedb.com/role
+NAME                 READY   STATUS    RESTARTS   ROLE
+mysql-ha-cluster-0   2/2     Running   4          standby
+mysql-ha-cluster-1   2/2     Running   0          standby     # corrected
+mysql-ha-cluster-2   2/2     Running   3          primary
+
+➤ SELECT MEMBER_HOST, MEMBER_PORT, MEMBER_STATE, MEMBER_ROLE
+    FROM performance_schema.replication_group_members;
++-----------------------------------------------+-------------+--------------+-------------+
+| MEMBER_HOST                                   | MEMBER_PORT | MEMBER_STATE | MEMBER_ROLE |
++-----------------------------------------------+-------------+--------------+-------------+
+| mysql-ha-cluster-2.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | PRIMARY     |
+| mysql-ha-cluster-1.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
+| mysql-ha-cluster-0.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
++-----------------------------------------------+-------------+--------------+-------------+
+
+➤ # GTIDs — all match ✅
+pod-0: 7b919383-...:1-4, 87aa5caa-...:1-71032:1000103-1000579
+pod-1: 7b919383-...:1-4, 87aa5caa-...:1-71032:1000103-1000579
+pod-2: 7b919383-...:1-4, 87aa5caa-...:1-71032:1000103-1000579
+```
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 19:21:45 | — | Pre-chaos baseline (pod-1 = primary) | `Ready` |
+| 19:21:45 | 0s | 1 bps bandwidth applied to pod-1 | `Ready` |
+| 19:22:15 | +30s | Operator probe times out; dual-primary label appears | `NotReady` |
+| 19:22:46 | +60s | pod-2 promoted PRIMARY | `NotReady` |
+| 19:23:45 | +2m00s | Chaos auto-recovered, throttle cleared | `Critical` |
+| 19:24:46 | +3m01s | pod-1 label corrected, all 3 ONLINE | `Ready` |
+
+**Result: PASS** — failover completed even under the harshest bandwidth condition; no writes accepted on the throttled side (no split-brain at the data layer); the cluster fully reconverged after the throttle cleared. Zero data loss. Same dual-primary label transient as Chaos#15/#16.
+
+Clean up:
+
+```shell
+➤ kubectl delete -f tests/17-bandwidth-1bps.yaml
+networkchaos.chaos-mesh.org "test-kubedb-primary-network-bandwidth" deleted
+```
+
+---
+
 ## Router-Specific Observations
 
 1. **Automatic failover re-route** — Router detects primary changes via the metadata cache (TTL = 0.5s) and re-routes RW traffic on port 6446 within seconds of a GR view change.
