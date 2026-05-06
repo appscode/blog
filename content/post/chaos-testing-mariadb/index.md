@@ -1,6 +1,6 @@
 ---
 title: Chaos Engineering KubeDB MariaDB on Kubernetes, Testing Galera Cluster & Replication with MaxScale Resilience
-date: "2026-04-17"
+date: "2026-05-19"
 weight: 25
 authors:
 - SK Ali Arman
