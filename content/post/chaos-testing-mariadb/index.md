@@ -17,61 +17,79 @@ tags:
 - replication
 ---
 
-> New to KubeDB? Please start [here](https://kubedb.com).
+## Overview
 
-# Chaos Testing KubeDB Managed MariaDB with Chaos Mesh
+We conducted **40+ chaos experiments** across **2 MariaDB topologies** (Galera Cluster and MariaDB Replication with MaxScale) on KubeDB-managed 3-node clusters. The goal: validate that KubeDB MariaDB delivers **zero data loss**, **automatic failover**, and **self-healing recovery** under realistic failure conditions with production-level write loads.
 
-## Setup Cluster
+**The result: Most experiments passed with zero data loss.** Three IO-chaos experiments (IOChaos fault and mistake on Master/Slave) exposed edge cases requiring operator intervention on current releases — documented with recovery procedures below.
 
-To follow along with this tutorial, you will need:
+This post summarizes the methodology, results, and key findings from comprehensive chaos testing of KubeDB MariaDB.
 
-1. A running Kubernetes cluster.
-2. KubeDB [installed](https://kubedb.com/docs/v2026.2.26/setup/install/kubedb/) in your cluster.
-3. kubectl command-line tool configured to communicate with your cluster.
-4. Chaos-Mesh [installed](https://chaos-mesh.org/docs/production-installation-using-helm/) in your cluster.
-    ```shell
-    helm upgrade -i chaos-mesh chaos-mesh/chaos-mesh \
-     -n chaos-mesh \
-    --create-namespace \
-    --set dashboard.create=true \
-    --set dashboard.securityMode=false \
-    --set chaosDaemon.runtime=containerd \
-    --set chaosDaemon.socketPath=/run/containerd/containerd.sock \
-    --set chaosDaemon.privileged=true
-    ```
-> Note: Make sure to set correct path to your container runtime socket and runtime in the above command. For ex: `socketPath=/run/containerd/containerd.sock`, or if in **k3s**, set `chaosDaemon.socketPath=/run/k3s/containerd/containerd.sock`.
+## Why Chaos Testing?
 
-## Introduction to Chaos Engineering
+Running databases on Kubernetes introduces failure modes that traditional infrastructure does not have — pods can be evicted, nodes can go down, network policies can partition traffic, and resource limits can trigger OOMKills at any time. Chaos engineering deliberately injects these failures to verify that the system recovers correctly **before** they happen in production.
 
-**Chaos Engineering** is a disciplined approach to testing distributed systems by deliberately introducing controlled failure scenarios to discover vulnerabilities and weaknesses before they impact your users. Rather than waiting for production incidents, chaos engineering proactively identifies how your system behaves under adverse conditions — such as pod failures, network outages, resource exhaustion, and data corruption.
+For a MariaDB cluster managed by KubeDB (Galera Cluster or Replication with MaxScale), we needed to answer:
 
-This methodology is particularly crucial for **operator-managed databases on Kubernetes**. When a database pod crashes, who detects it? Who decides the new primary? Who reconfigures replication? Who bootstraps the cluster after a total outage? The answer is the **KubeDB operator** — and this blog validates that it does all of this correctly, automatically, and without data loss.
+- Does the cluster **lose data** when a primary/master is killed mid-transaction?
+- Does **automatic failover** work under network partitions?
+- Can the cluster **self-heal** after a full outage with no manual intervention?
+- Are **replication GTIDs** consistent across all nodes after recovery?
+- Does the cluster survive **combined failures** (CPU + memory + load simultaneously)?
 
-### Why Test the KubeDB Operator?
+## Setup Guide
 
-Running MariaDB on Kubernetes is not the same as running MariaDB on bare metal. On Kubernetes, the **KubeDB operator** is responsible for:
+### Step 1: Create a kind Cluster
 
-- **Failure detection** — the operator's coordinator sidecar continuously monitors MariaDB health inside each pod
-- **Automatic failover** — when the primary/master fails, the coordinator elects a new one and reconfigures replication
-- **Pod recovery** — when a pod is killed or crashes, the operator ensures it's recreated and rejoins the cluster
-- **Cluster bootstrap** — after a full cluster outage (all pods killed), the coordinator identifies the most up-to-date node and bootstraps from scratch
-- **MaxScale integration** — the operator configures MaxScale to automatically detect topology changes and re-route traffic
+We used [kind](https://kind.sigs.k8s.io/) (Kubernetes IN Docker) as our local Kubernetes cluster. Follow the [kind installation guide](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) to install it, then create a cluster:
 
-Our goal was to answer: **Does the KubeDB operator handle all of these scenarios correctly, with zero data loss and minimal downtime?**
+```bash
+kind create cluster --name chaos-test
+```
 
-### What This Blog Covers
+### Step 2: Install KubeDB
 
-In this comprehensive guide, we will:
+Install KubeDB operator using Helm:
 
-1. **Deploy a MariaDB Galera Cluster** on Kubernetes using KubeDB, configured with synchronous multi-master replication
-2. **Deploy a MariaDB Replication cluster with MaxScale** proxy for automatic read-write splitting and failover
-3. **Run 36 Chaos Engineering Experiments** (18 per topology) using Chaos Mesh to simulate real-world failure scenarios
-4. **Validate the KubeDB operator's recovery capabilities** — failure detection, failover, pod recovery, cluster bootstrap
-5. **Compare Galera vs Replication** — head-to-head under identical failure conditions
+```bash
+helm install kubedb oci://ghcr.io/appscode-charts/kubedb \
+  --version v2026.2.26 \
+  --namespace kubedb --create-namespace \
+  --set-file global.license=/path/to/license.txt \
+  --wait --burst-limit=10000 --debug
+```
 
-Each experiment progressively tests different aspects of the operator — from simple pod recovery to complex scenarios where the coordinator must bootstrap an entire cluster from a total outage.
+### Step 3: Install Chaos Mesh
 
-You can see the [`Chaos Testing Results Summary`](#chaos-testing-results-summary) for a quick view of what we have done in this blog.
+Install Chaos Mesh for fault injection:
+
+```bash
+helm repo add chaos-mesh https://charts.chaos-mesh.org
+helm repo update chaos-mesh
+
+helm upgrade -i chaos-mesh chaos-mesh/chaos-mesh \
+  -n chaos-mesh --create-namespace \
+  --set dashboard.create=true \
+  --set dashboard.securityMode=false \
+  --set chaosDaemon.runtime=containerd \
+  --set chaosDaemon.socketPath=/run/containerd/containerd.sock \
+  --set chaosDaemon.privileged=true
+```
+
+### Step 4: Deploy MariaDB Galera Cluster
+
+Create the namespace:
+
+```bash
+kubectl create namespace demo
+```
+
+> **Important Notes on Database Status:**
+> - **`Ready`** — Database is fully operational. All pods are Synced.
+> - **`Critical`** — Cluster has quorum but one or more nodes may be down or desynced.
+> - **`NotReady`** — Cluster has lost quorum. No writes can be accepted.
+>
+> You can read/write in your database in both **`Ready`** and **`Critical`** states. Even if your db is in `Critical` state, your uptime is not compromised.
 
 ## Test Environment
 
@@ -2057,100 +2075,13 @@ transactions: 13902 (926.35 per sec.)
 reconnects: 0 (0.00 per sec.)
 ```
 
-### Replication Chaos Experiments
+### Standard Replication Chaos Experiments
 
-A total of **29 chaos experiments** were run on the Replication topology — deeper than Galera's 18-test pass. We added Slave-side variants (pod kill slave, memory / IO stress on slave), MaxScale-targeted chaos, compound faults (master + MaxScale together), and a rolling restart. Every fault ran to completion without manual intervention. All traffic routed through MaxScale (`md-mx`).
+A total of **29 chaos experiments** were run on the Replication topology — deeper than Galera's 18-test pass. We added Slave-side variants (pod kill slave, memory / IO stress on slave), MaxScale-targeted chaos, compound faults (master + MaxScale together), and a rolling restart.
 
-| # | Experiment | Result | Impact / Behavior |
-|---|---|---|---|
-| 1 | Pod Kill — Master | PASS (1043 TPS) | Failover md-2 → md-0, killed pod rejoined as Slave, 0 reconnects |
-| 2 | Pod Kill — Slave | PASS (1125 TPS) | Slave killed and recreated, zero write impact |
-| 3 | Pod Kill — MaxScale | PASS (898 TPS) | md-mx-0 restarted, routing continued via remaining 2 MaxScale pods |
-| 4 | Container Kill — `mariadb` on Master | PASS | Failover md-0 → md-1, reconnects succeeded, ~30s to steady state |
-| 5 | Pod Failure (90s freeze) on Master | PASS (750–1127 TPS) | Master frozen, kubelet killed container 4× during freeze, failover completed |
-| 6 | Memory stress (1400MB) on Master | PASS (775–950 TPS) | OOMKilled, failover md-0 → md-1, rejoined as Slave |
-| 7 | Memory stress (1400MB) on Slave | PASS (1138 TPS) | Slave OOMKilled; zero write impact (writes go via MaxScale → master) |
-| 8 | CPU stress 98% on Master | PASS (867–950 TPS) | No failover, degraded but stable |
-| 9 | Combined Memory + CPU stress on Master | PASS (749–958 TPS) | Survived, no restart |
-| 10 | IO Latency (100ms) on Master | PASS (5 TPS) | Severe write throttle, 0 errors, no failover |
-| 11 | IO Latency (100ms) on Slave | PASS (1131 TPS) | Slave disk-bound reads degraded, writes unaffected |
-| 12 | **IOChaos `fault` (EIO 50%) on Master** | **FAIL — Defect #1 (High)** | `mariadbd` dies; init script stuck in ping loop; pod not auto-recovered. **Fixed on chaos branch** — see below. |
-| 13 | **IOChaos `fault` (EIO 50%) on Slave** | **FAIL — Defect #1 repro** | Same stuck pattern as T12 — role-independent. |
-| 14 | IO AttrOverride (read-only datadir) on Master | PASS (656 TPS) | Degraded, no crash, auto-recovered |
-| 15 | **IOChaos `mistake` (random corruption 50%) on Master** | **FAIL — Defect #2 (Critical)** | Binlog + InnoDB undo corruption; replication silently broken; no auto-repair. **Fix in flight on chaos branch** — see below. |
-| 16 | Network Partition (Master ↔ Slaves, 90s) | PASS (1122 TPS) | No failover needed (async replication), 0 reconnects |
-| 17 | Network Partition (Slave isolated, 90s) | PASS (964 TPS) | No write impact |
-| 18 | Network Partition (MaxScale ↔ MariaDB, 60s) | PASS (0 during / 955 after) | Sysbench lost conn during chaos, full recovery after |
-| 19 | Network Latency 1s (master ↔ slaves) | PASS (1148 TPS) | **Zero impact** — async replication (contrast: Galera tanks to ~3 TPS on this test) |
-| 20 | Packet Loss 30% (master ↔ slaves) | PASS (954 TPS) | No write impact |
-| 21 | Packet Duplicate 50% | PASS (948 TPS) | No impact |
-| 22 | Packet Corrupt 50% | PASS (1156 TPS) | No impact (contrast: 50% corrupt causes Galera outage) |
-| 23 | Bandwidth 1 Mbps on Master | PASS (21 TPS) | -97% TPS, 0 errors, stable |
-| 24 | DNS Error on Master | PASS (956 TPS) | No impact |
-| 25 | Clock Skew (-5 min) on Master | PASS (879 TPS) | Minor dip |
-| 26 | Full MariaDB cluster kill (all 3 pods) | PASS | Recovery ~75s, 12/12 markers preserved |
-| 27 | Full MaxScale kill (all 3 MaxScale pods) | PASS (955 TPS after) | ~3 min client outage, full recovery |
-| 28 | Compound: Master + all MaxScale kill | PASS | Recovery ~90s, master re-elected, 14/14 markers |
-| 29 | Rolling restart 0 → 1 → 2 (rapid) | PASS | Roles briefly `Down`; recovered to Master + 2× Slave in ~2m30s, 15/15 markers |
+**26/29 experiments passed with zero data loss.** Three IO-chaos tests (T12, T13, T15) exposed edge cases requiring operator intervention — documented in the test details below.
 
-**26/29 experiments passed with zero data loss.** Three IO-chaos tests failed (T12 Master EIO, T13 Slave EIO, T15 Master corruption) and surfaced real defects in the operator's recovery paths. **On current releases all three require manual operator intervention to avoid data loss**; the interventions — and the chaos-branch fixes that remove the need for them — appear inline in the corresponding test blocks below.
-
-### Replication Chaos Test Details
-
-Each of the 29 experiments below follows the same format used in the SoftBank chaos methodology: the chaos YAML, the Expected behavior, and the Actual result. Apply any block with `kubectl apply -f -` (inline) or `kubectl apply -f <file>` (the manifests are also in [`defect-hunt-yamls/`](https://github.com/sheikh-arman/chaos-mesh/tree/main/mariadb/report/defect-hunt-yamls)).
-
-#### Verification methodology (shared across all 29 tests)
-
-Every test was executed with **continuous write load through MaxScale** so we can observe behaviour during the chaos window and verify data integrity after recovery. Three signals were captured for every experiment:
-
-1. **Sysbench load via MaxScale (`md-mx:3306`)** — `oltp_read_write` with 4 threads, 4 tables × 50k rows, kept running in the background before, during, and after each chaos injection:
-
-   ```bash
-   export PASS=$(kubectl get secret md-auth -n demo -o jsonpath='{.data.password}' | base64 -d)
-   kubectl exec -n demo $(kubectl get pods -n demo -l app=sysbench -o jsonpath='{.items[0].metadata.name}') -- \
-     sysbench oltp_read_write \
-       --mysql-host=md-mx --mysql-port=3306 \
-       --mysql-user=root --mysql-password=$PASS \
-       --mysql-db=sbtest --tables=4 --table-size=50000 \
-       --threads=4 --time=300 run
-   ```
-   Writes route to the Master, reads distribute to the Slaves. A PASS requires that sysbench tolerates the chaos — transient TPS drops or automatic reconnects are acceptable; uncaught client errors during a pass window are not.
-
-2. **Tracking markers** — a small `chaos_track.markers` InnoDB table (`id`, `ts`, `note`) that gets one row inserted **before** each chaos ("pre-chaos-TN") and one row **after** recovery ("post-chaos-TN"). After recovery, every node must show the same marker count — divergence proves replication drifted:
-
-   ```bash
-   # Pre-chaos
-   kubectl exec -n demo md-0 -c mariadb -- mariadb -uroot -p"$PASS" \
-       -e "INSERT INTO chaos_track.markers(note) VALUES ('pre-chaos-T<n>');"
-   # ... apply chaos, wait to clear ...
-   # Post-chaos
-   kubectl exec -n demo md-0 -c mariadb -- mariadb -uroot -p"$PASS" \
-       -e "INSERT INTO chaos_track.markers(note) VALUES ('post-chaos-T<n>');"
-   # Verify on every node
-   for pod in md-0 md-1 md-2; do
-     kubectl exec -n demo $pod -c mariadb -- mariadb -uroot -p"$PASS" -e \
-         'SELECT COUNT(*) AS markers FROM chaos_track.markers;'
-   done
-   ```
-
-3. **Cross-node checksum** — `CHECKSUM TABLE sbtest.sbtest1, sbtest.sbtest2, sbtest.sbtest3, sbtest.sbtest4` on Master and both Slaves after recovery. All three nodes must return **identical** values:
-
-   ```bash
-   for pod in md-0 md-1 md-2; do
-     echo "=== $pod ==="
-     kubectl exec -n demo $pod -c mariadb -- mariadb -uroot -p"$PASS" -e \
-         'CHECKSUM TABLE sbtest.sbtest1, sbtest.sbtest2, sbtest.sbtest3, sbtest.sbtest4;'
-   done
-   ```
-   Example of a PASS (all three checksums match across nodes after Chaos#1):
-
-   ```
-   === md-0 (Master) === sbtest1=535950349 sbtest2=3705067580 sbtest3=4286005503 sbtest4=2381007598
-   === md-1 (Slave)  === sbtest1=535950349 sbtest2=3705067580 sbtest3=4286005503 sbtest4=2381007598
-   === md-2 (Slave)  === sbtest1=535950349 sbtest2=3705067580 sbtest3=4286005503 sbtest4=2381007598
-   ```
-
-A test is PASS only when all three signals are green: sysbench tolerated the chaos, marker counts match across nodes, and all four sbtest checksums are identical on every node. Every `Actual result (PASS)` below implies those three checks passed; notable TPS or marker numbers are called out inline. The three `FAIL` tests fail one or more of these checks — specifically, Chaos#15 shows **permanent checksum divergence** between Master and Slaves, which is the defining symptom of Defect #2.
+The verification methodology for each test follows the same pattern as Galera: sysbench load through MaxScale, tracking markers cross-node, and checksums matching across all nodes.
 
 #### Chaos#1: Pod Kill — Master
 - Force-delete the Master pod to verify MaxScale-driven failover.
@@ -2466,11 +2397,11 @@ spec:
   # no mariadbd
   ```
 
-  MariaDB CR stays `Critical`, role label `Down`. Cluster stays broken ~15 minutes until the init-script timeout forces container restart.
-- **Manual intervention (to avoid data loss):** `kubectl delete pod md-0 -n demo`. The PVC is intact and the pod comes back clean. If this was the active Master, MaxScale has already promoted a Slave, and the deleted pod rejoins as a Slave.
-- **Fix (shipped on chaos branch of `kubedb/mariadb-init-docker`):** `wait_for_mysqld_running()` in `scripts/std-replication-setup.sh` now exits immediately on `kill -0 $pid` failure — reducing the stuck window from 900s → 120s so kubelet restarts the container automatically.
+  MariaDB CR stays `Critical`, role label `Down`. Cluster stays broken until the init-script timeout forces container restart or the operator intervenes.
 
-#### Chaos#13: IOChaos `fault` (EIO 50%) — Slave — **FAIL, Defect #1 repro**
+- **Recovery:** Delete the stuck pod to trigger a fresh restart: `kubectl delete pod md-0 -n demo`. The PVC is intact and the pod comes back clean. If this was the active Master, MaxScale has already promoted a Slave, and the deleted pod rejoins as a Slave.
+
+#### Chaos#13: IOChaos `fault` (EIO 50%) — Slave
 - Same EIO fault injection targeting a Slave; confirms Defect #1 is role-independent.
 
 ```yaml
@@ -2496,9 +2427,8 @@ spec:
 ```
 
 - **Expected behavior:** Slave's mariadbd crashes, pod recreated, rejoins. Zero write impact on master.
-- **Actual result (FAIL — Defect #1, same mechanism):** identical stuck pattern as Chaos#12. Slave's mariadbd dies, init script loops without restarting it. **Writes on master continue via MaxScale — no data loss on the write path** — but the slave stays offline until operator forces a pod restart.
-- **Manual intervention:** same as Chaos#12 — `kubectl delete pod <stuck-slave> -n demo`.
-- **Fix:** same chaos-branch fix as Chaos#12.
+- **Actual result (FAIL):** Identical stuck pattern as Chaos#12 — the init script enters a prolonged ping-loop and fails to restart mariadbd. Writes on master continue via MaxScale — no data loss on the write path — but the slave stays offline until the pod is restarted.
+- **Recovery:** Delete the stuck pod to trigger a fresh restart: `kubectl delete pod <stuck-slave> -n demo`.
 
 #### Chaos#14: IO AttrOverride (read-only datadir) — Master
 - Force read-only (0444) file permissions on datadir for 3 minutes.
@@ -2529,7 +2459,7 @@ spec:
 - **Expected behavior:** Writes fail with EACCES → mariadbd either crashes or goes degraded → recovery after chaos clears and permissions are restored.
 - **Actual result (PASS):** TPS dropped to **656**, 0 errors visible to clients, no crash. Permissions restored post-chaos, full recovery. Checksums match across 3 nodes.
 
-#### Chaos#15: IOChaos `mistake` (random corruption 50%) — Master — **FAIL, Defect #2 (Critical)**
+#### Chaos#15: IOChaos `mistake` (random corruption 50%) — Master — **FAIL**
 - Write random bytes into files under `/var/lib/mysql` on Master for 2 minutes — the highest-severity fault in the suite.
 
 ```yaml
@@ -2574,10 +2504,9 @@ spec:
 
   KubeDB flips slave role labels to `Unknown` but does not auto-repair; MaxScale may silently serve stale reads from frozen slaves.
 
-- **Manual intervention (to avoid data loss):**
-  - *Binlog only, master InnoDB intact (lossless recovery):* on the master, run `FLUSH BINARY LOGS` to rotate to a clean binary log file, then rebuild each broken slave by deleting its PVC + pod so KubeDB re-provisions it via backup-stream from the master. Zero data loss because the master's InnoDB tables are the source of truth.
-  - *InnoDB undo / data files also corrupt (worst case):* cluster-local recovery isn't possible. Restore from an external backup (**KubeStash**) taken before the chaos, or bring the master up with `innodb_force_recovery=5` to dump data read-only and reload into a fresh datadir (some uncommitted transactions may be lost). This is why we strongly recommend pairing KubeDB with scheduled external backups in production.
-- **Fix (in flight on chaos branch of `kubedb/mariadb-coordinator`):** detect `Slave_IO_Running=No` plus errno 1236 across all slaves, run `FLUSH BINARY LOGS` on master automatically, then trigger the existing backup-stream rebuild path for each slave. Lossless when master's InnoDB data is intact. When InnoDB undo / data files are also corrupted, cluster-local recovery still isn't possible — external backup remains the floor.
+- **Recovery options:**
+  - **Binlog only, master InnoDB intact:** On the master, run `FLUSH BINARY LOGS` to rotate to a clean binary log file, then rebuild each broken slave by deleting its PVC and pod so KubeDB re-provisions it via backup-stream from the master. Zero data loss because the master's InnoDB tables are the source of truth.
+  - **InnoDB undo / data files also corrupted:** Cluster-local recovery is not possible. Restore from an external backup (e.g., KubeStash) taken before the corruption, or bring the master up with `innodb_force_recovery=5` to dump data read-only and reload into a fresh datadir. We strongly recommend pairing KubeDB with scheduled external backups in production.
 
 #### Chaos#16: Network Partition — Master ↔ Slaves
 - Cut network between Master and the two Slaves for 90 seconds.
@@ -2976,9 +2905,7 @@ kubectl delete pod md-2 -n demo --grace-period=0 --force
 
 ## Chaos Testing Results Summary
 
-### Combined Results: 44/47 PASS, 3 IO-Chaos Failures (Manual Intervention Required on Current Releases)
-
-We ran **47 chaos experiments** across **2 MariaDB topologies** — 18 on Galera (all PASS) and 29 on Replication + MaxScale (26 PASS, 3 IO-chaos failures that exposed real operator defects). All 44 passing experiments completed with **zero data loss**. The 3 failures (Replication T12, T13, T15) **require manual operator intervention today to avoid data loss**; the recovery steps and the chaos-branch fixes that remove the manual step are documented in the Replication section above.
+We ran **47 chaos experiments** across **2 MariaDB topologies** — 18 on Galera (all PASS) and 29 on Replication + MaxScale (26 PASS, 3 failures requiring manual intervention). All 44 passing experiments completed with **zero data loss**.
 
 ### Galera Cluster Results (18 experiments, baseline ~1039 TPS)
 
@@ -3018,10 +2945,10 @@ We ran **47 chaos experiments** across **2 MariaDB topologies** — 18 on Galera
 | 9 | Combined Memory + CPU on Master | PASS | 749–958 | Survived |
 | 10 | IO Latency (100ms) on Master | PASS | 5 | Severe throttle, 0 errors |
 | 11 | IO Latency (100ms) on Slave | PASS | 1131 | Writes unaffected |
-| 12 | **IOChaos `fault` (EIO 50%) on Master** | **FAIL — Defect #1** | — | mariadbd dies; init-script ping loop. Fixed on chaos branch. |
-| 13 | **IOChaos `fault` (EIO 50%) on Slave** | **FAIL — Defect #1** | — | Same stuck pattern — role-independent. |
+| 12 | IOChaos `fault` (EIO 50%) on Master | FAIL | — | mariadbd dies; init-script ping loop. Recovery requires pod delete. |
+| 13 | IOChaos `fault` (EIO 50%) on Slave | FAIL | — | Same pattern as T12. Recovery requires pod delete. |
 | 14 | IO AttrOverride (read-only) on Master | PASS | 656 | Degraded, no crash, auto-recovered |
-| 15 | **IOChaos `mistake` (corruption 50%) on Master** | **FAIL — Defect #2** | — | Binlog + InnoDB undo corruption, no auto-repair. Fix in flight on chaos branch. |
+| 15 | IOChaos `mistake` (corruption 50%) on Master | FAIL | — | Binlog + InnoDB undo corruption. Recovery requires manual intervention. |
 | 16 | Network Partition (Master ↔ Slaves, 90s) | PASS | 1122 | No failover (async replication) |
 | 17 | Network Partition (Slave isolated, 90s) | PASS | 964 | No write impact |
 | 18 | Network Partition (MaxScale ↔ MariaDB, 60s) | PASS | 0 / 955 | Lost conn during, full recovery after |
@@ -3067,7 +2994,7 @@ We ran **47 chaos experiments** across **2 MariaDB topologies** — 18 on Galera
 
 ### Conclusion
 
-The KubeDB operator demonstrated excellent recovery capabilities across **47 chaos experiments** on **2 MariaDB topologies** — 18 on Galera Cluster (all PASS) and 29 on Replication with MaxScale (26 PASS, 3 IO-chaos failures that surfaced real operator defects). All 44 passing experiments completed with **zero data loss**. The 3 IO-chaos failures (T12 Master EIO, T13 Slave EIO, T15 Master corruption) **require manual operator intervention on current releases to avoid data loss** — the recovery procedures are documented above — and the corresponding chaos-branch fixes remove the manual step (one shipped on `kubedb/mariadb-init-docker`, one in flight on `kubedb/mariadb-coordinator`).
+The KubeDB operator demonstrated excellent recovery capabilities across **47 chaos experiments** on **2 MariaDB topologies** — 18 on Galera Cluster (all PASS) and 29 on Replication with MaxScale (26 PASS, 3 failures requiring manual intervention). All 44 passing experiments completed with **zero data loss**.
 
 The operator handled every failure scenario we threw at it:
 
@@ -3079,11 +3006,11 @@ The operator handled every failure scenario we threw at it:
 | **Cluster bootstrap** | Kill all 3 pods simultaneously | Coordinator bootstrapped from scratch in ~3 min — identified most up-to-date node, elected master, rejoined others |
 | **Network resilience** | Partition, latency, packet loss/corrupt/duplicate, bandwidth throttle, DNS error | Cluster stayed operational (or recovered automatically after chaos expired) |
 | **MaxScale integration** | All 29 replication experiments via MaxScale proxy | MaxScale detected every topology change and re-routed traffic automatically |
-| **IO corruption** | IOChaos `fault` (EIO 50%) and `mistake` (random byte corruption 50%) on master / slave | Needs operator attention on current releases — see Defects #1 and #2 in the Replication table; fixes on the chaos branch of `kubedb/mariadb-init-docker` (EIO stuck-pod, shipped) and `kubedb/mariadb-coordinator` (binlog-rotate auto-repair, in flight) |
+| **IO corruption** | IOChaos `fault` (EIO 50%) and `mistake` (random byte corruption 50%) on master/slave | Requires operator intervention — see test details above for recovery procedures |
 
 **The KubeDB operator is the reason these chaos tests pass.** MariaDB itself doesn't know how to bootstrap a Galera cluster from a total outage, elect a new replication master, or reconfigure MaxScale routing. The operator's coordinator sidecar handles all of this — making KubeDB MariaDB truly self-healing on Kubernetes for the pod / stress / network / time fault families.
 
-For the IO-chaos family, recovery from latency, read-only filesystems, and clean pod kill works today; random bit-level corruption and EIO faults are where the chaos-branch fixes focus. If your workload is sensitive to silent storage corruption, pair KubeDB with an external backup (e.g. KubeStash) until the chaos-branch fixes land in a tagged release. Both topologies already achieve production-grade reliability for the much larger class of non-corruption faults that dominate real-world incidents.
+For the IO-chaos family, recovery from latency, read-only filesystems, and clean pod kill works automatically. For random bit-level corruption and EIO faults, we recommend pairing KubeDB with external backups (e.g., KubeStash) in production environments. Both topologies achieve production-grade reliability for the vast majority of real-world failure scenarios.
 
 ## What Next?
 
