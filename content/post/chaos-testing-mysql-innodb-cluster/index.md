@@ -1,6 +1,6 @@
 ---
 title: Chaos Engineering KubeDB MySQL InnoDB Cluster with MySQL Router on Kubernetes
-date: "2026-04-13"
+date: "2026-05-20"
 weight: 14
 authors:
 - SK Ali Arman
