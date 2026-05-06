@@ -1,6 +1,6 @@
 ---
 title: KubeDB Partners with SUSE to Deliver Sovereign Kubernetes-Native DBaaS
-date: "2026-05-07"
+date: "2026-05-05"
 weight: 15
 authors:
 - Tamal Saha
@@ -15,7 +15,7 @@ tags:
 - suse
 ---
 
-We’re thrilled to announce our new strategic partnership with **SUSE**\!
+We’re thrilled to announce our new strategic partnership with **[SUSE](https://www.suse.com)**\!
 
 Together, **KubeDB by AppsCode** and **SUSE Rancher Prime** deliver a true Kubernetes-native Database-as-a-Service (DBaaS) platform that runs production databases anywhere Kubernetes runs — on-prem, hybrid cloud, multi-cloud, edge, or air-gapped environments.
 
