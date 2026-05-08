@@ -746,12 +746,11 @@ kubectl exec -it -n demo redis-cluster-shard0-0 -- \
   redis-cli -a $PASSWORD -c GET chaos-test
 
 "before-chaos"
-` `` 
 ```
 
 ---
 
-### Experiment 10: I/O Chaos
+### Experiment 10: I/O Chaos Latency
 
 **What it does:** Injects latency into disk I/O operations for the Redis data directory. This simulates a slow or degraded storage backend affecting AOF writes and RDB snapshots.
 
@@ -759,22 +758,22 @@ kubectl exec -it -n demo redis-cluster-shard0-0 -- \
 apiVersion: chaos-mesh.org/v1alpha1
 kind: IOChaos
 metadata:
-  name: redis-io-delay
+  name: io-latency-example
   namespace: demo
 spec:
   action: latency
-  mode: one
+  mode: all
   selector:
     namespaces:
       - demo
     labelSelectors:
-      app.kubernetes.io/instance: "redis-cluster"
-      app.kubernetes.io/name: "redis"
+      app.kubernetes.io/name: redises.kubedb.com
+      kubedb.com/role: master
   volumePath: /data
-  path: "/data/**"
-  delay: "100ms"
+  path: '/data/**/*'
+  delay: '15000ms'
   percent: 50
-  duration: "60s"
+  duration: '100s
 ```
 
 Observe:
@@ -783,37 +782,168 @@ Observe:
 kubectl logs -n demo redis-cluster-shard0-0 --tail=50 -f
 ```
 
-Redis will log warnings about slow AOF flushes or delayed RDB saves. After the experiment ends, I/O returns to normal and persistence operations resume.
+Redis will log warnings about slow I/O operations. AOF fsync and RDB snapshot latency will increase. After the experiment ends, I/O returns to normal and persistence operations resume.
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status  |
+|---|---|---|------------|
+| 09:16:01 | — | Pre-chaos baseline (all 3 master pods ONLINE) | `Ready`    |
+| 09:16:01 | 0s | `IOChaos` applied — 15000ms I/O latency injected on 50% of ops for shard0-0, shard1-0, shard2-0 | `Ready`    |
+| 09:16:01 | +0s | I/O latency injected into `/data` path on all master pods | `NotReady` |
+| 09:16:10 | ~+9s | AOF fsync and RDB snapshot operations slow significantly; write latency increases | `NotReady`  |
+| 09:17:41 | +100s | Chaos experiment window ends; I/O latency removed from all master pods | `Ready`    |
+| 09:17:45 | ~+1m44s | Persistence operations return to baseline; cluster fully converged | `Ready`    |
+
+**Result: PASS** — I/O latency of 15000ms was injected into 50% of disk operations on the `/data` path across all master pods. Redis remained available throughout the experiment as it primarily operates in-memory, but persistence operations (AOF/RDB) were significantly delayed. After the 100-second chaos window ended, all pods recovered automatically. The test key `chaos-test` remained intact.
+
+Verify data:
+
+```bash
+kubectl exec -it -n demo redis-cluster-shard0-0 -- \
+  redis-cli -a $PASSWORD -c GET chaos-test
+
+"before-chaos"
+```
 
 ---
 
-## Summary of Experiments
+### Experiment 11: I/O Chaos Fault
 
-| # | Experiment | Chaos Kind | What is Validated                         |
-|---|---|---|-------------------------------------------|
-| 1 | Pod Failure | PodChaos | Pod unavailability, automatic recovery    |
-| 2 | Pod Kill | PodChaos | Hard kill, PetSet reschedule behavior     |
-| 3 | Container Kill | PodChaos | In-place container restart                |
-| 4 | Network Delay | NetworkChaos | High latency, client timeout behavior     |
-| 5 | Network Loss | NetworkChaos | Packet drops, client retry behavior       |
-| 6 | Network Corruption | NetworkChaos | Corrupted packets, TCP retransmission     |
-| 7 | Network Partition | NetworkChaos | Cluster split, re-convergence             |
-| 8 | CPU Stress | StressChaos | Performance under CPU saturation          |
-| 9 | Memory Stress | StressChaos | OOM behavior, key eviction                |
-| 10 | I/O Chaos | IOChaos | Storage degradation, persistence behavior |
+**What it does:** Injects I/O faults (EIO — errno 5) into 50% of disk operations on the Redis `/data` directory. This simulates a failing or corrupted storage device, causing read/write syscalls to return errors rather than just slowing down.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: io-fault-example
+  namespace: demo
+spec:
+  action: fault
+  mode: all
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      app.kubernetes.io/name: redises.kubedb.com
+      kubedb.com/role: master
+  volumePath: /data
+  path: /data/**/*
+  errno: 5
+  percent: 50
+  duration: '120s'
+```
+
+Apply and observe:
+
+```bash
+kubectl get rd,pods -n demo
+kubectl logs -n demo redis-cluster-shard0-0 --tail=20 -f
+```
+
+Unlike I/O latency (Experiment 10), this experiment causes syscalls to fail outright. Redis immediately starts logging AOF write errors. Because errno 5 (`EIO`) is injected on 50% of I/O syscalls, even `kubectl exec` into the affected pods fails — the working directory `/data` itself becomes unreadable:
+
+```
+error: Internal error occurred: error executing command in container: failed to exec in container:
+OCI runtime exec failed: exec failed: unable to start container process:
+chdir to cwd ("/data") set in config.json failed: input/output error
+```
+
+Redis logs during the experiment:
+
+```
+74:M 08 May 2026 09:30:16.611 # Error writing to the AOF file: Input/output error
+74:M 08 May 2026 09:30:16.622 * AOF write error looks solved, Redis can write again.
+74:M 08 May 2026 09:30:16.632 # Fail to fsync the AOF file: Input/output error
+```
+
+The intermittent nature of the fault (50% of ops) causes Redis to oscillate between detecting and resolving the error within the same second, exposing the retry logic in the AOF write path.
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 09:30:11 | — | Pre-chaos baseline (all 3 master pods ONLINE) | `Ready` |
+| 09:30:11 | 0s | `IOChaos` applied — errno 5 injected on 50% of `/data` I/O ops for shard0-0, shard1-0, shard2-0 | `Ready` |
+| 09:30:16 | ~+5s | AOF fsync fails: `Fail to fsync the AOF file: Input/output error` on shard1-0; `Error writing to the AOF file` on shard0-0 | `NotReady` |
+| 09:30:16 | ~+5s | `kubectl exec` into affected pods fails — `/data` working directory returns `input/output error` | `NotReady` |
+| 09:32:11 | +120s | Chaos experiment window ends; I/O fault removed from all master pods | `NotReady` |
+| ~09:32:13 | ~+2m02s | AOF write error resolves: `AOF write error looks solved, Redis can write again` | `Ready` |
+
+**Result: PASS** — errno 5 (`EIO`) was injected into 50% of I/O syscalls on the `/data` path across all master pods. Redis detected and logged AOF write failures within 5 seconds. The fault was severe enough to prevent `kubectl exec` from entering affected containers. After the 120-second window ended, Redis self-healed — AOF writes resumed and the cluster re-converged without data loss.
+
+Verify data:
+
+```bash
+kubectl exec -it -n demo redis-cluster-shard0-0 -- \
+  redis-cli -a $PASSWORD -c GET chaos-test
+
+"before-chaos"
+```
+
+---
+
+## Summary
+
+We ran 11 chaos experiments against a KubeDB-managed Redis Cluster on Kubernetes. Every experiment resulted in a **PASS** — the cluster recovered automatically and the test key `chaos-test` remained intact throughout.
+
+| # | Experiment | Tool | Fault Type | Duration | Result |
+|---|---|---|---|---|---|
+| 1 | Master Pod Failure | PodChaos | Pod marked unavailable | 1m | ✅ PASS |
+| 2 | Pod Kill Master | PodChaos | SIGKILL all master pods | 5m | ✅ PASS |
+| 3 | Container Kill | PodChaos | Kill `redis` container in-place | 5m | ✅ PASS |
+| 4 | Network Delay | NetworkChaos | 1000ms latency on master pods | 60s | ✅ PASS |
+| 5 | Network Bandwidth | NetworkChaos | 1 Mbps cap on all pods | 60s | ✅ PASS |
+| 6 | Network Corruption | NetworkChaos | 40% packet corruption | 60s | ✅ PASS |
+| 7 | Network Partition | NetworkChaos | Bidirectional master↔replica split | 10m | ✅ PASS |
+| 8 | CPU Stress | StressChaos | 4 workers at 50% CPU on masters | 2m | ✅ PASS |
+| 9 | Memory Stress | StressChaos | 256MB allocation on one pod | 60s | ✅ PASS |
+| 10 | I/O Latency | IOChaos | 15000ms latency on 50% of `/data` ops | 100s | ✅ PASS |
+| 11 | I/O Fault | IOChaos | errno 5 on 50% of `/data` ops | 120s | ✅ PASS |
+
+**Key takeaways:**
+
+- **KubeDB** continuously reconciles the Redis Cluster back to the desired state after every fault — no manual intervention was needed.
+- **Redis Cluster** mode provides built-in resilience: replica promotion, automatic re-election, and shard re-convergence all worked as expected.
+- **Pod-level faults** (kill, failure, container kill) recovered within seconds to a few minutes via Kubernetes StatefulSet rescheduling.
+- **Network faults** (partition, delay, bandwidth, corruption) caused temporary `Critical` states but the cluster re-converged automatically once the fault was lifted.
+- **Resource stress** (CPU, memory) degraded performance but never caused data loss or cluster failure within the tested limits.
+- **I/O faults** are the most disruptive class — errno injection can prevent `kubectl exec` from entering pods — but Redis self-healed after the chaos window ended.
 
 ---
 
 ## Cleanup
 
-Delete the Redis cluster:
+Once you are done with the experiments, remove all resources to avoid incurring unnecessary costs.
+
+Delete all Chaos Mesh experiments:
 
 ```bash
-kubectl delete redis -n demo redis-cluster
+kubectl delete podchaos,networkchaos,stresschaos,iochaos --all -n demo
+```
+
+Delete the Redis Cluster:
+
+```bash
+kubectl delete redis redis-cluster -n demo
 ```
 
 Delete the namespace:
 
 ```bash
 kubectl delete ns demo
+```
+
+Uninstall Chaos Mesh (if installed via Helm):
+
+```bash
+helm uninstall chaos-mesh -n chaos-mesh
+kubectl delete ns chaos-mesh
+```
+
+Uninstall KubeDB (if installed via Helm):
+
+```bash
+helm uninstall kubedb -n kubedb
+kubectl delete ns kubedb
 ```
