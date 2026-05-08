@@ -25,31 +25,21 @@ ACE **v2026.4.30** is a smaller stabilization release focused on installer usabi
 - **Selfhost installer workflows are improved** with better Kube API Server handling and DNS-related fixes.
 - **Platform UI improves organization management** with member actions and member counts.
 - **Cluster feature-set flows are more reliable** with fixes for spoke configuration and enable/configure behavior.
-- **ACE interfaces received dependency and security updates** across the `v2.2.0` UI releases and the latest Selfhost UI updates.
+- **Automate the migration process from ingress to gateway**.
 
 Here are the components specific changes:
 
-### Billing UI
-#### Fixes & Improvements
-- Updated Billing UI dependencies and resolved security issues as part of the `v2.2.0` release line.
 
 ### Cluster UI
 #### Fixes & Improvements
 - Fixed feature-set issues in spoke configuration flows.
 - Resolved enable/configure confusion in feature-set workflows to make cluster settings behavior more predictable.
-- Updated Cluster UI dependencies and resolved security issues as part of the `v2.2.0` release line.
-
-### KubeDB UI
-#### Fixes & Improvements
-- Updated KubeDB UI dependencies and resolved security issues as part of the `v2.2.0` release line.
 
 ### Platform UI
 #### Enhancements
 - Added member count visibility in the Site Administration organization list.
 - Added a remove-member action in organization member management flows.
-
-#### Fixes & Improvements
-- Updated Platform UI dependencies and resolved security issues as part of the `v2.2.0` release line.
+- The error-toaster will be visible for 10 seconds instead of only 2 seconds.
 
 ### Selfhost UI
 #### Enhancements
@@ -59,10 +49,8 @@ Here are the components specific changes:
 - Fixed DNS-related issues in Selfhost installer workflows.
 
 ### Platform Backend
-#### Fixes & Improvements
-- Synced the latest `lib-selfhost` changes into the backend to keep installer-driven workflows aligned with the current self-hosted release behavior.
-- Updated bundled wizard and resource metadata for newer database and editor definitions, including **DocumentDB**, **DB2**, **HanaDB**, **Milvus**, **Neo4j**, **Qdrant**, and **Weaviate**.
-- Added backend test coverage around ACE installer and upgrader flows while refreshing dependencies.
+#### Enhancements
+- Gateway-related resources will be installed in the 'ace' namespace in the hub cluster.
 
 ### External products
 Here is the summary of external dependency updates for `ACE v2026.4.30`:
