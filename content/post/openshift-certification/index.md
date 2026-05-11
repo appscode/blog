@@ -1,5 +1,5 @@
 ---
-title: KubeDB Is Now Certified on the Red Hat Ecosystem Catalog
+title: KubeDB by AppsCode Achieves Red Hat OpenShift Operator Certification
 date: "2026-05-11"
 weight: 14
 authors:
