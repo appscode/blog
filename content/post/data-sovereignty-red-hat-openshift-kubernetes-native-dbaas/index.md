@@ -1,6 +1,6 @@
 ---
 title: Why Data Sovereignty Is Driving Red Hat OpenShift Users Toward Kubernetes-Native DBaaS
-date: "2026-05-13"
+date: "2026-05-12"
 weight: 14
 authors:
 - Tamal Saha
