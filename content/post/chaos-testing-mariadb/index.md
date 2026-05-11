@@ -93,18 +93,18 @@ kubectl create namespace demo
 
 ## Test Environment
 
-| Component | Details |
-|---|---|
-| Kubernetes | kind (local cluster) |
-| KubeDB Version | 2026.2.26 |
-| Cluster Topology | 3-node Galera Cluster (all nodes read-write) |
-| MariaDB Version | 11.8.5 |
-| Storage | 2Gi PVC per node (Durable, ReadWriteOnce) |
-| Memory Limit | 1.5Gi per MariaDB pod |
-| CPU Request | 500m per pod |
-| Chaos Engine | Chaos Mesh |
+| Component | Details                                                    |
+|---|------------------------------------------------------------|
+| Kubernetes | kind (local cluster)                                       |
+| KubeDB Version | 2026.4.27                                                  |
+| Cluster Topology | 3-node Galera Cluster (all nodes read-write)               |
+| MariaDB Version | 11.8.5                                                     |
+| Storage | 2Gi PVC per node (Durable, ReadWriteOnce)                  |
+| Memory Limit | 1.5Gi per MariaDB pod                                      |
+| CPU Request | 500m per pod                                               |
+| Chaos Engine | Chaos Mesh                                                 |
 | Load Generator | sysbench `oltp_read_write`, 4 tables x 50k rows, 4 threads |
-| Baseline TPS | ~1,039 |
+| Baseline TPS | ~1,039                                                     |
 
 All experiments were run under **sustained sysbench read-write load** to simulate production traffic during failures.
 
@@ -477,17 +477,17 @@ spec:
   stressors:
     memory:
       workers: 2
-      size: "1200MB"
+      size: "1400MB"
   duration: "10m"
 ```
 
-**What this chaos does:** Allocates 1200MB of extra memory on one pod. With MariaDB's memory usage, this approaches the 1.5Gi limit.
+**What this chaos does:** Allocates 1400MB of extra memory on one pod. With MariaDB's memory usage, this approaches the 1.5Gi limit.
 
 - **Expected behavior:**
   Memory stress pushes pod near 1.5Gi limit → either (a) pod OOMKilled → recreated → rejoins via IST, or (b) survives with degraded performance. Cluster stays operational at ≥ 2 nodes throughout. Zero data loss either way.
 
 - **Actual result:**
-  MariaDB **survived** 1200MB stress without OOMKill. No pod restarts. Cluster ran at 1050 TPS (no degradation). 25/25 tracking rows preserved, checksums match. **PASS.**
+  MariaDB **survived** 1400MB stress trigger OOMKill. mariadb container of md-0 got restarted and joined the cluster again.  Cluster ran at 1050 TPS (no degradation). 25/25 tracking rows preserved, checksums match. **PASS.**
 
 Apply the chaos:
 
@@ -496,7 +496,7 @@ Apply the chaos:
 stresschaos.chaos-mesh.org/mariadb-primary-memory-stress created
 ```
 
-After 20 seconds, check pods — no OOMKill triggered:
+After 20 seconds, check pods — md-0 get OOMKill triggered:
 
 ```shell
 ➤ kubectl get mariadb,pods -n demo
@@ -504,12 +504,12 @@ NAME                       VERSION   STATUS   AGE
 mariadb.kubedb.com/md      11.8.5    Ready    76m
 
 NAME       READY   STATUS    RESTARTS   AGE
-pod/md-0   2/2     Running   0          7m54s
+pod/md-0   2/2     Running   1 (4m ago)          7m54s
 pod/md-1   2/2     Running   0          20m
 pod/md-2   2/2     Running   0          76m
 ```
 
-MariaDB survived at 1200MB stress — no OOMKill. Run sysbench during stress:
+Run sysbench during stress:
 
 ```shell
 ➤ sysbench oltp_read_write ... --time=15 --report-interval=5 run
@@ -538,7 +538,7 @@ md-1: sbtest1=3400554968, sbtest2=1909458598
 md-2: sbtest1=3400554968, sbtest2=1909458598
 ```
 
-**Result: PASS** — MariaDB survived 1200MB memory stress without OOMKill. Cluster fully operational at 1050 TPS (no degradation). All 25 tracking rows preserved, checksums match.
+**Result: PASS** — MariaDB survived memory stress with OOMKill. Cluster fully operational at 1050 TPS (no degradation). All 25 tracking rows preserved, checksums match.
 
 Clean up:
 
@@ -2852,7 +2852,6 @@ spec:
 - Simultaneously kill Master and all 3 MaxScale pods.
 
 ```yaml
-kubectl apply -f - <<'EOF'
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
@@ -2881,7 +2880,6 @@ spec:
     labelSelectors:
       app.kubernetes.io/instance: md-mx
   gracePeriod: 0
-EOF
 ```
 
 - **Expected behavior:** Both Master and MaxScale path broken → full outage → MaxScale restarts, Slave promoted to Master, recovery.
