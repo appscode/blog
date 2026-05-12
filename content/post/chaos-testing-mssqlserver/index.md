@@ -242,12 +242,7 @@ We will run some chaos experiments to see how our cluster behaves under failure 
 
 
 
-HERE WE ARE............................
-
-
-
-
-
+<REVIEW STARTHERE ............................
 
 
 ### SQL Server High Write/Read Load Client
@@ -470,17 +465,14 @@ Test data table deleted successfully
 Test completed successfully!
 ```
 
-
-
-
-
-
-
-
-
 > You can see these logs by running `kubectl logs -n demo job/ms-load-test-job` command.
 
 With this load on the cluster, we are ready to run some chaos experiments and see how our cluster behaves under failure scenarios.
+
+
+</REVIEW ENDHERE ............................
+
+
 
 ###  Chaos#1: Kill the Primary Pod
 
@@ -582,31 +574,23 @@ Now wait some time, and you should see the old primary is back and the database 
 
 ```shell
 Every 2.0s: kubectl get ms,petset,pods -n demo
-
-NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d15h
-
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d15h
-
-NAME                  READY   STATUS    RESTARTS      AGE
-pod/sqlserver-ag-cluster-0   2/2     Running   1 (62s ago)   64s
-pod/sqlserver-ag-cluster-1   2/2     Running   0             4m30s
-pod/sqlserver-ag-cluster-2   2/2     Running   0             4m28s
+NAME                                          VERSION    STATUS   AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Ready    97m
 ```
 
 Now let's clean up the chaos experiment.
 
 ```shell
-kubectl delete -f tests/01-pod-kill.yaml
+kubectl delete -f 01-pod-kill.yaml
 podchaos.chaos-mesh.org "ms-primary-pod-kill" deleted
 ```
+
 
 ###  Chaos#2: OOMKill the Primary Pod
 
 Now we are going to OOMKill the primary pod. This is a more realistic scenario than just killing the pod, because in real life, your primary pod might get OOMKilled due to high memory usage.
 
-Save this yaml as `tests/02-oomkill.yaml`:
+Save this YAML as `tests/02-oomkill.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -625,12 +609,30 @@ spec:
   stressors:
     memory:
       workers: 1
-      size: "5000MB"  # Exceed the 3Gi limit to trigger OOM
+      size: "5000MB"  # Exceed the 4Gi limit to trigger OOM
   duration: "10m"
 
 ```
 
 **What this chaos does:** Allocates excessive memory on the primary pod to exceed its limits, triggering an OOMKill that forces failover.
+
+
+
+
+
+
+
+
+
+<REVIEW STARTHERE ............................
+
+
+
+
+
+
+
+
 
 
 Before running this, we will run the load test job.
@@ -646,7 +648,7 @@ persistentvolumeclaim/ms-load-test-results created
 
 We can see the database is in ready state while the load test job is running.
 ```shell
-NAME                                VERSION   STATUS   AGE
+NAME                                       VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d16h
 ---------------------------------------------------------------
 pod/ms-load-test-job-z8bxf   1/1     Running   0          22s
@@ -683,7 +685,7 @@ Connection Pool:
 Now run the chaos experiment.
 
 ```shell
-> kubectl apply -f primary-oomkill.yaml
+> kubectl apply -f 02-oomkill.yaml
 stresschaos.chaos-mesh.org/ms-primary-oom created
 ```
 
@@ -695,17 +697,16 @@ watch kubectl get ms,petset,pods -n demo
 
 ```shell
 Every 2.0s: kubectl get ms,petset,pods -n demo
+NAME                                          VERSION    STATUS   AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Critical 127m
 
-NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   2d16h
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   126m
 
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d16h
-
-NAME                         READY   STATUS    RESTARTS     AGE
-pod/sqlserver-ag-cluster-0          2/2     Running   0            54m
-pod/sqlserver-ag-cluster-1          2/2     Running   1 (3s ago)   56m # NOTE: This shows the Restarts counter. It indicates that the pod is OOMKilled and restarted by Kubernetes
-pod/sqlserver-ag-cluster-2          2/2     Running   0            54m
+NAME                         READY   STATUS    RESTARTS      AGE
+pod/sqlserver-ag-cluster-0   2/2     Running   0             38m
+pod/sqlserver-ag-cluster-1   2/2     Running   0             38m
+pod/sqlserver-ag-cluster-2   2/2     Running   1 (94s ago)   48m # NOTE: This shows the Restarts counter. It indicates that the pod is OOMKilled and restarted by Kubernetes
 pod/ms-load-test-job-z8bxf   1/1     Running   0            113s
 
 ```
@@ -727,7 +728,8 @@ You can check the status of chaos experiment by running `kubectl get stresschaos
 
 ```
 
-Now after some time, you should see the old primary is back and the database state is `Ready` again.
+Now, you should see the old primary is back and the database state is `Ready` again.
+
 
 ```shell
 watch kubectl get ms,petset,pods -n demo
@@ -735,17 +737,16 @@ watch kubectl get ms,petset,pods -n demo
 
 ```shell
 Every 2.0s: kubectl get ms,petset,pods -n demo
+NAME                                          VERSION    STATUS   AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Ready    148m
 
-NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d16h
-
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d16h
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   147m
 
 NAME                         READY   STATUS    RESTARTS      AGE
-pod/sqlserver-ag-cluster-0          2/2     Running   0             55m
-pod/sqlserver-ag-cluster-1          2/2     Running   1 (51s ago)   57m
-pod/sqlserver-ag-cluster-2          2/2     Running   0             55m
+pod/sqlserver-ag-cluster-0   2/2     Running   0             59m
+pod/sqlserver-ag-cluster-1   2/2     Running   0             59m
+pod/sqlserver-ag-cluster-2   2/2     Running   1 (21m ago)   69m
 pod/ms-load-test-job-z8bxf   1/1     Running   0             2m41s
 ```
 Now check the data loss report from the load test job logs once the test is completed.
@@ -781,15 +782,25 @@ stresschaos.chaos-mesh.org "ms-primary-oom" deleted
 ```
 
 
+
+
+
+
+</REVIEW ENDHERE ............................
+
+
+
+
+
 ###  Chaos#3: Kill SQL Server process in the Primary Pod
 
-Now we are going to kill the postgres process in the primary pod. Save this yaml as `tests/03-kill-postgres-process.yaml`:
+Now we are going to kill the sqlservr process in the primary pod. Save this YAML as `tests/03-kill-sqlservr-process.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: ms-kill-postgres-process
+  name: ms-kill-sqlservr-process
   namespace: chaos-mesh
 spec:
   action: container-kill
@@ -801,7 +812,7 @@ spec:
       "app.kubernetes.io/instance": "sqlserver-ag-cluster"
       "kubedb.com/role": "primary"
   containerNames:
-    - postgres
+    - mssql
   duration: "30s"
 ```
 
@@ -827,8 +838,8 @@ pod/ms-load-test-job-79k9p   1/1     Running   0            10s # NOTE the load 
 Now run the chaos experiment.
 
 ```shell
-kubectl apply -f ms-kill-postgres-process.yaml
-podchaos.chaos-mesh.org/ms-kill-postgres-process created
+kubectl apply -f ms-kill-sqlservr-process.yaml
+podchaos.chaos-mesh.org/ms-kill-sqlservr-process created
 ```
 
 As soon as you run the chaos experiment, you should see the primary pod is killed, the failover might/might not happen based on the possibility of data loss. If all the replica were synced up with primary before primary went down, a failover will happen immediately. Conversely, if there was some lag between primary and replica, there is a possibility of data loss and in that case, failover will not happen until the primary is back and the replica is synced up with primary.
@@ -853,8 +864,8 @@ pod/sqlserver-ag-cluster-2          2/2     Running   0            81m
 pod/ms-load-test-job-79k9p   1/1     Running   0            39s
 
 ```
-You can see the primary pod was killed and restarted by Kubernetes. The failover was not performed and the database state is `NotReady`. The reason database didn't go ready is that chaos-mesh killed the postgres process immediately without giving the secondary time to receive the last WAL the primary generated under high load. So there is a chance of data loss if we do a failover, so we are not doing a failover in this case to protect your data. However, there are APIs using which you can do a failover in this case also.
-Now wait some time and you should see the old primary is back and the database state is `Ready` again.
+You can see the primary pod was killed and restarted by Kubernetes. The failover was not performed and the database state is `NotReady`. The reason database didn't go ready is that chaos-mesh killed the sqlservr process immediately without giving the secondary time to receive the last WAL the primary generated under high load. So there is a chance of data loss if we do a failover, so we are not doing a failover in this case to protect your data. However, there are APIs using which you can do a failover in this case also.
+Now wait some time, and you should see the old primary is back and the database state is `Ready` again.
 
 
 ```shell
@@ -935,8 +946,8 @@ Test completed successfully!
 Clean up the chaos experiment.
 
 ```shell
-kubectl delete -f tests/03-kill-postgres-process.yaml
-podchaos.chaos-mesh.org "ms-kill-postgres-process" deleted
+kubectl delete -f tests/03-kill-sqlservr-process.yaml
+podchaos.chaos-mesh.org "ms-kill-sqlservr-process" deleted
 ```
 
 ###  Chaos#4: Primary Pod Failure
