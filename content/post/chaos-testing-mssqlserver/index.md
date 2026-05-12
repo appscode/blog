@@ -47,27 +47,23 @@ To follow along with this tutorial, you will need:
 
 ```shell
 ➤ kubectl get pods -n kubedb
-NAME                                             READY   STATUS    RESTARTS   AGE
-kubedb-kubedb-autoscaler-0                       1/1     Running   0          24d
-kubedb-kubedb-ops-manager-0                      1/1     Running   0          22d
-kubedb-kubedb-provisioner-0                      1/1     Running   0          146m
-kubedb-kubedb-webhook-server-699bf949df-24w5k    1/1     Running   0          146m
-kubedb-operator-shard-manager-77c8df4946-4gwhc   1/1     Running   0          146m
-kubedb-petset-869495bb7f-2cln2                   1/1     Running   0          146m
-kubedb-sidekick-794cf489b4-t9rgf                 1/1     Running   0          146m
----
+kubedb         kubedb-kubedb-ops-manager-0                      1/1     Running   1 (15d ago)   19d
+kubedb         kubedb-kubedb-provisioner-0                      1/1     Running   3 (15d ago)   19d
+kubedb         kubedb-kubedb-webhook-server-658996949b-lwrh6    1/1     Running   1 (15d ago)   19d
+kubedb         kubedb-operator-shard-manager-7fdb4d8d49-h96wt   1/1     Running   1 (15d ago)   19d
+kubedb         kubedb-petset-58957c9cc8-z7rr7                   1/1     Running   1 (15d ago)   19d
+kubedb         kubedb-sidekick-6bcf5fc5b7-lhlwd                 1/1     Running   1 (15d ago)   19d
 
 ```
 
 ```shell
 ➤ kubectl get pods -n chaos-mesh
-NAME                                        READY   STATUS    RESTARTS   AGE
-chaos-controller-manager-7d44db47fb-4cwc9   1/1     Running   0          3d17h
-chaos-controller-manager-7d44db47fb-cqvf7   1/1     Running   0          3d15h
-chaos-controller-manager-7d44db47fb-x4xnt   1/1     Running   0          3d17h
-chaos-daemon-f779s                          1/1     Running   0          3d17h
-chaos-dashboard-6855b9d4c-phkht             1/1     Running   0          4d1h
-chaos-dns-server-85b8846dc9-ngcwm           1/1     Running   0          4d1h
+chaos-mesh     chaos-controller-manager-78bcfb886-978ts         1/1     Running   0             144m
+chaos-mesh     chaos-controller-manager-78bcfb886-9tbp4         1/1     Running   0             144m
+chaos-mesh     chaos-controller-manager-78bcfb886-svgdt         1/1     Running   0             144m
+chaos-mesh     chaos-daemon-sgdp2                               1/1     Running   0             144m
+chaos-mesh     chaos-dashboard-6855b9d4c-ln652                  1/1     Running   0             144m
+chaos-mesh     chaos-dns-server-85b8846dc9-59xsp                1/1     Running   0             144m
 ```
 
 ## Introduction to Chaos Engineering
