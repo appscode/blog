@@ -816,7 +816,13 @@ spec:
   duration: "30s"
 ```
 
-**What this chaos does:** Forcefully terminates the SQL Server process in the primary container, simulating a database crash without pod termination.
+
+
+
+<REVIEW STARTHERE ............................
+
+
+**What this chaos does:** Forcefully terminates the SQL Server process in the primary container (mssql), simulating a database crash without pod termination.
 
 Create the load test job. I will alter the duration of the load test job to 1 minute as this chaos experiment is generally shorter.
 
@@ -833,16 +839,23 @@ persistentvolumeclaim/ms-load-test-results created
 
 ```shell
 pod/ms-load-test-job-79k9p   1/1     Running   0            10s # NOTE the load test job is running
+
+kubectl get pods -n demo -L kubedb.com/role
+NAME                     READY   STATUS    RESTARTS      AGE   ROLE
+sqlserver-ag-cluster-0   2/2     Running   0             89m   secondary
+sqlserver-ag-cluster-1   2/2     Running   0             89m   secondary
+sqlserver-ag-cluster-2   2/2     Running   1 (52m ago)   99m   primary
 ```
+
 
 Now run the chaos experiment.
 
 ```shell
-kubectl apply -f ms-kill-sqlservr-process.yaml
+kubectl apply -f tests/03-kill-sqlservr-process.yaml
 podchaos.chaos-mesh.org/ms-kill-sqlservr-process created
 ```
 
-As soon as you run the chaos experiment, you should see the primary pod is killed, the failover might/might not happen based on the possibility of data loss. If all the replica were synced up with primary before primary went down, a failover will happen immediately. Conversely, if there was some lag between primary and replica, there is a possibility of data loss and in that case, failover will not happen until the primary is back and the replica is synced up with primary.
+As soon as you run the chaos experiment, you should see the primary pod is killed, the failover happens
 
 ```shell
 watch kubectl get ms,petset,pods -n demo
@@ -850,40 +863,43 @@ watch kubectl get ms,petset,pods -n demo
 
 ```shell
 Every 2.0s: kubectl get ms,petset,pods -n demo
+NAME                                          VERSION    STATUS   AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Critical    3h
 
-NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   2d17h
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   179m
 
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d17h
-
-NAME                         READY   STATUS    RESTARTS     AGE
-pod/sqlserver-ag-cluster-0          2/2     Running   0            81m
-pod/sqlserver-ag-cluster-1          2/2     Running   2 (9s ago)   84m 
-pod/sqlserver-ag-cluster-2          2/2     Running   0            81m
+NAME                         READY   STATUS    RESTARTS      AGE
+pod/sqlserver-ag-cluster-0   2/2     Running   0             91m
+pod/sqlserver-ag-cluster-1   2/2     Running   0             91m
+pod/sqlserver-ag-cluster-2   2/2     Running   2 (27s ago)   101m
 pod/ms-load-test-job-79k9p   1/1     Running   0            39s
 
 ```
-You can see the primary pod was killed and restarted by Kubernetes. The failover was not performed and the database state is `NotReady`. The reason database didn't go ready is that chaos-mesh killed the sqlservr process immediately without giving the secondary time to receive the last WAL the primary generated under high load. So there is a chance of data loss if we do a failover, so we are not doing a failover in this case to protect your data. However, there are APIs using which you can do a failover in this case also.
+You can see the primary pod was killed and restarted by Kubernetes. The failover was performed and the database state is `Critical` (old primary is not back yet). 
 Now wait some time, and you should see the old primary is back and the database state is `Ready` again.
 
 
 ```shell
 Every 2.0s: kubectl get ms,petset,pods -n demo
+NAME                                          VERSION    STATUS   AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Ready    3h
 
-NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d17h
-
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d17h
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   179m
 
 NAME                         READY   STATUS    RESTARTS      AGE
-pod/sqlserver-ag-cluster-0          2/2     Running   0             82m
-pod/sqlserver-ag-cluster-1          2/2     Running   2 (35s ago)   84m
-pod/sqlserver-ag-cluster-2          2/2     Running   0             82m
-pod/ms-load-test-job-79k9p   1/1     Running   0             65s
-
+pod/sqlserver-ag-cluster-0   2/2     Running   0             91m
+pod/sqlserver-ag-cluster-1   2/2     Running   0             91m
+pod/sqlserver-ag-cluster-2   2/2     Running   2 (77s ago)   101m
 ```
+
+
+
+
+
+
+
 
 Now check the data loss report from the load test job logs once the test is completed.
 
@@ -949,6 +965,23 @@ Clean up the chaos experiment.
 kubectl delete -f tests/03-kill-sqlservr-process.yaml
 podchaos.chaos-mesh.org "ms-kill-sqlservr-process" deleted
 ```
+
+
+</REVIEW ENDHERE ............................
+
+
+
+
+
+
+
+
+
+START FROM HERE...................
+
+
+
+
 
 ###  Chaos#4: Primary Pod Failure
 
@@ -1277,7 +1310,6 @@ Check the logs of the new primary. It shows that it is now accepting connections
 
 ```shell
 ➤ kubectl logs -f -n demo sqlserver-ag-cluster-0
-Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 ...
 2026-04-06 07:23:26.417 UTC [116] LOG:  database system is ready to accept connections
 2026-04-06 07:23:26.864 UTC [160] LOG:  checkpoint complete: wrote 23062 buffers (35.2%); 0 WAL file(s) added, 0 removed, 17 recycled; write=0.407 s, sync=0.027 s, total=0.460 s; sync files=47, longest=0.011 s, average=0.001 s; distance=287175 kB, estimate=287175 kB; lsn=8/42873F88, redo lsn=8/42871FF0
@@ -2968,7 +3000,6 @@ Let's see who is primary:
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-0
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
-Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 sqlserver-ag-cluster-0:/$ psql
 psql (16.4)
 Type "help" for help.
@@ -3027,7 +3058,6 @@ After running for some time, the database went into critical state. Let's see if
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-1
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-1 -- bash
-Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 sqlserver-ag-cluster-1:/$ psql
 psql (16.4)
 Type "help" for help.
@@ -3046,7 +3076,6 @@ I will show you what happened to old primary due to i/o error.
 
 ```shell
 ➤ kubectl logs -n demo sqlserver-ag-cluster-0
-Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 ...
 2026-04-07 02:04:14.564 UTC [2813] LOG:  all server processes terminated; reinitializing
 2026-04-07 02:04:14.564 UTC [2813] LOG:  could not open directory "base/mssql_tmp": I/O error
@@ -3283,7 +3312,6 @@ Let's check the logs from unresponsive primary `sqlserver-ag-cluster-1`.
 
 ```shell
 ➤ kubectl logs -f -n demo sqlserver-ag-cluster-1
-Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 ...
 2026-04-07 02:33:20.552 UTC [237694] FATAL:  the database system is in recovery mode
 2026-04-07 02:33:20.553 UTC [2908] LOG:  all server processes terminated; reinitializing
@@ -3323,7 +3351,6 @@ Our database now moved to `NotReady` -> `Critical` state. Let's see who is the n
 sqlserver-ag-cluster-0
 -----
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
-Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 sqlserver-ag-cluster-0:/$ psql
 psql (16.4)
 Type "help" for help.
@@ -3335,7 +3362,6 @@ postgres=# select ms_is_in_recovery();
 (1 row)
 ----
 ➤ kubectl logs -f -n demo sqlserver-ag-cluster-0
-Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 ...
 2026-04-07 02:34:38.753 UTC [368446] LOG:  checkpoint starting: wal
 2026-04-07 02:35:09.342 UTC [368446] LOG:  checkpoint complete: wrote 20389 buffers (31.1%); 0 WAL file(s) added, 0 removed, 21 recycled; write=29.948 s, sync=0.444 s, total=30.589 s; sync files=11, longest=0.351 s, average=0.041 s; distance=539515 kB, estimate=618146 kB; lsn=4/FACB3C48, redo lsn=4/DD03C9B0
@@ -3538,7 +3564,6 @@ Lets check the primary.
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-0
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
-Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 sqlserver-ag-cluster-0:/$ psql
 psql (16.4)
 Type "help" for help.
@@ -3731,7 +3756,6 @@ lets see who is the primary.
 sqlserver-ag-cluster-0
 -----
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
-Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 sqlserver-ag-cluster-0:/$ psql
 psql (16.4)
 Type "help" for help.
