@@ -566,7 +566,7 @@ pod/sqlserver-ag-cluster-2   2/2     Running   0          66m
 
 ```
 
-you can see that the primary pod is just killed. The failover was done almost immediately.
+You can see that the primary pod is just killed. The failover was done almost immediately.
 The database state is now `Critical`, which
 means your new primary is ready to accept connections, but one or
 more of your replicas are not ready. The old primary will
@@ -581,7 +581,7 @@ sqlserver-ag-cluster-2
 Now wait some time, and you should see the old primary is back and the database state is `Ready` again.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 09:39:50 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d15h
@@ -694,7 +694,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 10:47:30 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   2d16h
@@ -734,7 +734,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 10:48:18 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d16h
@@ -838,7 +838,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 11:15:07 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   2d17h
@@ -858,7 +858,7 @@ Now wait some time and you should see the old primary is back and the database s
 
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 11:15:32 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d17h
@@ -1171,7 +1171,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 13:21:23 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d19h
@@ -1624,7 +1624,7 @@ watch kubectl get ms,petset,pods -n demo
 ```shell
 > watch -n demo kubectl get ms,petset,pods
 
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 17:13:20 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d23h
@@ -1772,7 +1772,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 18:39:12 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d
@@ -1941,7 +1941,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:00:54 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d
@@ -2084,7 +2084,6 @@ Lets run the load test job with some changes in config.
 ```
 
 ```shell
-saurov@saurov-pc:~/g/s/g/s/high-write-load-client|main⚡*?
 ➤ ./run-k8s.sh
 job.batch "ms-load-test-job" deleted
 persistentvolumeclaim "ms-load-test-results" deleted
@@ -2107,7 +2106,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:19:44 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
@@ -2250,7 +2249,7 @@ Lets change some config and apply the load test creation script.
  TEST_RUN_DURATION: "240"
 ```
 
-```shellsaurov@saurov-pc:~/g/s/g/s/high-write-load-client|main⚡*?
+```shell
 ➤ ./run-k8s.sh
 job.batch "ms-load-test-job" deleted
 persistentvolumeclaim "ms-load-test-results" deleted
@@ -2292,7 +2291,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:27:48 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
@@ -2317,7 +2316,7 @@ sqlserver-ag-cluster-0
 
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:35:09 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   3d1h
@@ -2335,7 +2334,7 @@ pod/ms-load-test-job-5q4gh   1/1     Running   0          52s
 Database turns into `NotReady` state as a failover happens due of the corruption.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:35:52 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   3d1h
@@ -2379,7 +2378,7 @@ So sqlserver-ag-cluster-1 is the new primary. Wait for the chaos to be recovered
 `Alrecovered` true means chaos experiment is over.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:36:25 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
@@ -2515,7 +2514,6 @@ spec:
 ```shell
 ➤ kubectl apply -f tests/11-time-offset.yaml
 timechaos.chaos-mesh.org/ms-primary-time-offset created
-saurov@saurov-pc:~/g/s/g/s/chaos-mesh|main⚡*
 ➤ kubectl apply -f tests/12-dns-error.yaml 
 dnschaos.chaos-mesh.org/ms-primary-dns-error created
 ```
@@ -2527,7 +2525,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:50:14 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
@@ -2624,7 +2622,7 @@ spec:
 Run `kubectl apply -f setup/sqlserver-ag-cluster.yaml` and wait for database to be in ready state.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 20:17:16 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    54s
@@ -2736,7 +2734,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 20:37:24 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   21m
@@ -2758,25 +2756,19 @@ Now we might observe some interesting behavior as the IO is not performing corre
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-0
 sqlserver-ag-cluster-2
-saurov@saurov-pc:~
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-0
 sqlserver-ag-cluster-2
-saurov@saurov-pc:~
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-0
 sqlserver-ag-cluster-2
-saurov@saurov-pc:~
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-0
 sqlserver-ag-cluster-2
-saurov@saurov-pc:~
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-2
-saurov@saurov-pc:~
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-0
-saurov@saurov-pc:~
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-0
 ```
@@ -2784,7 +2776,7 @@ sqlserver-ag-cluster-0
 After some amount of time, we should see a stable primary, in our case which is `sqlserver-ag-cluster-0`.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 20:40:04 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   23m
@@ -2820,7 +2812,7 @@ The chaos is recovered. Now the database should be in `Ready` state. But if anyt
 
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 20:48:52 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    32m
@@ -2944,7 +2936,7 @@ spec:
 Let's see how our database is now,
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:00:56 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    11h
@@ -3003,7 +2995,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:05:39 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   11h
@@ -3079,7 +3071,7 @@ status:
 Chaos is recovered by chaos-mesh.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:11:28 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    11h
@@ -3212,7 +3204,7 @@ Let's see how our database is now.
 kubectl get ms,petset,pods -n demo
 ```
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:32:42 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    12h
@@ -3252,7 +3244,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:33:45 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   12h
@@ -3297,7 +3289,7 @@ removing the initial scripts as server is not running ...
 So you can see primary is shut down for I/O chaos. A failover should happen soon.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:34:42 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   12h
@@ -3361,7 +3353,7 @@ status:
 All the generated chaos has been recovered.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:38:52 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    12h
@@ -3503,7 +3495,7 @@ spec:
 Let's check the database state.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:57:53 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    12h
@@ -3534,7 +3526,6 @@ Lets check the primary.
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-0
-saurov@saurov-pc:~
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
 Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 sqlserver-ag-cluster-0:/$ psql
@@ -3562,7 +3553,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:59:26 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   12h
@@ -3581,7 +3572,7 @@ pod/ms-load-test-job-b56q6   1/1     Running   0          75s
 Database went into NotReady state and should be back in `Critical` state as we used `forceFailoverAcceptingDataLossAfter` api.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:00:32 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   12h
@@ -3617,7 +3608,7 @@ status:
 All the chaos recovered.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:04:55 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    12h
@@ -3707,7 +3698,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Wed Apr  8 10:15:14 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    68s
@@ -3764,7 +3755,7 @@ Now watch the database state.
 
 ```shell
 watch kubectl get ms,petset,pods -n demo
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Wed Apr  8 10:20:38 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   6m32s
@@ -3803,7 +3794,7 @@ status:
 Now the chaos is recovered and our database should eventually reach `Ready` state.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Wed Apr  8 10:33:12 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    19m
@@ -3919,7 +3910,7 @@ spec:
 This is simulate a typical node failure scenario where all the pod restarted.
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:31:47 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    13h
@@ -3945,7 +3936,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:12 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   13h
@@ -3959,7 +3950,7 @@ pod/sqlserver-ag-cluster-1          2/2     Running     0          2s
 
 ```
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:24 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   13h
@@ -3974,7 +3965,7 @@ pod/sqlserver-ag-cluster-2          2/2     Running     0          11s
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:33 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   13h
@@ -3989,7 +3980,7 @@ pod/sqlserver-ag-cluster-2          2/2     Running     0          21s
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:40 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    13h
@@ -4060,7 +4051,7 @@ sqlserver-ag-cluster-1
 Lets check the cpu usages:
 
 ```shell
-Every 2.0s: kubectl top pods --containers -n demo          saurov-pc: Tue Apr  7 09:35:42 2026
+Every 2.0s: kubectl top pods --containers -n demo
 
 POD                      NAME             CPU(cores)   MEMORY(bytes)
 sqlserver-ag-cluster-0          ms-coordinator   29m          40Mi
@@ -4078,7 +4069,7 @@ watch kubectl top pods --containers -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl top pods --containers -n demo          saurov-pc: Tue Apr  7 09:35:58 2026
+Every 2.0s: kubectl top pods --containers -n demo
 
 POD                      NAME             CPU(cores)   MEMORY(bytes)
 sqlserver-ag-cluster-0          ms-coordinator   29m          37Mi
@@ -4099,7 +4090,7 @@ watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:36:31 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    13h
