@@ -87,14 +87,48 @@ Each experiment progressively tests different aspects of the system—from simpl
 You can see the [`Chaos Testing Results Summary`](#chaos-testing-results-summary) for a quick view of what we have done in this blog.
 
 
-## Create a High-Availability SQL Server Cluster
+## Deploy a Microsoft SQL Server Availability Group Cluster
 
 First, we need to deploy a SQL Server cluster configured for High Availability.
 Unlike a Standalone instance, a HA cluster consists of a primary pod
 and one or more secondary pods that are ready to take over if the leader
 fails.
 
-Save the following YAML as yamls/sqlserver-ag-cluster.yaml. This manifest
+First, an issuer needs to be created, which will be used to generate TLS certificates for secure communication between the primary and secondary replicas in the cluster. 
+
+### Create Issuer/ClusterIssuer
+
+Now, we are going to create an example `Issuer`.
+
+- Start off by generating our ca-certificates using openssl,
+```bash
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./ca.key -out ./ca.crt -subj "/CN=MSSQLServer/O=kubedb"
+```
+- Create a secret using the certificate files we have just generated,
+```bash
+$ kubectl create secret tls mssqlserver-ca --cert=ca.crt  --key=ca.key --namespace=demo 
+secret/mssqlserver-ca created
+```
+Now, we are going to create an `Issuer` using the `mssqlserver-ca` secret that contains the ca-certificate we have just created. Below is the YAML of the `Issuer` CR that we are going to create,
+
+```yaml
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+ name: mssqlserver-ca-issuer
+ namespace: demo
+spec:
+ ca:
+   secretName: mssqlserver-ca
+```
+
+Let’s create the `Issuer` CR we have shown above,
+```bash
+$ kubectl create -f mssqlserver-ca-issuer.yaml
+issuer.cert-manager.io/mssqlserver-ca-issuer created
+```
+
+Save the following YAML as sqlserver-ag-cluster.yaml. This manifest
 defines a 3-node SQL Server cluster.
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -185,6 +219,36 @@ The pod having label `kubedb.com/role=primary` is the primary and `kubedb.com/ro
 ## Chaos Testing
 
 We will run some chaos experiments to see how our cluster behaves under failure scenarios like oom kill, network latency, network partition, io latency, io fault etc. We will use a SQL Server client application to simulate high write and read load on the cluster.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+HERE WE ARE............................
+
+
+
+
+
+
 
 ### SQL Server High Write/Read Load Client
 
@@ -326,7 +390,7 @@ spec:
       storage: 1Gi
 ```
 
-> Also as a standard, we will use 10% write, 10% update and 80% 
+> As a standard, we will use 10% write, 10% update and 80% 
 read operations. In 5 minutes of high load,
 it should generate around 30GB of data, more than 
 30M rows inserted, more than 300M rows read. 
@@ -334,7 +398,7 @@ it should generate around 30GB of data, more than
 > **Note**: If you do not want to generate this much data, you can reduce the INSERT_PERCENT and BATCH_SIZE values.
 
 
-Save the above yamls. Then make a script like below:
+Save the above YAMLs. Then make a script like below:
 
 ```shell
 ➤ cat run-k8s.sh 
@@ -406,6 +470,14 @@ Test data table deleted successfully
 Test completed successfully!
 ```
 
+
+
+
+
+
+
+
+
 > You can see these logs by running `kubectl logs -n demo job/ms-load-test-job` command.
 
 With this load on the cluster, we are ready to run some chaos experiments and see how our cluster behaves under failure scenarios.
@@ -416,7 +488,7 @@ We will ignore the load test for this experiment.
 
 We are about to kill the primary pod and see how fast the failover happens. We will use Chaos-Mesh to do this. You can also do this manually by running `kubectl delete pod` command, but using Chaos-Mesh will give you more insights about the failover process.
 
-Save this yaml as `tests/01-pod-kill.yaml`:
+Save this YAML as `01-pod-kill.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -451,28 +523,29 @@ sqlserver-ag-cluster-0
 ```
 
 Now run `watch kubectl get ms,petset,pods -n demo`.
-
 ```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 09:36:19 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo                                                
+NAME                                          VERSION    STATUS   AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Ready    44m
 
-NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d15h
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   43m
 
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d15h
-
-NAME                  READY   STATUS    RESTARTS   AGE
-pod/sqlserver-ag-cluster-0   2/2     Running   0          3m44s
-pod/sqlserver-ag-cluster-1   2/2     Running   0          59s
-pod/sqlserver-ag-cluster-2   2/2     Running   0          57s
-
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/sqlserver-ag-cluster-0   2/2     Running   0          43m
+pod/sqlserver-ag-cluster-1   2/2     Running   0          43m
+pod/sqlserver-ag-cluster-2   2/2     Running   0          43m
 ```
 
 While watching the pods, run the chaos experiment.
 
 ```shell
-kubectl apply -f primary-pod-kill.yaml
+kubectl apply -f 01-pod-kill.yaml
 podchaos.chaos-mesh.org/ms-primary-pod-kill created
+
+kubectl get podchaos.chaos-mesh.org  -A
+NAMESPACE    NAME                  AGE
+chaos-mesh   ms-primary-pod-kill   10s
 ```
 
 ```shell
@@ -480,35 +553,32 @@ kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   2d15h
+NAME                                          VERSION    STATUS   AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Critical    67m
 
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d15h
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   66m
 
-NAME                  READY   STATUS    RESTARTS     AGE
-pod/sqlserver-ag-cluster-0   2/2     Running   1 (8s ago)   10s
-pod/sqlserver-ag-cluster-1   2/2     Running   0            3m36s
-pod/sqlserver-ag-cluster-2   2/2     Running   0            3m34s
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/sqlserver-ag-cluster-0   2/2     Running   0          20s
+pod/sqlserver-ag-cluster-1   2/2     Running   0          66m
+pod/sqlserver-ag-cluster-2   2/2     Running   0          66m
+
 ```
 
-Note the `Restarts` section; you will see the primary pod was
-killed 8 seconds ago. The failover was done almost immediately.
+you can see that the primary pod is just killed. The failover was done almost immediately.
 The database state is now `Critical`, which
 means your new primary is ready to accept connections, but one or
 more of your replicas are not ready. The old primary will
 be ready after `chaos.spec.duration` seconds, which is 30 seconds.
 
 Let's see who is the new primary.
-
-
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep  primary | awk '{print $1}'
-sqlserver-ag-cluster-1
-
+sqlserver-ag-cluster-2
 ```
 
-Now wait some time and you should see the old primary is back and the database state is `Ready` again.
+Now wait some time, and you should see the old primary is back and the database state is `Ready` again.
 
 ```shell
 Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 09:39:50 2026
