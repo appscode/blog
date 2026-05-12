@@ -91,62 +91,52 @@ You can see the [`Chaos Testing Results Summary`](#chaos-testing-results-summary
 
 First, we need to deploy a SQL Server cluster configured for High Availability.
 Unlike a Standalone instance, a HA cluster consists of a primary pod
-and one or more standby pods that are ready to take over if the leader
+and one or more secondary pods that are ready to take over if the leader
 fails.
 
 Save the following YAML as yamls/sqlserver-ag-cluster.yaml. This manifest
 defines a 3-node SQL Server cluster.
-
-
-
-
-
-DONE SO FAR. ##############################################
-
-
-
 ```yaml
-apiVersion: kubedb.com/v1
+apiVersion: kubedb.com/v1alpha2
 kind: MSSQLServer
 metadata:
-  name: sqlserver-ag-cluster
-  namespace: demo
+   name: sqlserver-ag-cluster
+   namespace: demo
 spec:
-  clientAuthMode: md5
-  deletionPolicy: Delete
-  podTemplate:
-    spec:
-      containers:
-        - name: postgres
-          resources:
-            limits:
-              memory: 3Gi
-            requests:
-              cpu: 2
-              memory: 2Gi
-  replicas: 3
-  replication:
-    walKeepSize: 5000
-    walLimitPolicy: WALKeepSize
-    # forceFailoverAcceptingDataLossAfter: 30s # uncomment this if you want to accept data loss during failover, but want to have minimal downtime. 
-  standbyMode: Hot
-  storage:
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 50Gi
-  storageType: Durable
-  version: "16.4"
+   version: "2025-cu0"
+   replicas: 3
+   topology:
+      mode: AvailabilityGroup
+      availabilityGroup:
+         databases:
+            - agdb
+         secondaryAccessMode: "All"
+   tls:
+      issuerRef:
+         name: mssqlserver-ca-issuer
+         kind: Issuer
+         apiGroup: "cert-manager.io"
+      clientTLS: false
+   podTemplate:
+      spec:
+         containers:
+            - name: mssql
+              env:
+                 - name: ACCEPT_EULA
+                   value: "Y"
+                 - name: MSSQL_PID
+                   value: Evaluation
+   storageType: Durable
+   storage:
+      accessModes:
+         - ReadWriteOnce
+      resources:
+         requests:
+            storage: 10Gi
+   deletionPolicy: WipeOut
 ```
 > **`Important Notes`**:
-> - We have set walLimitPolicy to WALKeepSize and
-> walKeepSize to 5000. This means that we will keep 5000 MB
-> of WAL files in our cluster. If your write operations are
-> very high, you might want to increase this value.
-> We suggest you set it to at least 15 - 30% of your storage.
-> - If you can tolerate some data loss, but you want your primary to be up and running at any time with minimal downtime, you can set `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s`
-> - You can read/write in your database in both **`Ready`** and **`Critical`** state. So it means even if your db is in `Critical` state, your uptime is not compromised. `Critical` means one or more replicas are offline. But `primary` is up and running along with some other replicas probably.
+> - You can read/write in your database in both **`Ready`** and **`Critical`** state. So it means even if your db is in `Critical` state, your uptime is not compromised. `Critical` means one or more replicas are offline. But `primary` is up and running along with some other replicas, probably.
 > - All the results/metrics shown in this blog is related to the chaos scenarios. In general, **a failover takes ~5 seconds** and **without any data loss** ensuring high availability and data safety.
 
 Now, create the namespace and apply the manifest:
@@ -156,68 +146,58 @@ Now, create the namespace and apply the manifest:
 kubectl create ns demo
 
 # Apply the manifest to deploy the cluster
-kubectl apply -f setup/sqlserver-ag-cluster.yaml
+kubectl apply -f sqlserver-ag-cluster.yaml
 ```
 
 You can monitor the status until all pods are ready:
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 See the database status is ready.
 
 ```shell
-➤ kubectl get pg,petset,pods -n demo
-NAME                             VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    4m45s
+➤ kubectl get ms,petset,pods -n demo
+NAME                                          VERSION    STATUS   AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Ready    4m50s
 
-NAME                                      AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   4m41s
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3m45s
 
-NAME               READY   STATUS    RESTARTS   AGE
-pod/sqlserver-ag-cluster-0   2/2     Running   0          4m41s
-pod/sqlserver-ag-cluster-1   2/2     Running   0          2m45s
-pod/sqlserver-ag-cluster-2   2/2     Running   0          2m39s
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/sqlserver-ag-cluster-0   2/2     Running   0          3m44s
+pod/sqlserver-ag-cluster-1   2/2     Running   0          3m38s
+pod/sqlserver-ag-cluster-2   2/2     Running   0          3m31s
 ```
 
-Inspect who is primary and who is standby.
+Inspect the pods role, which one is primary and which ones are secondary.
 
 ```shell
-# you can inspect who is primary
-# and who is secondary like below
-
-➤ kubectl get pods -n demo --show-labels | grep role
-sqlserver-ag-cluster-0   2/2     Running   0          20m   app.kubernetes.io/component=database,app.kubernetes.io/instance=sqlserver-ag-cluster,app.kubernetes.io/managed-by=kubedb.com,app.kubernetes.io/name=postgreses.kubedb.com,apps.kubernetes.io/pod-index=0,controller-revision-hash=sqlserver-ag-cluster-6c5954fd77,kubedb.com/role=primary,statefulset.kubernetes.io/pod-name=sqlserver-ag-cluster-0
-sqlserver-ag-cluster-1   2/2     Running   0          19m   app.kubernetes.io/component=database,app.kubernetes.io/instance=sqlserver-ag-cluster,app.kubernetes.io/managed-by=kubedb.com,app.kubernetes.io/name=postgreses.kubedb.com,apps.kubernetes.io/pod-index=1,controller-revision-hash=sqlserver-ag-cluster-6c5954fd77,kubedb.com/role=standby,statefulset.kubernetes.io/pod-name=sqlserver-ag-cluster-1
-sqlserver-ag-cluster-2   2/2     Running   0          18m   app.kubernetes.io/component=database,app.kubernetes.io/instance=sqlserver-ag-cluster,app.kubernetes.io/managed-by=kubedb.com,app.kubernetes.io/name=postgreses.kubedb.com,apps.kubernetes.io/pod-index=2,controller-revision-hash=sqlserver-ag-cluster-6c5954fd77,kubedb.com/role=standby,statefulset.kubernetes.io/pod-name=sqlserver-ag-cluster-2
-
+➤ kubectl get pods -n demo -L kubedb.com/role
+NAME                     READY   STATUS    RESTARTS   AGE     ROLE
+sqlserver-ag-cluster-0   2/2     Running   0          4m52s   primary
+sqlserver-ag-cluster-1   2/2     Running   0          4m46s   secondary
+sqlserver-ag-cluster-2   2/2     Running   0          4m39s   secondary
 ```
-The pod having `kubedb.com/role=primary` is the primary and `kubedb.com/role=standby` are the standbys.
+The pod having label `kubedb.com/role=primary` is the primary and `kubedb.com/role=secondary` are the secondary.
 
 
 
 ## Chaos Testing
 
-We will run some chaos experiments to see how our
-cluster behaves under failure scenarios like oom kill, network latency, network partition, io latency, io fault etc. We will use a SQL Server client application to simulate high write and read load on the cluster.
+We will run some chaos experiments to see how our cluster behaves under failure scenarios like oom kill, network latency, network partition, io latency, io fault etc. We will use a SQL Server client application to simulate high write and read load on the cluster.
 
 ### SQL Server High Write/Read Load Client
 
-You can apply these YAMLs to create a client application
-that will continuously write and read data from the database.
-This will help us see how the cluster behaves under load and
-during chaos scenarios. Make sure you change the password of your database in the below Secret YAML.
-
-
-
+You can apply these YAMLs to create a client application that will continuously write and read data from the database.
+This will help us see how the cluster behaves under load and during chaos scenarios. Make sure you change the password of your database in the below Secret YAML.
 ```yaml
-# k8s/01-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: pg-load-test-config
+  name: ms-load-test-config
   namespace: demo
   labels:
-    app: pg-load-test
+    app: ms-load-test
 data:
   # Test Duration (in seconds)
   TEST_RUN_DURATION: "400"
@@ -252,10 +232,10 @@ data:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: pg-load-test-secret
+  name: ms-load-test-secret
   namespace: demo
   labels:
-    app: pg-load-test
+    app: ms-load-test
 type: Opaque
 data:
   # Base64 encoded database credentials
@@ -289,10 +269,10 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: pg-load-test-job
+  name: ms-load-test-job
   namespace: demo
   labels:
-    app: pg-load-test
+    app: ms-load-test
     version: v2
 spec:
   completions: 1
@@ -301,7 +281,7 @@ spec:
   template:
     metadata:
       labels:
-        app: pg-load-test
+        app: ms-load-test
         version: v2
     spec:
       restartPolicy: Never
@@ -319,25 +299,25 @@ spec:
               cpu: "2000m"
           envFrom:
             - configMapRef:
-                name: pg-load-test-config
+                name: ms-load-test-config
             - secretRef:
-                name: pg-load-test-secret
+                name: ms-load-test-secret
           volumeMounts:
             - name: results
               mountPath: /results
       volumes:
         - name: results
           persistentVolumeClaim:
-            claimName: pg-load-test-results
+            claimName: ms-load-test-results
 ---
 # k8s/04-pvc.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pg-load-test-results
+  name: ms-load-test-results
   namespace: demo
   labels:
-    app: pg-load-test
+    app: ms-load-test
 spec:
   accessModes:
     - ReadWriteOnce
@@ -373,11 +353,11 @@ Run the script to start the load test.
 ```shell
 chmod +x run-k8s.sh
 ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config configured
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config configured
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 I have attached a sample output of the load test job below. These metrics will be printed after every `REPORT_INTERVAL` seconds. You can see that we are generating around 38GB of data, more than 4M rows inserted, more than 32M rows read in 7 minutes of high load.
@@ -426,7 +406,7 @@ Test data table deleted successfully
 Test completed successfully!
 ```
 
-> You can see these logs by running `kubectl logs -n demo job/pg-load-test-job` command.
+> You can see these logs by running `kubectl logs -n demo job/ms-load-test-job` command.
 
 With this load on the cluster, we are ready to run some chaos experiments and see how our cluster behaves under failure scenarios.
 
@@ -442,7 +422,7 @@ Save this yaml as `tests/01-pod-kill.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: pg-primary-pod-kill
+  name: ms-primary-pod-kill
   namespace: chaos-mesh
 spec:
   action: pod-kill
@@ -457,11 +437,11 @@ spec:
   duration: "30s"
 ```
 
-**What this chaos does:** Terminates the primary pod abruptly, forcing an immediate failover to a standby replica.
+**What this chaos does:** Terminates the primary pod abruptly, forcing an immediate failover to a secondary replica.
 
 We are selecting the primary pod using label selector and killing it. The `duration` field specifies how long the chaos will last. In this case, we are killing the primary pod for 30 seconds.
 
-Our expectation is that within 30 seconds, the primary pod will be killed, and one of the standby pods will be promoted to primary. The killed pod will be brought back by our PetSet operator and will join the cluster as a standby.
+Our expectation is that within 30 seconds, the primary pod will be killed, and one of the secondary pods will be promoted to primary. The killed pod will be brought back by our PetSet operator and will join the cluster as a secondary.
 
 Before running, let's see who is the primary
 
@@ -470,10 +450,10 @@ Before running, let's see who is the primary
 sqlserver-ag-cluster-0
 ```
 
-Now run `watch kubectl get pg,petset,pods -n demo`.
+Now run `watch kubectl get ms,petset,pods -n demo`.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 09:36:19 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 09:36:19 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d15h
@@ -492,11 +472,11 @@ While watching the pods, run the chaos experiment.
 
 ```shell
 kubectl apply -f primary-pod-kill.yaml
-podchaos.chaos-mesh.org/pg-primary-pod-kill created
+podchaos.chaos-mesh.org/ms-primary-pod-kill created
 ```
 
 ```shell
-kubectl get pg,petset,pods -n demo
+kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
@@ -531,7 +511,7 @@ sqlserver-ag-cluster-1
 Now wait some time and you should see the old primary is back and the database state is `Ready` again.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 09:39:50 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 09:39:50 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d15h
@@ -549,7 +529,7 @@ Now let's clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/01-pod-kill.yaml
-podchaos.chaos-mesh.org "pg-primary-pod-kill" deleted
+podchaos.chaos-mesh.org "ms-primary-pod-kill" deleted
 ```
 
 ###  Chaos#2: OOMKill the Primary Pod
@@ -562,7 +542,7 @@ Save this yaml as `tests/02-oomkill.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: StressChaos
 metadata:
-  name: pg-primary-oom
+  name: ms-primary-oom
   namespace: chaos-mesh
 spec:
   mode: one
@@ -587,11 +567,11 @@ Before running this, we will run the load test job.
 
 ```shell
 ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config configured
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config configured
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 We can see the database is in ready state while the load test job is running.
@@ -599,13 +579,13 @@ We can see the database is in ready state while the load test job is running.
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d16h
 ---------------------------------------------------------------
-pod/pg-load-test-job-z8bxf   1/1     Running   0          22s
+pod/ms-load-test-job-z8bxf   1/1     Running   0          22s
 ```
 
 Let's see the log from the load test job:
 
 ```shell
-➤ kubectl logs -f -n demo job/pg-load-test-job
+➤ kubectl logs -f -n demo job/ms-load-test-job
 
 Test Duration: 43s
 -----------------------------------------------------------------
@@ -634,17 +614,17 @@ Now run the chaos experiment.
 
 ```shell
 > kubectl apply -f primary-oomkill.yaml
-stresschaos.chaos-mesh.org/pg-primary-oom created
+stresschaos.chaos-mesh.org/ms-primary-oom created
 ```
 
-Now you should see the primary pod is OOMKilled and the failover happens. The database state will be `Critical` during the failover and will be `Ready` again after the old primary is back as standby.
+Now you should see the primary pod is OOMKilled and the failover happens. The database state will be `Critical` during the failover and will be `Ready` again after the old primary is back as secondary.
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 10:47:30 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 10:47:30 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   2d16h
@@ -656,11 +636,11 @@ NAME                         READY   STATUS    RESTARTS     AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0            54m
 pod/sqlserver-ag-cluster-1          2/2     Running   1 (3s ago)   56m # NOTE: This shows the Restarts counter. It indicates that the pod is OOMKilled and restarted by Kubernetes
 pod/sqlserver-ag-cluster-2          2/2     Running   0            54m
-pod/pg-load-test-job-z8bxf   1/1     Running   0            113s
+pod/ms-load-test-job-z8bxf   1/1     Running   0            113s
 
 ```
 
-You can check the status of chaos experiment by running `kubectl get stresschaos -n chaos-mesh pg-primary-oom` command.
+You can check the status of chaos experiment by running `kubectl get stresschaos -n chaos-mesh ms-primary-oom` command.
 
 ```shell
 ...
@@ -680,11 +660,11 @@ You can check the status of chaos experiment by running `kubectl get stresschaos
 Now after some time, you should see the old primary is back and the database state is `Ready` again.
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 10:48:18 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 10:48:18 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d16h
@@ -696,7 +676,7 @@ NAME                         READY   STATUS    RESTARTS      AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0             55m
 pod/sqlserver-ag-cluster-1          2/2     Running   1 (51s ago)   57m
 pod/sqlserver-ag-cluster-2          2/2     Running   0             55m
-pod/pg-load-test-job-z8bxf   1/1     Running   0             2m41s
+pod/ms-load-test-job-z8bxf   1/1     Running   0             2m41s
 ```
 Now check the data loss report from the load test job logs once the test is completed.
 
@@ -727,7 +707,7 @@ Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/02-oomkill.yaml
-stresschaos.chaos-mesh.org "pg-primary-oom" deleted
+stresschaos.chaos-mesh.org "ms-primary-oom" deleted
 ```
 
 
@@ -739,7 +719,7 @@ Now we are going to kill the postgres process in the primary pod. Save this yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: pg-kill-postgres-process
+  name: ms-kill-postgres-process
   namespace: chaos-mesh
 spec:
   action: container-kill
@@ -763,32 +743,32 @@ Just change the `TEST_RUN_DURATION: "60"` in the ConfigMap YAML and apply all th
 
 ```shell
 ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config configured
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config configured
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 ```shell
-pod/pg-load-test-job-79k9p   1/1     Running   0            10s # NOTE the load test job is running
+pod/ms-load-test-job-79k9p   1/1     Running   0            10s # NOTE the load test job is running
 ```
 
 Now run the chaos experiment.
 
 ```shell
-kubectl apply -f pg-kill-postgres-process.yaml
-podchaos.chaos-mesh.org/pg-kill-postgres-process created
+kubectl apply -f ms-kill-postgres-process.yaml
+podchaos.chaos-mesh.org/ms-kill-postgres-process created
 ```
 
 As soon as you run the chaos experiment, you should see the primary pod is killed, the failover might/might not happen based on the possibility of data loss. If all the replica were synced up with primary before primary went down, a failover will happen immediately. Conversely, if there was some lag between primary and replica, there is a possibility of data loss and in that case, failover will not happen until the primary is back and the replica is synced up with primary.
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 11:15:07 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 11:15:07 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   2d17h
@@ -800,15 +780,15 @@ NAME                         READY   STATUS    RESTARTS     AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0            81m
 pod/sqlserver-ag-cluster-1          2/2     Running   2 (9s ago)   84m 
 pod/sqlserver-ag-cluster-2          2/2     Running   0            81m
-pod/pg-load-test-job-79k9p   1/1     Running   0            39s
+pod/ms-load-test-job-79k9p   1/1     Running   0            39s
 
 ```
-You can see the primary pod was killed and restarted by Kubernetes. The failover was not performed and the database state is `NotReady`. The reason database didn't go ready is that chaos-mesh killed the postgres process immediately without giving the standby time to receive the last WAL the primary generated under high load. So there is a chance of data loss if we do a failover, so we are not doing a failover in this case to protect your data. However, there are APIs using which you can do a failover in this case also.
+You can see the primary pod was killed and restarted by Kubernetes. The failover was not performed and the database state is `NotReady`. The reason database didn't go ready is that chaos-mesh killed the postgres process immediately without giving the secondary time to receive the last WAL the primary generated under high load. So there is a chance of data loss if we do a failover, so we are not doing a failover in this case to protect your data. However, there are APIs using which you can do a failover in this case also.
 Now wait some time and you should see the old primary is back and the database state is `Ready` again.
 
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 11:15:32 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 11:15:32 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d17h
@@ -820,7 +800,7 @@ NAME                         READY   STATUS    RESTARTS      AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0             82m
 pod/sqlserver-ag-cluster-1          2/2     Running   2 (35s ago)   84m
 pod/sqlserver-ag-cluster-2          2/2     Running   0             82m
-pod/pg-load-test-job-79k9p   1/1     Running   0             65s
+pod/ms-load-test-job-79k9p   1/1     Running   0             65s
 
 ```
 
@@ -886,7 +866,7 @@ Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/03-kill-postgres-process.yaml
-podchaos.chaos-mesh.org "pg-kill-postgres-process" deleted
+podchaos.chaos-mesh.org "ms-kill-postgres-process" deleted
 ```
 
 ###  Chaos#4: Primary Pod Failure
@@ -899,7 +879,7 @@ Save this yaml as `tests/04-pod-failure.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: pg-primary-pod-failure
+  name: ms-primary-pod-failure
   namespace: chaos-mesh
 spec:
   action: pod-failure
@@ -923,7 +903,7 @@ We will not run load tests for this experiment as well.
 Before running this, let's examine the database state.
 
 ```shell
-➤ kubectl get pg -n demo
+➤ kubectl get ms -n demo
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d17h
 ---------------------------------------------------------------
 ➤ kubectl get pods -n demo --show-labels | grep  primary | awk '{print $1}'
@@ -940,8 +920,8 @@ pod/sqlserver-ag-cluster-2          2/2     Running     0             102m
 
 Now run the chaos experiment.
 ```shell
-kubectl apply -f pg-primary-pod-failure.yaml
-podchaos.chaos-mesh.org/pg-primary-pod-failure created
+kubectl apply -f ms-primary-pod-failure.yaml
+podchaos.chaos-mesh.org/ms-primary-pod-failure created
 ```
 
 See the database went into NotReady state. Now based on the possibility of data loss, a failover will happen or be prohibited.
@@ -972,7 +952,7 @@ Let's see who is the new primary.
 sqlserver-ag-cluster-0
 ```
 
-Now let's wait 5 minutes and follow the status of the chaos experiment by running `kubectl get podchaos -n chaos-mesh pg-primary-pod-failure` command.
+Now let's wait 5 minutes and follow the status of the chaos experiment by running `kubectl get podchaos -n chaos-mesh ms-primary-pod-failure` command.
 
 ```shell
 status:
@@ -1006,7 +986,7 @@ Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/04-pod-failure.yaml
-podchaos.chaos-mesh.org "pg-primary-pod-failure" deleted
+podchaos.chaos-mesh.org "ms-primary-pod-failure" deleted
 ```
 
 ###  Chaos#5: Network Partition Primary Pod
@@ -1019,25 +999,25 @@ podchaos.chaos-mesh.org "pg-primary-pod-failure" deleted
 In this experiment, we simulate a network partition affecting the primary pod in a SQL Server cluster.
 
 
-Let's say we have a cluster with 3 nodes: one primary and two standbys. Now we are going to create a network partition between the primary and the standby pods. After the split, the primary will be in the minority partition and the standbys will be in the majority partition. 
+Let's say we have a cluster with 3 nodes: one primary and two secondarys. Now we are going to create a network partition between the primary and the secondary pods. After the split, the primary will be in the minority partition and the secondarys will be in the majority partition. 
 ```shell
 Cluster (3 nodes)
 -----------------
 |  Partition A  |   Partition B   |
 |---------------|-----------------|
-|  primary-0    |  standby-1      |
-|               |  standby-2      |
+|  primary-0    |  secondary-1      |
+|               |  secondary-2      |
 ```
-The primary will keep running as primary in the minority partition and one of the standbys will be promoted to primary in the majority partition. Because the majority quorum can't reach the primary in the minority partition due to network partition, they 
-think the primary is down and they will promote one of the standby to primary by leader election.
+The primary will keep running as primary in the minority partition and one of the secondarys will be promoted to primary in the majority partition. Because the majority quorum can't reach the primary in the minority partition due to network partition, they 
+think the primary is down and they will promote one of the secondary to primary by leader election.
 
 ```shell
 After Split
 -----------
 | Partition A        | Partition B        |
 |--------------------|--------------------|
-| primary-0 (active) | standby-1 → primary|
-|                    | standby-2          |
+| primary-0 (active) | secondary-1 → primary|
+|                    | secondary-2          |
 ```
 
 ```shell
@@ -1054,8 +1034,8 @@ Safe Outcome
 ------------
 | Partition A        | Partition B        |
 |--------------------|--------------------|
-| primary-0 (stopped)| standby-1 → primary|
-|                    | standby-2          |
+| primary-0 (stopped)| secondary-1 → primary|
+|                    | secondary-2          |
 ```
 
 But again, there exists a data loss window which is generally small (30s - 1 minute). So how much data might be lost? Depends on your write load during that time, might be none in case there wasn't any write load.
@@ -1066,7 +1046,7 @@ Now save this yaml as `tests/05-network-partition.yaml`. We will test this scena
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: pg-primary-network-partition
+  name: ms-primary-network-partition
   namespace: chaos-mesh
 spec:
   action: partition
@@ -1084,12 +1064,12 @@ spec:
         - demo
       labelSelectors:
         "app.kubernetes.io/instance": "sqlserver-ag-cluster"
-        "kubedb.com/role": "standby"
+        "kubedb.com/role": "secondary"
   direction: both
   duration: "4m"
 ```
 
-**What this chaos does:** Blocks network connectivity between the primary pod and all standby pods, forcing a split-brain scenario where standbys promote a new primary in their partition while the isolated primary continues running.
+**What this chaos does:** Blocks network connectivity between the primary pod and all secondary pods, forcing a split-brain scenario where secondarys promote a new primary in their partition while the isolated primary continues running.
 
 Lets first test on the current postgres, which is running in asynchronous replication mode. Its basically the default mode if you have not mentioned anything in the `.spec.streamingMode` field of MSSQLServer Object.
 
@@ -1107,21 +1087,21 @@ Now,
 
 ```shell
 ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config configured
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config configured
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 Before running this experiment, lets examine db state.
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 13:21:23 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 13:21:23 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d19h
@@ -1133,7 +1113,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          102s
 pod/sqlserver-ag-cluster-1          2/2     Running   0          99s
 pod/sqlserver-ag-cluster-2          2/2     Running   0          96s
-pod/pg-load-test-job-ztb94   1/1     Running   0          12s
+pod/ms-load-test-job-ztb94   1/1     Running   0          12s
 
 ```
 
@@ -1146,7 +1126,7 @@ Now let's go ahead and run the chaos experiment.
 
 ```shell
 ➤ kubectl apply -f tests/05-network-partition.yaml
-networkchaos.chaos-mesh.org/pg-primary-network-partition created
+networkchaos.chaos-mesh.org/ms-primary-network-partition created
 ```
 
 Your database will be in `Ready` state for some time until we detect there is a network partition, when we detect the
@@ -1171,7 +1151,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          3m55s
 pod/sqlserver-ag-cluster-1          2/2     Running   0          3m52s
 pod/sqlserver-ag-cluster-2          2/2     Running   0          3m49s
-pod/pg-load-test-job-ztb94   1/1     Running   0          2m25s
+pod/ms-load-test-job-ztb94   1/1     Running   0          2m25s
 
 ```
 
@@ -1189,9 +1169,9 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          4m38s
 pod/sqlserver-ag-cluster-1          2/2     Running   0          4m35s
 pod/sqlserver-ag-cluster-2          2/2     Running   0          4m32s
-pod/pg-load-test-job-ztb94   1/1     Running   0          3m8s
+pod/ms-load-test-job-ztb94   1/1     Running   0          3m8s
 ```
-> **NOTE**: There is one possible way where data loss might be avoided even with asynchronous replication, this reason is somewhat weird but possible. In a scenario where the standby was lagging behind the primary before the network partition happened, there won't be a failover in this case as we know doing a failover will result in data loss in this case. In this case, your db will be in `NotReady` state.
+> **NOTE**: There is one possible way where data loss might be avoided even with asynchronous replication, this reason is somewhat weird but possible. In a scenario where the secondary was lagging behind the primary before the network partition happened, there won't be a failover in this case as we know doing a failover will result in data loss in this case. In this case, your db will be in `NotReady` state.
 
 > So, if you see your db is in **NotReady** state for longer period, this might be the reason, and you have successfully avoided data loss even with asynchronous replication at the cost of some downtime. Again, if you prefer uptime, use `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s` which will force fully do a failover without considering data loss case.
 
@@ -1216,7 +1196,7 @@ Check the logs of the new primary. It shows that it is now accepting connections
 
 ```shell
 ➤ kubectl logs -f -n demo sqlserver-ag-cluster-0
-Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 ...
 2026-04-06 07:23:26.417 UTC [116] LOG:  database system is ready to accept connections
 2026-04-06 07:23:26.864 UTC [160] LOG:  checkpoint complete: wrote 23062 buffers (35.2%); 0 WAL file(s) added, 0 removed, 17 recycled; write=0.407 s, sync=0.027 s, total=0.460 s; sync files=47, longest=0.011 s, average=0.001 s; distance=287175 kB, estimate=287175 kB; lsn=8/42873F88, redo lsn=8/42871FF0
@@ -1224,7 +1204,7 @@ Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-c
 2026-04-06 07:23:26.871 UTC [160] LOG:  checkpoint complete: wrote 1 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.002 s, total=0.007 s; sync files=1, longest=0.002 s, average=0.002 s; distance=8 kB, estimate=258459 kB; lsn=8/42874050, redo lsn=8/42874018
 ```
 
-Now wait for the chaos experiment to be recovered, you can check the status of chaos experiment by running `kubectl get networkchaos -n chaos-mesh pg-primary-network-partition` command.
+Now wait for the chaos experiment to be recovered, you can check the status of chaos experiment by running `kubectl get networkchaos -n chaos-mesh ms-primary-network-partition` command.
 
 ```shell
   status:
@@ -1239,7 +1219,7 @@ Now wait for the chaos experiment to be recovered, you can check the status of c
       type: Paused
 ```
 
-Once `AllRecovered` is `True` you should see the old primary is back as standby and the database state is `Ready` again.
+Once `AllRecovered` is `True` you should see the old primary is back as secondary and the database state is `Ready` again.
 
 ```shell
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d19h
@@ -1331,7 +1311,7 @@ spec:
   replication:
     walKeepSize: 5000
     walLimitPolicy: WALKeepSize
-  standbyMode: Hot
+  secondaryMode: Hot
   storage:
     accessModes:
       - ReadWriteOnce
@@ -1350,9 +1330,9 @@ Before applying this, let's clean up the previous yamls including postgres, load
 kubectl delete -f setup/sqlserver-ag-cluster.yaml
 postgres.kubedb.com "sqlserver-ag-cluster" deleted
 kubectl delete -f k8s/03-job.yaml
-job.batch "pg-load-test-job" deleted
+job.batch "ms-load-test-job" deleted
 kubectl delete -f tests/05-network-partition.yaml
-networkchaos.chaos-mesh.org "pg-primary-network-partition" deleted
+networkchaos.chaos-mesh.org "ms-primary-network-partition" deleted
 ```
 
 Now apply the setup/sqlserver-ag-cluster.yaml and wait for the db to be in `Ready` state.
@@ -1368,25 +1348,25 @@ Once the db is in `Ready` state, apply the load test job and then wait 1 minute,
 
 ```shell
 ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config configured
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config configured
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 First delete the previous experiment.
 
 ```shell
 ➤ kubectl delete -f tests/05-network-partition.yaml
-networkchaos.chaos-mesh.org/pg-primary-network-partition deleted
+networkchaos.chaos-mesh.org/ms-primary-network-partition deleted
 ```
 
 Now apply the experiment again.
 
 ```shell
 ➤ kubectl apply -f tests/05-network-partition.yaml
-networkchaos.chaos-mesh.org/pg-primary-network-partition created
+networkchaos.chaos-mesh.org/ms-primary-network-partition created
 ```
 You should experience the same scenario as before, but this time there won't be any data loss as we are using synchronous replication.
 
@@ -1453,7 +1433,7 @@ Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/05-network-partition.yaml
-networkchaos.chaos-mesh.org "pg-primary-network-partition" deleted
+networkchaos.chaos-mesh.org "ms-primary-network-partition" deleted
 ```
 
 Delete and recreate the postgres with asynchronous replication if you want to do more experiments.
@@ -1497,7 +1477,7 @@ kubectl apply -f setup/sqlserver-ag-cluster.yaml
 Now wait until database is in ready state.
 
 ```
-➤ kubectl get pg,pods -n demo
+➤ kubectl get ms,pods -n demo
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2m28s
 
@@ -1509,7 +1489,7 @@ pod/sqlserver-ag-cluster-2          2/2     Running     0          2m8s
 
 ```
 
-For this chaos experiment, we are going to limit the bandwidth of the primary pod. This will cause the replication lag between primary and standby to increase, which can lead to data loss if a failover happens during this time. So this is a good experiment to test the behavior of your cluster under network congestion.
+For this chaos experiment, we are going to limit the bandwidth of the primary pod. This will cause the replication lag between primary and secondary to increase, which can lead to data loss if a failover happens during this time. So this is a good experiment to test the behavior of your cluster under network congestion.
 
 Save this yaml as `tests/06-bandwidth-limit.yaml`:
 
@@ -1517,7 +1497,7 @@ Save this yaml as `tests/06-bandwidth-limit.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: pg-primary-bandwidth-limit
+  name: ms-primary-bandwidth-limit
   namespace: chaos-mesh
 spec:
   action: bandwidth
@@ -1558,23 +1538,23 @@ Run the load generating job.
 
 ```shell
 ➤ ./run-k8s.sh 
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config configured
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config configured
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 Now let's watch the pods and postgres. 
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 
 ```shell
-> watch -n demo kubectl get pg,petset,pods
+> watch -n demo kubectl get ms,petset,pods
 
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 17:13:20 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 17:13:20 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d23h
@@ -1586,7 +1566,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          3h40m
 pod/sqlserver-ag-cluster-1          2/2     Running   0          3h38m
 pod/sqlserver-ag-cluster-2          2/2     Running   0          3h38m
-pod/pg-load-test-job-hf85p   1/1     Running   0          105s
+pod/ms-load-test-job-hf85p   1/1     Running   0          105s
 
 ```
 
@@ -1652,12 +1632,12 @@ Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/06-bandwidth-limit.yaml
-networkchaos.chaos-mesh.org "pg-primary-bandwidth-limit" deleted
+networkchaos.chaos-mesh.org "ms-primary-bandwidth-limit" deleted
 ```
 
 ###  Chaos#7: Network Delay Primary Pod
 
-In this chaos experiment, we are going to introduce network delay to the primary pod. This will cause the replication lag between primary and standby to increase, which can lead to data loss if a failover happens during this time. So this is a good experiment to test the behavior of your cluster under network congestion.
+In this chaos experiment, we are going to introduce network delay to the primary pod. This will cause the replication lag between primary and secondary to increase, which can lead to data loss if a failover happens during this time. So this is a good experiment to test the behavior of your cluster under network congestion.
 
 Save this yaml as `tests/07-network-delay.yaml`:
 
@@ -1665,7 +1645,7 @@ Save this yaml as `tests/07-network-delay.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: pg-primary-network-delay
+  name: ms-primary-network-delay
   namespace: chaos-mesh
 spec:
   action: delay
@@ -1707,22 +1687,22 @@ Lets create the load test job.
 
 ```shell
 ➤ ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config configured
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config configured
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 Now watch the pods and postgres status.
 
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 18:39:12 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 18:39:12 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d
@@ -1734,7 +1714,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          83m
 pod/sqlserver-ag-cluster-1          2/2     Running   0          83m
 pod/sqlserver-ag-cluster-2          2/2     Running   0          83m
-pod/pg-load-test-job-89flv   1/1     Running   0          72s
+pod/ms-load-test-job-89flv   1/1     Running   0          72s
 ```
 
 The database should be in `Ready` state all the time.
@@ -1819,7 +1799,7 @@ Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/07-network-delay.yaml
-networkchaos.chaos-mesh.org "pg-primary-network-delay" deleted
+networkchaos.chaos-mesh.org "ms-primary-network-delay" deleted
 ```
 
 ###  Chaos#8: Network Loss Primary Pod
@@ -1832,7 +1812,7 @@ Save this yaml as `tests/08-network-loss.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: pg-primary-packet-loss
+  name: ms-primary-packet-loss
   namespace: chaos-mesh
 spec:
   action: loss
@@ -1870,28 +1850,28 @@ Lets create the load test job.
 
 ```shell
 ➤ ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config unchanged
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config unchanged
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 Now create the chaos experiment.
 
 ```shell
 ➤ kubectl apply -f tests/08-network-loss.yaml
-networkchaos.chaos-mesh.org/pg-primary-packet-loss created
+networkchaos.chaos-mesh.org/ms-primary-packet-loss created
 ```
 
 Now watch the pods and postgres status.
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 19:00:54 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:00:54 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d
@@ -1903,7 +1883,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          104m
 pod/sqlserver-ag-cluster-1          2/2     Running   0          104m
 pod/sqlserver-ag-cluster-2          2/2     Running   0          104m
-pod/pg-load-test-job-44hg8   1/1     Running   0          96s
+pod/ms-load-test-job-44hg8   1/1     Running   0          96s
 
 ```
 
@@ -1986,7 +1966,7 @@ Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/08-network-loss.yaml
-networkchaos.chaos-mesh.org "pg-primary-packet-loss" deleted
+networkchaos.chaos-mesh.org "ms-primary-packet-loss" deleted
 ```
 
 ###  Chaos#9: Network Duplicate to Primary Pod
@@ -1999,7 +1979,7 @@ Save this yaml as `tests/09-network-duplicate.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: pg-primary-packet-duplicate
+  name: ms-primary-packet-duplicate
   namespace: chaos-mesh
 spec:
   action: duplicate
@@ -2036,28 +2016,28 @@ Lets run the load test job with some changes in config.
 ```shell
 saurov@saurov-pc:~/g/s/g/s/high-write-load-client|main⚡*?
 ➤ ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config unchanged
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config unchanged
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 Now lets create the chaos experiment.
 
 ```shell
 ➤ kubectl apply -f tests/09-network-duplicate.yaml
-networkchaos.chaos-mesh.org/pg-primary-packet-duplicate created
+networkchaos.chaos-mesh.org/ms-primary-packet-duplicate created
 ```
 
 Now watch the pods and postgres status.
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 19:19:44 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:19:44 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
@@ -2153,7 +2133,7 @@ Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/09-network-duplicate.yaml
-networkchaos.chaos-mesh.org "pg-primary-packet-duplicate" deleted
+networkchaos.chaos-mesh.org "ms-primary-packet-duplicate" deleted
 ```
 
 ###  Chaos#10: Network Corruption to Primary Pod
@@ -2166,7 +2146,7 @@ Save this yaml as `tests/10-network-corrupt.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: pg-primary-packet-corrupt
+  name: ms-primary-packet-corrupt
   namespace: chaos-mesh
 spec:
   action: corrupt
@@ -2202,17 +2182,17 @@ Lets change some config and apply the load test creation script.
 
 ```shellsaurov@saurov-pc:~/g/s/g/s/high-write-load-client|main⚡*?
 ➤ ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config unchanged
-job.batch/pg-load-test-job created 
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config unchanged
+job.batch/ms-load-test-job created 
+persistentvolumeclaim/ms-load-test-results created
 ``` 
 
 Now check if the database is in ready state.
 
 ```shell
-kubectl get pg,petset,pods -n demo
+kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
@@ -2225,24 +2205,24 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          126m
 pod/sqlserver-ag-cluster-1          2/2     Running   0          126m
 pod/sqlserver-ag-cluster-2          2/2     Running   0          126m
-pod/pg-load-test-job-lftl8   1/1     Running   0          6s
+pod/ms-load-test-job-lftl8   1/1     Running   0          6s
 
 ```
 
 Now create the chaos experiment.
 
 ```yaml➤ kubectl apply -f tests/10-network-corrupt.yaml
-networkchaos.chaos-mesh.org/pg-primary-packet-corrupt created
+networkchaos.chaos-mesh.org/ms-primary-packet-corrupt created
 ```
 
 Now watch the pods and postgres status.
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 19:27:48 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:27:48 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
@@ -2267,7 +2247,7 @@ sqlserver-ag-cluster-0
 
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 19:35:09 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:35:09 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   3d1h
@@ -2279,13 +2259,13 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          139m
 pod/sqlserver-ag-cluster-1          2/2     Running   0          139m
 pod/sqlserver-ag-cluster-2          2/2     Running   0          139m
-pod/pg-load-test-job-5q4gh   1/1     Running   0          52s
+pod/ms-load-test-job-5q4gh   1/1     Running   0          52s
 
 ```
 Database turns into `NotReady` state as a failover happens due of the corruption.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 19:35:52 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:35:52 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   3d1h
@@ -2297,7 +2277,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          139m
 pod/sqlserver-ag-cluster-1          2/2     Running   0          139m
 pod/sqlserver-ag-cluster-2          2/2     Running   0          139m
-pod/pg-load-test-job-5q4gh   1/1     Running   0          95s
+pod/ms-load-test-job-5q4gh   1/1     Running   0          95s
 
 ```
 
@@ -2329,7 +2309,7 @@ So sqlserver-ag-cluster-1 is the new primary. Wait for the chaos to be recovered
 `Alrecovered` true means chaos experiment is over.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 19:36:25 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:36:25 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
@@ -2341,7 +2321,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          140m
 pod/sqlserver-ag-cluster-1          2/2     Running   0          140m
 pod/sqlserver-ag-cluster-2          2/2     Running   0          140m
-pod/pg-load-test-job-5q4gh   1/1     Running   0          2m8s
+pod/ms-load-test-job-5q4gh   1/1     Running   0          2m8s
 
 ```
 The database has returned to `Ready` state.
@@ -2407,7 +2387,7 @@ Cleanup the chaos experiment:
 
 ```shell
 kubectl delete -f tests/10-network-corrupt.yaml
-networkchaos.chaos-mesh.org "pg-primary-packet-corrupt" deleted
+networkchaos.chaos-mesh.org "ms-primary-packet-corrupt" deleted
 ```
 
 ###  Chaos#11: Time Offset and DNS error
@@ -2420,7 +2400,7 @@ Save this yaml as `tests/11-time-offset.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: TimeChaos
 metadata:
-  name: pg-primary-time-offset
+  name: ms-primary-time-offset
   namespace: chaos-mesh
 spec:
   mode: one
@@ -2445,7 +2425,7 @@ Save this yaml as `tests/12-dns-error.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: DNSChaos
 metadata:
-  name: pg-primary-dns-error
+  name: ms-primary-dns-error
   namespace: chaos-mesh
 spec:
   action: error
@@ -2464,20 +2444,20 @@ spec:
 
 ```shell
 ➤ kubectl apply -f tests/11-time-offset.yaml
-timechaos.chaos-mesh.org/pg-primary-time-offset created
+timechaos.chaos-mesh.org/ms-primary-time-offset created
 saurov@saurov-pc:~/g/s/g/s/chaos-mesh|main⚡*
 ➤ kubectl apply -f tests/12-dns-error.yaml 
-dnschaos.chaos-mesh.org/pg-primary-dns-error created
+dnschaos.chaos-mesh.org/ms-primary-dns-error created
 ```
 
 Your database will be in ready state through the whole chaos.
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 19:50:14 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 19:50:14 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
@@ -2495,9 +2475,9 @@ Clean up the chaos experiments.
 
 ```shell
 kubectl delete -f tests/11-time-offset.yaml 
-timechaos.chaos-mesh.org "pg-primary-time-offset" deleted
+timechaos.chaos-mesh.org "ms-primary-time-offset" deleted
 kubectl delete -f tests/12-dns-error.yaml 
-dnschaos.chaos-mesh.org "pg-primary-dns-error" deleted
+dnschaos.chaos-mesh.org "ms-primary-dns-error" deleted
 ```
 
 ## IO chaos
@@ -2560,7 +2540,7 @@ spec:
     walKeepSize: 5000
     walLimitPolicy: WALKeepSize
     forceFailoverAcceptingDataLossAfter: 30s # New added
-  standbyMode: Hot
+  secondaryMode: Hot
   storage:
     accessModes:
       - ReadWriteOnce
@@ -2574,7 +2554,7 @@ spec:
 Run `kubectl apply -f setup/sqlserver-ag-cluster.yaml` and wait for database to be in ready state.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 20:17:16 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 20:17:16 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    54s
@@ -2608,7 +2588,7 @@ Save this yaml as `tests/13-io-latency.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: IOChaos
 metadata:
-  name: pg-primary-io-latency 
+  name: ms-primary-io-latency 
   namespace: chaos-mesh
 spec:
   action: latency
@@ -2657,36 +2637,36 @@ DB_PASSWORD: bVApIWcyYW5PcV9ONXR+bQ==
 
 ```shell
 ➤ kubectl apply -f k8s/02-secret.yaml
-secret/pg-load-test-secret configured
+secret/ms-load-test-secret configured
 ```
 
 Now apply the load test yamls.
 
 ```shell
 ➤ ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config configured
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config configured
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 Now wait 10-20 second and apply the chaos experiment.
 
 ```shell
 ➤ kubectl apply -f tests/13-io-latency.yaml
-iochaos.chaos-mesh.org/pg-primary-io-latency created
+iochaos.chaos-mesh.org/ms-primary-io-latency created
 ```
 
 Soon after we created the chaos test, the database should be in `NotReady` state. The reason for this is, the client call to `Primary` pod is getting timed
 out due of slow IO. 
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 20:37:24 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 20:37:24 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   21m
@@ -2698,7 +2678,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          5m55s
 pod/sqlserver-ag-cluster-1          2/2     Running   0          5m52s
 pod/sqlserver-ag-cluster-2          2/2     Running   0          5m49s
-pod/pg-load-test-job-62l88   1/1     Running   0          2m10s
+pod/ms-load-test-job-62l88   1/1     Running   0          2m10s
 
 ```
 
@@ -2734,7 +2714,7 @@ sqlserver-ag-cluster-0
 After some amount of time, we should see a stable primary, in our case which is `sqlserver-ag-cluster-0`.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 20:40:04 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 20:40:04 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   23m
@@ -2746,7 +2726,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          8m34s
 pod/sqlserver-ag-cluster-1          2/2     Running   0          8m31s
 pod/sqlserver-ag-cluster-2          2/2     Running   0          8m28s
-pod/pg-load-test-job-62l88   1/1     Running   0          4m49s
+pod/ms-load-test-job-62l88   1/1     Running   0          4m49s
 ```
 
 Now, the database is in critical state. We will wait untill the chaos is recovered.
@@ -2770,7 +2750,7 @@ The chaos is recovered. Now the database should be in `Ready` state. But if anyt
 
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Mon Apr  6 20:48:52 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Mon Apr  6 20:48:52 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    32m
@@ -2782,7 +2762,7 @@ NAME                         READY   STATUS      RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running     0          17m
 pod/sqlserver-ag-cluster-1          2/2     Running     0          17m
 pod/sqlserver-ag-cluster-2          2/2     Running     0          17m
-pod/pg-load-test-job-62l88   0/1     Completed   0          13m
+pod/ms-load-test-job-62l88   0/1     Completed   0          13m
 
 ```
 
@@ -2841,7 +2821,7 @@ I0406 14:40:33.621913       1 load_generator_v2.go:556] totalRows in LoadGenerat
 ⚠️  WARNING: 100 records were inserted but not found in database!
 This may indicate:
   - Database crash/restart occurred during test
-  - pg_rewind was triggered due to network partition
+  - ms_rewind was triggered due to network partition
   - Transaction rollback due to replication issues
 ```
 
@@ -2855,7 +2835,7 @@ Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/13-io-latency.yaml
-iochaos.chaos-mesh.org "pg-primary-io-latency" deleted
+iochaos.chaos-mesh.org "ms-primary-io-latency" deleted
 ```
 
 ###  Chaos#13: IO Fault to primary
@@ -2869,7 +2849,7 @@ Save this yaml as `tests/14-io-fault.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: IOChaos
 metadata:
-  name: pg-primary-io-fault
+  name: ms-primary-io-fault
   namespace: chaos-mesh
 spec:
   action: fault
@@ -2894,7 +2874,7 @@ spec:
 Let's see how our database is now,
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:00:56 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:00:56 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    11h
@@ -2906,7 +2886,7 @@ NAME                         READY   STATUS      RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running     0          11h
 pod/sqlserver-ag-cluster-1          2/2     Running     0          11h
 pod/sqlserver-ag-cluster-2          2/2     Running     0          11h
-pod/pg-load-test-job-62l88   0/1     Completed   0          11h
+pod/ms-load-test-job-62l88   0/1     Completed   0          11h
 ```
 
 Let's see who is primary:
@@ -2915,13 +2895,13 @@ Let's see who is primary:
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-0
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
-Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 sqlserver-ag-cluster-0:/$ psql
 psql (16.4)
 Type "help" for help.
 
-postgres=# select pg_is_in_recovery();
- pg_is_in_recovery 
+postgres=# select ms_is_in_recovery();
+ ms_is_in_recovery 
 -------------------
  f
 (1 row)
@@ -2932,28 +2912,28 @@ Lets now create the load generate job,
 
 ```shell
 ➤ ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config unchanged
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config unchanged
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 Wait 15-20 second and then apply the io-fault yaml.
 
 ```shell
 ➤ kubectl apply -f tests/14-io-fault.yaml
-iochaos.chaos-mesh.org/pg-primary-io-fault created
+iochaos.chaos-mesh.org/ms-primary-io-fault created
 ```
 
 keep watching the database and pods,
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:05:39 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:05:39 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   11h
@@ -2965,7 +2945,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          11h
 pod/sqlserver-ag-cluster-1          2/2     Running   0          11h
 pod/sqlserver-ag-cluster-2          2/2     Running   0          11h
-pod/pg-load-test-job-pq4l6   1/1     Running   0          117s
+pod/ms-load-test-job-pq4l6   1/1     Running   0          117s
 ```
 
 After running for some time, the database went into critical state. Let's see if there is a failover.
@@ -2974,13 +2954,13 @@ After running for some time, the database went into critical state. Let's see if
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-1
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-1 -- bash
-Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 sqlserver-ag-cluster-1:/$ psql
 psql (16.4)
 Type "help" for help.
 
-postgres=# select pg_is_in_recovery();
- pg_is_in_recovery 
+postgres=# select ms_is_in_recovery();
+ ms_is_in_recovery 
 -------------------
  f
 (1 row)
@@ -2993,25 +2973,25 @@ I will show you what happened to old primary due to i/o error.
 
 ```shell
 ➤ kubectl logs -n demo sqlserver-ag-cluster-0
-Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 ...
 2026-04-07 02:04:14.564 UTC [2813] LOG:  all server processes terminated; reinitializing
-2026-04-07 02:04:14.564 UTC [2813] LOG:  could not open directory "base/pgsql_tmp": I/O error
+2026-04-07 02:04:14.564 UTC [2813] LOG:  could not open directory "base/mssql_tmp": I/O error
 2026-04-07 02:04:14.564 UTC [2813] LOG:  could not open directory "base": I/O error
-2026-04-07 02:04:14.564 UTC [2813] LOG:  could not open directory "pg_tblspc": I/O error
-2026-04-07 02:04:14.643 UTC [2813] PANIC:  could not open file "global/pg_control": I/O error
+2026-04-07 02:04:14.564 UTC [2813] LOG:  could not open directory "ms_tblspc": I/O error
+2026-04-07 02:04:14.643 UTC [2813] PANIC:  could not open file "global/ms_control": I/O error
 /scripts/run.sh: line 61:  2813 Aborted                 (core dumped) /run_scripts/role/run.sh
 removing the initial scripts as server is not running ...
 
 ```
 
-So as it wasn't able to operate cleanly and communicate with standby's, a new leader election happened and `sqlserver-ag-cluster-1` was promoted as primary.
+So as it wasn't able to operate cleanly and communicate with secondary's, a new leader election happened and `sqlserver-ag-cluster-1` was promoted as primary.
 As we saw earlier, we can run queries on `sqlserver-ag-cluster-1`, so our cluster is usable even in the time of chaos.
 
 Now wait until chaos is recovered.
 
 ```shell
-➤ kubectl get iochaos -n chaos-mesh pg-primary-io-fault -oyaml
+➤ kubectl get iochaos -n chaos-mesh ms-primary-io-fault -oyaml
 ...
 status:
   conditions:
@@ -3029,7 +3009,7 @@ status:
 Chaos is recovered by chaos-mesh.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:11:28 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:11:28 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    11h
@@ -3041,7 +3021,7 @@ NAME                         READY   STATUS      RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running     0          11h
 pod/sqlserver-ag-cluster-1          2/2     Running     0          11h
 pod/sqlserver-ag-cluster-2          2/2     Running     0          11h
-pod/pg-load-test-job-pq4l6   0/1     Completed   0          7m47s
+pod/ms-load-test-job-pq4l6   0/1     Completed   0          7m47s
 ```
 
 Our database is transitioned back into `Ready` state.
@@ -3118,7 +3098,7 @@ Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/14-io-fault.yaml
-iochaos.chaos-mesh.org "pg-primary-io-fault" deleted
+iochaos.chaos-mesh.org "ms-primary-io-fault" deleted
 ```
 
 ###  Chaos#14: IO attribute overwrite
@@ -3133,7 +3113,7 @@ Save this yaml as `tests/15-io-attr-override.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: IOChaos
 metadata:
-  name: pg-primary-io-attr-override
+  name: ms-primary-io-attr-override
   namespace: chaos-mesh
 spec:
   action: attrOverride
@@ -3159,10 +3139,10 @@ spec:
 
 Let's see how our database is now.
 ```shell
-kubectl get pg,petset,pods -n demo
+kubectl get ms,petset,pods -n demo
 ```
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:32:42 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:32:42 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    12h
@@ -3181,28 +3161,28 @@ Create the load generation job.
 
 ```shell
 ➤ ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config unchanged
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config unchanged
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 Apply the chaos experiment.
 
 ```shell
 ➤ kubectl apply -f tests/15-io-attr-override.yaml
-iochaos.chaos-mesh.org/pg-primary-io-attr-override created
+iochaos.chaos-mesh.org/ms-primary-io-attr-override created
 ```
 
 Keep watching the database resources.
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:33:45 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:33:45 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   12h
@@ -3214,7 +3194,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          12h
 pod/sqlserver-ag-cluster-1          2/2     Running   0          12h
 pod/sqlserver-ag-cluster-2          2/2     Running   0          12h
-pod/pg-load-test-job-cgbgt   1/1     Running   0          72s
+pod/ms-load-test-job-cgbgt   1/1     Running   0          72s
 ```
 
 So the database went into `NotReady` state, which means the primary is not responsive. The reason might be that the database inside the primary pod is not running.
@@ -3230,15 +3210,15 @@ Let's check the logs from unresponsive primary `sqlserver-ag-cluster-1`.
 
 ```shell
 ➤ kubectl logs -f -n demo sqlserver-ag-cluster-1
-Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 ...
 2026-04-07 02:33:20.552 UTC [237694] FATAL:  the database system is in recovery mode
 2026-04-07 02:33:20.553 UTC [2908] LOG:  all server processes terminated; reinitializing
-2026-04-07 02:33:20.553 UTC [2908] LOG:  could not open directory "base/pgsql_tmp": Permission denied
+2026-04-07 02:33:20.553 UTC [2908] LOG:  could not open directory "base/mssql_tmp": Permission denied
 2026-04-07 02:33:20.554 UTC [2908] LOG:  could not open directory "base/4": Permission denied
 2026-04-07 02:33:20.554 UTC [2908] LOG:  could not open directory "base/5": Permission denied
 2026-04-07 02:33:20.554 UTC [2908] LOG:  could not open directory "base/1": Permission denied
-2026-04-07 02:33:20.627 UTC [2908] PANIC:  could not open file "global/pg_control": Permission denied
+2026-04-07 02:33:20.627 UTC [2908] PANIC:  could not open file "global/ms_control": Permission denied
 removing the initial scripts as server is not running ...
 /scripts/run.sh: line 61:  2908 Aborted                 (core dumped) /run_scripts/role/run.sh
 
@@ -3247,7 +3227,7 @@ removing the initial scripts as server is not running ...
 So you can see primary is shut down for I/O chaos. A failover should happen soon.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:34:42 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:34:42 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   12h
@@ -3259,7 +3239,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          12h
 pod/sqlserver-ag-cluster-1          2/2     Running   0          12h
 pod/sqlserver-ag-cluster-2          2/2     Running   0          12h
-pod/pg-load-test-job-cgbgt   1/1     Running   0          2m9s
+pod/ms-load-test-job-cgbgt   1/1     Running   0          2m9s
 
 ```
 
@@ -3270,19 +3250,19 @@ Our database now moved to `NotReady` -> `Critical` state. Let's see who is the n
 sqlserver-ag-cluster-0
 -----
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
-Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 sqlserver-ag-cluster-0:/$ psql
 psql (16.4)
 Type "help" for help.
 
-postgres=# select pg_is_in_recovery();
- pg_is_in_recovery 
+postgres=# select ms_is_in_recovery();
+ ms_is_in_recovery 
 -------------------
  f
 (1 row)
 ----
 ➤ kubectl logs -f -n demo sqlserver-ag-cluster-0
-Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 ...
 2026-04-07 02:34:38.753 UTC [368446] LOG:  checkpoint starting: wal
 2026-04-07 02:35:09.342 UTC [368446] LOG:  checkpoint complete: wrote 20389 buffers (31.1%); 0 WAL file(s) added, 0 removed, 21 recycled; write=29.948 s, sync=0.444 s, total=30.589 s; sync files=11, longest=0.351 s, average=0.041 s; distance=539515 kB, estimate=618146 kB; lsn=4/FACB3C48, redo lsn=4/DD03C9B0
@@ -3294,7 +3274,7 @@ Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-c
 So database is back online again, however old primary has not yet joined in the cluster. We will wait until all the chaos recovered.
 
 ```shell
-➤ kubectl get iochaos -n chaos-mesh pg-primary-io-attr-override -oyaml
+➤ kubectl get iochaos -n chaos-mesh ms-primary-io-attr-override -oyaml
 ...
 status:
   conditions:
@@ -3311,7 +3291,7 @@ status:
 All the generated chaos has been recovered.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:38:52 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:38:52 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    12h
@@ -3323,7 +3303,7 @@ NAME                         READY   STATUS      RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running     0          12h
 pod/sqlserver-ag-cluster-1          2/2     Running     0          12h
 pod/sqlserver-ag-cluster-2          2/2     Running     0          12h
-pod/pg-load-test-job-cgbgt   0/1     Completed   0          6m20s
+pod/ms-load-test-job-cgbgt   0/1     Completed   0          6m20s
 
 ```
 
@@ -3410,7 +3390,7 @@ Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/15-io-attr-override.yaml 
-iochaos.chaos-mesh.org "pg-primary-io-attr-override" deleted
+iochaos.chaos-mesh.org "ms-primary-io-attr-override" deleted
 ```
 
 ###  Chaos#15: IO mistake
@@ -3425,7 +3405,7 @@ Save this yaml as `tests/16-io-mistake.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: IOChaos
 metadata:
-  name: pg-primary-io-mistake
+  name: ms-primary-io-mistake
   namespace: chaos-mesh
 spec:
   action: mistake
@@ -3453,7 +3433,7 @@ spec:
 Let's check the database state.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:57:53 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:57:53 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    12h
@@ -3472,11 +3452,11 @@ Running the load generation job.
 
 ```shell
 ➤ ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config unchanged
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config unchanged
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 Lets check the primary.
@@ -3486,13 +3466,13 @@ Lets check the primary.
 sqlserver-ag-cluster-0
 saurov@saurov-pc:~
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
-Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 sqlserver-ag-cluster-0:/$ psql
 psql (16.4)
 Type "help" for help.
 
-postgres=# select pg_is_in_recovery();
- pg_is_in_recovery 
+postgres=# select ms_is_in_recovery();
+ ms_is_in_recovery 
 -------------------
  f
 (1 row)
@@ -3502,17 +3482,17 @@ Lets apply the experiment.
 
 ```shell
 ➤ kubectl apply -f tests/16-io-mistake.yaml 
-iochaos.chaos-mesh.org/pg-primary-io-mistake created
+iochaos.chaos-mesh.org/ms-primary-io-mistake created
 ```
 
 Keep watching the database.
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 08:59:26 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 08:59:26 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   12h
@@ -3524,14 +3504,14 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          12h
 pod/sqlserver-ag-cluster-1          2/2     Running   0          12h
 pod/sqlserver-ag-cluster-2          2/2     Running   0          12h
-pod/pg-load-test-job-b56q6   1/1     Running   0          75s
+pod/ms-load-test-job-b56q6   1/1     Running   0          75s
 
 ```
 
 Database went into NotReady state and should be back in `Critical` state as we used `forceFailoverAcceptingDataLossAfter` api.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:00:32 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:00:32 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   12h
@@ -3543,14 +3523,14 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          12h
 pod/sqlserver-ag-cluster-1          2/2     Running   0          12h
 pod/sqlserver-ag-cluster-2          2/2     Running   0          12h
-pod/pg-load-test-job-b56q6   1/1     Running   0          2m21s
+pod/ms-load-test-job-b56q6   1/1     Running   0          2m21s
 
 ```
 
 The database is back in `Critical` state.
 
 ```shell
-➤ kubectl get iochaos -n chaos-mesh pg-primary-io-mistake -oyaml
+➤ kubectl get iochaos -n chaos-mesh ms-primary-io-mistake -oyaml
 status:
   conditions:
   - status: "True"
@@ -3567,7 +3547,7 @@ status:
 All the chaos recovered.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:04:55 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:04:55 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    12h
@@ -3579,7 +3559,7 @@ NAME                         READY   STATUS      RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running     0          12h
 pod/sqlserver-ag-cluster-1          2/2     Running     0          12h
 pod/sqlserver-ag-cluster-2          2/2     Running     0          12h
-pod/pg-load-test-job-b56q6   0/1     Completed   0          6m44
+pod/ms-load-test-job-b56q6   0/1     Completed   0          6m44
 ```
 
 Database back in `Ready` state.
@@ -3604,7 +3584,7 @@ Cleanup:
 
 ```shell
 ➤ kubectl delete -f tests/16-io-mistake.yaml 
-iochaos.chaos-mesh.org "pg-primary-io-mistake" deleted
+iochaos.chaos-mesh.org "ms-primary-io-mistake" deleted
 ```
 
 
@@ -3637,7 +3617,7 @@ spec:
   replication:
     walKeepSize: 3000
     walLimitPolicy: WALKeepSize
-  standbyMode: Hot
+  secondaryMode: Hot
   storage:
     accessModes:
       - ReadWriteOnce
@@ -3653,11 +3633,11 @@ Now apply this yaml `kubectl apply -f setup/sqlserver-ag-cluster.yaml`.
 watch the resource coming up and db getting `Ready`.
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Wed Apr  8 10:15:14 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Wed Apr  8 10:15:14 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    68s
@@ -3679,13 +3659,13 @@ lets see who is the primary.
 sqlserver-ag-cluster-0
 -----
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
-Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
+Defaulted container "postgres" out of: postgres, ms-coordinator, postgres-init-container (init)
 sqlserver-ag-cluster-0:/$ psql
 psql (16.4)
 Type "help" for help.
 
-postgres=# select pg_is_in_recovery();
- pg_is_in_recovery 
+postgres=# select ms_is_in_recovery();
+ ms_is_in_recovery 
 -------------------
  f
 (1 row)
@@ -3696,25 +3676,25 @@ lets run the load generate job.
 
 ```shell
 ➤ ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config unchanged
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config unchanged
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 Apply the io-latency chaos experiment.
 
 ```shell
 ➤ kubectl apply -f tests/13-io-latency.yaml 
-iochaos.chaos-mesh.org/pg-primary-io-latency created
+iochaos.chaos-mesh.org/ms-primary-io-latency created
 ```
 
 Now watch the database state.
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Wed Apr  8 10:20:38 2026
+watch kubectl get ms,petset,pods -n demo
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Wed Apr  8 10:20:38 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   6m32s
@@ -3726,7 +3706,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          6m27s
 pod/sqlserver-ag-cluster-1          2/2     Running   0          6m20s
 pod/sqlserver-ag-cluster-2          2/2     Running   0          6m12s
-pod/pg-load-test-job-p7vvw   1/1     Running   0          80s
+pod/ms-load-test-job-p7vvw   1/1     Running   0          80s
 
 ```
 
@@ -3753,7 +3733,7 @@ status:
 Now the chaos is recovered and our database should eventually reach `Ready` state.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Wed Apr  8 10:33:12 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Wed Apr  8 10:33:12 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    19m
@@ -3765,7 +3745,7 @@ NAME                         READY   STATUS      RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running     0          53s
 pod/sqlserver-ag-cluster-1          2/2     Running     0          18m
 pod/sqlserver-ag-cluster-2          2/2     Running     0          18m
-pod/pg-load-test-job-p7vvw   0/1     Completed   0          13m
+pod/ms-load-test-job-p7vvw   0/1     Completed   0          13m
 ```
 
 The database reached in `Ready` state.
@@ -3834,7 +3814,7 @@ Similarly, you can try the other chaos also. You should find out no data loss fo
 Cleanup:
 ```shell
 ➤ kubectl delete -f tests/13-io-latency.yaml
-iochaos.chaos-mesh.org "pg-primary-io-latency" deleted
+iochaos.chaos-mesh.org "ms-primary-io-latency" deleted
 ```
 
 ## Misc Chaos Tests
@@ -3849,7 +3829,7 @@ Save this yaml as `tests/17-node-reboot.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: pg-cluster-all-pods-kill
+  name: ms-cluster-all-pods-kill
   namespace: chaos-mesh
 spec:
   action: pod-kill
@@ -3869,7 +3849,7 @@ spec:
 This is simulate a typical node failure scenario where all the pod restarted.
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:31:47 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:31:47 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    13h
@@ -3891,11 +3871,11 @@ kubectl apply -f tests/17-node-reboot.yaml
 
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:12 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:12 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   13h
@@ -3909,7 +3889,7 @@ pod/sqlserver-ag-cluster-1          2/2     Running     0          2s
 
 ```
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:24 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:24 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   13h
@@ -3924,7 +3904,7 @@ pod/sqlserver-ag-cluster-2          2/2     Running     0          11s
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:33 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:33 2026
 
 NAME                                VERSION   STATUS     AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   13h
@@ -3939,7 +3919,7 @@ pod/sqlserver-ag-cluster-2          2/2     Running     0          21s
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:40 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:32:40 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    13h
@@ -3964,7 +3944,7 @@ Save this yaml as `tests/18-stress-cpu-primary.yaml`:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: StressChaos
 metadata:
-  name: pg-primary-cpu-stress
+  name: ms-primary-cpu-stress
   namespace: chaos-mesh
 spec:
   mode: one
@@ -3988,18 +3968,18 @@ But before running this, we will run the load test job.
 
 ```shell
 ➤ ./run-k8s.sh
-job.batch "pg-load-test-job" deleted
-persistentvolumeclaim "pg-load-test-results" deleted
-configmap/pg-load-test-config unchanged
-job.batch/pg-load-test-job created
-persistentvolumeclaim/pg-load-test-results created
+job.batch "ms-load-test-job" deleted
+persistentvolumeclaim "ms-load-test-results" deleted
+configmap/ms-load-test-config unchanged
+job.batch/ms-load-test-job created
+persistentvolumeclaim/ms-load-test-results created
 ```
 
 Now lets apply the chaos experiment.
 
 ```shell
 ➤ kubectl apply -f tests/18-stress-cpu-primary.yaml
-stresschaos.chaos-mesh.org/pg-primary-cpu-stress created
+stresschaos.chaos-mesh.org/ms-primary-cpu-stress created
 ```
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
@@ -4013,13 +3993,13 @@ Lets check the cpu usages:
 Every 2.0s: kubectl top pods --containers -n demo          saurov-pc: Tue Apr  7 09:35:42 2026
 
 POD                      NAME             CPU(cores)   MEMORY(bytes)
-sqlserver-ag-cluster-0          pg-coordinator   29m          40Mi
+sqlserver-ag-cluster-0          ms-coordinator   29m          40Mi
 sqlserver-ag-cluster-0          postgres         244m         621Mi
-sqlserver-ag-cluster-1          pg-coordinator   15m          38Mi
+sqlserver-ag-cluster-1          ms-coordinator   15m          38Mi
 sqlserver-ag-cluster-1          postgres         7060m        693Mi
-sqlserver-ag-cluster-2          pg-coordinator   16m          38Mi
+sqlserver-ag-cluster-2          ms-coordinator   16m          38Mi
 sqlserver-ag-cluster-2          postgres         217m         629Mi
-pg-load-test-job-sfj6z   load-test        1594m        216Mi
+ms-load-test-job-sfj6z   load-test        1594m        216Mi
 
 ```
 
@@ -4031,13 +4011,13 @@ watch kubectl top pods --containers -n demo
 Every 2.0s: kubectl top pods --containers -n demo          saurov-pc: Tue Apr  7 09:35:58 2026
 
 POD                      NAME             CPU(cores)   MEMORY(bytes)
-sqlserver-ag-cluster-0          pg-coordinator   29m          37Mi
+sqlserver-ag-cluster-0          ms-coordinator   29m          37Mi
 sqlserver-ag-cluster-0          postgres         272m         633Mi
-sqlserver-ag-cluster-1          pg-coordinator   15m          38Mi
+sqlserver-ag-cluster-1          ms-coordinator   15m          38Mi
 sqlserver-ag-cluster-1          postgres         8509m        941Mi
-sqlserver-ag-cluster-2          pg-coordinator   14m          39Mi
+sqlserver-ag-cluster-2          ms-coordinator   14m          39Mi
 sqlserver-ag-cluster-2          postgres         241m         657Mi
-pg-load-test-job-sfj6z   load-test        1256m        272Mi
+ms-load-test-job-sfj6z   load-test        1256m        272Mi
 
 ```
 
@@ -4045,11 +4025,11 @@ Database remain in ready state as there was sufficient cpu left in the cluster. 
 
 
 ```shell
-watch kubectl get pg,petset,pods -n demo
+watch kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-Every 2.0s: kubectl get pg,petset,pods -n demo             saurov-pc: Tue Apr  7 09:36:31 2026
+Every 2.0s: kubectl get ms,petset,pods -n demo             saurov-pc: Tue Apr  7 09:36:31 2026
 
 NAME                                VERSION   STATUS   AGE
 postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    13h
@@ -4061,7 +4041,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          4m24s
 pod/sqlserver-ag-cluster-1          2/2     Running   0          4m21s
 pod/sqlserver-ag-cluster-2          2/2     Running   0          4m19s
-pod/pg-load-test-job-sfj6z   1/1     Running   0          113s
+pod/ms-load-test-job-sfj6z   1/1     Running   0          113s
 ```
 
 
@@ -4084,9 +4064,9 @@ CleanUp:
 
 ```shell
 kubectl delete -f tests/17-node-reboot.yaml 
-podchaos.chaos-mesh.org "pg-cluster-all-pods-kill" deleted
+podchaos.chaos-mesh.org "ms-cluster-all-pods-kill" deleted
 kubectl delete -f tests/18-stress-cpu-primary.yaml 
-stresschaos.chaos-mesh.org "pg-primary-cpu-stress" deleted
+stresschaos.chaos-mesh.org "ms-primary-cpu-stress" deleted
 ```
 
 ## Chaos Testing Results Summary
