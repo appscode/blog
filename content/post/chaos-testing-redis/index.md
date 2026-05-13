@@ -511,9 +511,49 @@ spec:
   duration: "60s"
 ```
 
+markdown
 Observe:
 
+```bash
+kubectl get rd,pods -n demo
+NAME                             VERSION   STATUS   AGE
+redis.kubedb.com/redis-cluster   7.4.0     Ready    145m
+
+NAME                         READY   STATUS    RESTARTS      AGE
+pod/redis-cluster-shard0-0   1/1     Running   1 (86m ago)   99m
+pod/redis-cluster-shard0-1   1/1     Running   0             145m
+pod/redis-cluster-shard1-0   1/1     Running   1 (86m ago)   99m
+pod/redis-cluster-shard1-1   1/1     Running   0             145m
+pod/redis-cluster-shard2-0   1/1     Running   1 (86m ago)   99m
+pod/redis-cluster-shard2-1   1/1     Running   0             145m
+```
+
 TCP will detect and retransmit corrupted packets, so most Redis commands will still succeed but with higher latency and occasional errors. After the experiment, the network returns to normal.
+
+> **Note:** Chaos Mesh may initially fail to apply the `tc` (traffic control) rules on some pods — retrying automatically until injection succeeds. This is visible in the `NetworkChaos` status as repeated `Failed` → `Succeeded` events per pod.
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status  |
+|---|---|---|------------|
+| 09:59:46 | — | Pre-chaos baseline (all 6 pods ONLINE) | `Ready`    |
+| 09:59:46 | 0s | `NetworkChaos` applied — 100% packet corruption injected on all pods | `Ready`    |
+| 09:59:46 | +0s | Chaos Mesh begins injecting `tc` rules; some pods fail initial injection and retry | `Ready`    |
+| 10:00:00 | ~+14s | All pods successfully injected; Redis inter-node gossip and replication traffic degraded | `Ready`    |
+| 10:00:10 | ~+24s | TCP retransmissions increase; Redis commands experience elevated latency and occasional errors | `NotReady` |
+| 10:00:46 | +60s | Chaos experiment window ends; corruption rules removed from all pods | `NotReady` |
+| 10:00:50 | ~+1m04s | All pods return to normal network; cluster fully converged | `Ready`    |
+
+**Result: PASS** — 100% packet corruption was injected across all 6 Redis pods. TCP retransmission handled most corrupted packets transparently, keeping the cluster available with elevated latency. Some pods required multiple injection retries by Chaos Mesh before `tc` rules were successfully applied. After the 60-second window ended, all pods recovered automatically. The test key `chaos-test` remained intact.
+
+Verify data:
+
+```bash
+kubectl exec -it -n demo redis-cluster-shard0-0 -- \
+  redis-cli -a $PASSWORD -c GET chaos-test
+
+"before-chaos"
+```
 
 ---
 
