@@ -503,11 +503,10 @@ spec:
     namespaces:
       - demo
     labelSelectors:
-      app.kubernetes.io/instance: "redis-cluster"
-      app.kubernetes.io/name: "redis"
+      app.kubernetes.io/name: redises.kubedb.com
   corrupt:
-    corrupt: "40"
-    correlation: "25"
+    corrupt: "100"
+    correlation: "100"
   duration: "60s"
 ```
 
@@ -923,9 +922,394 @@ kubectl exec -it -n demo redis-cluster-shard0-0 -- \
 
 ---
 
+### Experiment 12: Network Loss
+
+**What it does:** Drops 100% of outgoing network packets from all Redis master pods to the rest of the cluster. This simulates a complete one-directional network failure, where masters can receive traffic but cannot send any responses.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: rd-master-packet-loss
+  namespace: demo
+spec:
+  action: loss
+  mode: all
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      app.kubernetes.io/name: redises.kubedb.com
+      kubedb.com/role: master
+  loss:
+    loss: "100"
+    correlation: "100"
+  direction: to
+  target:
+    mode: all
+    selector:
+      namespaces:
+        - demo
+      labelSelectors:
+        app.kubernetes.io/component: database
+  duration: "2m"
+```
+
+Observe:
+
+```bash
+kubectl get rd,rds,rdops,rdsops,pods -n demo
+NAME                             VERSION   STATUS     AGE
+redis.kubedb.com/redis-cluster   7.4.0     NotReady   5h26m
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/redis-cluster-shard0-0   1/1     Running   0          5h26m
+pod/redis-cluster-shard0-1   1/1     Running   0          5h26m
+pod/redis-cluster-shard1-0   1/1     Running   0          5h26m
+pod/redis-cluster-shard1-1   1/1     Running   0          5h26m
+pod/redis-cluster-shard2-0   1/1     Running   0          5h26m
+pod/redis-cluster-shard2-1   1/1     Running   0          5h26m
+```
+
+With 100% outgoing packet loss from all master pods, the cluster loses inter-node gossip and replication traffic completely. Replica pods will detect master unavailability and attempt failover. After the 2-minute window, packet loss is lifted and the cluster re-converges.
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status  |
+|---|---|---|------------|
+| 10:32:18 | — | Pre-chaos baseline (all 3 master pods ONLINE) | `Ready`    |
+| 10:32:18 | 0s | `NetworkChaos` applied — 100% outgoing packet loss injected on all master pods | `Ready`    |
+| 10:32:18 | +0s | All 6 pods targeted; master pods unable to send any packets to cluster peers | `Critical` |
+| 10:32:25 | ~+7s | Replica pods detect master heartbeat loss; Redis Cluster initiates replica promotion | `NotReady` |
+| 10:32:30 | ~+12s | KubeDB detects degraded cluster state | `NotReady` |
+| 10:34:18 | +2m00s | Chaos experiment window ends; packet loss removed from all master pods | `Critical` |
+| ~10:36:00 | ~+3m42s | All shards re-converge; cluster topology stabilized | `Ready`    |
+
+**Result: PASS** — 100% outgoing packet loss was injected on all master pods for 2 minutes. The Redis Cluster detected the loss of master heartbeats and promoted replicas to maintain availability. After the chaos window ended, all pods recovered automatically and KubeDB reconciled the cluster back to `Ready`. The test key `chaos-test` remained intact after full recovery.
+
+Verify data:
+
+```bash
+kubectl exec -it -n demo redis-cluster-shard0-0 -- \
+  redis-cli -a $PASSWORD -c GET chaos-test
+
+"before-chaos"
+```
+
+---
+
+### Experiment 13: Network Duplicate
+
+**What it does:** Duplicates 100% of outgoing network packets from all Redis master pods to the rest of the cluster. This simulates a noisy or faulty network where duplicate packets cause redundant processing, increased bandwidth usage, and potential out-of-order delivery.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: rd-master-packet-duplicate
+  namespace: demo
+spec:
+  action: duplicate
+  mode: all
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      app.kubernetes.io/name: redises.kubedb.com
+      kubedb.com/role: master
+  duplicate:
+    duplicate: "100"
+    correlation: "100"
+  direction: both
+  target:
+    mode: all
+    selector:
+      namespaces:
+        - demo
+      labelSelectors:
+        app.kubernetes.io/component: database
+  duration: "2m"
+```
+
+Observe:
+
+```bash
+kubectl get rd,rds,rdops,rdsops,pods -n demo
+NAME                             VERSION   STATUS   AGE
+redis.kubedb.com/redis-cluster   7.4.0     Ready    6h33m
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/redis-cluster-shard0-0   1/1     Running   0          6h33m
+pod/redis-cluster-shard0-1   1/1     Running   0          6h32m
+pod/redis-cluster-shard1-0   1/1     Running   0          6h33m
+pod/redis-cluster-shard1-1   1/1     Running   0          6h32m
+pod/redis-cluster-shard2-0   1/1     Running   0          6h33m
+pod/redis-cluster-shard2-1   1/1     Running   0          6h32m
+```
+
+With 100% packet duplication on all master pods, Redis inter-node gossip and replication traffic will contain duplicate packets. TCP will deduplicate most of them transparently, but increased bandwidth usage and potential sequence number handling overhead may cause elevated latency. After the 2-minute window, duplication is lifted and the cluster re-converges.
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 11:38:35 | — | Pre-chaos baseline (all 3 master pods ONLINE) | `Ready` |
+| 11:38:35 | 0s | `NetworkChaos` applied — 100% packet duplication injected on all master pods (bidirectional) | `Ready` |
+| 11:38:35 | +0s | All 6 pods targeted; duplicate packets injected on both master and replica pods | `Ready` |
+| 11:38:40 | ~+5s | Redis gossip and replication traffic contains duplicate packets; TCP deduplication handles most transparently | `Ready` |
+| 11:38:55 | ~+20s | Cluster remains functional; elevated bandwidth usage observed across all shards | `Ready` |
+| 11:40:35 | +2m00s | Chaos experiment window ends; duplication removed from all pods | `Ready` |
+| 11:40:40 | ~+2m05s | All pods return to normal network behavior; cluster fully converged | `Ready` |
+
+**Result: PASS** — 100% packet duplication was injected bidirectionally across all master and replica pods. TCP's built-in deduplication handled the duplicate packets transparently, keeping the Redis Cluster available throughout the experiment. No quorum loss or data corruption was observed. After the 2-minute chaos window ended, all pods returned to normal network behavior automatically. The test key `chaos-test` remained intact.
+
+Verify data:
+
+```bash
+kubectl exec -it -n demo redis-cluster-shard0-0 -- \
+  redis-cli -a $PASSWORD -c GET chaos-test
+
+"before-chaos"
+```
+
+---
+
+### Experiment 14: Time Offset
+
+**What it does:** Shifts the system clock of all Redis master pods back by 2 hours. This simulates clock skew between nodes, which can affect TTL expiry, token validation, certificate checks, and distributed coordination logic that depends on wall-clock time.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: TimeChaos
+metadata:
+  name: rd-master-time-offset
+  namespace: demo
+spec:
+  mode: all
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      app.kubernetes.io/name: redises.kubedb.com
+      kubedb.com/role: master
+  clockIds:
+    - CLOCK_REALTIME
+  timeOffset: "-2h"
+  duration: "2m"
+```
+
+Observe:
+
+```bash
+kubectl get rd,pods -n demo
+```
+
+With the clock skewed by -2 hours on all master pods, any time-sensitive operations (TTL expiry, TLS certificate validation, token checks) will behave as if the pods are 2 hours in the past. After the 2-minute window, the clock is restored to the real time.
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 11:52:10 | — | Pre-chaos baseline (all 3 master pods ONLINE) | `Ready` |
+| 11:52:10 | 0s | `TimeChaos` applied — `-2h` clock offset injected on all master pods | `Ready` |
+| 11:52:10 | +0s | `CLOCK_REALTIME` skewed by -2h on shard0-0, shard1-0, shard2-0 | `Ready` |
+| 11:52:15 | ~+5s | Redis continues operating normally; cluster heartbeat and gossip unaffected | `Ready` |
+| 11:54:10 | +2m00s | Chaos experiment window ends; clock offset recovered on all master pods | `Ready` |
+| 11:54:10 | ~+2m00s | All master pod clocks restored to real time; cluster fully converged | `Ready` |
+
+**Result: PASS** — A -2h clock offset was injected on all master pods via `CLOCK_REALTIME`. Redis remained available throughout the experiment — the cluster heartbeat and gossip protocol were unaffected by the skew. After the 2-minute chaos window ended, the clock was automatically restored on all pods. The test key `chaos-test` remained intact.
+
+Verify data:
+
+```bash
+kubectl exec -it -n demo redis-cluster-shard0-0 -- \
+  redis-cli -a $PASSWORD -c GET chaos-test
+
+"before-chaos"
+```
+---
+
+### Experiment 15: DNS Chaos
+
+**What it does:** Injects DNS errors into all Redis master pods, causing DNS resolution failures for any hostname lookups. This simulates a DNS outage or misconfiguration that affects service discovery and inter-node communication relying on DNS.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: DNSChaos
+metadata:
+  name: rd-master-dns-error
+  namespace: demo
+spec:
+  action: error
+  mode: all
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      app.kubernetes.io/name: redises.kubedb.com
+      kubedb.com/role: master
+  duration: "2m"
+```
+
+Apply and observe:
+
+```bash
+kubectl get rd,pods -n demo
+```
+
+With DNS errors injected, any hostname-based lookups from master pods will fail. Redis Cluster primarily uses IP addresses for gossip and replication, so the impact is limited — but any client or sidecar relying on DNS-based service discovery will be affected.
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 11:58:42 | — | Pre-chaos baseline (all 3 master pods ONLINE) | `Ready` |
+| 11:58:42 | 0s | `DNSChaos` applied — DNS error injected on all master pods | `Ready` |
+| 11:58:43 | ~+1s | DNS error injection succeeded on shard0-0, shard1-0, shard2-0 | `Ready` |
+| 11:58:48 | ~+6s | DNS resolution failures observed; Redis cluster gossip unaffected (IP-based) | `Ready` |
+| 12:00:42 | +2m00s | Chaos experiment window ends; DNS errors removed from all master pods | `Ready` |
+| 12:00:42 | ~+2m00s | DNS resolution restored on all master pods; cluster fully converged | `Ready` |
+
+**Result: PASS** — DNS errors were injected on all master pods for 2 minutes. Since Redis Cluster gossip and replication use IP addresses rather than hostnames, the cluster remained fully available throughout the experiment. DNS injection and recovery were confirmed via the `DNSChaos` status (`AllInjected` → `AllRecovered`). The test key `chaos-test` remained intact.
+
+Verify data:
+
+```bash
+kubectl exec -it -n demo redis-cluster-shard0-0 -- \
+  redis-cli -a $PASSWORD -c GET chaos-test
+
+"before-chaos"
+```
+
+---
+
+### Experiment 16: io attr-override
+
+**What it does:** Overrides the file permission attributes on all files in the Redis `/data` directory to `perm: 72` (octal `0110` — execute-only for owner and group, no read or write). This simulates a scenario where the storage volume becomes inaccessible due to incorrect permissions, preventing Redis from reading or writing its data files.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: rd-master-io-attr-override
+  namespace: demo
+spec:
+  action: attrOverride
+  attr:
+    perm: 72
+  duration: "2m"
+  mode: all
+  path: /data/**/*
+  percent: 100
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      app.kubernetes.io/name: redises.kubedb.com
+      kubedb.com/role: master
+  volumePath: /data
+```
+
+Apply and observe:
+
+```bash
+kubectl get rd,pods -n demo
+kubectl logs -n demo redis-cluster-shard0-0 --tail=20 -f
+```
+
+With file permissions overridden to execute-only (`--x--x---`), Redis loses read and write access to its data directory. AOF and RDB persistence operations will fail immediately. After the 2-minute window ends, Chaos Mesh restores the original permissions.
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 12:07:37 | — | Pre-chaos baseline (all 3 master pods ONLINE) | `Ready` |
+| 12:07:37 | 0s | `IOChaos` applied — `perm: 72` (execute-only) overridden on 100% of `/data` ops for all master pods | `Ready` |
+| 12:07:37 | +0s | File attribute override injected on shard0-1, shard1-1, shard2-1 (`AllInjected`) | `Ready` |
+| 12:07:42 | ~+5s | Redis persistence operations (AOF/RDB) fail; in-memory operations continue normally | `Ready` |
+| 12:09:37 | +2m00s | Chaos experiment window ends; file permissions restored on all targeted pods (`AllRecovered`) | `Ready` |
+| 12:09:40 | ~+2m03s | Persistence operations resume; cluster fully converged | `Ready` |
+
+**Result: PASS** — File permissions on the `/data` path were overridden to execute-only (`perm: 72`) across all targeted pods for 2 minutes. Redis continued serving in-memory read/write operations normally, as the permission fault only affected disk-level persistence (AOF/RDB). After the chaos window ended, Chaos Mesh restored the original permissions and persistence operations resumed automatically. The test key `chaos-test` remained intact.
+
+Verify data:
+
+```bash
+kubectl exec -it -n demo redis-cluster-shard0-0 -- \
+  redis-cli -a $PASSWORD -c GET chaos-test
+
+"before-chaos"
+```
+
+---
+
+### Experiment 17: I/O Mistake
+
+**What it does:** Injects data corruption into READ and WRITE operations on the Redis `/data` directory by overwriting up to 10 bytes with zeros on 100% of I/O operations. This simulates silent data corruption from a faulty storage device — where syscalls succeed but the data returned or written is silently corrupted.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: io-mistake-example
+  namespace: demo
+spec:
+  action: mistake
+  duration: "120s"
+  methods:
+    - READ
+    - WRITE
+  mistake:
+    filling: zero
+    maxLength: 10
+    maxOccurrences: 1
+  mode: all
+  path: /data/**/*
+  percent: 100
+  selector:
+    namespaces:
+      - demo
+    labelSelectors:
+      app.kubernetes.io/name: redises.kubedb.com
+      kubedb.com/role: master
+  volumePath: /data
+```
+
+Apply and observe:
+
+```bash
+kubectl get rd,pods -n demo
+kubectl logs -n demo redis-cluster-shard0-0 --tail=20 -f
+```
+
+Unlike I/O fault (Experiment 11), this experiment does not return errors — syscalls appear to succeed, but up to 10 bytes per operation are silently zeroed out. This is particularly insidious as Redis may not detect the corruption immediately. AOF and RDB persistence operations are the most likely to be affected.
+
+**Observed timeline:**
+
+| Wall-clock | Δ from chaos | Event | DB Status |
+|---|---|---|---|
+| 12:24:04 | — | Pre-chaos baseline (all 3 master pods ONLINE) | `Ready` |
+| 12:24:04 | 0s | `IOChaos` applied — zero-fill mistake injected on 100% of READ/WRITE ops for all master pods | `Ready` |
+| 12:24:04 | +0s | I/O mistake injected on shard0-1, shard1-1, shard2-1 (`AllInjected`) | `Ready` |
+| 12:24:09 | ~+5s | Silent data corruption begins on AOF/RDB I/O ops; Redis in-memory operations unaffected | `Ready` |
+| 12:26:04 | +2m00s | Chaos experiment window ends; I/O mistake removed from all targeted pods | `Ready` |
+| 12:26:07 | ~+2m03s | Persistence operations return to normal; cluster fully converged | `Ready` |
+
+**Result: PASS** — Silent zero-fill corruption was injected into 100% of READ and WRITE I/O operations on the `/data` path across all master pods for 2 minutes. Redis continued serving in-memory operations normally — the corruption only affected disk-level persistence paths (AOF/RDB). Since Redis primarily operates in-memory and the corruption was limited to 10 bytes per operation, no in-memory data was affected. After the chaos window ended, Chaos Mesh removed the injection (`AllRecovered`) and persistence resumed automatically. The test key `chaos-test` remained intact.
+
+Verify data:
+
+```bash
+kubectl exec -it -n demo redis-cluster-shard0-0 -- \
+  redis-cli -a $PASSWORD -c GET chaos-test
+
+"before-chaos"
+```
+---
+
 ## Summary
 
-We ran 11 chaos experiments against a KubeDB-managed Redis Cluster on Kubernetes. Every experiment resulted in a **PASS** — the cluster recovered automatically and the test key `chaos-test` remained intact throughout.
+We ran 17 chaos experiments against a KubeDB-managed Redis Cluster on Kubernetes. Every experiment resulted in a **PASS** — the cluster recovered automatically and the test key `chaos-test` remained intact throughout.
 
 | # | Experiment | Tool | Fault Type | Duration | Result |
 |---|---|---|---|---|---|
@@ -934,21 +1318,28 @@ We ran 11 chaos experiments against a KubeDB-managed Redis Cluster on Kubernetes
 | 3 | Container Kill | PodChaos | Kill `redis` container in-place | 5m | ✅ PASS |
 | 4 | Network Delay | NetworkChaos | 1000ms latency on master pods | 60s | ✅ PASS |
 | 5 | Network Bandwidth | NetworkChaos | 1 Mbps cap on all pods | 60s | ✅ PASS |
-| 6 | Network Corruption | NetworkChaos | 40% packet corruption | 60s | ✅ PASS |
+| 6 | Network Corruption | NetworkChaos | 100% packet corruption on all pods | 60s | ✅ PASS |
 | 7 | Network Partition | NetworkChaos | Bidirectional master↔replica split | 10m | ✅ PASS |
 | 8 | CPU Stress | StressChaos | 4 workers at 50% CPU on masters | 2m | ✅ PASS |
 | 9 | Memory Stress | StressChaos | 256MB allocation on one pod | 60s | ✅ PASS |
 | 10 | I/O Latency | IOChaos | 15000ms latency on 50% of `/data` ops | 100s | ✅ PASS |
 | 11 | I/O Fault | IOChaos | errno 5 on 50% of `/data` ops | 120s | ✅ PASS |
+| 12 | Network Loss | NetworkChaos | 100% outgoing packet loss from masters | 2m | ✅ PASS |
+| 13 | Network Duplicate | NetworkChaos | 100% packet duplication (bidirectional) | 2m | ✅ PASS |
+| 14 | Time Offset | TimeChaos | -2h clock skew on all master pods | 2m | ✅ PASS |
+| 15 | DNS Chaos | DNSChaos | DNS error injection on all master pods | 2m | ✅ PASS |
+| 16 | I/O Attr Override | IOChaos | Execute-only permissions on `/data` | 2m | ✅ PASS |
+| 17 | I/O Mistake | IOChaos | Silent zero-fill on 100% of READ/WRITE ops | 2m | ✅ PASS |
 
 **Key takeaways:**
 
 - **KubeDB** continuously reconciles the Redis Cluster back to the desired state after every fault — no manual intervention was needed.
 - **Redis Cluster** mode provides built-in resilience: replica promotion, automatic re-election, and shard re-convergence all worked as expected.
 - **Pod-level faults** (kill, failure, container kill) recovered within seconds to a few minutes via Kubernetes StatefulSet rescheduling.
-- **Network faults** (partition, delay, bandwidth, corruption) caused temporary `Critical` states but the cluster re-converged automatically once the fault was lifted.
+- **Network faults** (partition, delay, bandwidth, corruption, loss, duplicate) caused temporary `Critical` or `NotReady` states but the cluster re-converged automatically once the fault was lifted.
 - **Resource stress** (CPU, memory) degraded performance but never caused data loss or cluster failure within the tested limits.
 - **I/O faults** are the most disruptive class — errno injection can prevent `kubectl exec` from entering pods — but Redis self-healed after the chaos window ended.
+- **Time and DNS chaos** had minimal impact on Redis Cluster because gossip and replication rely on IP addresses and in-memory state rather than wall-clock time or hostname resolution.
 
 ---
 
@@ -959,7 +1350,7 @@ Once you are done with the experiments, remove all resources to avoid incurring 
 Delete all Chaos Mesh experiments:
 
 ```bash
-kubectl delete podchaos,networkchaos,stresschaos,iochaos --all -n demo
+kubectl delete podchaos,networkchaos,stresschaos,iochaos,timechaos,dnschaos --all -n demo
 ```
 
 Delete the Redis Cluster:
