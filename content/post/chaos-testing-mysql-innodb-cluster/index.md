@@ -593,7 +593,19 @@ After GR timeout — pod-2 elected as new PRIMARY, pod-1 expelled. Router re-rou
 mysql-ha-cluster-2
 ```
 
-After the 2-minute partition lifted, the coordinator rejoined pod-1 automatically (~90s later). All 3 members `ONLINE`, GTIDs and checksums match.
+After the 2-minute partition lifted, the coordinator rejoined pod-1 automatically (~90s later). All 3 members `ONLINE`, GTIDs and checksums match:
+
+```shell
+➤ SELECT MEMBER_HOST, MEMBER_PORT, MEMBER_STATE, MEMBER_ROLE
+    FROM performance_schema.replication_group_members;
++-----------------------------------------------+-------------+--------------+-------------+
+| MEMBER_HOST                                   | MEMBER_PORT | MEMBER_STATE | MEMBER_ROLE |
++-----------------------------------------------+-------------+--------------+-------------+
+| mysql-ha-cluster-2.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | PRIMARY     |
+| mysql-ha-cluster-1.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
+| mysql-ha-cluster-0.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
++-----------------------------------------------+-------------+--------------+-------------+
+```
 
 **Result: PASS** — Partition caused failover in ~20 seconds. Router re-routed RW traffic. Expelled member auto-rejoined. Zero data loss.
 
@@ -640,7 +652,7 @@ spec:
   Primary's disk I/O slowed by 100ms → TPS collapses (disk-bound writes) but cluster stays `Ready` → Router keeps the connection to the degraded primary (it is still alive, just slow) → when chaos ends, TPS recovers. Zero data loss.
 
 - **Actual result:**
-  TPS dropped to ~0 during the 30s latency window, then recovered to 1242 TPS after chaos expired. No failover, no errors. GTIDs and checksums match. **PASS.**
+  TPS dropped to ~0 during the 30s latency window, then recovered to 1242 TPS after chaos expired. No failover, no errors. All 3 members `ONLINE`, GTIDs and checksums match. **PASS.**
 
 Apply the chaos while running 8-thread sysbench write load through the Router (port 6446):
 
@@ -662,7 +674,19 @@ iochaos.chaos-mesh.org/mysql-primary-io-latency created
 [ 60s ] thds: 8 tps: 1242.00 qps: 7452.01 lat (ms,95%):    11.24 err/s: 0.00   # full recovery
 ```
 
-The Router maintained the connection to the degraded primary throughout — no failover triggered. TPS recovered to ~1242 once the chaos cleared.
+The Router maintained the connection to the degraded primary throughout — no failover triggered. TPS recovered to ~1242 once the chaos cleared. All 3 members `ONLINE`:
+
+```shell
+➤ SELECT MEMBER_HOST, MEMBER_PORT, MEMBER_STATE, MEMBER_ROLE
+    FROM performance_schema.replication_group_members;
++-----------------------------------------------+-------------+--------------+-------------+
+| MEMBER_HOST                                   | MEMBER_PORT | MEMBER_STATE | MEMBER_ROLE |
++-----------------------------------------------+-------------+--------------+-------------+
+| mysql-ha-cluster-2.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | PRIMARY     |
+| mysql-ha-cluster-1.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
+| mysql-ha-cluster-0.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
++-----------------------------------------------+-------------+--------------+-------------+
+```
 
 ```shell
 ➤ # GTIDs — all match ✅
@@ -741,7 +765,19 @@ networkchaos.chaos-mesh.org/mysql-replication-latency created
 [ 60s ] thds: 8 tps: 1.20 qps: 7.20 lat (ms,95%): 6476.48 err/s: 0.00
 ```
 
-All 3 members stayed `ONLINE` throughout the latency window. Router did not change route.
+All 3 members stayed `ONLINE` throughout the latency window. Router did not change route:
+
+```shell
+➤ SELECT MEMBER_HOST, MEMBER_PORT, MEMBER_STATE, MEMBER_ROLE
+    FROM performance_schema.replication_group_members;
++-----------------------------------------------+-------------+--------------+-------------+
+| MEMBER_HOST                                   | MEMBER_PORT | MEMBER_STATE | MEMBER_ROLE |
++-----------------------------------------------+-------------+--------------+-------------+
+| mysql-ha-cluster-2.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | PRIMARY     |
+| mysql-ha-cluster-1.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
+| mysql-ha-cluster-0.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
++-----------------------------------------------+-------------+--------------+-------------+
+```
 
 **Result: PASS** — GR tolerated extreme replication latency. Zero data loss, zero errors.
 
@@ -805,7 +841,19 @@ stresschaos.chaos-mesh.org/mysql-primary-cpu-stress created
 [ 60s ] thds: 8 tps:  810.70 qps: 4863.39 lat (ms,95%):  31.37 err/s: 0.00
 ```
 
-Cluster stays `Ready` — no failover. All 3 members remain `ONLINE`. Router does not switch routes.
+Cluster stays `Ready` — no failover. All 3 members remain `ONLINE`. Router does not switch routes:
+
+```shell
+➤ SELECT MEMBER_HOST, MEMBER_PORT, MEMBER_STATE, MEMBER_ROLE
+    FROM performance_schema.replication_group_members;
++-----------------------------------------------+-------------+--------------+-------------+
+| MEMBER_HOST                                   | MEMBER_PORT | MEMBER_STATE | MEMBER_ROLE |
++-----------------------------------------------+-------------+--------------+-------------+
+| mysql-ha-cluster-2.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | PRIMARY     |
+| mysql-ha-cluster-1.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
+| mysql-ha-cluster-0.mysql-ha-cluster-pods.demo |        3306 | ONLINE       | SECONDARY   |
++-----------------------------------------------+-------------+--------------+-------------+
+```
 
 **Result: PASS** — CPU stress caused temporary TPS drop. Zero data loss, zero errors.
 
