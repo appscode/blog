@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mssql-load-test-config
+  namespace: mssql-load-test
+data:
+  # SQL Server connection
+  DB_HOST: "mssql-service.default.svc.cluster.local"
+  DB_PORT: "1433"
+  DB_USER: "sa"
+  DB_NAME: "testdb"
+  DB_ENCRYPT: "disable"
+  DB_TRUST_SERVER_CERT: "true"
+  # Connection pool
+  DB_MAX_OPEN_CONNS: "100"
+  DB_MAX_IDLE_CONNS: "20"
+  DB_MIN_FREE_CONNS: "5"
+  # Load test settings
+  CONCURRENT_WRITERS: "50"
+  TEST_RUN_DURATION: "300"     # 5 minutes
+  BATCH_SIZE: "100"
+  REPORT_INTERVAL: "10"
+  # Workload distribution (must sum to 100)
+  READ_PERCENT: "20"
+  INSERT_PERCENT: "60"
+  UPDATE_PERCENT: "20"
+  TABLE_NAME: "load_test_data"
+  READ_BATCH_SIZE: "10"
+  SEED_DATA_ROWS: "50000"

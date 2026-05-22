@@ -1,5 +1,5 @@
 ---
-title: 'Building Resilient SQL Server Availability Group Clusters on KubeDB with Chaos Mesh'
+title: Building Resilient SQL Server Availability Group Clusters on KubeDB with Chaos Mesh
 date: "2026-05-10"
 weight: 25
 authors:
@@ -14,8 +14,8 @@ tags:
 - high-availability
 - kubedb
 - kubernetes
+- mssql
 - sqlserver
-- mssql 
 ---
 
 > New to KubeDB? Please start [here](https://kubedb.com/docs/v2026.2.26/welcome/).
@@ -219,6 +219,19 @@ The pod having label `kubedb.com/role=primary` is the primary and `kubedb.com/ro
 ## Chaos Testing
 
 We will run some chaos experiments to see how our cluster behaves under failure scenarios like oom kill, network latency, network partition, io latency, io fault etc. We will use a SQL Server client application to simulate high write and read load on the cluster.
+
+
+
+
+
+
+
+
+
+<START REVIEW...............................>
+
+
+
 
 
 ### SQL Server High Write/Read Load Client

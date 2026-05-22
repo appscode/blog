@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mssql-load-test
+  namespace: mssql-load-test
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: mssql-load-test
+          image: ghcr.io/neaj-morshad-101/mssql-load-test:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: mssql-load-test-config
+            - secretRef:
+                name: mssql-load-test-secret
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "2"
+              memory: "2Gi"
