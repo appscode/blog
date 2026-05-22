@@ -221,30 +221,6 @@ The pod having label `kubedb.com/role=primary` is the primary and `kubedb.com/ro
 We will run some chaos experiments to see how our cluster behaves under failure scenarios like oom kill, network latency, network partition, io latency, io fault etc. We will use a SQL Server client application to simulate high write and read load on the cluster.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<REVIEW STARTHERE ............................
-
-
 ### SQL Server High Write/Read Load Client
 
 You can apply these YAMLs to create a client application that will continuously write and read data from the database.
