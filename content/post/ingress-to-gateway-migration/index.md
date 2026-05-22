@@ -1,6 +1,6 @@
 ---
 title: Zero-Downtime Migration from Ingress to Kubernetes Gateway API in ACE
-date: "2026-05-08"
+date: "2026-05-22"
 weight: 15
 authors:
 - Arnob Kumar Saha
@@ -14,7 +14,7 @@ tags:
 - migration
 ---
 
-The Kubernetes [Gateway API](https://kubernetes.io/docs/concepts/services-networking/gateway/) is the designated successor to Ingress. It offers richer routing semantics, native TCP/UDP support, explicit timeout configuration, upstream TLS policies, and a cleaner separation between infrastructure owners and application teams — all without relying on controller-specific annotations. For kubedb-platform, migrating to Gateway API was a clear improvement. The hard part was doing it without breaking anything for our existing self-hosted users.
+The Kubernetes [Gateway API](https://kubernetes.io/docs/concepts/services-networking/gateway/) is the designated successor to Ingress. It offers richer routing semantics, native TCP/UDP support, explicit timeout configuration, upstream TLS policies, and a cleaner separation between infrastructure owners and application teams — all without relying on controller-specific annotations. For kubedb-platform, migrating to Gateway API was a clear necessity. The hard part was doing it without breaking anything for our existing self-hosted users.
 
 This post explains the three-phase strategy we used to achieve a fully transparent, zero-downtime migration. In the full demonstration, Lets assume "dbaas.kubedb.cloud" is the domain user is using.
 
