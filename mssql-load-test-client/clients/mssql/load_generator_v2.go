@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/Neaj-Morshad-101/mssql-load-test/config"
 	"github.com/Neaj-Morshad-101/mssql-load-test/metrics"
-	"k8s.io/klog/v2"
 	"math/rand"
 	"strings"
 	"sync"
@@ -400,8 +399,6 @@ func (lg *LoadGeneratorV2) CheckDataLoss(ctx context.Context) (int64, int64, err
 		fmt.Sprintf("SELECT COUNT(*) FROM %s", lg.tableName)).Scan(&tot); err != nil {
 		return 0, 0, fmt.Errorf("failed to count total records for data loss check: %w", err)
 	}
-	klog.Infoln("Total records in table:", tot)
-	klog.Infoln("totalRows in LoadGenerator:", lg.totalRows.Load())
 	lost := lg.totalRows.Load() - tot
 	if lost < 0 {
 		lost = 0

@@ -46,6 +46,7 @@ type WorkloadConfig struct {
 	TableName     string
 	SeedDataRows  int
 	ReadBatchSize int
+	SkipCleanup   bool // if true, do not drop the table after the test
 }
 
 // LoadFromEnv loads configuration from environment variables
@@ -74,6 +75,7 @@ func LoadFromEnv() (*Config, error) {
 	cfg.Workload.TableName = getEnv("TABLE_NAME", "load_test_data")
 	cfg.Workload.ReadBatchSize = getEnvAsInt("READ_BATCH_SIZE", 10)
 	cfg.Workload.SeedDataRows = getEnvAsInt("SEED_DATA_ROWS", 50000)
+	cfg.Workload.SkipCleanup = getEnv("SKIP_CLEANUP", "false") == "true"
 	if err := cfg.Validate(); err != nil {
 		return nil, err
 	}

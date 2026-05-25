@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/Neaj-Morshad-101/mssql-load-test/config"
 	_ "github.com/microsoft/go-mssqldb" // SQL Server driver
-	"k8s.io/klog/v2"
 	"time"
 )
 
@@ -30,7 +29,6 @@ func NewConnectionManager(cfg *config.DBConfig) (*ConnectionManager, error) {
 		config: cfg,
 	}
 	connStr := cfg.GetConnectionString()
-	klog.Infoln("Connecting to SQL Server with connection string:", connStr)
 	db, err := sql.Open("sqlserver", connStr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database connection: %w", err)
@@ -75,21 +73,18 @@ func NewConnectionManager(cfg *config.DBConfig) (*ConnectionManager, error) {
 // GetConnectionStats retrieves current connection statistics from SQL Server
 func (cm *ConnectionManager) GetConnectionStats(ctx context.Context) (*ConnectionStats, error) {
 	stats := &ConnectionStats{}
-	// Get max connections from SQL Server configuration
-	// value_in_use = 0 means unlimited (default SQL Server max is 32767)
+	// @@MAX_CONNECTIONS works reliably from any database context (including AG databases).
+	// When the server-level config is 0 (unlimited), SQL Server returns 32767 here.
 	var maxConnsCfg int32
-	err := cm.db.QueryRowContext(ctx,
-		"SELECT CAST(value_in_use AS INT) FROM sys.configurations WHERE name = 'max connections'",
-	).Scan(&maxConnsCfg)
+	err := cm.db.QueryRowContext(ctx, "SELECT @@MAX_CONNECTIONS").Scan(&maxConnsCfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get max connections: %w", err)
 	}
 	if maxConnsCfg == 0 {
-		// 0 means unlimited; SQL Server practical max is 32767
 		maxConnsCfg = 32767
 	}
 	stats.MaxConnections = maxConnsCfg
-	// Get current number of active user sessions
+	// Count active user sessions across the whole server
 	var currentConns int32
 	err = cm.db.QueryRowContext(ctx,
 		"SELECT COUNT(*) FROM sys.dm_exec_sessions WHERE is_user_process = 1",

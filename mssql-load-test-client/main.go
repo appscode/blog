@@ -162,10 +162,16 @@ func main() {
 	fmt.Println("\nCleaning up test data...")
 	cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cleanupCancel()
-	if err := lg.Cleanup(cleanupCtx); err != nil {
-		fmt.Printf("Warning: Cleanup failed: %v\n", err)
+	if cfg.Workload.SkipCleanup {
+		fmt.Println("SKIP_CLEANUP=true: leaving table in place for manual inspection.")
+		fmt.Printf("  Table: %s (in database %s)\n", cfg.Workload.TableName, cfg.DB.DBName)
+		fmt.Printf("  To inspect: SELECT COUNT(*) FROM %s;\n", cfg.Workload.TableName)
 	} else {
-		fmt.Println("Test data table deleted successfully")
+		if err := lg.Cleanup(cleanupCtx); err != nil {
+			fmt.Printf("Warning: Cleanup failed: %v\n", err)
+		} else {
+			fmt.Println("Test data table deleted successfully")
+		}
 	}
 	fmt.Println("\nTest completed successfully!")
 }

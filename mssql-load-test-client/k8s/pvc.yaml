@@ -1,0 +1,17 @@
+
+
+---
+# k8s/04-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ms-load-test-results
+  namespace: demo
+  labels:
+    app: ms-load-test
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi

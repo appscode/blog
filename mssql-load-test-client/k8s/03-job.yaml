@@ -5,13 +5,23 @@ metadata:
   namespace: mssql-load-test
 spec:
   backoffLimit: 0
+  ttlSecondsAfterFinished: 86400
   template:
     spec:
       restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: mssql-load-test
-          image: ghcr.io/neaj-morshad-101/mssql-load-test:latest
+          image: neajmorshad/mssql-load-test:latest
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           envFrom:
             - configMapRef:
                 name: mssql-load-test-config

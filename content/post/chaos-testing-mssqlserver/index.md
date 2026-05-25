@@ -223,17 +223,6 @@ We will run some chaos experiments to see how our cluster behaves under failure 
 
 
 
-
-
-
-
-
-<START REVIEW...............................>
-
-
-
-
-
 ### SQL Server High Write/Read Load Client
 
 You can apply these YAMLs to create a client application that will continuously write and read data from the database.
@@ -249,30 +238,30 @@ metadata:
 data:
   # Test Duration (in seconds)
   TEST_RUN_DURATION: "400"
-  
+
   # Concurrency Settings
   CONCURRENT_WRITERS: "20"
-  
+
   # Workload Distribution (must sum to 100)
   READ_PERCENT: "80"
   INSERT_PERCENT: "10"
   UPDATE_PERCENT: "10"
-  
+
   # Batch Sizes
   BATCH_SIZE: "100"
   READ_BATCH_SIZE: "100"
-  
+
   # Database Settings
   TABLE_NAME: "load_test_data"
-  
+
   # Connection Pool Settings
   MAX_OPEN_CONNS: "60"
   MAX_IDLE_CONNS: "10"
   CONN_MAX_LIFETIME: "300"
-  
+
   # Connection Safety
   MIN_FREE_CONNS: "5"
-  
+
   # Reporting
   REPORT_INTERVAL: "20"
 ---
@@ -289,29 +278,22 @@ data:
   # Base64 encoded database credentials
   # Replace these with your actual base64-encoded values
 
-  # Example: echo -n "your-postgres-host" | base64
-  DB_HOST: cGctaGEtY2x1c3Rlci5kZW1vLnN2Yy5jbHVzdGVyLmxvY2Fs
+  # echo -n "sqlserver-ag-cluster.demo.svc.cluster.local" | base64
+  DB_HOST: c3Fsc2VydmVyLWFnLWNsdXN0ZXIuZGVtby5zdmMuY2x1c3Rlci5sb2NhbA==
 
-  # Example: echo -n "5432" | base64
-  DB_PORT: NTQzMg==
+  # echo -n "1433" | base64
+  DB_PORT: MTQzMw==
 
-  # Example: echo -n "postgres" | base64
-  DB_USER: cG9zdGdyZXM=
+  # echo -n "sa" | base64
+  DB_USER: c2E=
 
-  # Example: echo -n "your-password" | base64
-  # IMPORTANT: Replace this with your actual password
-  DB_PASSWORD: NihrMkohSXVYdChGSSpmSg==
+  # Retrieve your password: kubectl get secret -n demo sqlserver-ag-cluster-auth -o jsonpath='{.data.password}'
+  # Then paste the base64 value below (the secret already stores the password in base64)
+  DB_PASSWORD: <base64-encoded-password-from-auth-secret>
 
-  # Example: echo -n "postgres" | base64
-  DB_NAME: cG9zdGdyZXM=
+  # echo -n "agdb" | base64
+  DB_NAME: YWdkYg==
 
----
-# How to encode your credentials:
-# echo -n "127.0.0.1" | base64
-# echo -n "5678" | base64
-# echo -n "postgres" | base64
-# echo -n "CIX6TzfTYFn8~pj4" | base64
-# echo -n "postgres" | base64
 ---
 # k8s/03-job.yaml
 apiVersion: batch/v1
@@ -333,11 +315,19 @@ spec:
         version: v2
     spec:
       restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: load-test
-          # Replace with your image registry and tag
-          image: souravbiswassanto/high-write-load-client:v0.0.0
+          image: neajmorshad/mssql-load-test:latest
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           resources:
             requests:
               memory: "2Gi"
@@ -371,15 +361,13 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 5Gi
 ```
 
 > As a standard, we will use 10% write, 10% update and 80% 
-read operations. In 5 minutes of high load,
-it should generate around 30GB of data, more than 
-30M rows inserted, more than 300M rows read. 
+read operations.
 
-> **Note**: If you do not want to generate this much data, you can reduce the INSERT_PERCENT and BATCH_SIZE values.
+> **Note**: If you want to customize how much data should be inserted / updated, you can modify the INSERT_PERCENT and BATCH_SIZE values.
 
 
 Save the above YAMLs. Then make a script like below:
@@ -388,12 +376,13 @@ Save the above YAMLs. Then make a script like below:
 ➤ cat run-k8s.sh 
 #! /usr/bin/bash
 
-kubectl delete -f k8s/03-job.yaml
-kubectl delete -f k8s/04-pvc.yaml
+kubectl delete -f job.yaml
+kubectl delete -f pvc.yaml
 
-kubectl apply -f k8s/01-configmap.yaml
-kubectl apply -f k8s/03-job.yaml
-kubectl apply -f k8s/04-pvc.yaml
+kubectl apply -f secret.yaml
+kubectl apply -f configmap.yaml
+kubectl apply -f job.yaml
+kubectl apply -f pvc.yaml
 ```
 
 Run the script to start the load test.
@@ -403,63 +392,90 @@ chmod +x run-k8s.sh
 ./run-k8s.sh
 job.batch "ms-load-test-job" deleted
 persistentvolumeclaim "ms-load-test-results" deleted
+secret/ms-load-test-secret unchanged
 configmap/ms-load-test-config configured
 job.batch/ms-load-test-job created
 persistentvolumeclaim/ms-load-test-results created
 ```
 
-I have attached a sample output of the load test job below. These metrics will be printed after every `REPORT_INTERVAL` seconds. You can see that we are generating around 38GB of data, more than 4M rows inserted, more than 32M rows read in 7 minutes of high load.
+Below is a sample output from the load test job. These metrics are printed after every `REPORT_INTERVAL` seconds. In just **7 minutes** of high concurrency load, the client performed **45,877 operations** — 36,695 reads, **4,586 inserts** (each inserting 100 rows = **458,600 new rows**), and 4,596 updates — transferring **4.19 GB** of data, with an average throughput of **107 operations/sec** and **zero errors**. The data loss check confirms all **508,600 rows** (458,600 inserted + 50,000 seed) are intact in the database.
 
 ```shell
-Test Duration: 7m3s
+Final Results:
+=================================================================
+Test Duration: 7m7s
 -----------------------------------------------------------------
 Cumulative Statistics:
-  Total Operations: 408454 (Reads: 326500, Inserts: 40908, Updates: 41046)
-  Total Number of Rows Reads: 32650000, Inserts: 4090800, Updates: 41046
+  Total Operations: 45877 (Reads: 36695, Inserts: 4586, Updates: 4596)
   Total Errors: 0
-  Total Data Transferred: 38187.80 MB
+  Total Data Transferred: 4290.31 MB
 -----------------------------------------------------------------
 Current Throughput (interval):
-  Operations/sec: 0.00 (Reads: 0.00/s, Inserts: 0.00/s, Updates: 0.00/s)
-  Throughput: 0.00 MB/s
+  Operations/sec: 28.26 (Reads: 18.37/s, Inserts: 9.89/s, Updates: 0.00/s)
+  Throughput: 2.94 MB/s
   Errors/sec: 0.00
 -----------------------------------------------------------------
 Latency Statistics:
-  Reads   - Avg: 12.097ms, P95: 83.291ms, P99: 100.506ms
-  Inserts - Avg: 58.51ms, P95: 146.231ms, P99: 218.178ms
-  Updates - Avg: 37.444ms, P95: 100.994ms, P99: 192.838ms
+  Reads   - Avg: 116.518ms, P95: 684.497ms, P99: 1.457711s
+  Inserts - Avg: 691.727ms, P95: 1.699168s, P99: 2.795346s
+  Updates - Avg: 123.077ms, P95: 734.085ms, P99: 1.731241s
 -----------------------------------------------------------------
 Connection Pool:
-  Active: 13, Max: 100, Available: 87
+  Active: 27, Max: 32767, Available: 32740
+=================================================================
+
+=================================================================
+Performance Summary:
+  Average Throughput: 107.45 operations/sec
+  Read Operations: 36695 (85.94/sec avg)
+  Insert Operations: 4586 (10.74/sec avg)
+  Update Operations: 4596 (10.76/sec avg)
+  Error Rate: 0.0000%
+  Total Data Transferred: 4.19 GB
+=================================================================
+
+=================================================================
+Checking for Data Loss...
 =================================================================
 
 =================================================================
 Data Loss Report:
 -----------------------------------------------------------------
-  Total Records Inserted: 4140800
-  Records Found in DB: 4140800
-I0406 04:26:53.097674       1 load_generator_v2.go:555] Total records in table: 4140800
-I0406 04:26:53.097700       1 load_generator_v2.go:556] totalRows in LoadGenerator: 4140800
+  Total Rows Tracked (inserts + seed): 508600
+  Records Found in DB: 508600
   Records Lost: 0
   Data Loss Percentage: 0.00%
 =================================================================
 
- No data loss detected - all inserted records are present in database
+No data loss detected - all inserted records are present in database
 
 Cleaning up test data...
-Cleaning up test table...
-Cleanup completed
-Test data table deleted successfully
+SKIP_CLEANUP=true: leaving table in place for manual inspection.
+  Table: load_test_data (in database agdb)
+  To inspect: SELECT COUNT(*) FROM load_test_data;
 
 Test completed successfully!
 ```
 
 > You can see these logs by running `kubectl logs -n demo job/ms-load-test-job` command.
 
+
+```bash
+kubectl exec -it -n demo sqlserver-ag-cluster-0 -c mssql -- bash
+mssql@sqlserver-ag-cluster-0:/$ /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P $MSSQL_SA_PASSWORD -No
+1> use agdb;
+2> go
+Changed database context to 'agdb'.
+1> select count(*) from load_test_data;
+2> go    
+-----------
+     508600
+````
+
+
+
 With this load on the cluster, we are ready to run some chaos experiments and see how our cluster behaves under failure scenarios.
 
-
-</REVIEW ENDHERE ............................
 
 
 
@@ -606,24 +622,6 @@ spec:
 **What this chaos does:** Allocates excessive memory on the primary pod to exceed its limits, triggering an OOMKill that forces failover.
 
 
-
-
-
-
-
-
-
-<REVIEW STARTHERE ............................
-
-
-
-
-
-
-
-
-
-
 Before running this, we will run the load test job.
 
 ```shell
@@ -637,38 +635,39 @@ persistentvolumeclaim/ms-load-test-results created
 
 We can see the database is in ready state while the load test job is running.
 ```shell
-NAME                                       VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d16h
----------------------------------------------------------------
-pod/ms-load-test-job-z8bxf   1/1     Running   0          22s
+NAME                                          VERSION    STATUS   AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Ready    152m
+
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   151m
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/ms-load-test-job-86b5q   1/1     Running   0          43s
 ```
 
 Let's see the log from the load test job:
 
 ```shell
 ➤ kubectl logs -f -n demo job/ms-load-test-job
-
-Test Duration: 43s
+Test Duration: 1m25s
 -----------------------------------------------------------------
 Cumulative Statistics:
-  Total Operations: 70123 (Reads: 55952, Inserts: 7053, Updates: 7118)
-  Total Number of Rows Reads: 5595200, Inserts: 705300, Updates: 7118
+  Total Operations: 10568 (Reads: 8387, Inserts: 1068, Updates: 1113)
   Total Errors: 0
-  Total Data Transferred: 6548.86 MB
+  Total Data Transferred: 982.95 MB
 -----------------------------------------------------------------
 Current Throughput (interval):
-  Operations/sec: 1526.62 (Reads: 1219.18/s, Inserts: 158.02/s, Updates: 149.42/s)
-  Throughput: 143.24 MB/s
+  Operations/sec: 150.60 (Reads: 119.35/s, Inserts: 15.95/s, Updates: 15.30/s)
+  Throughput: 14.07 MB/s
   Errors/sec: 0.00
 -----------------------------------------------------------------
 Latency Statistics:
-  Reads   - Avg: 5.042ms, P95: 27.845ms, P99: 63.214ms
-  Inserts - Avg: 50.112ms, P95: 128.465ms, P99: 274.199ms
-  Updates - Avg: 22.783ms, P95: 87.802ms, P99: 211.079ms
+  Reads   - Avg: 71.044ms, P95: 507.978ms, P99: 985.134ms
+  Inserts - Avg: 523.97ms, P95: 1.072215s, P99: 1.252189s
+  Updates - Avg: 26.84ms, P95: 58.247ms, P99: 88.069ms
 -----------------------------------------------------------------
 Connection Pool:
-  Active: 20, Max: 100, Available: 80
-=================================================================
+  Active: 26, Max: 32767, Available: 32741
 ```
 
 Now run the chaos experiment.
@@ -678,7 +677,7 @@ Now run the chaos experiment.
 stresschaos.chaos-mesh.org/ms-primary-oom created
 ```
 
-Now you should see the primary pod is OOMKilled and the failover happens. The database state will be `Critical` during the failover and will be `Ready` again after the old primary is back as secondary.
+Now you should see the primary pod is OOMKilled and the failover may or may not happen depending on how fast the primary comes up. The database state will be `Critical` during the failover and will be `Ready` again after the old primary is back as secondary.
 
 ```shell
 watch kubectl get ms,petset,pods -n demo
@@ -741,25 +740,16 @@ pod/ms-load-test-job-z8bxf   1/1     Running   0             2m41s
 Now check the data loss report from the load test job logs once the test is completed.
 
 ```shell
+=================================================================
 Data Loss Report:
 -----------------------------------------------------------------
-  Total Records Inserted: 4095300
-I0406 04:52:42.162937       1 load_generator_v2.go:555] Total records in table: 4095300
-I0406 04:52:42.162960       1 load_generator_v2.go:556] totalRows in LoadGenerator: 4095300
-  Records Found in DB: 4095300
+  Total Rows Tracked (inserts + seed): 537100
+  Records Found in DB: 537100
   Records Lost: 0
   Data Loss Percentage: 0.00%
 =================================================================
 
- No data loss detected - all inserted records are present in database
-
-Cleaning up test data...
-Cleaning up test table...
-Cleanup completed
-Test data table deleted successfully
-
-Test completed successfully!
-
+No data loss detected - all inserted records are present in database
 ```
 
 
@@ -769,16 +759,6 @@ Clean up the chaos experiment.
 kubectl delete -f tests/02-oomkill.yaml
 stresschaos.chaos-mesh.org "ms-primary-oom" deleted
 ```
-
-
-
-
-
-
-</REVIEW ENDHERE ............................
-
-
-
 
 
 ###  Chaos#3: Kill SQL Server process in the Primary Pod
@@ -805,12 +785,6 @@ spec:
   duration: "30s"
 ```
 
-
-
-
-<REVIEW STARTHERE ............................
-
-
 **What this chaos does:** Forcefully terminates the SQL Server process in the primary container (mssql), simulating a database crash without pod termination.
 
 Create the load test job. I will alter the duration of the load test job to 1 minute as this chaos experiment is generally shorter.
@@ -827,13 +801,13 @@ persistentvolumeclaim/ms-load-test-results created
 ```
 
 ```shell
-pod/ms-load-test-job-79k9p   1/1     Running   0            10s # NOTE the load test job is running
+pod/ms-load-test-job-nbjqf   1/1     Running   0             26s # NOTE the load test job is running
 
 kubectl get pods -n demo -L kubedb.com/role
 NAME                     READY   STATUS    RESTARTS      AGE   ROLE
-sqlserver-ag-cluster-0   2/2     Running   0             89m   secondary
-sqlserver-ag-cluster-1   2/2     Running   0             89m   secondary
-sqlserver-ag-cluster-2   2/2     Running   1 (52m ago)   99m   primary
+sqlserver-ag-cluster-0   2/2     Running   1 (16m ago)   171m   primary
+sqlserver-ag-cluster-1   2/2     Running   0             171m   secondary
+sqlserver-ag-cluster-2   2/2     Running   0             171m   secondary
 ```
 
 
@@ -844,7 +818,7 @@ kubectl apply -f tests/03-kill-sqlservr-process.yaml
 podchaos.chaos-mesh.org/ms-kill-sqlservr-process created
 ```
 
-As soon as you run the chaos experiment, you should see the primary pod is killed, the failover happens
+As soon as you run the chaos experiment, you should see the primary pod is killed, the failover may or may not happen depending on how fast the primary comes up. The database state will be `Critical` during the failover and will be `Ready` again after the old primary is back as secondary.
 
 ```shell
 watch kubectl get ms,petset,pods -n demo
@@ -859,68 +833,65 @@ NAME                                                AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   179m
 
 NAME                         READY   STATUS    RESTARTS      AGE
-pod/sqlserver-ag-cluster-0   2/2     Running   0             91m
+pod/sqlserver-ag-cluster-0   2/2     Running   2 (40s ago)   91m
 pod/sqlserver-ag-cluster-1   2/2     Running   0             91m
-pod/sqlserver-ag-cluster-2   2/2     Running   2 (27s ago)   101m
+pod/sqlserver-ag-cluster-2   2/2     Running   2             101m
 pod/ms-load-test-job-79k9p   1/1     Running   0            39s
 
 ```
-You can see the primary pod was killed and restarted by Kubernetes. The failover was performed and the database state is `Critical` (old primary is not back yet). 
+You can see the primary pod was killed and restarted by Kubernetes. The failover was performed and the database state is `Critical`.
 Now wait some time, and you should see the old primary is back and the database state is `Ready` again.
 
 
 ```shell
 Every 2.0s: kubectl get ms,petset,pods -n demo
 NAME                                          VERSION    STATUS   AGE
-mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Ready    3h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Ready    175m
 
 NAME                                                AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   179m
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   174m
 
-NAME                         READY   STATUS    RESTARTS      AGE
-pod/sqlserver-ag-cluster-0   2/2     Running   0             91m
-pod/sqlserver-ag-cluster-1   2/2     Running   0             91m
-pod/sqlserver-ag-cluster-2   2/2     Running   2 (77s ago)   101m
+NAME                         READY   STATUS      RESTARTS       AGE
+pod/ms-load-test-job-nbjqf   0/1     Completed   0              3m18s
+pod/sqlserver-ag-cluster-0   2/2     Running     2 (2m7s ago)   174m
+pod/sqlserver-ag-cluster-1   2/2     Running     0              174m
+pod/sqlserver-ag-cluster-2   2/2     Running     0              174m
 ```
-
-
-
-
-
-
-
 
 Now check the data loss report from the load test job logs once the test is completed.
 
 ```shell
+Final Results:
+=================================================================
+Test Duration: 1m25s
+-----------------------------------------------------------------
 Cumulative Statistics:
-  Total Operations: 83211 (Reads: 66607, Inserts: 8355, Updates: 8249)
-  Total Number of Rows Reads: 6660700, Inserts: 835500, Updates: 8249)
-  Total Errors: 19548
-  Total Data Transferred: 7790.99 MB
+  Total Operations: 11168 (Reads: 8933, Inserts: 1108, Updates: 1127)
+  Total Errors: 15142
+  Total Data Transferred: 1043.02 MB
 -----------------------------------------------------------------
 Current Throughput (interval):
-  Operations/sec: 1298.86 (Reads: 974.14/s, Inserts: 259.77/s, Updates: 64.94/s)
-  Throughput: 129.14 MB/s
+  Operations/sec: 116.89 (Reads: 70.14/s, Inserts: 35.07/s, Updates: 11.69/s)
+  Throughput: 11.20 MB/s
   Errors/sec: 0.00
 -----------------------------------------------------------------
 Latency Statistics:
-  Reads   - Avg: 5.366ms, P95: 30.093ms, P99: 72.567ms
-  Inserts - Avg: 53.477ms, P95: 135.148ms, P99: 238.446ms
-  Updates - Avg: 31.277ms, P95: 99.222ms, P99: 202.694ms
+  Reads   - Avg: 51.176ms, P95: 321.218ms, P99: 780.448ms
+  Inserts - Avg: 462.997ms, P95: 977.854ms, P99: 1.208648s
+  Updates - Avg: 22.867ms, P95: 60.9ms, P99: 120.124ms
 -----------------------------------------------------------------
 Connection Pool:
-  Active: 14, Max: 100, Available: 86
+  Active: 23, Max: 32767, Available: 32744
 =================================================================
 
 =================================================================
 Performance Summary:
-  Average Throughput: 1327.47 operations/sec
-  Read Operations: 66607 (1062.59/sec avg)
-  Insert Operations: 8355 (133.29/sec avg)
-  Update Operations: 8249 (131.60/sec avg)
-  Error Rate: 19.0232%
-  Total Data Transferred: 7.61 GB
+  Average Throughput: 131.07 operations/sec
+  Read Operations: 8933 (104.84/sec avg)
+  Insert Operations: 1108 (13.00/sec avg)
+  Update Operations: 1127 (13.23/sec avg)
+  Error Rate: 57.5523%
+  Total Data Transferred: 1.02 GB
 =================================================================
 
 =================================================================
@@ -930,22 +901,13 @@ Checking for Data Loss...
 =================================================================
 Data Loss Report:
 -----------------------------------------------------------------
-  Total Records Inserted: 885500
-  Records Found in DB: 885500
+  Total Rows Tracked (inserts + seed): 160800
+  Records Found in DB: 160800
   Records Lost: 0
   Data Loss Percentage: 0.00%
 =================================================================
 
- No data loss detected - all inserted records are present in database
-
-Cleaning up test data...
-Cleaning up test table...
-I0406 05:15:34.394443       1 load_generator_v2.go:555] Total records in table: 885500
-I0406 05:15:34.394469       1 load_generator_v2.go:556] totalRows in LoadGenerator: 885500
-Cleanup completed
-Test data table deleted successfully
-
-Test completed successfully!
+No data loss detected - all inserted records are present in database
 ```
 
 Clean up the chaos experiment.
@@ -956,27 +918,16 @@ podchaos.chaos-mesh.org "ms-kill-sqlservr-process" deleted
 ```
 
 
-</REVIEW ENDHERE ............................
 
 
 
-
-
-
-
-
-
-START FROM HERE...................
-
-
-
-
+ 
 
 ###  Chaos#4: Primary Pod Failure
 
-In this experiment, we are going to simulate a complete failure of the primary pod, including the node it is running on. This is a more extreme scenario than just killing the pod or the postgres process.
+In this experiment, we are going to simulate a complete failure of the primary pod, including the node it is running on. This is a more extreme scenario than just killing the pod or the SQL Server process.
 
-Save this yaml as `tests/04-pod-failure.yaml`:
+Save this YAML as `tests/04-pod-failure.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -997,7 +948,7 @@ spec:
 
 ```
 
-**What this chaos does:** Removes the entrypoint which is running the postgres process. 
+**What this chaos does:** Removes the entrypoint which is running the SQL Server process. 
 
 > **NOTE**: Chaos-Mesh will simulate a pod failure for `.spec.duration` amount of time; for our case, it is 5 minutes. As this simulates the complete failure of a pod for 5 minutes, our database will be in either a NotReady or Critical state for 5 minutes. Once this chaos is `Recovered`, the database will move back to `Ready` state automatically.
 
@@ -1006,19 +957,19 @@ We will not run load tests for this experiment as well.
 Before running this, let's examine the database state.
 
 ```shell
-➤ kubectl get ms -n demo
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d17h
+kubectl get ms -n demo
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    2d17h
 ---------------------------------------------------------------
-➤ kubectl get pods -n demo --show-labels | grep  primary | awk '{print $1}'
-sqlserver-ag-cluster-1 # Primary pod
+kubectl get pods -n demo --show-labels | grep  primary | awk '{print $1}'
+sqlserver-ag-cluster-0 # Primary pod
 ```
 
 See the primary pod is in running state.
 
 ```shell
-pod/sqlserver-ag-cluster-0          2/2     Running     0             102m
-pod/sqlserver-ag-cluster-1          2/2     Running     2 (21m ago)   105m
-pod/sqlserver-ag-cluster-2          2/2     Running     0             102m
+pod/sqlserver-ag-cluster-0   2/2     Running     2 (6m53s ago)   179m
+pod/sqlserver-ag-cluster-1   2/2     Running     0               178m
+pod/sqlserver-ag-cluster-2   2/2     Running     0               178m
 ```
 
 Now run the chaos experiment.
@@ -1027,32 +978,33 @@ kubectl apply -f ms-primary-pod-failure.yaml
 podchaos.chaos-mesh.org/ms-primary-pod-failure created
 ```
 
-See the database went into NotReady state. Now based on the possibility of data loss, a failover will happen or be prohibited.
+See the database went into NotReady state. Now a failover will happen, as we maintain quorum, we can afford to lose the primary pod without losing data. The new primary will be ready to accept connections immediately, but the old primary will be NotReady until the chaos experiment is recovered after 5 minutes.
 
 ```shell
-NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   2d17h
+NAME                                          VERSION    STATUS     AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   NotReady   3h
 ```
 
 A failover happened immediately as there was no possibility of data loss. See the database is now in `Critical` state, which means the new primary is ready to accept connections, but one or more of the replicas are not ready, in this case, the old primary in not ready. The old primary will be ready after `chaos.spec.duration` seconds when chaos will be recovered, which is 5 minutes in our case.
 
 ```shell
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   2d17h
+NAME                                          VERSION    STATUS     AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Critical   3h3m
 
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d17h
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3h2m
 
 NAME                         READY   STATUS      RESTARTS      AGE
-pod/sqlserver-ag-cluster-0          2/2     Running     0             103m
-pod/sqlserver-ag-cluster-1          2/2     Running     2 (22m ago)   106m
-pod/sqlserver-ag-cluster-2          2/2     Running     0             103m
+pod/sqlserver-ag-cluster-0   2/2     Running     4 (2m38s ago)   3h2m
+pod/sqlserver-ag-cluster-1   2/2     Running     0               3h2m
+pod/sqlserver-ag-cluster-2   2/2     Running     0               3h2m
 ```
 
 Let's see who is the new primary.
 
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep  primary | awk '{print $1}'
-sqlserver-ag-cluster-0
+sqlserver-ag-cluster-2
 ```
 
 Now let's wait 5 minutes and follow the status of the chaos experiment by running `kubectl get podchaos -n chaos-mesh ms-primary-pod-failure` command.
@@ -1074,15 +1026,16 @@ status:
 If you see `AllRecovered` condition is `True`, that means the chaos experiment is recovered, now you should see the old primary is back and the database state is `Ready` again.
 
 ```shell
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d17h
+NAME                                          VERSION    STATUS   AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Ready    3h8m
 
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d17h
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3h7m
 
-NAME                         READY   STATUS      RESTARTS   AGE
-pod/sqlserver-ag-cluster-0          2/2     Running     0          106m
-pod/sqlserver-ag-cluster-1          2/2     Running     4 (10m ago)   110m
-pod/sqlserver-ag-cluster-2          2/2     Running     0          106m
+NAME                         READY   STATUS      RESTARTS       AGE
+pod/sqlserver-ag-cluster-0   2/2     Running     6 (2m5s ago)   3h7m
+pod/sqlserver-ag-cluster-1   2/2     Running     0              3h6m
+pod/sqlserver-ag-cluster-2   2/2     Running     0              3h6m
 ```
 
 Clean up the chaos experiment.
@@ -1092,12 +1045,8 @@ kubectl delete -f tests/04-pod-failure.yaml
 podchaos.chaos-mesh.org "ms-primary-pod-failure" deleted
 ```
 
+
 ###  Chaos#5: Network Partition Primary Pod
-
-> **NOTE**: The only possible way to avoid data loss in the network partition case is to use synchronous replication. You can do this by changing `db.spec.streamingMode: Synchronous`. In this case, there won't be any data loss.
-
-> **Caution**: This experiment can cause data loss if you are using asynchronous replication. So use this experiment with caution and only on non-production environments.
-
 
 In this experiment, we simulate a network partition affecting the primary pod in a SQL Server cluster.
 
@@ -1130,7 +1079,7 @@ Partition Check
 | Partition B  | Nodes: 2 |  Has quorum |
 ```
 
-We will detect this situation and will shutdown the primary in the minority partition to avoid data loss as much as possible.
+We will detect this situation and will shut down the primary in the minority partition.
 
 ```shell
 Safe Outcome
@@ -1141,9 +1090,7 @@ Safe Outcome
 |                    | secondary-2          |
 ```
 
-But again, there exists a data loss window which is generally small (30s - 1 minute). So how much data might be lost? Depends on your write load during that time, might be none in case there wasn't any write load.
-
-Now save this yaml as `tests/05-network-partition.yaml`. We will test this scenario against both asynchronous and synchronous replication mode and see the difference.
+Now save this YAML as `tests/05-network-partition.yaml`. We will test this scenario.
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -1172,9 +1119,7 @@ spec:
   duration: "4m"
 ```
 
-**What this chaos does:** Blocks network connectivity between the primary pod and all secondary pods, forcing a split-brain scenario where secondarys promote a new primary in their partition while the isolated primary continues running.
-
-Lets first test on the current postgres, which is running in asynchronous replication mode. Its basically the default mode if you have not mentioned anything in the `.spec.streamingMode` field of MSSQLServer Object.
+**What this chaos does:** Blocks network connectivity between the primary pod and all secondary pods, forcing a scenario where secondarys promote a new primary in their partition while the isolated primary stops and continues as secondary when the partition goes.
 
 
 Now lets first apply the load test job, but I will modify some config before running it.
@@ -1182,7 +1127,7 @@ Now lets first apply the load test job, but I will modify some config before run
 BATCH_SIZE: "100"
 TEST_RUN_DURATION: "600" # updated this, 10 minutes
 INSERT_PERCENT: "1" # let's put some realistic write load, 1% of the operations will be insert
-UPDATE_PERCENT: "19" # 19% of the operations will be update, so total write load is 20% which is quite high for postgres. We want to see some data loss in this case
+UPDATE_PERCENT: "19" # 19% of the operations will be update, so total write load is 20% which is quite high for SQL Server.
 CONCURRENT_WRITERS: "10" # Reduce the concurrent writers
 ```
 
@@ -1207,7 +1152,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d19h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    2d19h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d19h
@@ -1222,7 +1167,7 @@ pod/ms-load-test-job-ztb94   1/1     Running   0          12s
 
 ```shell
 ➤ kubectl get pods -n demo --show-labels | grep  primary | awk '{print $1}'
-sqlserver-ag-cluster-1 # Primary pod
+sqlserver-ag-cluster-2 # Primary pod
 ```
 
 Now let's go ahead and run the chaos experiment.
@@ -1234,18 +1179,18 @@ networkchaos.chaos-mesh.org/ms-primary-network-partition created
 
 Your database will be in `Ready` state for some time until we detect there is a network partition, when we detect the
 network partition,
-we shutdown the primary in the minority quorum. So you will see the database is in `Ready` state for some 
-time and then it will go to `NotReady` or `Critical` state based on some other criteria.
+we shut down the primary in the minority quorum. So you will see the database is in `Ready` state for some 
+time, and then it will go to `NotReady` or `Critical` state based on some other criteria.
 
 ```shell
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d19h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    2d19h
 ```
 
-After some time, you should see the database is in `NotReady` state as we detected the network partition and shutdown the primary in the minority partition to avoid data loss as much as possible.
+After some time, you should see the database is in `NotReady` state as we detected the network partition and shutdown the primary in the minority partition
 
 ```shell
-NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   2d19h
+NAME                                          VERSION        STATUS     AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      NotReady   2d19h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d19h
@@ -1255,7 +1200,6 @@ pod/sqlserver-ag-cluster-0          2/2     Running   0          3m55s
 pod/sqlserver-ag-cluster-1          2/2     Running   0          3m52s
 pod/sqlserver-ag-cluster-2          2/2     Running   0          3m49s
 pod/ms-load-test-job-ztb94   1/1     Running   0          2m25s
-
 ```
 
 Your database should be in `Critical` state after some time.
@@ -1263,7 +1207,7 @@ Your database should be in `Critical` state after some time.
 ```shell
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   2d19h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Critical   2d19h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d19h
@@ -1274,20 +1218,10 @@ pod/sqlserver-ag-cluster-1          2/2     Running   0          4m35s
 pod/sqlserver-ag-cluster-2          2/2     Running   0          4m32s
 pod/ms-load-test-job-ztb94   1/1     Running   0          3m8s
 ```
-> **NOTE**: There is one possible way where data loss might be avoided even with asynchronous replication, this reason is somewhat weird but possible. In a scenario where the secondary was lagging behind the primary before the network partition happened, there won't be a failover in this case as we know doing a failover will result in data loss in this case. In this case, your db will be in `NotReady` state.
-
-> So, if you see your db is in **NotReady** state for longer period, this might be the reason, and you have successfully avoided data loss even with asynchronous replication at the cost of some downtime. Again, if you prefer uptime, use `.spec.replication.forceFailoverAcceptingDataLossAfter: 30s` which will force fully do a failover without considering data loss case.
 
 
-Let's see the logs of the old primary, you should see the postgres process is shutdown immediately after the network partition is detected.
+See the logs of the old primary, you should see the SQL Server process is shutdown immediately after the network partition is detected.
 
-```shell
-➤ kubectl logs -f -n demo sqlserver-ag-cluster-1
-...
-2026-04-06 07:23:50.190 UTC [2598] FATAL:  the database system is shutting down
-2026-04-06 07:23:50.514 UTC [77] LOG:  checkpoint complete: wrote 24464 buffers (37.3%); 0 WAL file(s) added, 0 removed, 23 recycled; write=0.441 s, sync=0.036 s, total=0.519 s; sync files=44, longest=0.025 s, average=0.001 s; distance=376832 kB, estimate=376832 kB; lsn=8/48000028, redo lsn=8/48000028
-2026-04-06 07:23:50.576 UTC [48] LOG:  database system is shut down
-```
 Let's check who is the new primary.
 
 ```shell
@@ -1296,15 +1230,6 @@ sqlserver-ag-cluster-0
 ```
 
 Check the logs of the new primary. It shows that it is now accepting connections, so new read/write operations will now go to the new primary.
-
-```shell
-➤ kubectl logs -f -n demo sqlserver-ag-cluster-0
-...
-2026-04-06 07:23:26.417 UTC [116] LOG:  database system is ready to accept connections
-2026-04-06 07:23:26.864 UTC [160] LOG:  checkpoint complete: wrote 23062 buffers (35.2%); 0 WAL file(s) added, 0 removed, 17 recycled; write=0.407 s, sync=0.027 s, total=0.460 s; sync files=47, longest=0.011 s, average=0.001 s; distance=287175 kB, estimate=287175 kB; lsn=8/42873F88, redo lsn=8/42871FF0
-2026-04-06 07:23:26.864 UTC [160] LOG:  checkpoint starting: immediate force wait
-2026-04-06 07:23:26.871 UTC [160] LOG:  checkpoint complete: wrote 1 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.002 s, total=0.007 s; sync files=1, longest=0.002 s, average=0.002 s; distance=8 kB, estimate=258459 kB; lsn=8/42874050, redo lsn=8/42874018
-```
 
 Now wait for the chaos experiment to be recovered, you can check the status of chaos experiment by running `kubectl get networkchaos -n chaos-mesh ms-primary-network-partition` command.
 
@@ -1324,212 +1249,12 @@ Now wait for the chaos experiment to be recovered, you can check the status of c
 Once `AllRecovered` is `True` you should see the old primary is back as secondary and the database state is `Ready` again.
 
 ```shell
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d19h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    2d19h
 ```
 
-Now let's see how many rows we lost in this case by checking the load test job logs.
-
-```shell
-Cumulative Statistics:
-  Total Operations: 2371907 (Reads: 1897709, Inserts: 47445, Updates: 426753)
-  Total Number of Rows Reads: 189770900, Inserts: 237225, Updates: 426753)
-  Total Errors: 73
-  Total Data Transferred: 192743.74 MB
------------------------------------------------------------------
-Current Throughput (interval):
-  Operations/sec: 58.05 (Reads: 26.12/s, Inserts: 2.90/s, Updates: 29.03/s)
-  Throughput: 2.81 MB/s
-  Errors/sec: 0.00
------------------------------------------------------------------
-Latency Statistics:
-  Reads   - Avg: 5.23ms, P95: 36.986ms, P99: 48.888ms
-  Inserts - Avg: 7.183ms, P95: 37.949ms, P99: 49.527ms
-  Updates - Avg: 5.358ms, P95: 33.606ms, P99: 45.95ms
------------------------------------------------------------------
-Connection Pool:
-  Active: 9, Max: 100, Available: 91
-=================================================================
-
-=================================================================
-Performance Summary:
-  Average Throughput: 3934.44 operations/sec
-  Read Operations: 1897709 (3147.85/sec avg)
-  Insert Operations: 47445 (78.70/sec avg)
-  Update Operations: 426753 (707.88/sec avg)
-  Error Rate: 0.0031%
-  Total Data Transferred: 188.23 GB
-=================================================================
-
-=================================================================
-Checking for Data Loss...
-=================================================================
-
-=================================================================
-Data Loss Report:
------------------------------------------------------------------
-  Total Records Inserted: 270295
-  Records Found in DB: 253365
-  Records Lost: 16930
-  Data Loss Percentage: 6.26%
-=================================================================
-
-⚠️  WARNING: 16930 records were inserted but not found in database!
-```
-
-So we incurred data loss. Now the question is: how much? In our above case, there were:
-Insert Operations: 47445 (78.70/sec avg) -> 78.70 insert operations per second, each insert uses batch size of `BATCH_SIZE: 5`,
-which is 78.70 * 5 = 393.5 rows inserted per second.
-
-We lost 16930 rows, so the data loss window is 16930 / 393.5 = 43 seconds. 
-So we can say that there was a network partition for around 4 minutes (`chaos.spec.duration`) 
-and split brain due of network partition was for 43 seconds. 
-
-This split brain detection time is around ~30 seconds(Your data loss window) despite how longer your network partition lasts.
-
-> Note: If your network partition window is less than 30 seconds, you won't loose any data even in Asynchronous mode.
-
-Now lets try to **avoid data loss** by using **Synchronous** replication. Change the `db.spec.streamingMode: Synchronous` to the setup/sqlserver-ag-cluster.yaml.
-
-```yaml
-apiVersion: kubedb.com/v1
-kind: MSSQLServer
-metadata:
-  name: sqlserver-ag-cluster
-  namespace: demo
-spec:
-  clientAuthMode: md5
-  deletionPolicy: Delete
-  podTemplate:
-    spec:
-      containers:
-        - name: postgres
-          resources:
-            limits:
-              memory: 3Gi
-            requests:
-              cpu: 2
-              memory: 2Gi
-  replicas: 3
-  replication:
-    walKeepSize: 5000
-    walLimitPolicy: WALKeepSize
-  secondaryMode: Hot
-  storage:
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 50Gi
-  storageType: Durable
-  streamingMode: Synchronous # Note this line
-  version: "16.4"
-
-```
-
-Before applying this, let's clean up the previous yamls including postgres, load-test jobs and chaos experiment.
-
-```shell
-kubectl delete -f setup/sqlserver-ag-cluster.yaml
-postgres.kubedb.com "sqlserver-ag-cluster" deleted
-kubectl delete -f k8s/03-job.yaml
-job.batch "ms-load-test-job" deleted
-kubectl delete -f tests/05-network-partition.yaml
-networkchaos.chaos-mesh.org "ms-primary-network-partition" deleted
-```
-
-Now apply the setup/sqlserver-ag-cluster.yaml and wait for the db to be in `Ready` state.
-
-```shell
-kubectl apply -f setup/sqlserver-ag-cluster.yaml
-```
+You can confirm no data loss happened by checking the load test job logs.
 
 
-Once the db is in `Ready` state, apply the load test job and then wait 1 minute, then apply the chaos experiment. 
-
-
-
-```shell
-./run-k8s.sh
-job.batch "ms-load-test-job" deleted
-persistentvolumeclaim "ms-load-test-results" deleted
-configmap/ms-load-test-config configured
-job.batch/ms-load-test-job created
-persistentvolumeclaim/ms-load-test-results created
-```
-
-First delete the previous experiment.
-
-```shell
-➤ kubectl delete -f tests/05-network-partition.yaml
-networkchaos.chaos-mesh.org/ms-primary-network-partition deleted
-```
-
-Now apply the experiment again.
-
-```shell
-➤ kubectl apply -f tests/05-network-partition.yaml
-networkchaos.chaos-mesh.org/ms-primary-network-partition created
-```
-You should experience the same scenario as before, but this time there won't be any data loss as we are using synchronous replication.
-
-
-Let's wait and verify the logs from the load test job once the test is completed.
-
-```shell
-Final Results:
-=================================================================
-Test Duration: 10m3s
------------------------------------------------------------------
-Cumulative Statistics:
-  Total Operations: 1828426 (Reads: 1463758, Inserts: 36327, Updates: 328341)
-  Total Number of Rows Reads: 146375800, Inserts: 181635, Updates: 328341)
-  Total Errors: 42
-  Total Data Transferred: 151400.85 MB
------------------------------------------------------------------
-Current Throughput (interval):
-  Operations/sec: 62.77 (Reads: 51.69/s, Inserts: 3.69/s, Updates: 7.38/s)
-  Throughput: 5.37 MB/s
-  Errors/sec: 0.00
------------------------------------------------------------------
-Latency Statistics:
-  Reads   - Avg: 4.254ms, P95: 6.757ms, P99: 72.028ms
-  Inserts - Avg: 10.912ms, P95: 59.609ms, P99: 72.482ms
-  Updates - Avg: 14.94ms, P95: 18.156ms, P99: 70.674ms
------------------------------------------------------------------
-Connection Pool:
-  Active: 10, Max: 100, Available: 90
-=================================================================
-
-=================================================================
-Performance Summary:
-  Average Throughput: 3032.08 operations/sec
-  Read Operations: 1463758 (2427.35/sec avg)
-  Insert Operations: 36327 (60.24/sec avg)
-  Update Operations: 328341 (544.49/sec avg)
-  Error Rate: 0.0023%
-  Total Data Transferred: 147.85 GB
-=================================================================
-
-=================================================================
-Checking for Data Loss...
-=================================================================
-
-=================================================================
-Data Loss Report:
------------------------------------------------------------------
-  Total Records Inserted: 231635
-  Records Found in DB: 231635
-  Records Lost: 0
-I0406 07:45:57.178325       1 load_generator_v2.go:555] Total records in table: 231635
-I0406 07:45:57.178359       1 load_generator_v2.go:556] totalRows in LoadGenerator: 231635
-  Data Loss Percentage: 0.00%
-=================================================================
-
- No data loss detected - all inserted records are present in database
-
-```
-
-See this time there is `no data loss`.
 
 Clean up the chaos experiment.
 
@@ -1538,16 +1263,36 @@ kubectl delete -f tests/05-network-partition.yaml
 networkchaos.chaos-mesh.org "ms-primary-network-partition" deleted
 ```
 
-Delete and recreate the postgres with asynchronous replication if you want to do more experiments.
-Also revert back this changes
+If you want to do more experiments, revert back the changes made in this test.
 
-```shell
-BATCH_SIZE: "100"
-TEST_RUN_DURATION: "300" # updated this, 5 minutes
-INSERT_PERCENT: "10" # lets put some relistic write load, 1% of the operations will be insert
-UPDATE_PERCENT: "10" # 19% of the operations will be update, so total write load is 20% which is pretty high for postgres, we want to see some data loss in this case
-CONCURRENT_WRITERS: "20" # Reduce the concurrent writters
-```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<REVIEW FROM HERE> ################################################################
+
+
+
+
+
+
+
 
 ###  Chaos#6: Limit bandwidth of Primary Pod
 
@@ -1581,7 +1326,7 @@ Now wait until database is in ready state.
 ```
 ➤ kubectl get ms,pods -n demo
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2m28s
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    2m28s
 
 NAME                         READY   STATUS      RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running     0          2m22s
@@ -1646,7 +1391,7 @@ configmap/ms-load-test-config configured
 job.batch/ms-load-test-job created
 persistentvolumeclaim/ms-load-test-results created
 ```
-Now let's watch the pods and postgres. 
+Now let's watch the pods and database. 
 
 ```shell
 watch kubectl get ms,petset,pods -n demo
@@ -1659,7 +1404,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    2d23h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    2d23h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   2d23h
@@ -1712,8 +1457,6 @@ Performance Summary:
 =================================================================
 Checking for Data Loss...
 =================================================================
-I0406 11:14:41.761915       1 load_generator_v2.go:555] Total records in table: 1014600
-I0406 11:14:41.761938       1 load_generator_v2.go:556] totalRows in LoadGenerator: 1010600
 
 =================================================================
 Data Loss Report:
@@ -1791,12 +1534,12 @@ Lets create the load test job.
 ➤ ./run-k8s.sh
 job.batch "ms-load-test-job" deleted
 persistentvolumeclaim "ms-load-test-results" deleted
-configmap/ms-load-test-config configured
+configmap/ms-load-test-config unchanged
 job.batch/ms-load-test-job created
 persistentvolumeclaim/ms-load-test-results created
 ```
 
-Now watch the pods and postgres status.
+Now watch the pods and database status.
 
 
 ```shell
@@ -1807,7 +1550,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    3d
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d
@@ -1834,6 +1577,7 @@ kubectl get networkchaos -n chaos-mesh -oyaml
       type: Selected
     - status: "False"
       type: AllInjected
+
 ```
 
 `AllRecovered` condition is `True`, that means the chaos experiment is done. Now let's check how many rows were inserted.
@@ -1888,14 +1632,7 @@ Data Loss Report:
 
  No data loss detected - all inserted records are present in database
 
-Cleaning up test data...
-Cleaning up test table...
-I0406 12:41:39.032079       1 load_generator_v2.go:555] Total records in table: 2587000
-I0406 12:41:39.032102       1 load_generator_v2.go:556] totalRows in LoadGenerator: 2587000
-=================================================================
-
 ```
-As you can see, 25M rows were inserted, 23GB data was transferred to the database and there was no data loss. So even with 500ms network delay, our cluster was able to handle the load and there was no data loss.
 
 Clean up the chaos experiment.
 
@@ -1966,7 +1703,7 @@ Now create the chaos experiment.
 networkchaos.chaos-mesh.org/ms-primary-packet-loss created
 ```
 
-Now watch the pods and postgres status.
+Now watch the pods and database status.
 
 ```shell
 watch kubectl get ms,petset,pods -n demo
@@ -1976,7 +1713,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    3d
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d
@@ -2028,7 +1765,7 @@ Current Throughput (interval):
 Latency Statistics:
   Reads   - Avg: 13.045ms, P95: 50.368ms, P99: 218.188ms
   Inserts - Avg: 45.326ms, P95: 119.711ms, P99: 189.261ms
-  Updates - Avg: 23.338ms, P95: 81.739ms, P99: 142.693ms
+  Updates - Avg: 23.338ms, P95: 99.222ms, P99: 142.693ms
 -----------------------------------------------------------------
 Connection Pool:
   Active: 29, Max: 100, Available: 71
@@ -2047,8 +1784,6 @@ Performance Summary:
 =================================================================
 Checking for Data Loss...
 =================================================================
-I0406 13:02:54.311885       1 load_generator_v2.go:555] Total records in table: 2351600
-I0406 13:02:54.311910       1 load_generator_v2.go:556] totalRows in LoadGenerator: 2351600
 
 =================================================================
 Data Loss Report:
@@ -2060,9 +1795,10 @@ Data Loss Report:
 =================================================================
 
  No data loss detected - all inserted records are present in database
+
 ```
 
-You can see the stats and this clearly shows lots of rows were inserted and reads were performed, but there was no data loss. And no downtime.
+You can see the stats and this clearly shows lots of rows were inserted, reads were performed, but there was no data loss. And no downtime.
 
 Clean up the chaos experiment.
 
@@ -2131,7 +1867,7 @@ Now lets create the chaos experiment.
 networkchaos.chaos-mesh.org/ms-primary-packet-duplicate created
 ```
 
-Now watch the pods and postgres status.
+Now watch the pods and database status.
 
 ```shell
 watch kubectl get ms,petset,pods -n demo
@@ -2141,7 +1877,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    3d1h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d1h
@@ -2223,8 +1959,6 @@ Data Loss Report:
 
 Cleaning up test data...
 Cleaning up test table...
-I0406 13:15:39.100598       1 load_generator_v2.go:555] Total records in table: 2304700
-I0406 13:15:39.100624       1 load_generator_v2.go:556] totalRows in LoadGenerator: 2304700
 =================================================================
 ```
 
@@ -2297,7 +2031,7 @@ kubectl get ms,petset,pods -n demo
 ```
 
 ```shell
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    3d1h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d1h
@@ -2316,7 +2050,7 @@ Now create the chaos experiment.
 networkchaos.chaos-mesh.org/ms-primary-packet-corrupt created
 ```
 
-Now watch the pods and postgres status.
+Now watch the pods and database status.
 
 ```shell
 watch kubectl get ms,petset,pods -n demo
@@ -2326,15 +2060,16 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    3d1h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d1h
 
-NAME                         READY   STATUS      RESTARTS   AGE
-pod/sqlserver-ag-cluster-0          2/2     Running     0          131m
-pod/sqlserver-ag-cluster-1          2/2     Running     0          131m
-pod/sqlserver-ag-cluster-2          2/2     Running     0          131m
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/sqlserver-ag-cluster-0          2/2     Running   0          131m
+pod/sqlserver-ag-cluster-1          2/2     Running   0          131m
+pod/sqlserver-ag-cluster-2          2/2     Running   0          131m
+pod/ms-load-test-job-lftl8   1/1     Running   0          52s
 
 ```
 
@@ -2351,7 +2086,7 @@ sqlserver-ag-cluster-0
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   3d1h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      NotReady   3d1h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d1h
@@ -2360,7 +2095,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          139m
 pod/sqlserver-ag-cluster-1          2/2     Running   0          139m
 pod/sqlserver-ag-cluster-2          2/2     Running   0          139m
-pod/ms-load-test-job-5q4gh   1/1     Running   0          52s
+pod/ms-load-test-job-lftl8   1/1     Running   0          95s
 
 ```
 Database turns into `NotReady` state as a failover happens due of the corruption.
@@ -2369,7 +2104,7 @@ Database turns into `NotReady` state as a failover happens due of the corruption
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   3d1h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Critical   3d1h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d1h
@@ -2378,7 +2113,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          139m
 pod/sqlserver-ag-cluster-1          2/2     Running   0          139m
 pod/sqlserver-ag-cluster-2          2/2     Running   0          139m
-pod/ms-load-test-job-5q4gh   1/1     Running   0          95s
+pod/ms-load-test-job-lftl8   1/1     Running   0          2m8s
 
 ```
 
@@ -2413,7 +2148,7 @@ So sqlserver-ag-cluster-1 is the new primary. Wait for the chaos to be recovered
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    3d1h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d1h
@@ -2422,7 +2157,7 @@ NAME                         READY   STATUS    RESTARTS   AGE
 pod/sqlserver-ag-cluster-0          2/2     Running   0          140m
 pod/sqlserver-ag-cluster-1          2/2     Running   0          140m
 pod/sqlserver-ag-cluster-2          2/2     Running   0          140m
-pod/ms-load-test-job-5q4gh   1/1     Running   0          2m8s
+pod/ms-load-test-job-lftl8   0/1     Completed   0          2m8s
 
 ```
 The database has returned to `Ready` state.
@@ -2449,7 +2184,7 @@ Current Throughput (interval):
 Latency Statistics:
   Reads   - Avg: 10.469ms, P95: 64.429ms, P99: 103.762ms
   Inserts - Avg: 51.473ms, P95: 134.532ms, P99: 201.798ms
-  Updates - Avg: 29.607ms, P95: 98.249ms, P99: 169.741ms
+  Updates - Avg: 29.607ms, P95: 33.606ms, P99: 45.95ms
 -----------------------------------------------------------------
 Connection Pool:
   Active: 27, Max: 100, Available: 73
@@ -2468,8 +2203,6 @@ Performance Summary:
 =================================================================
 Checking for Data Loss...
 =================================================================
-I0406 13:26:04.117504       1 load_generator_v2.go:555] Total records in table: 2437800
-I0406 13:26:04.117540       1 load_generator_v2.go:556] totalRows in LoadGenerator: 2437800
 
 =================================================================
 Data Loss Report:
@@ -2481,6 +2214,7 @@ Data Loss Report:
 =================================================================
 
  No data loss detected - all inserted records are present in database
+
 ```
 So everything looks alright. No data loss.
 
@@ -2560,7 +2294,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    3d1h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    3d1h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d1h
@@ -2617,38 +2351,49 @@ kubectl get pods -n demo | grep sqlserver-ag-cluster
 Now update your setup/sqlserver-ag-cluster.yaml with below yaml.
 
 ```yaml
-apiVersion: kubedb.com/v1
+apiVersion: kubedb.com/v1alpha2
 kind: MSSQLServer
 metadata:
   name: sqlserver-ag-cluster
   namespace: demo
 spec:
-  clientAuthMode: md5
-  deletionPolicy: Delete
+  version: "2025-cu0"
+  replicas: 3
+  topology:
+    mode: AvailabilityGroup
+    availabilityGroup:
+      databases:
+        - agdb
+      secondaryAccessMode: "All"
+  tls:
+    issuerRef:
+      name: mssqlserver-ca-issuer
+      kind: Issuer
+      apiGroup: "cert-manager.io"
+    clientTLS: false
   podTemplate:
     spec:
       containers:
-        - name: postgres
+        - name: mssql
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_PID
+              value: Evaluation
           resources:
             limits:
-              memory: 3Gi
+              memory: 4Gi
             requests:
-              cpu: 2
+              cpu: "2"
               memory: 2Gi
-  replicas: 3
-  replication:
-    walKeepSize: 5000
-    walLimitPolicy: WALKeepSize
-    forceFailoverAcceptingDataLossAfter: 30s # New added
-  secondaryMode: Hot
+  storageType: Durable
   storage:
     accessModes:
       - ReadWriteOnce
     resources:
       requests:
         storage: 50Gi
-  storageType: Durable
-  version: "16.4"
+  deletionPolicy: WipeOut
 ```
 
 Run `kubectl apply -f setup/sqlserver-ag-cluster.yaml` and wait for database to be in ready state.
@@ -2657,7 +2402,7 @@ Run `kubectl apply -f setup/sqlserver-ag-cluster.yaml` and wait for database to 
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    54s
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    54s
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   48s
@@ -2705,7 +2450,7 @@ spec:
   percent: 100
   duration: "5m"
   containerNames:
-    - postgres
+    - mssql
 ```
 
 **What this chaos does:** Injects 500ms latency into all disk I/O operations on the primary pod, simulating slow storage that increases replication lag and can trigger failover.
@@ -2717,7 +2462,7 @@ Lets change the load test config.
   TEST_RUN_DURATION: "300"
 ```
 
-In case your database password is changed(you recreated the postgres and used WipeOut deletion policy), you can run the below command to check your database password.
+In case your database password is changed(you recreated the SQL Server instance and used WipeOut deletion policy), you can run the below command to check your database password.
 
 ```shell
 ➤ kubectl get secret -n demo sqlserver-ag-cluster-auth -oyaml
@@ -2769,7 +2514,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   21m
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      NotReady   21m
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   20m
@@ -2811,7 +2556,7 @@ After some amount of time, we should see a stable primary, in our case which is 
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   23m
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Critical   23m
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   23m
@@ -2847,7 +2592,7 @@ The chaos is recovered. Now the database should be in `Ready` state. But if anyt
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    32m
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    32m
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   32m
@@ -2903,8 +2648,6 @@ Checking for Data Loss...
 
 =================================================================
 Data Loss Report:
-I0406 14:40:33.621876       1 load_generator_v2.go:555] Total records in table: 2185700
-I0406 14:40:33.621913       1 load_generator_v2.go:556] totalRows in LoadGenerator: 2185800
 -----------------------------------------------------------------
   Total Records Inserted: 2185700
   Records Found in DB: 2185600
@@ -2915,7 +2658,7 @@ I0406 14:40:33.621913       1 load_generator_v2.go:556] totalRows in LoadGenerat
 ⚠️  WARNING: 100 records were inserted but not found in database!
 This may indicate:
   - Database crash/restart occurred during test
-  - ms_rewind was triggered due to network partition
+  - wal_re_sync was triggered due to network partition
   - Transaction rollback due to replication issues
 ```
 
@@ -2960,7 +2703,7 @@ spec:
   percent: 50
   duration: "5m"
   containerNames:
-    - postgres
+    - mssql
 ```
 
 **What this chaos does:** Injects I/O errors (EIO) on 50% of disk operations to the primary pod, simulating disk hardware failures or filesystem corruption.
@@ -2971,7 +2714,7 @@ Let's see how our database is now,
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    11h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    11h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   11h
@@ -2989,15 +2732,14 @@ Let's see who is primary:
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-0
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
-sqlserver-ag-cluster-0:/$ psql
-psql (16.4)
-Type "help" for help.
+sqlserver-ag-cluster-0:/$ /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -No
+1> SELECT is_primary_replica FROM sys.dm_hadr_database_replica_states WHERE is_local = 1;
+2> GO
+is_primary_replica
+------------------
+1
 
-postgres=# select ms_is_in_recovery();
- ms_is_in_recovery 
--------------------
- f
-(1 row)
+(1 rows affected)
 
 ```
 
@@ -3029,7 +2771,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   11h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Critical   11h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   11h
@@ -3047,15 +2789,14 @@ After running for some time, the database went into critical state. Let's see if
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-1
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-1 -- bash
-sqlserver-ag-cluster-1:/$ psql
-psql (16.4)
-Type "help" for help.
+sqlserver-ag-cluster-1:/$ /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -No
+1> SELECT is_primary_replica FROM sys.dm_hadr_database_replica_states WHERE is_local = 1;
+2> GO
+is_primary_replica
+------------------
+1
 
-postgres=# select ms_is_in_recovery();
- ms_is_in_recovery 
--------------------
- f
-(1 row)
+(1 rows affected)
 
 ```
 
@@ -3067,11 +2808,9 @@ I will show you what happened to old primary due to i/o error.
 ➤ kubectl logs -n demo sqlserver-ag-cluster-0
 ...
 2026-04-07 02:04:14.564 UTC [2813] LOG:  all server processes terminated; reinitializing
-2026-04-07 02:04:14.564 UTC [2813] LOG:  could not open directory "base/mssql_tmp": I/O error
-2026-04-07 02:04:14.564 UTC [2813] LOG:  could not open directory "base": I/O error
-2026-04-07 02:04:14.564 UTC [2813] LOG:  could not open directory "ms_tblspc": I/O error
-2026-04-07 02:04:14.643 UTC [2813] PANIC:  could not open file "global/ms_control": I/O error
-/scripts/run.sh: line 61:  2813 Aborted                 (core dumped) /run_scripts/role/run.sh
+2026-04-07 02:04:14 spid51      Error: 823, Severity: 24, State: 2.
+2026-04-07 02:04:14 spid51      The operating system returned error 5(Access is denied.) to SQL Server during a read at offset 0x000001234de000 in file 'E:\\MSSQL\\DATA\\tempdb.mdf:MSSQL_DBCC4'.
+2026-04-07 02:04:14 spid13s     SQL Server is terminating because of a system shutdown.
 removing the initial scripts as server is not running ...
 
 ```
@@ -3103,7 +2842,7 @@ Chaos is recovered by chaos-mesh.
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    11h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    11h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   11h
@@ -3181,6 +2920,7 @@ Data Loss Report:
 =================================================================
 
  No data loss detected - all inserted records are present in database
+
 ```
 
 You can see the statistics here, 25 GB was inserted in 5 minutes with zero data loss even though we accepted data loss via `forceFailoverAcceptingDataLossAfter`.
@@ -3222,7 +2962,7 @@ spec:
   percent: 100
   duration: "4m"
   containerNames:
-    - postgres
+    - mssql
 
 ```
 
@@ -3236,7 +2976,7 @@ kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    12h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    12h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   12h
@@ -3276,7 +3016,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   12h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      NotReady   12h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   12h
@@ -3304,13 +3044,9 @@ Let's check the logs from unresponsive primary `sqlserver-ag-cluster-1`.
 ...
 2026-04-07 02:33:20.552 UTC [237694] FATAL:  the database system is in recovery mode
 2026-04-07 02:33:20.553 UTC [2908] LOG:  all server processes terminated; reinitializing
-2026-04-07 02:33:20.553 UTC [2908] LOG:  could not open directory "base/mssql_tmp": Permission denied
-2026-04-07 02:33:20.554 UTC [2908] LOG:  could not open directory "base/4": Permission denied
-2026-04-07 02:33:20.554 UTC [2908] LOG:  could not open directory "base/5": Permission denied
-2026-04-07 02:33:20.554 UTC [2908] LOG:  could not open directory "base/1": Permission denied
-2026-04-07 02:33:20.627 UTC [2908] PANIC:  could not open file "global/ms_control": Permission denied
-removing the initial scripts as server is not running ...
-/scripts/run.sh: line 61:  2908 Aborted                 (core dumped) /run_scripts/role/run.sh
+2026-04-07 02:33:20 spid51      Error: 5123, Severity: 16, State: 1.
+2026-04-07 02:33:20 spid51      CREATE FILE encountered operating system error 13(Permission denied) while attempting to open or create the physical file 'E:\\MSSQL\\DATA\\sqlservr_tmp'.
+2026-04-07 02:33:20 spid13s     SQL Server is terminating because of a system shutdown.
 
 ```
 
@@ -3320,7 +3056,7 @@ So you can see primary is shut down for I/O chaos. A failover should happen soon
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   12h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Critical   12h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   12h
@@ -3340,15 +3076,14 @@ Our database now moved to `NotReady` -> `Critical` state. Let's see who is the n
 sqlserver-ag-cluster-0
 -----
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
-sqlserver-ag-cluster-0:/$ psql
-psql (16.4)
-Type "help" for help.
+sqlserver-ag-cluster-0:/$ /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -No
+1> SELECT is_primary_replica FROM sys.dm_hadr_database_replica_states WHERE is_local = 1;
+2> GO
+is_primary_replica
+------------------
+1
 
-postgres=# select ms_is_in_recovery();
- ms_is_in_recovery 
--------------------
- f
-(1 row)
+(1 rows affected)
 ----
 ➤ kubectl logs -f -n demo sqlserver-ag-cluster-0
 ...
@@ -3382,7 +3117,7 @@ All the generated chaos has been recovered.
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    12h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    12h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   12h
@@ -3435,35 +3170,11 @@ Performance Summary:
 =================================================================
 Checking for Data Loss...
 =================================================================
-=================================================================
-Test Duration: 5m13s
------------------------------------------------------------------
-Cumulative Statistics:
-  Total Operations: 248425 (Reads: 198683, Inserts: 24948, Updates: 24794)
-  Total Number of Rows Reads: 19868300, Inserts: 2494800, Updates: 24794)
-  Total Errors: 232435
-  Total Data Transferred: 23243.14 MB
------------------------------------------------------------------
-Current Throughput (interval):
-  Operations/sec: 0.00 (Reads: 0.00/s, Inserts: 0.00/s, Updates: 0.00/s)
-  Throughput: 0.00 MB/s
-  Errors/sec: 0.00
------------------------------------------------------------------
-Latency Statistics:
-  Reads   - Avg: 16.922ms, P95: 52.069ms, P99: 317.142ms
-  Inserts - Avg: 44.849ms, P95: 130.692ms, P99: 211.022ms
-  Updates - Avg: 19.201ms, P95: 66.474ms, P99: 148.452ms
------------------------------------------------------------------
-Connection Pool:
-  Active: 14, Max: 100, Available: 86
-=================================================================
 
-I0407 02:37:53.535684       1 load_generator_v2.go:555] Total records in table: 2544800
 =================================================================
 Data Loss Report:
 -----------------------------------------------------------------
   Total Records Inserted: 2544800
-I0407 02:37:53.535709       1 load_generator_v2.go:556] totalRows in LoadGenerator: 2544800
   Records Found in DB: 2544800
   Records Lost: 0
   Data Loss Percentage: 0.00%
@@ -3513,7 +3224,7 @@ spec:
   percent: 50
   duration: "5m"
   containerNames:
-    - postgres
+    - mssql
 ```
 
 **What this chaos does:** Randomly injects garbage data (random bytes) into file operations on 50% of disk writes, corrupting the data stored on disk.
@@ -3524,7 +3235,7 @@ Let's check the database state.
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    12h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    12h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   12h
@@ -3553,15 +3264,14 @@ Lets check the primary.
 ➤ kubectl get pods -n demo --show-labels | grep primary | awk '{ print $1}'
 sqlserver-ag-cluster-0
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
-sqlserver-ag-cluster-0:/$ psql
-psql (16.4)
-Type "help" for help.
+sqlserver-ag-cluster-0:/$ /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -No
+1> SELECT is_primary_replica FROM sys.dm_hadr_database_replica_states WHERE is_local = 1;
+2> GO
+is_primary_replica
+------------------
+1
 
-postgres=# select ms_is_in_recovery();
- ms_is_in_recovery 
--------------------
- f
-(1 row)
+(1 rows affected)
 ```
 
 Lets apply the experiment.
@@ -3581,7 +3291,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   12h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      NotReady   12h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   12h
@@ -3600,7 +3310,7 @@ Database went into NotReady state and should be back in `Critical` state as we u
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   12h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Critical   12h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   12h
@@ -3636,7 +3346,7 @@ All the chaos recovered.
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    12h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    12h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   12h
@@ -3651,23 +3361,65 @@ pod/ms-load-test-job-b56q6   0/1     Completed   0          6m44
 Database back in `Ready` state.
 
 ```shell
-...
+Final Results:
+=================================================================
+Test Duration: 5m3s
+-----------------------------------------------------------------
+Cumulative Statistics:
+  Total Operations: 248425 (Reads: 198683, Inserts: 24948, Updates: 24794)
+  Total Number of Rows Reads: 19868300, Inserts: 2494800, Updates: 24794)
+  Total Errors: 232435
+  Total Data Transferred: 23243.14 MB
+-----------------------------------------------------------------
+Current Throughput (interval):
+  Operations/sec: 48.77 (Reads: 36.58/s, Inserts: 4.88/s, Updates: 7.32/s)
+  Throughput: 4.34 MB/s
+  Errors/sec: 0.00
+-----------------------------------------------------------------
+Latency Statistics:
+  Reads   - Avg: 16.922ms, P95: 52.069ms, P99: 317.142ms
+  Inserts - Avg: 44.849ms, P95: 130.692ms, P99: 211.022ms
+  Updates - Avg: 19.201ms, P95: 66.474ms, P99: 148.452ms
+-----------------------------------------------------------------
+Connection Pool:
+  Active: 25, Max: 100, Available: 75
+=================================================================
+
+=================================================================
+Performance Summary:
+  Average Throughput: 820.04 operations/sec
+  Read Operations: 198683 (655.85/sec avg)
+  Insert Operations: 24948 (82.35/sec avg)
+  Update Operations: 24794 (81.84/sec avg)
+  Error Rate: 48.3374%
+  Total Data Transferred: 22.70 GB
+=================================================================
+
+=================================================================
+Checking for Data Loss...
+=================================================================
+Error getting connection stats: failed to get current connections: pq: canceling statement due to user request
+Error getting connection stats: failed to get max_connections: context deadline exceeded
+
+=================================================================
 Data Loss Report:
 -----------------------------------------------------------------
-  Total Records Inserted: 2537700
-I0407 03:03:27.372254       1 load_generator_v2.go:556] totalRows in LoadGenerator: 2537700
-  Records Found in DB: 2537700
+  Total Records Inserted: 775000
+  Records Found in DB: 775000
   Records Lost: 0
   Data Loss Percentage: 0.00%
 =================================================================
 
  No data loss detected - all inserted records are present in database
+
 ```
 
-No data loss.
+From the load generate job, we can see there was less data inserted as database was unavailable. But more importantly,
+**No data loss** was recorded.
+
+Similarly, you can try the other chaos also. You should find out no data loss for each io chaos cases.
 
 Cleanup:
-
 ```shell
 ➤ kubectl delete -f tests/16-io-mistake.yaml 
 iochaos.chaos-mesh.org "ms-primary-io-mistake" deleted
@@ -3681,37 +3433,43 @@ but without this api.
 
 Now save this yaml at `setup/sqlserver-ag-cluster.yaml`
 ```yaml
-apiVersion: kubedb.com/v1
+apiVersion: kubedb.com/v1alpha2
 kind: MSSQLServer
 metadata:
   name: sqlserver-ag-cluster
   namespace: demo
 spec:
-  clientAuthMode: md5
-  deletionPolicy: Delete
+  version: "2025-cu0"
+  replicas: 3
+  topology:
+    mode: AvailabilityGroup
+    availabilityGroup:
+      databases:
+        - agdb
+      secondaryAccessMode: "All"
+  tls:
+    issuerRef:
+      name: mssqlserver-ca-issuer
+      kind: Issuer
+      apiGroup: "cert-manager.io"
+    clientTLS: false
   podTemplate:
     spec:
       containers:
-        - name: postgres
-          resources:
-            limits:
-              memory: 3Gi
-            requests:
-              cpu: 2
-              memory: 2Gi
-  replicas: 3
-  replication:
-    walKeepSize: 3000
-    walLimitPolicy: WALKeepSize
-  secondaryMode: Hot
+        - name: mssql
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_PID
+              value: Evaluation
+  storageType: Durable
   storage:
     accessModes:
       - ReadWriteOnce
     resources:
       requests:
         storage: 20Gi
-  storageType: Durable
-  version: "16.4"
+  deletionPolicy: WipeOut
 ```
 
 Now apply this yaml `kubectl apply -f setup/sqlserver-ag-cluster.yaml`.
@@ -3726,7 +3484,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    68s
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    68s
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   63s
@@ -3745,15 +3503,14 @@ lets see who is the primary.
 sqlserver-ag-cluster-0
 -----
 ➤ kubectl exec -it -n demo sqlserver-ag-cluster-0 -- bash
-sqlserver-ag-cluster-0:/$ psql
-psql (16.4)
-Type "help" for help.
+sqlserver-ag-cluster-0:/$ /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -No
+1> SELECT is_primary_replica FROM sys.dm_hadr_database_replica_states WHERE is_local = 1;
+2> GO
+is_primary_replica
+------------------
+1
 
-postgres=# select ms_is_in_recovery();
- ms_is_in_recovery 
--------------------
- f
-(1 row)
+(1 rows affected)
 
 ```
 
@@ -3782,7 +3539,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   6m32s
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      NotReady   6m32s
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   6m27s
@@ -3798,7 +3555,7 @@ pod/ms-load-test-job-p7vvw   1/1     Running   0          80s
 You should see your database is in `NotReady` state all the time. The reason behind that:
 - Primary database is up and running, but as IO latency increased, new connection creation is getting timed out.
 - All existing connections to the primary are working fine.
-- Primary postgres process are working fine, that's why we are not doing a failover.
+- Primary SQL Server process are working fine, that's why we are not doing a failover.
 - So new connections during this test wasn't possible, and as we do not used force failover, no failover performed.
 
 ```shell
@@ -3821,7 +3578,7 @@ Now the chaos is recovered and our database should eventually reach `Ready` stat
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    19m
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    19m
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   19m
@@ -3875,8 +3632,6 @@ Checking for Data Loss...
 =================================================================
 Error getting connection stats: failed to get current connections: pq: canceling statement due to user request
 Error getting connection stats: failed to get max_connections: context deadline exceeded
-I0408 04:30:19.253637       1 load_generator_v2.go:555] Total records in table: 775000
-I0408 04:30:19.253658       1 load_generator_v2.go:556] totalRows in LoadGenerator: 775000
 
 =================================================================
 Data Loss Report:
@@ -3937,7 +3692,7 @@ This is simulate a typical node failure scenario where all the pod restarted.
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    13h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    13h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   13h
@@ -3963,7 +3718,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   13h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Critical   13h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   13h
@@ -3977,7 +3732,7 @@ pod/sqlserver-ag-cluster-1          2/2     Running     0          2s
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      NotReady   13h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      NotReady   13h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   13h
@@ -3992,7 +3747,7 @@ pod/sqlserver-ag-cluster-2          2/2     Running     0          11s
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS     AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Critical   13h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Critical   13h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   13h
@@ -4007,7 +3762,7 @@ pod/sqlserver-ag-cluster-2          2/2     Running     0          21s
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    13h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    13h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   13h
@@ -4078,12 +3833,12 @@ Lets check the cpu usages:
 Every 2.0s: kubectl top pods --containers -n demo
 
 POD                      NAME             CPU(cores)   MEMORY(bytes)
-sqlserver-ag-cluster-0          ms-coordinator   29m          40Mi
-sqlserver-ag-cluster-0          postgres         244m         621Mi
-sqlserver-ag-cluster-1          ms-coordinator   15m          38Mi
-sqlserver-ag-cluster-1          postgres         7060m        693Mi
-sqlserver-ag-cluster-2          ms-coordinator   16m          38Mi
-sqlserver-ag-cluster-2          postgres         217m         629Mi
+sqlserver-ag-cluster-0          mssql-coordinator   29m          40Mi
+sqlserver-ag-cluster-0          mssql            244m         621Mi
+sqlserver-ag-cluster-1          mssql-coordinator   15m          38Mi
+sqlserver-ag-cluster-1          mssql            7060m        693Mi
+sqlserver-ag-cluster-2          mssql-coordinator   16m          38Mi
+sqlserver-ag-cluster-2          mssql            217m         629Mi
 ms-load-test-job-sfj6z   load-test        1594m        216Mi
 
 ```
@@ -4096,12 +3851,12 @@ watch kubectl top pods --containers -n demo
 Every 2.0s: kubectl top pods --containers -n demo
 
 POD                      NAME             CPU(cores)   MEMORY(bytes)
-sqlserver-ag-cluster-0          ms-coordinator   29m          37Mi
-sqlserver-ag-cluster-0          postgres         272m         633Mi
-sqlserver-ag-cluster-1          ms-coordinator   15m          38Mi
-sqlserver-ag-cluster-1          postgres         8509m        941Mi
-sqlserver-ag-cluster-2          ms-coordinator   14m          39Mi
-sqlserver-ag-cluster-2          postgres         241m         657Mi
+sqlserver-ag-cluster-0          mssql-coordinator   29m          37Mi
+sqlserver-ag-cluster-0          mssql            272m         633Mi
+sqlserver-ag-cluster-1          mssql-coordinator   15m          38Mi
+sqlserver-ag-cluster-1          mssql            8509m        941Mi
+sqlserver-ag-cluster-2          mssql-coordinator   14m          39Mi
+sqlserver-ag-cluster-2          mssql            241m         657Mi
 ms-load-test-job-sfj6z   load-test        1256m        272Mi
 
 ```
@@ -4117,7 +3872,7 @@ watch kubectl get ms,petset,pods -n demo
 Every 2.0s: kubectl get ms,petset,pods -n demo
 
 NAME                                VERSION   STATUS   AGE
-postgres.kubedb.com/sqlserver-ag-cluster   16.4      Ready    13h
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    13h
 
 NAME                                         AGE
 petset.apps.k8s.appscode.com/sqlserver-ag-cluster   13h
@@ -4138,14 +3893,12 @@ Data Loss Report:
   Records Lost: 0
   Data Loss Percentage: 0.00%
 =================================================================
-I0407 03:40:04.019990       1 load_generator_v2.go:555] Total records in table: 3273100
-I0407 03:40:04.020008       1 load_generator_v2.go:556] totalRows in LoadGenerator: 3273100
 
  No data loss detected - all inserted records are present in database
 
 ```
 
-CleanUp:
+Clean up the chaos experiment.
 
 ```shell
 kubectl delete -f tests/17-node-reboot.yaml 
@@ -4167,8 +3920,8 @@ Below is a comprehensive summary of all chaos engineering experiments conducted 
 | # | Experiment | Failure Mode | Failover Time | Data Loss | Downtime | Notes |
 |---|---|---|---|---|---|---|
 | 1 | Kill Primary Pod | Pod termination | **With**: ~8s  **Without**: ~8s | **With**:  0 / **Without**:  0 | **With**: Minimal / **Without**: Minimal | Immediate failover works in both cases |
-| 2 | OOMKill Primary Pod | Memory exhaustion | **With**: ~3s / **Without**: ~3s | **With**:  0 / **Without**:  0 | **With**: Minimal / **Without**: Minimal | Rapid failover, 4.1M rows inserted |
-| 3 | Kill SQLServer Process | Process crash | **With**: ~30s / **Without**: ~30s+ | **With**:  0 / **Without**:  0 | **With**: ~30s / **Without**: 40s | Blocks failover to prevent data loss in both cases |
+| 2 | OOMKill the Primary Pod | Memory exhaustion | **With**: ~3s / **Without**: ~3s | **With**:  0 / **Without**:  0 | **With**: Minimal / **Without**: Minimal | Rapid failover, 4.1M rows inserted |
+| 3 | Kill SQL Server process in the Primary Pod | Process crash | **With**: ~30s / **Without**: ~30s+ | **With**:  0 / **Without**:  0 | **With**: ~30s / **Without**: 40s | Blocks failover to prevent data loss in both cases |
 | 4 | Primary Pod Failure | Network isolation | **With**: ~10s / **Without**: ~10s | **With**:  0 / **Without**:  0 | **With**: Minimal / **Without**: Minimal | Split-brain handled well |
 | 5 | Network Partition | Complete isolation | **With**: ~30s / **Without**: ~30s+ | **With**: ⚠️ Possible / **Without**: ⚠️ Possible | **With**: Brief / **Without**: Extended | Split-brain scenario, data safety challenge in both |
 | 6 | Bandwidth Limit (1 Mbps) | Slow network | **With**: No failover / **Without**: No failover | **With**:  0 / **Without**:  0 | **With**: 0s / **Without**: 0s | 2.3M rows inserted, high latency tolerated |
@@ -4276,5 +4029,3 @@ To receive product announcements, follow us on [Twitter](https://twitter.com/Kub
 
 If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
 
-
----

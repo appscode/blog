@@ -27,3 +27,5 @@ data:
   TABLE_NAME: "load_test_data"
   READ_BATCH_SIZE: "10"
   SEED_DATA_ROWS: "50000"
+  # Set to "true" to keep the table after test (for manual inspection)
+  SKIP_CLEANUP: "false"

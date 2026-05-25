@@ -1,4 +1,4 @@
-IMAGE_REGISTRY ?= ghcr.io/neaj-morshad-101
+IMAGE_REGISTRY ?= neajmorshad
 IMAGE_TAG      ?= latest
 IMAGE_NAME     := $(IMAGE_REGISTRY)/mssql-load-test:$(IMAGE_TAG)
 .PHONY: build
