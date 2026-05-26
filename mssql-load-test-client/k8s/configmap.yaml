@@ -7,7 +7,7 @@ metadata:
     app: ms-load-test
 data:
   # Test Duration (in seconds)
-  TEST_RUN_DURATION: "60"
+  TEST_RUN_DURATION: "200"
 
   # Concurrency Settings
   CONCURRENT_WRITERS: "20"
