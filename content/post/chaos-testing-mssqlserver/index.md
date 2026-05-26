@@ -1752,7 +1752,7 @@ networkchaos.chaos-mesh.org "ms-primary-packet-loss" deleted
 
 In this experiment, we will introduce packet duplication to the primary pod. We expect the database to be able to handle packet duplication and be ready all the time.
 
-Save this yaml as `tests/09-network-duplicate.yaml`:
+Save this YAML as `tests/09-network-duplicate.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -1786,7 +1786,7 @@ spec:
 
 **What this chaos does:** Duplicates 50% of network packets to/from the primary pod, creating redundant traffic that can overwhelm or confuse the receiving end.
 
-Lets run the load test job with some changes in config.
+Let's run the load test job with some changes in config.
 
 ```shell
  TEST_RUN_DURATION: "240"
@@ -1801,7 +1801,7 @@ job.batch/ms-load-test-job created
 persistentvolumeclaim/ms-load-test-results created
 ```
 
-Now lets create the chaos experiment.
+Now let's create the chaos experiment.
 
 ```shell
 ➤ kubectl apply -f tests/09-network-duplicate.yaml
@@ -1816,17 +1816,17 @@ watch kubectl get ms,petset,pods -n demo
 
 ```shell
 Every 2.0s: kubectl get ms,petset,pods -n demo
+NAME                                          VERSION    STATUS   AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Ready    25h
 
-NAME                                VERSION   STATUS   AGE
-mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    3d1h
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   25h
 
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d1h
-
-NAME                         READY   STATUS      RESTARTS   AGE
-pod/sqlserver-ag-cluster-0          2/2     Running     0          123m
-pod/sqlserver-ag-cluster-1          2/2     Running     0          123m
-pod/sqlserver-ag-cluster-2          2/2     Running     0          123m
+NAME                         READY   STATUS      RESTARTS      AGE
+pod/ms-load-test-job-pj5gs   0/1     Completed   0             6m
+pod/sqlserver-ag-cluster-0   2/2     Running     6 (22h ago)   25h
+pod/sqlserver-ag-cluster-1   2/2     Running     0             25h
+pod/sqlserver-ag-cluster-2   2/2     Running     0             7m53s
 ```
 
 You should see your database is in `Ready` state all the time despite the packet duplication.
@@ -1851,36 +1851,35 @@ Once the experiment is done, check the logs of load test job to see if there was
 ```shell
 Final Results:
 =================================================================
-Test Duration: 3m23s
+Test Duration: 3m20s
 -----------------------------------------------------------------
 Cumulative Statistics:
-  Total Operations: 224846 (Reads: 179994, Inserts: 22547, Updates: 22305)
-  Total Number of Rows Reads: 17999400, Inserts: 2254700, Updates: 22305)
+  Total Operations: 16088 (Reads: 12880, Inserts: 1590, Updates: 1618)
   Total Errors: 0
-  Total Data Transferred: 21050.70 MB
+  Total Data Transferred: 1502.90 MB
 -----------------------------------------------------------------
 Current Throughput (interval):
-  Operations/sec: 151.38 (Reads: 105.97/s, Inserts: 22.71/s, Updates: 22.71/s)
-  Throughput: 13.61 MB/s
+  Operations/sec: 443.17 (Reads: 288.06/s, Inserts: 132.95/s, Updates: 22.16/s)
+  Throughput: 43.65 MB/s
   Errors/sec: 0.00
 -----------------------------------------------------------------
 Latency Statistics:
-  Reads   - Avg: 13.234ms, P95: 71.521ms, P99: 237.409ms
-  Inserts - Avg: 46.457ms, P95: 115.989ms, P99: 193.325ms
-  Updates - Avg: 24.757ms, P95: 91.271ms, P99: 157.036ms
+  Reads   - Avg: 172.771ms, P95: 894.273ms, P99: 2.218021s
+  Inserts - Avg: 854.721ms, P95: 2.535159s, P99: 5.205942s
+  Updates - Avg: 257.235ms, P95: 1.124645s, P99: 2.120069s
 -----------------------------------------------------------------
 Connection Pool:
-  Active: 14, Max: 100, Available: 86
+  Active: 26, Max: 32767, Available: 32741
 =================================================================
 
 =================================================================
 Performance Summary:
-  Average Throughput: 1109.38 operations/sec
-  Read Operations: 179994 (888.08/sec avg)
-  Insert Operations: 22547 (111.25/sec avg)
-  Update Operations: 22305 (110.05/sec avg)
+  Average Throughput: 80.40 operations/sec
+  Read Operations: 12880 (64.37/sec avg)
+  Insert Operations: 1590 (7.95/sec avg)
+  Update Operations: 1618 (8.09/sec avg)
   Error Rate: 0.0000%
-  Total Data Transferred: 20.56 GB
+  Total Data Transferred: 1.47 GB
 =================================================================
 
 =================================================================
@@ -1890,17 +1889,13 @@ Checking for Data Loss...
 =================================================================
 Data Loss Report:
 -----------------------------------------------------------------
-  Total Records Inserted: 2304700
-  Records Found in DB: 2304700
+  Total Rows Tracked (inserts + seed): 688400
+  Records Found in DB: 688400
   Records Lost: 0
   Data Loss Percentage: 0.00%
 =================================================================
 
- No data loss detected - all inserted records are present in database
-
-Cleaning up test data...
-Cleaning up test table...
-=================================================================
+No data loss detected - all inserted records are present in database
 ```
 
 As usual, despite load on the database and packet duplication, there was no data loss and database was in `Ready` state all the time.
@@ -1914,9 +1909,9 @@ networkchaos.chaos-mesh.org "ms-primary-packet-duplicate" deleted
 
 ###  Chaos#10: Network Corruption to Primary Pod
 
-In this experiment, we will introduce packet corruption to the primary pod. We expect the database to be able to handle packet corruption and not lose any data.
+In this experiment, we will introduce packet corruption to the primary pod. We expect the database to be able to handle packet corruption and onviously not lose any data.
 
-Save this yaml as `tests/10-network-corrupt.yaml`:
+Save this YAML as `tests/10-network-corrupt.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
@@ -1950,7 +1945,7 @@ spec:
 
 **What this chaos does:** Corrupts 50% of network packets to/from the primary pod by flipping random bits in the payload, causing checksums to fail.
 
-Lets change some config and apply the load test creation script.
+Let's change some config and apply the load test creation script.
 
 ```shell
  TEST_RUN_DURATION: "240"
@@ -1999,19 +1994,17 @@ watch kubectl get ms,petset,pods -n demo
 
 ```shell
 Every 2.0s: kubectl get ms,petset,pods -n demo
+NAME                                          VERSION    STATUS     AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Ready      25h
 
-NAME                                VERSION   STATUS   AGE
-mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    3d1h
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   25h
 
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d1h
-
-NAME                         READY   STATUS    RESTARTS   AGE
-pod/sqlserver-ag-cluster-0          2/2     Running   0          131m
-pod/sqlserver-ag-cluster-1          2/2     Running   0          131m
-pod/sqlserver-ag-cluster-2          2/2     Running   0          131m
-pod/ms-load-test-job-lftl8   1/1     Running   0          52s
-
+NAME                         READY   STATUS    RESTARTS      AGE
+pod/ms-load-test-job-ms4hb   1/1     Running   0             26s
+pod/sqlserver-ag-cluster-0   2/2     Running   6 (22h ago)   25h
+pod/sqlserver-ag-cluster-1   2/2     Running   0             25h
+pod/sqlserver-ag-cluster-2   2/2     Running   0             9m54s  
 ```
 
 The database is ready so far, and sqlserver-ag-cluster-0 is the primary.
@@ -2025,38 +2018,19 @@ sqlserver-ag-cluster-0
 
 ```shell
 Every 2.0s: kubectl get ms,petset,pods -n demo
+NAME                                          VERSION    STATUS     AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Critical   25h
 
-NAME                                VERSION   STATUS     AGE
-mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      NotReady   3d1h
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   25h
 
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d1h
-
-NAME                         READY   STATUS    RESTARTS   AGE
-pod/sqlserver-ag-cluster-0          2/2     Running   0          139m
-pod/sqlserver-ag-cluster-1          2/2     Running   0          139m
-pod/sqlserver-ag-cluster-2          2/2     Running   0          139m
-pod/ms-load-test-job-lftl8   1/1     Running   0          95s
-
+NAME                         READY   STATUS    RESTARTS      AGE
+pod/ms-load-test-job-ms4hb   1/1     Running   0             71s
+pod/sqlserver-ag-cluster-0   2/2     Running   6 (22h ago)   25h
+pod/sqlserver-ag-cluster-1   2/2     Running   0             25h
+pod/sqlserver-ag-cluster-2   2/2     Running   0             10m
 ```
-Database turns into `NotReady` state as a failover happens due of the corruption.
-
-```shell
-Every 2.0s: kubectl get ms,petset,pods -n demo
-
-NAME                                VERSION   STATUS     AGE
-mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Critical   3d1h
-
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d1h
-
-NAME                         READY   STATUS    RESTARTS   AGE
-pod/sqlserver-ag-cluster-0          2/2     Running   0          139m
-pod/sqlserver-ag-cluster-1          2/2     Running   0          139m
-pod/sqlserver-ag-cluster-2          2/2     Running   0          139m
-pod/ms-load-test-job-lftl8   1/1     Running   0          2m8s
-
-```
+Database turns into `Critial` state as a failover happens due of the corruption.
 
 A new primary is elected and database moved into `Critical` state, which means new primary is ready to accept connections.
 
@@ -2087,18 +2061,17 @@ So sqlserver-ag-cluster-1 is the new primary. Wait for the chaos to be recovered
 
 ```shell
 Every 2.0s: kubectl get ms,petset,pods -n demo
+NAME                                          VERSION    STATUS   AGE
+mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0   Ready    25h
 
-NAME                                VERSION   STATUS   AGE
-mssqlserver.kubedb.com/sqlserver-ag-cluster   2025-cu0      Ready    3d1h
+NAME                                                AGE
+petset.apps.k8s.appscode.com/sqlserver-ag-cluster   25h
 
-NAME                                         AGE
-petset.apps.k8s.appscode.com/sqlserver-ag-cluster   3d1h
-
-NAME                         READY   STATUS    RESTARTS   AGE
-pod/sqlserver-ag-cluster-0          2/2     Running   0          140m
-pod/sqlserver-ag-cluster-1          2/2     Running   0          140m
-pod/sqlserver-ag-cluster-2          2/2     Running   0          140m
-pod/ms-load-test-job-lftl8   0/1     Completed   0          2m8s
+NAME                         READY   STATUS      RESTARTS   AGE
+pod/ms-load-test-job-ms4hb   0/1     Completed   0          4m14s
+pod/sqlserver-ag-cluster-0   2/2     Running     0          78s
+pod/sqlserver-ag-cluster-1   2/2     Running     0          25h
+pod/sqlserver-ag-cluster-2   2/2     Running     0          13m
 
 ```
 The database has returned to `Ready` state.
@@ -2109,36 +2082,35 @@ Now check the stats of data insertion and read.
 ```shell
 Final Results:
 =================================================================
-Test Duration: 3m23s
+Test Duration: 3m20s
 -----------------------------------------------------------------
 Cumulative Statistics:
-  Total Operations: 241642 (Reads: 193608, Inserts: 23878, Updates: 24156)
-  Total Number of Rows Reads: 19360800, Inserts: 2387800, Updates: 24156)
-  Total Errors: 0
-  Total Data Transferred: 22600.28 MB
+  Total Operations: 16938 (Reads: 13597, Inserts: 1690, Updates: 1651)
+  Total Errors: 1030
+  Total Data Transferred: 1587.98 MB
 -----------------------------------------------------------------
 Current Throughput (interval):
-  Operations/sec: 395.64 (Reads: 237.39/s, Inserts: 138.48/s, Updates: 19.78/s)
-  Throughput: 39.88 MB/s
+  Operations/sec: 261.17 (Reads: 235.05/s, Inserts: 26.12/s, Updates: 0.00/s)
+  Throughput: 26.56 MB/s
   Errors/sec: 0.00
 -----------------------------------------------------------------
 Latency Statistics:
-  Reads   - Avg: 10.469ms, P95: 64.429ms, P99: 103.762ms
-  Inserts - Avg: 51.473ms, P95: 134.532ms, P99: 201.798ms
-  Updates - Avg: 29.607ms, P95: 33.606ms, P99: 45.95ms
+  Reads   - Avg: 141.325ms, P95: 803.635ms, P99: 1.857053s
+  Inserts - Avg: 741.42ms, P95: 2.001123s, P99: 4.89386s
+  Updates - Avg: 211.745ms, P95: 1.002239s, P99: 1.769259s
 -----------------------------------------------------------------
 Connection Pool:
-  Active: 27, Max: 100, Available: 73
+  Active: 25, Max: 32767, Available: 32742
 =================================================================
 
 =================================================================
 Performance Summary:
-  Average Throughput: 1192.38 operations/sec
-  Read Operations: 193608 (955.36/sec avg)
-  Insert Operations: 23878 (117.83/sec avg)
-  Update Operations: 24156 (119.20/sec avg)
-  Error Rate: 0.0000%
-  Total Data Transferred: 22.07 GB
+  Average Throughput: 84.60 operations/sec
+  Read Operations: 13597 (67.91/sec avg)
+  Insert Operations: 1690 (8.44/sec avg)
+  Update Operations: 1651 (8.25/sec avg)
+  Error Rate: 5.7324%
+  Total Data Transferred: 1.55 GB
 =================================================================
 
 =================================================================
@@ -2148,14 +2120,13 @@ Checking for Data Loss...
 =================================================================
 Data Loss Report:
 -----------------------------------------------------------------
-  Total Records Inserted: 2437800
-  Records Found in DB: 2437800
+  Total Rows Tracked (inserts + seed): 857400
+  Records Found in DB: 858600
   Records Lost: 0
   Data Loss Percentage: 0.00%
 =================================================================
 
- No data loss detected - all inserted records are present in database
-
+No data loss detected - all inserted records are present in database
 ```
 So everything looks alright. No data loss.
 
