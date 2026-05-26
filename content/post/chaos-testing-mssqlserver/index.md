@@ -3240,32 +3240,30 @@ stresschaos.chaos-mesh.org "ms-primary-cpu-stress" deleted
 
 ### Test Results Overview
 
-Below is a comprehensive summary of all chaos engineering experiments conducted on the KubeDB-managed SQL Server High-Availability cluster. Each metric shows results in two configurations:
-- **With Force Failover**: Using `forceFailoverAcceptingDataLossAfter: 30s`
-- **Without Force Failover**: Waiting for data consistency before failover
-
-> Note: You might see different results if you have tested under no read/write load.
+Below is a comprehensive summary of all 16 chaos engineering experiments conducted on the KubeDB-managed SQL Server Availability Group cluster.
 
 > **Key principle**: KubeDB-managed SQL Server Availability Groups enforce **synchronous commit with quorum**. A write only succeeds when the majority of replicas acknowledge it. Data loss during failover is therefore not possible by design — the table below confirms this across all 16 experiments.
+
+> Note: You might see different results if you have tested under no read/write load.
 
 | # | Experiment | Failure Mode | Failover Time | Data Loss | Downtime | Notes |
 |---|---|---|---|---|---|---|
 | 1 | Kill Primary Pod | Pod termination | ~8s | ✅ 0 | Minimal | Immediate automatic failover |
 | 2 | OOMKill the Primary Pod | Memory exhaustion | ~3s | ✅ 0 | Minimal | Rapid failover, millions of rows inserted |
 | 3 | Kill SQL Server process | Process crash | ~30s | ✅ 0 | ~30s | Blocks failover until quorum confirmed |
-| 4 | Primary Pod Failure | Network isolation | ~10s | ✅ 0 | Minimal | Split-brain handled well |
-| 5 | Network Partition | Complete isolation | ~30s | ✅ 0 | Brief | Quorum enforces safe failover |
-| 6 | Bandwidth Limit (1 Mbps) | Slow network | No failover | ✅ 0 | 0s | High latency tolerated, no failover needed |
+| 4 | Primary Pod Failure | Pod crash | ~10s | ✅ 0 | Minimal | New primary elected automatically |
+| 5 | Network Partition | Complete isolation | ~30s | ✅ 0 | Brief | Quorum prevents split-brain writes; new primary only elected when majority agrees |
+| 6 | Bandwidth Limit (1 Mbps) | Slow network | No failover | ✅ 0 | 0s | High latency tolerated, replication catches up |
 | 7 | Network Delay (500ms) | High latency | No failover | ✅ 0 | 0s | Consistency maintained under latency |
-| 8 | Network Loss (100%) | Packet drop | No failover | ✅ 0 | 0s | No data loss |
+| 8 | Network Loss (100%) | Packet drop | No failover | ✅ 0 | 0s | Writes block until network recovers, no data lost |
 | 9 | Network Duplicate (50%) | Redundant traffic | No failover | ✅ 0 | 0s | Gracefully handled |
 | 10 | Network Corruption (50%) | Corrupted packets | ~15s | ✅ 0 | ~30s | Checksums fail, quorum enforces safety |
 | 11 | Time Offset & DNS Error | System time shift | No failover | ✅ 0 | 0s | Cluster unaffected |
-| 12 | IO Latency (500ms) | Disk I/O delay | No failover | ✅ 0 | Until chaos ends | Primary stays up, new connections timeout |
+| 12 | IO Latency (500ms) | Disk I/O delay | No failover | ✅ 0 | Until chaos ends | Primary stays up; new connections timeout, existing ones work |
 | 13 | IO Fault (50% EIO) | I/O errors | No failover | ✅ 0 | Until chaos ends | 25 GB transferred, zero data loss |
 | 14 | IO Attribute Override | Read-only filesystem | No failover | ✅ 0 | Until chaos ends | 23 GB transferred, zero data loss |
-| 15 | IO Mistake | Random I/O faults | No failover | ✅ 0 | Until chaos ends | Quorum commit keeps data safe |
-| 16 | Node Reboot (All Pods) | Complete cluster restart | ~30s | ✅ 0 | Extended | Full cluster restart, data intact |
+| 15 | IO Mistake | Random I/O faults | No failover | ✅ 0 | Until chaos ends | Quorum commit ensures durability |
+| 16 | Node Reboot (All Pods) | Complete cluster restart | ~30s | ✅ 0 | Extended | Full cluster restart; all committed data intact |
 
 > Note: `Until chaos ends` means the database is in `NotReady` state while chaos is active but recovers to `Ready` immediately after chaos is removed.
 
