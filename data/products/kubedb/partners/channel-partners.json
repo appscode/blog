@@ -1,0 +1,189 @@
+{
+  "hero": {
+    "hero_badge": "Channel Partner Program",
+    "hero_title_1": "Profitable Channel Partnership",
+    "hero_title_2": "with KubeDB",
+    "hero_description": "Join our growing network of Channel Partners delivering managed Kubernetes-native Database-as-a-Service to enterprises worldwide.",
+    "primary_action_text": "Join the Program",
+    "primary_action_url": "#partner-form",
+    "badge_icon": "lucide:store"
+  },
+
+  "benefits": {
+    "title": "Why Become a KubeDB Channel Partner?",
+    "description": "Expand your offerings with a high-margin, recurring-revenue Kubernetes DBaaS solution that customers desperately need.",
+    "items": [
+      {
+        "icon": "lucide:dollar-sign",
+        "title": "Higher Margins",
+        "description": "Attractive discounts, deal registration protection, and usage-based recurring revenue model.",
+        "gradient": "bg-grad-green"
+      },
+      {
+        "icon": "lucide:users",
+        "title": "Retain Account Control",
+        "description": "Deliver complete DBaaS solutions while keeping full ownership of customer relationships.",
+        "gradient": "bg-grad-blue"
+      },
+      {
+        "icon": "lucide:package",
+        "title": "Expand Portfolio",
+        "description": "Add production-grade databases (25+ engines) to complement your Kubernetes and managed services offerings.",
+        "gradient": "bg-grad-purple"
+      },
+      {
+        "icon": "lucide:rocket",
+        "title": "Go-to-Market Support",
+        "description": "Sales enablement, marketing resources, technical training, and joint customer success.",
+        "gradient": "bg-grad-orange"
+      }
+    ]
+  },
+
+  "resources": {
+    "title": "Channel Partner Resources",
+    "handbook_cta": "Download Partner Handbook",
+    "handbook_url": "#",
+    "columns": [
+      {
+        "icon": "lucide:book-open",
+        "title": "Sales Enablement",
+        "items": [
+          "Playbooks & Battlecards",
+          "ROI Calculators",
+          "Demo Environments",
+          "Competitive Comparison"
+        ]
+      },
+      {
+        "icon": "lucide:wrench",
+        "title": "Technical Resources",
+        "items": [
+          "Certification Training",
+          "Reference Architectures",
+          "Deployment Guides",
+          "24/7 Partner Support"
+        ]
+      },
+      {
+        "icon": "lucide:megaphone",
+        "title": "Marketing Resources",
+        "items": [
+          "Co-branded Collateral",
+          "Joint Webinars & Events",
+          "MDF / Marketing Funds",
+          "Lead Generation Support"
+        ]
+      }
+    ]
+  },
+
+  "deal_registration": {
+    "title": "Deal Registration",
+    "description": "Register opportunities early and get protected deal status, priority support, and special pricing.",
+    "cta_text": "Register a Deal Now",
+    "cta_url": "https://x.appscode.com/_/deal_registration?p=kubedb"
+  },
+
+  "featured_partners": {
+    "title": "Featured Channel Partners",
+    "partners": [
+      {
+        "name": "Pellera",
+        "logo": "/assets/images/partners/technology/pellera.png",
+        "logo_bg": "transparent",
+        "logo_padding": "0",
+        "url": "https://pellera.com/"
+      },
+      {
+        "name": "SHI",
+        "logo": "/assets/images/products/kubedb/partners/shi.svg",
+        "logo_bg": "transparent",
+        "logo_padding": "0",
+        "url": "https://www.shi.com/"
+      },
+      {
+        "name": "SoftwareOne",
+        "logo": "/assets/images/products/kubedb/partners/softwareone.svg",
+        "logo_bg": "#253746",
+        "logo_padding": "0.5rem 0.75rem",
+        "url": "https://www.softwareone.com/en"
+      },
+      {
+        "name": "HongKe",
+        "logo": "/assets/images/partners/technology/hkaco.svg",
+        "logo_bg": "transparent",
+        "logo_padding": "0",
+        "url": "https://hkaco.com/"
+      },
+      {
+        "name": "itbigtec",
+        "logo": "/assets/images/partners/technology/itbigtec.png",
+        "logo_bg": "transparent",
+        "logo_padding": "0",
+        "url": "https://itbigtec.com/"
+      },
+      {
+        "name": "TSG",
+        "logo": "/assets/images/products/kubedb/partners/tsg-soft365.svg",
+        "logo_bg": "transparent",
+        "logo_padding": "0",
+        "url": "https://tsg.net.vn/"
+      }
+    ]
+  },
+
+  "form": {
+    "badge": "Join Our Channel",
+    "badge_icon": "lucide:rocket",
+    "title": "Become a KubeDB Channel Partner",
+    "description": "Fill out the form below and our Channel team will contact you within 24 hours.",
+    "action": "#",
+    "fields": [
+      { "name": "company_name", "label": "Company Name", "type": "text", "placeholder": "Acme Corp", "required": true, "icon": "" },
+      { "name": "contact_name", "label": "Contact Name", "type": "text", "placeholder": "John Smith", "required": true, "icon": "" },
+      { "name": "email", "label": "Email Address", "type": "email", "placeholder": "john@acmecorp.com", "required": true, "icon": "lucide:mail" },
+      { "name": "phone", "label": "Phone Number", "type": "tel", "placeholder": "+1 (555) 123-4567", "required": false, "icon": "lucide:phone" },
+      { "name": "website", "label": "Company Website", "type": "url", "placeholder": "https://acmecorp.com", "required": false, "icon": "lucide:globe" }
+    ],
+    "partner_type_field": {
+      "name": "business_type",
+      "label": "What best describes your business?",
+      "required": true,
+      "placeholder": "Select Option",
+      "options": [
+        { "value": "msp", "label": "Managed Service Provider (MSP)" },
+        { "value": "si", "label": "Systems Integrator (SI)" },
+        { "value": "distributor", "label": "Distributor / VAR" },
+        { "value": "cloud", "label": "Cloud Provider / Hyperscaler" },
+        { "value": "other", "label": "Other" }
+      ]
+    },
+    "message_field": {
+      "name": "message",
+      "label": "Tell us about your interest in partnering with KubeDB",
+      "placeholder": "We are interested in...",
+      "rows": 4
+    },
+    "cta_primary": "Submit Application"
+  },
+
+  "cta_section": {
+    "cta_badge": "Channel Partner Program",
+    "cta_title": "Ready to Grow Together?",
+    "cta_description": "Join hundreds of channel partners already delivering KubeDB to enterprises worldwide.",
+    "cta_button_text": "Join the Program",
+    "cta_button_url": "#partner-form",
+    "cta_checklist": [
+      "Higher margins & deal protection",
+      "Sales & technical enablement",
+      "Co-marketing support"
+    ],
+    "cta_stats": [
+      { "icon": "lucide:database", "value": "25+", "label": "Databases", "gradient": "linear-gradient(135deg, #6366f1, #a855f7)" },
+      { "icon": "lucide:trending-up", "value": "10K+", "label": "Active Databases", "gradient": "linear-gradient(135deg, #4ade80, #10b981)" },
+      { "icon": "lucide:shield-check", "value": "99.9%", "label": "Response SLA", "gradient": "linear-gradient(135deg, #fb923c, #ef4444)" },
+      { "icon": "lucide:check-circle", "value": "24/7", "label": "Expert Support", "gradient": "linear-gradient(135deg, #a855f7, #ec4899)" }
+    ]
+  }
+}

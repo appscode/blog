@@ -1,0 +1,13 @@
+{
+  "title": "Pricing Model",
+  "subtitle": "Your annual cost is calculated from database memory requirements",
+  "included_items": [
+    "Managed DBaaS Platform Capabilities",
+    "Automated Backup and Disaster Recovery",
+    "Centralized Multi-Cluster Management",
+    "Developer-Friendly Free Tier",
+    "Includes Standard Support (8×5)"
+  ],
+  "cta_primary": "Get Started",
+  "cta_secondary": "Contact Sales"
+}

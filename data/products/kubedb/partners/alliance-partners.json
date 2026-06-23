@@ -1,0 +1,303 @@
+{
+  "hero": {
+    "hero_badge": "Alliance Partners",
+    "hero_title": "Strategic Technology Alliances",
+    "hero_description": "We partner with the best Kubernetes platforms, storage providers, and cloud ecosystems to deliver seamless, production-grade Database-as-a-Service experiences everywhere.",
+    "intro_text": "Together with our technology partners, KubeDB enables enterprises and MSPs to run highly available, secure, and portable databases on any Kubernetes environment.",
+    "primary_action_text": "Start a Technology Partnership",
+    "primary_action_url": "#partner-form",
+    "badge_icon": "lucide:handshake"
+  },
+
+  "partner_groups": [
+    {
+      "badge_icon": "lucide:cloud",
+      "badge": "Public Cloud & Hyperscaler Partners",
+      "type": "cloud",
+      "partners": [
+        {
+          "name": "AWS",
+          "label": "Amazon EKS",
+          "logo": "/assets/images/partners/showcase/aws.svg",
+          "color": "orange",
+          "url": "/partner/amazon-eks/"
+        },
+        {
+          "name": "Azure",
+          "label": "Azure AKS",
+          "logo": "/assets/images/partners/showcase/azure.svg",
+          "color": "blue",
+          "url": "/partner/microsoft-aks/"
+        },
+        {
+          "name": "Google",
+          "label": "Google GKE",
+          "logo": "/assets/images/partners/showcase/gcp.svg",
+          "color": "blue",
+          "url": "/partner/google-gke/"
+        },
+        {
+          "name": "Multi-Cloud",
+          "label": "Multi-Cloud & Hybrid",
+          "icon": "lucide:globe",
+          "color": "purple",
+          "url": "#"
+        }
+      ]
+    },
+    {
+      "badge_icon": "lucide:box",
+      "badge": "Kubernetes Platforms & Distributions",
+      "type": "k8s",
+      "partners": [
+        {
+          "name": "Red Hat",
+          "label": "OpenShift",
+          "color": "red",
+          "certified": true,
+          "logo": "/assets/images/products/kubedb/partners/red-hat.svg",
+          "url": "/partner/redhat-openshift/"
+        },
+        {
+          "name": "SUSE",
+          "label": "Rancher Prime",
+          "color": "green",
+          "logo": "/assets/images/products/kubedb/partners/suse.svg",
+          "url": "/partner/suse-rancher/"
+        },
+        {
+          "name": "Nutanix",
+          "label": "Kubernetes Platform",
+          "color": "purple",
+          "logo": "/assets/images/products/kubedb/partners/nutanix.svg",
+          "url": "/partner/nutanix/"
+        },
+        {
+          "name": "VMware",
+          "label": "Tanzu",
+          "color": "blue",
+          "logo": "/assets/images/products/kubedb/partners/vmware.svg",
+          "url": "/partner/vmware-vks/"
+        },
+        {
+          "name": "Mirantis",
+          "label": "Kubernetes Engine",
+          "color": "indigo",
+          "logo": "/assets/images/products/kubedb/partners/mirantis.svg",
+          "url": "/partner/mirantis/"
+        }
+      ]
+    },
+    {
+      "badge_icon": "lucide:hard-drive",
+      "badge": "Storage & Ecosystem Partners",
+      "type": "storage",
+      "partners": [
+        {
+          "name": "AWS EBS",
+          "url": "https://github.com/kubernetes-sigs/aws-ebs-csi-driver",
+          "logo": "/assets/images/products/kubedb/storage/amazon-ebs.svg",
+          "description": "AWS Elastic Block Store CSI driver for high-performance block storage on AWS."
+        },
+        {
+          "name": "Azure Disk",
+          "url": "https://github.com/kubernetes-sigs/azuredisk-csi-driver",
+          "logo": "/assets/images/products/kubedb/storage/azure-disk.svg",
+          "description": "Azure managed disks CSI driver for block storage."
+        },
+        {
+          "name": "Azure File",
+          "url": "https://github.com/kubernetes-sigs/azurefile-csi-driver",
+          "logo": "/assets/images/products/kubedb/storage/azure-file.svg",
+          "description": "Azure Files CSI driver for SMB/NFS shared file storage."
+        },
+        {
+          "name": "Google Persistent Disk",
+          "url": "https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver",
+          "logo": "/assets/images/products/kubedb/storage/google-persistent-disk.svg",
+          "description": "Google Compute Engine Persistent Disk CSI driver for block storage on GCP."
+        },
+        {
+          "name": "Ceph",
+          "url": "https://github.com/ceph/ceph-csi",
+          "logo": "/assets/images/products/kubedb/storage/ceph.svg",
+          "description": "Highly scalable open-source distributed storage (RBD block + CephFS file) via Rook or ceph-csi."
+        },
+        {
+          "name": "Rook",
+          "url": "https://rook.io/",
+          "logo": "/assets/images/products/kubedb/storage/rook.svg",
+          "description": "Kubernetes-native orchestrator for Ceph and other storage systems."
+        },
+        {
+          "name": "Longhorn",
+          "url": "https://longhorn.io/",
+          "logo": "/assets/images/products/kubedb/storage/longhorn.svg",
+          "description": "Cloud-native distributed block storage built for Kubernetes with easy replication and backups."
+        },
+        {
+          "name": "OpenEBS",
+          "url": "https://openebs.io/",
+          "logo": "/assets/images/products/kubedb/storage/openebs.svg",
+          "description": "Container Attached Storage with multiple engines (LocalPV, Mayastor, etc.)."
+        },
+        {
+          "name": "Portworx",
+          "url": "https://portworx.com/",
+          "logo": "/assets/images/products/kubedb/storage/portworx.svg",
+          "description": "Enterprise-grade Kubernetes storage with data services, high availability, and security."
+        },
+        {
+          "name": "vSphere CSI (VMware)",
+          "url": "https://github.com/kubernetes-sigs/vsphere-csi-driver",
+          "logo": "/assets/images/products/kubedb/storage/vsphere-csi-vmware.svg",
+          "description": "Official CSI driver for VMware vSphere datastores."
+        },
+        {
+          "name": "Alibaba Cloud",
+          "url": "https://github.com/kubernetes-sigs/alibaba-cloud-csi-driver",
+          "logo": "/assets/images/products/kubedb/storage/alibaba-cloud.svg",
+          "description": "Disk, NAS, and OSS storage for Alibaba Cloud."
+        },
+        {
+          "name": "NFS CSI",
+          "url": "https://github.com/kubernetes-csi/csi-driver-nfs",
+          "logo": "/assets/images/products/kubedb/storage/nfs-csi.png",
+          "description": "CSI driver for mounting existing NFS servers."
+        },
+        {
+          "name": "LINBIT (DRBD / LINSTOR)",
+          "url": "https://linbit.com/",
+          "logo": "/assets/images/products/kubedb/storage/linbit-drbd-linstor.svg",
+          "description": "High-availability block storage using DRBD and LINSTOR for Kubernetes."
+        },
+        {
+          "name": "Lightbits Labs",
+          "url": "https://www.lightbitslabs.com/",
+          "logo": "/assets/images/products/kubedb/storage/lightbits-labs.svg",
+          "description": "NVMe over TCP disaggregated block storage optimized for Kubernetes and cloud-native workloads."
+        },
+        {
+          "name": "SimplyBlock",
+          "url": "https://simplyblock.io/",
+          "logo": "/assets/images/products/kubedb/storage/simplyblock.svg",
+          "description": "High-performance NVMe-over-TCP cloud-native block storage for Kubernetes."
+        },
+        {
+          "name": "NetApp",
+          "url": "https://www.netapp.com/",
+          "logo": "/assets/images/products/kubedb/storage/netapp.png",
+          "description": "Enterprise storage with Trident CSI driver for ONTAP, SolidFire, etc."
+        },
+        {
+          "name": "Nutanix",
+          "url": "https://www.nutanix.com/",
+          "logo": "/assets/images/products/kubedb/storage/nutanix.svg",
+          "description": "Hyperconverged infrastructure with native CSI support for block and file storage."
+        },
+        {
+          "name": "Dell Technologies",
+          "url": "https://www.dell.com/",
+          "logo": "/assets/images/products/kubedb/storage/dell-technologies.svg",
+          "description": "CSI drivers for PowerStore, PowerScale, PowerMax, Unity, and PowerFlex."
+        },
+        {
+          "name": "HPE",
+          "url": "https://www.hpe.com/",
+          "logo": "/assets/images/products/kubedb/storage/hpe.svg",
+          "description": "CSI drivers for Alletra, Nimble, Primera, 3PAR, and more."
+        }
+      ]
+    }
+  ],
+
+  "why_partner": {
+    "title": "Why Partner with KubeDB?",
+    "reasons": [
+      {
+        "number": "1",
+        "title": "Joint Solutions",
+        "description": "Co-engineered, certified integrations with leading platforms",
+        "gradient": "bg-grad-green"
+      },
+      {
+        "number": "2",
+        "title": "Co-Marketing & Demand Gen",
+        "description": "Webinars, case studies, and joint go-to-market programs",
+        "gradient": "bg-grad-blue"
+      },
+      {
+        "number": "3",
+        "title": "Technical Collaboration",
+        "description": "Early access, joint engineering, and reference architectures",
+        "gradient": "bg-grad-purple"
+      }
+    ],
+    "stat_value": "500+",
+    "stat_label": "Active Integrations & Deployments",
+    "stat_items": [
+      { "icon": "lucide:cloud", "label": "Cloud Platforms" },
+      { "icon": "lucide:server", "label": "K8s Distros" },
+      { "icon": "lucide:hard-drive", "label": "Storage Systems" },
+      { "icon": "lucide:globe", "label": "Regions" }
+    ]
+  },
+
+  "form": {
+    "badge": "Join Our Ecosystem",
+    "badge_icon": "lucide:rocket",
+    "title": "Become a KubeDB Partner",
+    "description": "Fill out the form below and our partner team will contact you within 24 hours",
+    "action": "#",
+    "fields": [
+      { "name": "company_name", "label": "Company Name", "type": "text", "placeholder": "Your Company", "required": true, "icon": "" },
+      { "name": "contact_name", "label": "Contact Name", "type": "text", "placeholder": "John Doe", "required": true, "icon": "" },
+      { "name": "email", "label": "Email Address", "type": "email", "placeholder": "email@company.com", "required": true, "icon": "lucide:mail" },
+      { "name": "phone", "label": "Phone Number", "type": "tel", "placeholder": "+1 (555) 000-0000", "required": false, "icon": "lucide:phone" },
+      { "name": "website", "label": "Company Website", "type": "url", "placeholder": "https://company.com", "required": false, "icon": "lucide:globe" },
+      { "name": "country", "label": "Country", "type": "text", "placeholder": "United States", "required": true, "icon": "" }
+    ],
+    "partner_type_field": {
+      "name": "partner_type",
+      "label": "Partner Type",
+      "required": true,
+      "placeholder": "Select Type",
+      "options": [
+        { "value": "technology", "label": "Technology Partner" },
+        { "value": "reseller", "label": "Reseller Partner" },
+        { "value": "consulting", "label": "Service Integrator" },
+        { "value": "cloud", "label": "MSP / Cloud Partner" }
+      ]
+    },
+    "message_field": {
+      "name": "message",
+      "label": "Message",
+      "placeholder": "Tell us about your business and partnership interests...",
+      "rows": 5
+    },
+    "cta_primary": "Submit Application",
+    "cta_secondary": "Contact Sales",
+    "cta_secondary_icon": "lucide:message-square",
+    "disclaimer": "By submitting this form, you agree to our partner terms and conditions"
+  },
+
+  "cta_section": {
+    "cta_badge": "Technology Partnership",
+    "cta_title": "Ready to Build Together?",
+    "cta_description": "Join our growing ecosystem of technology leaders delivering the future of cloud-native data management.",
+    "cta_button_text": "Start a Technology Partnership",
+    "cta_button_url": "#partner-form",
+    "hide_secondary_cta": true,
+    "cta_checklist": [
+      "Joint solutions",
+      "Co-marketing support",
+      "Technical collaboration"
+    ],
+    "cta_stats": [
+      { "icon": "lucide:database", "value": "25+", "label": "Databases", "gradient": "linear-gradient(135deg, #6366f1, #a855f7)" },
+      { "icon": "lucide:trending-up", "value": "10K+", "label": "Active Databases", "gradient": "linear-gradient(135deg, #4ade80, #10b981)" },
+      { "icon": "lucide:shield-check", "value": "99.9%", "label": "Response SLA", "gradient": "linear-gradient(135deg, #fb923c, #ef4444)" },
+      { "icon": "lucide:check-circle", "value": "24/7", "label": "Expert Support", "gradient": "linear-gradient(135deg, #a855f7, #ec4899)" }
+    ]
+  }
+}

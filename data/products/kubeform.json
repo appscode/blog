@@ -105,7 +105,7 @@
         "alt": "http"
       },
       "summary": "",
-      "description": "With Kubeform, you can launch a cloud infrastructure via a simple CRD instance and start developing in minutes. Kubeform eliminates lengthy deployment and management processes with on-demand provisioning, scaling, patching and updating cloud infrastructure and shortens time-to-value. Kubeform gives each developer on your team their own development instance, so your team can focus on what matters most — velocity and not have to worry about stepping on each other’s toes."
+      "description": "With Kubeform, you can launch a cloud infrastructure via a simple CRD instance and start developing in minutes. Kubeform eliminates lengthy deployment and management processes with on-demand provisioning, scaling, patching and updating cloud infrastructure and shortens time-to-value. Kubeform gives each developer on your team their own development instance, so your team can focus on what matters most, velocity and not have to worry about stepping on each other’s toes."
     }
   ],
   "versions": [
@@ -116,7 +116,7 @@
     },
     {
       "version": "v2022.05.11",
-      "hostDocs": true,
+      "hostDocs": false,
       "show": true,
       "info": {
         "alicloud": "v0.5.0",
@@ -150,7 +150,7 @@
     },
     {
       "version": "v2021.10.29",
-      "hostDocs": true,
+      "hostDocs": false,
       "show": true,
       "info": {
         "alicloud": "v0.4.0",
@@ -183,7 +183,7 @@
     },
     {
       "version": "v2021.08.02",
-      "hostDocs": true,
+      "hostDocs": false,
       "show": true,
       "info": {
         "alicloud": "v0.3.0",
@@ -214,7 +214,7 @@
     },
     {
       "version": "v2021.07.28",
-      "hostDocs": true,
+      "hostDocs": false,
       "show": true,
       "info": {
         "aws": "v0.2.0",
