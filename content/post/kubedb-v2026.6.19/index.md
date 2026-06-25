@@ -143,6 +143,10 @@ Monitor the `LAG` field with `kubectl get migrator -n demo`. Once LAG reaches ze
 
 > See the [MySQL Migration Guide](https://kubedb.com/docs/v2026.6.19/guides/mysql/migration/databaseMigration/) for TLS setup, platform-specific binary log configuration, and AppBinding creation.
 
+### Virtual Secrets
+
+MySQL now supports the **Virtual Secrets** feature, allowing users to keep database auth secrets outside the cluster (e.g., Vault, AWS Secrets Manager, Azure Key Vault) while still using them with KubeDB-managed databases. See the [Virtual Secrets blog post](https://appscode.com/blog/post/virtual-secrets-v2025.3.14/) for details.
+
 ---
 
 ## MariaDB
@@ -200,6 +204,23 @@ spec:
 
 > See the [MariaDB Migration Guide](https://kubedb.com/docs/v2026.6.19/guides/mariadb/migration/databaseMigration/) for full details.
 
+### StorageClass Migration
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: MariaDBOpsRequest
+metadata:
+  name: storage-migration
+  namespace: demo
+spec:
+  type: StorageMigration
+  databaseRef:
+    name: sample
+  migration:
+    storageClassName: longhorn-custom
+    oldPVReclaimPolicy: Delete
+  timeout: 30m
+```
 ---
 
 ## MongoDB
@@ -1375,8 +1396,25 @@ spec:
   timeout: 3600s
   apply: IfReady
 ```
-
 ---
+## ProxySQL
+
+### Rotate Authentication
+
+KubeDB now supports `RotateAuth` for ProxySQL:
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: ProxySQLOpsRequest
+metadata:
+  name: rotate-px-auth
+  namespace: demo
+spec:
+  type: RotateAuth
+  proxyRef:
+    name: sample
+  apply: Always
+```
 
 ## Support
 
