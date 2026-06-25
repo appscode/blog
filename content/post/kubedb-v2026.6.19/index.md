@@ -94,7 +94,7 @@ The migration operates in three phases:
 
 **Prerequisite:** source MySQL must have binary logging enabled with `binlog_format=ROW` and `binlog_row_image=FULL`. The migration user must have `REPLICATION SLAVE` and `REPLICATION CLIENT` privileges.
 
-First deploy a KubeDB-managed MySQL (see the [quickstart guide](https://kubedb.com/docs/v2026.6.19/guides/mysql/quickstart/quickstart/)). Then create an `AppBinding` for the source and apply the following `Migrator` CR:
+First deploy a KubeDB-managed MySQL (see the [quickstart guide](https://kubedb.com/docs/v2026.6.19/guides/mysql/quickstart/)). Then create an `AppBinding` for the source and apply the following `Migrator` CR:
 
 ```yaml
 apiVersion: migrator.kubedb.com/v1alpha1
