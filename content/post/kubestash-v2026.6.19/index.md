@@ -35,7 +35,7 @@ We are pleased to announce the release of [KubeStash v2026.6.19](https://kubesta
 
 Knowing how far along a backup or restore is has historically required inspecting pod logs or guessing from restic output. With v2026.6.19, KubeStash now reports **real-time progress** directly in the Kubernetes API surface, so you can monitor backup & restore activity with standard tools like `kubectl`.
 
-Two new structures—`BackupProgress` and `RestoreProgress`—have been added to the `Snapshot` and `RestoreSession` status respectively. Each component reports fields such as `secondsElapsed`, `percentDone`, `totalFiles`, `filesDone`, the amount of data transferred (`backupDone`/`restoreDone`, in human-readable form), `total` size, and a live `speed` figure. This data is produced by a dedicated **stream reader** introduced in this release for both download and upload paths, which every backup driver (workload, PVC, kubedump, and the manifest addons) now uses to emit progress events back to the operator.
+Two new structures—`BackupProgress` and `RestoreProgress`—have been added to the `Snapshot` and `RestoreSession` status respectively. Each component reports fields such as `secondsElapsed`, `percentDone`, `totalFiles`, `filesDone`, the amount of data transferred (`backupDone`/`restoreDone`, in human-readable form), `total` size, and a live `speed` figure. This data is produced by a dedicated **stream reader** introduced in this release for both download and upload paths, which every backup driver (workload, PVC, kubedump, manifest and all major KubeDB database addons) now uses to emit progress events back to the operator.
 
 **Example: inspecting snapshot progress in real time**
 
