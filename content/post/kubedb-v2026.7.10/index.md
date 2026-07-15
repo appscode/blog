@@ -32,7 +32,7 @@ Other highlights include **ClickHouse PITR (Point-in-Time Recovery)** via the ne
 * **In-Place Vertical Scaling** — resize container CPU/memory on live pods with zero restarts (Kubernetes 1.35+)
 * **PostgreSQL Extensions** — new `-ext` PostgresVersions bundle pgvector, PostGIS, pg_repack, pg_cron, pgaudit, and pg_stat_statements
 * **PostgreSQL Synchronous Replication Config** — new `spec.synchronousReplicationConfig` API with quorum (`Any`), priority (`First`), and wildcard modes
-* **ClickHouse Archiver** — continuous WAL-level archiving and point-in-time recovery for ClickHouse
+* **ClickHouse Archiver** — continuous archiving and point-in-time recovery for ClickHouse
 * **ClickHouse Shard Scaling** — add shards to a running ClickHouse cluster via HorizontalScaling OpsRequest
 * **ClickHouse Alerting** — Alertmanager integration for ClickHouse metrics
 * **Oracle ReconfigureTLS** — add, remove, and rotate TLS certificates for Oracle databases
