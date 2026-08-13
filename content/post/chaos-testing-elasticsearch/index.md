@@ -54,6 +54,8 @@ To follow along with this tutorial, you will need:
     --set chaosDaemon.privileged=true
     ```
 > Note: Make sure to set the correct path to your container runtime socket and runtime in the above command. For ex: `socketPath=/run/containerd/containerd.sock`, or if in **k3s**, set `chaosDaemon.socketPath=/run/k3s/containerd/containerd.sock`.
+>
+> `dashboard.securityMode=false` disables dashboard authentication and is only safe on a throwaway/dev cluster with no external access. For anything else, leave security mode on and follow the [production installation guide](https://chaos-mesh.org/docs/production-installation-using-helm/) to set up dashboard RBAC/auth instead.
 
 ## Verify KubeDB and Chaos-Mesh Installation
 
@@ -290,11 +292,11 @@ data:
     URL="${ES_URL}"; USER="${ES_USER}"; PASS="${ES_PASS}"
     INDEX="${INDEX:-chaos-load}"; BATCH="${BATCH_SIZE:-100}"
     DURATION="${TEST_RUN_DURATION:-3600}"; REPORT="${REPORT_INTERVAL:-10}"
-    C="curl -s -k -u ${USER}:${PASS}"
+    c() { curl -s -k -u "${USER}:${PASS}" "$@"; }
     committed=0; idx_ok=0; idx_fail=0; search_ok=0; search_fail=0
     start=$(date +%s); last_report=$start
-    until $C "${URL}/_cluster/health" | grep -qE '"status":"(green|yellow)"'; do sleep 3; done
-    $C -X PUT "${URL}/${INDEX}" -H 'Content-Type: application/json' \
+    until c "${URL}/_cluster/health" | grep -qE '"status":"(green|yellow)"'; do sleep 3; done
+    c -X PUT "${URL}/${INDEX}" -H 'Content-Type: application/json' \
       -d '{"settings":{"number_of_shards":3,"number_of_replicas":1,"index.write.wait_for_active_shards":"1"}}' >/dev/null
     while [ $(( $(date +%s) - start )) -lt "$DURATION" ]; do
       ts=$(date -u +%FT%TZ); i=$committed; end=$(( committed + BATCH )); : > /tmp/bulk
@@ -302,23 +304,23 @@ data:
         printf '{"index":{"_id":"%s"}}\n{"n":%s,"ts":"%s","pad":"chaos-load-doc"}\n' "$i" "$i" "$ts" >> /tmp/bulk
         i=$(( i + 1 ))
       done
-      resp=$($C -X POST "${URL}/${INDEX}/_bulk" -H 'Content-Type: application/x-ndjson' --data-binary @/tmp/bulk)
+      resp=$(c -X POST "${URL}/${INDEX}/_bulk" -H 'Content-Type: application/x-ndjson' --data-binary @/tmp/bulk)
       if echo "$resp" | grep -q '"errors":false'; then
         committed=$(( committed + BATCH )); idx_ok=$(( idx_ok + 1 ))
       else idx_fail=$(( idx_fail + 1 )); sleep 0.3; fi
       if [ $(( (idx_ok + idx_fail) % 5 )) -eq 0 ]; then
-        if $C "${URL}/${INDEX}/_search?size=0&q=*:*" | grep -q '"total"'; then
+        if c "${URL}/${INDEX}/_search?size=0&q=*:*" | grep -q '"total"'; then
           search_ok=$(( search_ok + 1 )); else search_fail=$(( search_fail + 1 )); fi
       fi
       now=$(date +%s)
       if [ $(( now - last_report )) -ge "$REPORT" ]; then
         elapsed=$(( now - start )); rate=0; [ $elapsed -gt 0 ] && rate=$(( committed / elapsed ))
-        health=$($C "${URL}/_cluster/health" | sed -n 's/.*"status":"\([a-z]*\)".*/\1/p')
+        health=$(c "${URL}/_cluster/health" | sed -n 's/.*"status":"\([a-z]*\)".*/\1/p')
         echo "$(date -u +%FT%TZ) [report] elapsed=${elapsed}s committed_docs=${committed} idx_ok=${idx_ok} idx_fail=${idx_fail} search_ok=${search_ok} search_fail=${search_fail} health=${health} rate=${rate}b/s"
         last_report=$now
       fi
     done
-    actual=$($C "${URL}/${INDEX}/_count" | sed -n 's/.*"count":\([0-9]*\).*/\1/p')
+    actual=$(c "${URL}/${INDEX}/_count" | sed -n 's/.*"count":\([0-9]*\).*/\1/p')
     echo "$(date -u +%FT%TZ) [verify] client_committed=${committed} db_actual=${actual}"
 ```
 
@@ -1191,9 +1193,9 @@ The trade-offs to respect are Elasticsearch-specific. **Yellow is not an emergen
 
 Please try the latest release and give us your valuable feedback.
 
-* If you want to install KubeDB, please follow the installation instruction from [here](https://kubedb.com/docs/v2026.6.19/setup).
+* If you want to install KubeDB, please follow the installation instructions from [here](https://kubedb.com/docs/v2026.6.19/setup).
 
-* If you want to upgrade KubeDB from a previous version, please follow the upgrade instruction from [here](https://kubedb.com/docs/v2026.6.19/setup/upgrade/).
+* If you want to upgrade KubeDB from a previous version, please follow the upgrade instructions from [here](https://kubedb.com/docs/v2026.6.19/setup/upgrade/).
 
 ## Support
 
@@ -1201,4 +1203,4 @@ To speak with us, please leave a message on [our website](https://appscode.com/c
 
 To receive product announcements, follow us on [Twitter](https://twitter.com/KubeDB).
 
-If you have found a bug with KubeDB or want to request for new features, please [file an issue](https://github.com/kubedb/project/issues/new).
+If you have found a bug with KubeDB or want to request new features, please [file an issue](https://github.com/kubedb/project/issues/new).
