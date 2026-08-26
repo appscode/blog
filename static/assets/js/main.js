@@ -39,9 +39,10 @@ navItems.forEach((navItem) => {
   });
 });
 
-// Sticky header: once scrolled off the hero, the bar pins at top:0 (via
-// CSS position:sticky) over plain page content, so it needs the solid
-// white / dark-text treatment instead of the white-on-hero one used at rest.
+// Sticky header: once scrolled off the hero, the bar pins to top:0
+// (position:fixed, toggled below) over plain page content, so it needs the
+// solid white / dark-text treatment instead of the white-on-hero one used
+// at rest.
 if (navbarArea) {
   const STICKY_THRESHOLD = 40;
 
@@ -52,6 +53,12 @@ if (navbarArea) {
   updateStickyState();
   window.addEventListener("scroll", updateStickyState, { passive: true });
 }
+
+// Keep --fixed-header-height (set in baseof.html, used by anything that
+// sticks below the fixed header) in sync with the navbar's real rendered
+// height, since it changes with viewport width (e.g. the burger row).
+window.updateFixedHeaderHeight?.();
+window.addEventListener("resize", () => window.updateFixedHeaderHeight?.(), { passive: true });
 
 // mega menu active class
 var navbarItems = document.querySelectorAll(".navbar-item");

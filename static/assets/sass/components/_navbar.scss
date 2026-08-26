@@ -1,3 +1,11 @@
+// Live-measured height of the fixed navbar-area (notification bar + 60px
+// nav), kept in sync by main.js. Anything that sticks below the fixed
+// header (search-filter-area, its sidebar, ...) should offset by this var
+// instead of a hardcoded 60px, since the notification bar's height varies.
+:root {
+  --fixed-header-height: 60px;
+}
+
 // Design tokens ported from hugo-appscode for cross-site navbar consistency.
 // The rest of this file mirrors hugo-appscode's components/_navbar.scss so both
 // sites render/behave identically; only these tokens are blog-specific shims
@@ -34,17 +42,21 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
 // =============================================================================
 
 .navbar-area {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 999;
   background-color: transparent;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 
-  // Once scrolled, the bar pins at top:0 over plain page content instead of
-  // the green hero, so swap to a solid backdrop + dark text/logo. Every
-  // property below is nested deep enough (and !important, to be safe) to
-  // beat the shallower base rules regardless of source order.
+  // Toggled by JS once the user scrolls: pins the bar to the viewport top
+  // and swaps to a solid backdrop + dark text/logo, since it's no longer
+  // sitting over the green hero. Every property below is nested deep enough
+  // (and !important, to be safe) to beat the shallower base rules.
   &.is-sticky-solid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     background-color: $ac-white !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 
@@ -967,11 +979,12 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
       display: none;
       position: fixed;
       z-index: 998;
-      top: 60px;
+      // 96px = 60px nav + 36px notification bar fallback height
+      top: 96px;
       left: 0;
       right: 0;
       width: 100%;
-      height: calc(100vh - 60px);
+      height: calc(100vh - 96px);
       overflow-y: auto;
       background: $ac-white;
       padding: 20px 20px 48px;

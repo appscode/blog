@@ -426,14 +426,17 @@ ul.social-share-button {
 }
 
 .search-filter-area {
-  z-index: 9;
+  // 998, just under the navbar's 999. top follows the navbar's *actual*
+  // rendered height (nav + notification bar, which varies), not a fixed
+  // 60px, so this sticks right below it instead of being covered by it.
+  z-index: 998;
   background: #fff;
   box-shadow: 0 1px 3px rgba(15, 20, 40, 0.08);
   border-bottom: 1px solid $color-border;
   border-top: 1px solid $color-border;
   height: 64px;
   position: sticky;
-  top: 0;
+  top: 96px;
   overflow: hidden;
 
   .filter-wrapper {
@@ -546,7 +549,8 @@ ul.social-share-button {
     margin-right: 70px;
     padding-top: 16px;
     position: sticky;
-    top: 64px;
+    // navbar (variable) + search-filter-area (64px)
+    top: 160px;
     overflow-y: auto;
     padding-right: 30px;
     border-right: 1px solid $color-border;
@@ -887,7 +891,7 @@ ul.social-share-button {
   }
 
   .search-filter-area {
-    top: 0;
+    top: 96px;
   }
 
   .blog-items-area {
@@ -966,7 +970,7 @@ ul.social-share-button {
 
   .blog-items-area {
     .left-sidebar {
-      top: 60px;
+      top: 156px;
       margin-right: 0;
     }
   }
@@ -1067,12 +1071,12 @@ ul.social-share-button {
   }
 
   .search-filter-area {
-    top: 0;
+    top: 96px;
   }
 
   .blog-items-area {
     .left-sidebar {
-      top: 62px;
+      top: 158px;
     }
   }
 
