@@ -1255,6 +1255,18 @@ ul.social-share-button {
   }
 }
 
+// The navbar is fixed (position:fixed, out of document flow) on mobile/
+// tablet, so the negative margin above — which relies on the navbar being
+// in-flow to pull the hero up underneath it — no longer applies. Push the
+// hero back down by the fixed bar's height (60px) instead, so its content
+// isn't hidden behind it.
+@include touch {
+  .hero-area-blog {
+    margin-top: 0 !important;
+    padding-top: calc(60px + 40px) !important;
+  }
+}
+
 /*=================================================================================================
                                     Responsive code end
 =================================================================================================*/
