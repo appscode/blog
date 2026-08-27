@@ -1,3 +1,24 @@
+// Mirrors hugo-appscode's components/_footer.scss for cross-site consistency.
+// .dark-bg / .decorative-el(-large) are ported in from hugo-appscode's
+// base/_global.scss + pages/_homepage.scss at the bottom of this file,
+// since blog doesn't import those (footer is their only consumer here).
+
+.footer-area {
+  position: relative;
+  z-index: 1;
+
+  &:after {
+    position: absolute;
+    content: "";
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    @extend .decorative-el-large;
+  }
+}
+
 .single-footer-widget {
   .footer-logo {
     max-width: 160px;
@@ -6,17 +27,17 @@
 
 .subscription-form {
   margin-top: 10px;
+
   label {
     font-size: 18px;
     font-weight: 600;
-    color: $color-heading;
     display: block;
     font-family: $ac-font-heading;
   }
 
   input {
-    background: #f9f9f9;
-    border: 1px solid #e3e3e3;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: none;
     font-size: 16px;
     border-radius: 4px;
@@ -24,11 +45,20 @@
     height: 40px;
     position: relative;
     z-index: 1;
+    color: $ac-white;
+
+    &::placeholder {
+      color: #adb2b0;
+    }
+
+    &:focus {
+      border: 1px solid $ac-primary;
+    }
   }
 
   .button {
-    font-family: $color-text;
-    color: $primary;
+    font-family: $ac-font-paragraph;
+    color: $ac-primary;
     font-size: 16px;
     height: 40px;
     box-shadow: none;
@@ -42,8 +72,8 @@
     background: transparent;
 
     &:hover {
-      background-color: $primary;
-      color: $white-100 !important;
+      background-color: $ac-primary;
+      color: $ac-white !important;
       outline: none;
       box-shadow: none;
     }
@@ -55,13 +85,13 @@
 
   h4 {
     font-size: 18px;
-    color: $color-heading;
+    color: $ac-color-heading;
   }
 }
 
 .all-contact-info li a,
 p.spam-message {
-  color: $color-text;
+  color: #d4d6d5;
   display: inline-block;
   font-size: 14px;
   font-family: $ac-font-paragraph;
@@ -79,17 +109,17 @@ p.spam-message {
 }
 
 .footer-menu {
-  h4 {
+  label {
     font-size: 18px;
-    color: $color-heading;
     margin-bottom: 4px;
+    font-weight: 500;
   }
 }
 
 .footer-link {
   li {
     a {
-      color: $color-text;
+      color: #d4d6d5;
       font-size: 14px;
       display: block;
       padding: 8px 0;
@@ -100,7 +130,7 @@ p.spam-message {
       }
 
       &:hover {
-        color: $primary;
+        color: $ac-primary;
         padding-left: 5px;
       }
     }
@@ -109,29 +139,28 @@ p.spam-message {
 
 .footer-top {
   padding: 50px 0 30px 0;
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .footer-bottom {
   padding: 30px 0;
-  background-color: #fafafd;
 
   p {
     font-size: 14px;
-    color: $color-text;
+    color: #d4d6d5;
     margin-bottom: 0;
   }
 }
 
 .footer-inline-link {
   a {
-    color: $color-text;
+    color: #d4d6d5;
     font-size: 14px;
     margin-right: 30px;
     transition: 0.3s ease-in-out;
 
     &:hover {
-      color: $primary;
+      color: $ac-primary;
     }
 
     &:last-child {
@@ -158,8 +187,8 @@ p.spam-message {
       transition: 0.3s ease-in-out;
 
       &:hover {
-        background: $primary;
-        color: $white-100;
+        background: $ac-primary;
+        color: $ac-white;
         border: 1px solid transparent;
       }
     }
@@ -173,77 +202,105 @@ p.spam-message {
 /****************************************
 Responsive Classes
 *****************************************/
-// Extra small devices (portrait phones, less than 576px)
-@media (max-width: 768px) {
+@include mobile {
   .footer-area {
     .footer-top {
-      // padding-top: 0;
       .is-1-mobile {
         .column {
           padding: 0.25rem;
         }
       }
     }
+
     .single-footer-widget {
       height: 100%;
-      text-align: center;
+
       .footer-logo {
         margin: 0 auto;
       }
+
       .subscription-form {
         text-align: center;
       }
+
       .field.has-addons {
         justify-content: center;
       }
     }
+
     .footer-menu {
       background-color: #4d4dcb0d;
       height: 100%;
       padding: 20px 5px;
       border-radius: 4px;
-      &.is-info {
-        background-color: #0aafff2e;
-      }
-      &.is-danger {
-        background-color: #ea3d2f24;
-      }
-      &.is-warning {
-        background: #f7ad2a36;
-      }
-      &.is-success {
-        background-color: #27b06430;
-      }
-      h4 {
-        margin-bottom: 0;
-      }
+
+      &.is-info { background-color: #0aafff2e; }
+      &.is-danger { background-color: #ea3d2f24; }
+      &.is-warning { background: #f7ad2a36; }
+      &.is-success { background-color: #27b06430; }
+
+      h4 { margin-bottom: 0; }
     }
+
     .contact-information {
       text-align: center;
     }
   }
+
   .footer-inline-link {
     padding: 10px 0;
   }
+
   .footer-bottom {
     padding: 20px 0;
   }
 }
 
-// Small devices (landscape phones, 576px and up)
-// @media (min-width: 576px) and (max-width: 768px) {
-  
-// }
 
-// Medium devices (tablets, 769px and up)
-@media (min-width: 769px) and (max-width: 1023.98px) {
-  
+// =============================================================================
+// Decorative background utilities (ported from hugo-appscode's
+// base/_global.scss + pages/_homepage.scss — footer is their only consumer
+// in blog, so they live here instead of a separate shared file).
+// =============================================================================
+
+.decorative-el {
+  position: relative;
+  z-index: 1;
+
+  &::after {
+    position: absolute;
+    content: "";
+    left: -54px;
+    top: 0px;
+    width: 250px;
+    height: 250px;
+    z-index: -1;
+    background-image: url("../images/shape/decorative-el.svg");
+    background-repeat: no-repeat;
+
+    @include mobile {
+      width: 120px;
+      height: 120px;
+    }
+  }
 }
 
-// Large devices (desktops, 1024px and up)
-@media (min-width: 1024px) and (max-width: 1215px) {
+.decorative-el-large {
+  background-image: url("../images/shape/decorative-el-large-2.png");
+  background-size: cover;
+  background-position: center;
 }
 
-// Extra large devices (large desktops, 1216px and up)
-@media (min-width: 1216px) {
+// Dark background utility: sits after .contact-information/.footer-menu
+// above so its text-color overrides win the (equal-specificity) cascade.
+.dark-bg {
+  background-color: #000a05;
+
+  h1, h2, h3, h4, h5, h6, strong, label {
+    color: #e6e7e6;
+  }
+
+  p {
+    color: #d4d6d5;
+  }
 }

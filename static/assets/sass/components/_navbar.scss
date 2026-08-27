@@ -16,6 +16,7 @@ $ac-white-light: #e7e7e7;
 $ac-white-lighter: #f1f1f1;
 $ac-color-heading: #171b1c;
 $ac-color-text: #515d63;
+$ac-color-link: #4a4a4a;
 $ac-gray-dark: #5f5f5f;
 $color-text-muted: #6a7282;
 $color-surface-subtle: #fafafa;
@@ -84,6 +85,7 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
     }
 
     .embeded-console-button {
+      box-shadow: none;
       &.embed-on-hero { display: none !important; }
       &.embed-on-white { display: block !important; }
     }

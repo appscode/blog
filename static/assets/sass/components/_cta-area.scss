@@ -1,112 +1,224 @@
-.cta-area {
-  margin-top: 30px;
-  .cta-area-inner {
-    padding: 20px 50px;
-    background-image: url(../images/bg-image/cta-bg-transparent.png);
-    background-size: cover;
-    background-position: center;
-    border-radius: 8px;
-    min-height: 170px;
+.section-padding {
+  padding: 60px 0;
+
+  @include touch {
+    padding: 32px 0;
+  }
+}
+
+.tag.section-tag {
+  display: inline-flex;
+  height: 42px;
+  padding: 9px 18px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 165, 80, 0.2);
+  background: rgba(0, 165, 80, 0.1);
+  color: $ac-primary;
+  font-size: $ac-size-6;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 8px;
+
+  iconify-icon {
+    margin-right: 6px;
+  }
+}
+
+.headline-accent {
+  color: $ac-primary;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 10px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 12' preserveAspectRatio='none'%3E%3Cpath d='M0,8 Q50,2 100,7 Q150,12 200,6 Q250,0 300,6 Q350,12 400,5' stroke='%2300A550' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+}
+
+.final-cta-section {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 60% 60% at 0% 0%, rgba(0, 165, 80, 0.1) 0%, transparent 100%),
+    radial-gradient(ellipse 50% 50% at 100% 100%, rgba(0, 165, 80, 0.07) 0%, transparent 100%),
+    #fff;
+
+  .cta-shape-rect-top {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 130px;
+    height: 90px;
+    border-radius: 18px;
+    border: 2px solid rgba(0, 165, 80, 0.18);
+    background: transparent;
+    pointer-events: none;
+
+    @include mobile {
+      display: none;
+    }
+  }
+
+  .cta-shape-circle-bottom {
+    position: absolute;
+    bottom: -48px;
+    left: -48px;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 165, 80, 0.14);
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .cta-bg-glow-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 100%;
+    background: radial-gradient(ellipse at top left, rgba(0, 165, 80, 0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .final-cta-container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-title {
+    margin-bottom: 0;
+
+    h2 {
+      color: $color-heading;
+      text-align: center;
+      font-size: $ac-size-2;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -1.2px;
+      margin-bottom: 20px;
+
+      @include touch {
+        font-size: 32px;
+        letter-spacing: -0.5px;
+      }
+    }
+
+    .subtitle {
+      max-width: 580px;
+      margin: 16px auto 0;
+      color: $color-text;
+      text-align: center;
+      font-size: $ac-size-5;
+      font-weight: 400;
+      line-height: 28px;
+
+      @include touch {
+        font-size: $ac-size-6;
+        line-height: 24px;
+      }
+    }
+  }
+
+  .cta-benefits {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 56px;
+    margin-top: 52px;
+    margin-bottom: 52px;
+
+    @include touch {
+      gap: 32px;
+    }
+
+    @include mobile {
+      gap: 16px;
+    }
+
+    .benefit-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+
+      .feature-icon-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        border: 1px solid rgba(0, 165, 80, 0.25);
+        background: rgba(0, 165, 80, 0.08);
+        color: $ac-primary;
+        box-shadow: 0 2px 12px rgba(0, 165, 80, 0.08);
+      }
+
+      .subtext {
+        color: $color-heading;
+        text-align: center;
+        font-size: $font-size-normal;
+        font-weight: 700;
+        line-height: 20px;
+      }
+    }
+  }
+
+  .buttons.is-centered {
+    gap: 12px;
+    margin-bottom: 32px !important;
+
+    .ac-button {
+      border-radius: 8px !important;
+      height: 48px !important;
+      padding-left: 32px !important;
+      padding-right: 32px !important;
+      text-transform: uppercase !important;
+    }
+
+    .ac-button.is-white {
+      border: 1px solid #e2e8f0 !important;
+    }
+
+    @include touch {
+      flex-direction: column;
+
+      .ac-button {
+        width: 100%;
+        margin-right: 0 !important;
+      }
+    }
+  }
+
+  .cta-social-proof {
     display: flex;
     align-items: center;
-    background-color: $primary;
-
-    h3 {
-      color: $white-100;
-      margin-bottom: 0.75rem;
-      font-size: 28px;
-    }
-
-    p {
-      color: #f3f3f3;
-    }
+    justify-content: center;
+    gap: 8px;
   }
 }
 
-/****************************************
-Responsive Classes
-*****************************************/
-// Extra small devices (portrait phones, less than 576px)
-@media (max-width: 768px) {
-  .cta-area {
-    .cta-area-inner {
-      height: auto !important;
-      padding: 30px 15px;
-
-      h3 {
-        font-size: 22px;
-        text-align: center;
-      }
-
-      p {
-        text-align: center;
-      }
-      .buttons {
-        justify-content: center !important;
-        .button {
-          &.ac-button {
-            letter-spacing: 0;
-            padding: 0.5rem 1rem;
-          }
-        }
-      }
-    }
-  }
-}
-
-// Small devices (landscape phones, 576px and up)
-@media (min-width: 576px) and (max-width: 768px) {
-}
-
-// Medium devices (tablets, 769px and up)
-@media (min-width: 769px) and (max-width: 1023px) {
-  .cta-area {
-
-    .cta-area-inner {
-      padding: 20px;
-      height: 210px;
-      h3 {
-        font-size: 28px;
-      }
-    }
-  }
-}
-
-// Large devices (desktops, 1024px and up)
-@media (min-width: 1024px) and (max-width: 1215px) {
-  .cta-area {
-    .cta-area-inner {
-      padding: 20px;
-      h3 {
-        font-size: 28px;
-      }
-    }
-  }
-}
-
-@media (min-width: 1216px) and (max-width: 1407px) {
-  .cta-area {
-    .cta-area-inner {
-      height: 200px;
-      padding: 30px;
-      h3 {
-        font-size: 28px;
-      }
-    }
-  }
-}
-
-@media (min-width: 1408px) and (max-width: 1600px) {
-  .cta-area {
-    .cta-area-inner {
-      height: 200px;
-      padding: 30px;
-      h3 {
-        font-size: 28px;
-      }
-    }
-  }
-}
-
-@media (min-width: 1408px) {
+.dot-pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: $ac-primary;
+  flex-shrink: 0;
 }
