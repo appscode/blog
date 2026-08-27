@@ -124,10 +124,6 @@
           const navbarArea = document.querySelector(".navbar-area");
           let heightReceived = false;
 
-          // Anything sticking below the fixed header (search-filter-area,
-          // its sidebar, ...) reads this custom property instead of a
-          // hardcoded offset, since the notification bar's height varies.
-          // Exposed on window so main.js can also call it (e.g. on resize).
           window.updateFixedHeaderHeight = function () {
             if (!navbarArea) return;
             document.documentElement.style.setProperty(
@@ -136,12 +132,7 @@
             );
           };
 
-          // Primary path: in production the blog is served from
-          // appscode.com/blog/, the same origin as the iframe's
-          // appscode.com/notification-top/, so its DOM can be read
-          // directly. This measures the actual #notificationWrapper box
-          // exactly - no postMessage round-trip, no guessed fallback
-          // height, so no extra/short space versus the real content.
+   
           function syncFromWrapper() {
             let wrapper;
             try {
@@ -170,12 +161,7 @@
             window.updateFixedHeaderHeight();
           }, false);
 
-          // Last-resort default, used only when neither the direct DOM
-          // read nor postMessage got through (e.g. cross-origin dev,
-          // or the notification page hasn't shipped its height fix yet).
-          // Kept responsive per breakpoint - rather than one fixed
-          // number - so it still matches "1 line on desktop, wraps on
-          // mobile" instead of over/under-allocating space either way.
+        
           const desktopQuery = window.matchMedia("(min-width: 1025px)");
           function fallbackHeight() {
             return desktopQuery.matches ? 28 : 36;
@@ -191,10 +177,7 @@
             setTimeout(applyFallbackHeight, 800);
           });
 
-          // The banner's text can wrap onto more/fewer lines as the
-          // viewport is resized, so re-measure (or re-apply the
-          // breakpoint-appropriate fallback) instead of keeping the
-          // height captured at load.
+       
           window.addEventListener("resize", function () {
             if (!syncFromWrapper()) {
               applyFallbackHeight();
@@ -327,112 +310,6 @@
                         {{ end }}
                       </div>
                       <!-- product end -->
-
-                      <!-- product description start  -->
-                      {{ range $item := $.Site.Data.config.productMenu.c0 }}
-                      {{ $p := (index $.Site.Data.products $item) }}
-                      <!-- single product description start  -->
-                      <div class="product-description">
-                        <div class="brand">
-                          <img src="{{$.Site.Params.basePath}}{{ strings.TrimPrefix "/" $p.logo.src }}" alt="{{ $p.logo.alt }}" loading="lazy" height="30" width="auto">
-                        </div>
-
-                        <p>{{ $p.summary | safeHTML }}</p>
-
-                        <ul class="features">
-                          {{ range $index, $item := $p.features }}
-                          {{ if lt $index 8 }}
-                          <li>
-                            <span class="icon">
-                              <img src="{{$.Site.Params.basePath}}assets/images/products/appscode/icons/global/check-box.webp" alt="check-box" loading="lazy">
-                            </span>
-                            <span>{{ $item.title }}</span>
-                          </li>
-                          {{ end }}
-                          {{ end }}
-                        </ul>
-                      </div>
-                      <!-- single product description end  -->
-                      {{ end }}
-
-                      {{ range $item := $.Site.Data.config.productMenu.c1 }}
-                      {{ $p := (index $.Site.Data.products $item) }}
-                      <!-- single product description start  -->
-                      <div class="product-description">
-                        <div class="brand">
-                          <img src="{{$.Site.Params.basePath}}{{ strings.TrimPrefix "/" $p.logo.src }}" alt="{{ $p.logo.alt }}" loading="lazy">
-                        </div>
-
-                        <p>{{ $p.summary | safeHTML }}</p>
-
-                        <ul class="features">
-                          {{ range $index, $item := $p.features }}
-                          {{ if lt $index 8 }}
-                          <li>
-                            <span class="icon">
-                              <img src="{{$.Site.Params.basePath}}assets/images/products/appscode/icons/global/check-box.webp" alt="check-box" loading="lazy">
-                            </span>
-                            <span>{{ $item.title }}</span>
-                          </li>
-                          {{ end }}
-                          {{ end }}
-                        </ul>
-                      </div>
-                      <!-- single product description end  -->
-                      {{ end }}
-
-                      {{ range $item := $.Site.Data.config.productMenu.c2 }}
-                      {{ $p := (index $.Site.Data.products $item) }}
-                      <!-- single product description start  -->
-                      <div class="product-description">
-                        <div class="brand">
-                          <img src="{{$.Site.Params.basePath}}{{ strings.TrimPrefix "/" $p.logo.src }}" alt="{{ $p.logo.alt }}" loading="lazy">
-                        </div>
-
-                        <p>{{ $p.summary | safeHTML }}</p>
-
-                        <ul class="features">
-                          {{ range $index, $item := $p.features }}
-                          {{ if lt $index 8 }}
-                          <li>
-                            <span class="icon">
-                              <img src="{{$.Site.Params.basePath}}assets/images/products/appscode/icons/global/check-box.webp" alt="check-box" loading="lazy">
-                            </span>
-                            <span>{{ $item.title }}</span>
-                          </li>
-                          {{ end }}
-                          {{ end }}
-                        </ul>
-                      </div>
-                      <!-- single product description end  -->
-                      {{ end }}
-
-                      {{ range $item := $.Site.Data.config.productMenu.c3 }}
-                      {{ $p := (index $.Site.Data.products $item) }}
-                      <!-- single product description start  -->
-                      <div class="product-description">
-                        <div class="brand">
-                          <img src="{{$.Site.Params.basePath}}{{ strings.TrimPrefix "/" $p.logo.src }}" alt="{{ $p.logo.alt }}" loading="lazy">
-                        </div>
-
-                        <p>{{ $p.summary | safeHTML }}</p>
-
-                        <ul class="features">
-                          {{ range $index, $item := $p.features }}
-                          {{ if lt $index 8 }}
-                          <li>
-                            <span class="icon">
-                              <img src="{{$.Site.Params.basePath}}assets/images/products/appscode/icons/global/check-box.webp" alt="check-box" loading="lazy">
-                            </span>
-                            <span>{{ $item.title }}</span>
-                          </li>
-                          {{ end }}
-                          {{ end }}
-                        </ul>
-                      </div>
-                      <!-- single product description end  -->
-                      {{ end }}
-                      <!-- product description end -->
                     </div>
                   </div>
                   <script type="text/javascript">
