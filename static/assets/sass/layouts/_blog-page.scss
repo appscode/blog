@@ -135,7 +135,12 @@
     height: 80px;
     margin-right: 16px;
     border: 2px solid #fafbfc;
+    border-radius: 12px;
     overflow: hidden;
+
+    img {
+      border-radius: 12px;
+    }
   }
 
   .information {
@@ -211,6 +216,7 @@ a.inline-button {
   padding: 32px 16px;
   transition: 0.3s ease-in-out;
   border: 1px solid $color-border;
+  border-radius: 12px;
 
   &.list-view {
     height: auto;
@@ -218,6 +224,7 @@ a.inline-button {
     box-shadow: none;
     border: 1px solid transparent;
     border-bottom: 1px dotted $color-border;
+    border-radius: 0;
     padding: 16px 0;
 
     &:hover {
@@ -426,14 +433,14 @@ ul.social-share-button {
 }
 
 .search-filter-area {
-  z-index: 9;
+  z-index: 998;
   background: #fff;
   box-shadow: 0 1px 3px rgba(15, 20, 40, 0.08);
   border-bottom: 1px solid $color-border;
   border-top: 1px solid $color-border;
   height: 64px;
   position: sticky;
-  top: 0;
+  top: 86px;
   overflow: hidden;
 
   .filter-wrapper {
@@ -510,7 +517,7 @@ ul.social-share-button {
         height: 40px;
         border: none;
         background: #e5ebf0;
-        border-radius: 2px;
+        border-radius: 8px;
         font-size: 1rem;
         margin-right: 1rem;
         display: flex;
@@ -546,7 +553,8 @@ ul.social-share-button {
     margin-right: 70px;
     padding-top: 16px;
     position: sticky;
-    top: 64px;
+    // navbar (variable) + search-filter-area (64px)
+    top: 160px;
     overflow-y: auto;
     padding-right: 30px;
     border-right: 1px solid $color-border;
@@ -606,7 +614,7 @@ ul.social-share-button {
 
 .single-blog {
   border: 1px solid $color-border;
-  border-radius: 4px;
+  border-radius: 12px;
   transition: 0.3s ease-in-out;
   min-height: 400px;
   overflow: hidden;
@@ -642,7 +650,7 @@ ul.social-share-button {
   a {
     img {
       object-fit: cover;
-      border-radius: 4px 4px 0 0;
+      border-radius: 12px 12px 0 0;
       transition: 0.3s ease-in-out;
     }
   }
@@ -887,7 +895,7 @@ ul.social-share-button {
   }
 
   .search-filter-area {
-    top: 0;
+    top: 96px;
   }
 
   .blog-items-area {
@@ -966,7 +974,7 @@ ul.social-share-button {
 
   .blog-items-area {
     .left-sidebar {
-      top: 60px;
+      top: 156px;
       margin-right: 0;
     }
   }
@@ -1067,12 +1075,12 @@ ul.social-share-button {
   }
 
   .search-filter-area {
-    top: 0;
+    top: 86px;
   }
 
   .blog-items-area {
     .left-sidebar {
-      top: 62px;
+      top: 158px;
     }
   }
 
@@ -1252,6 +1260,18 @@ ul.social-share-button {
 @media (min-width: 2000px) {
   .hero-area-blog {
     background-image: url(/blog/assets/images/bg-image/hero-bg-2x.jpg);
+  }
+}
+
+// The navbar is fixed (position:fixed, out of document flow) on mobile/
+// tablet, so the negative margin above — which relies on the navbar being
+// in-flow to pull the hero up underneath it — no longer applies. Push the
+// hero back down by the fixed bar's height (60px) instead, so its content
+// isn't hidden behind it.
+@include touch {
+  .hero-area-blog {
+    margin-top: 0 !important;
+    padding-top: calc(60px + 40px) !important;
   }
 }
 

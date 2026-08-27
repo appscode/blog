@@ -1,0 +1,80 @@
+{{ $site := .site }}
+
+<div class="product-menu">
+
+  <a href="{{ $site.Params.blog_url }}" class="single-product">
+    <div class="product-logo">
+      <iconify-icon icon="heroicons:pencil-square" width="18" height="18"></iconify-icon>
+    </div>
+    <div class="product-info">
+      <h2>Blog</h2>
+      <p>Articles, tutorials &amp; insights</p>
+    </div>
+    <div class="navigate-icon">
+      <span class="icon">
+        <iconify-icon icon="heroicons:arrow-up-right" width="1.2rem" height="1.2rem"></iconify-icon>
+      </span>
+    </div>
+  </a>
+
+  <a href="{{ $site.Params.docs_url }}" class="single-product">
+    <div class="product-logo">
+      <iconify-icon icon="heroicons:book-open" width="18" height="18"></iconify-icon>
+    </div>
+    <div class="product-info">
+      <h2>Docs</h2>
+      <p>Guides, references &amp; API docs</p>
+    </div>
+    <div class="navigate-icon">
+      <span class="icon">
+        <iconify-icon icon="heroicons:arrow-up-right" width="1.2rem" height="1.2rem"></iconify-icon>
+      </span>
+    </div>
+  </a>
+
+  <a href="{{ $site.Params.domain_appscode }}/webinar" class="single-product">
+    <div class="product-logo">
+      <iconify-icon icon="heroicons:video-camera" width="18" height="18"></iconify-icon>
+    </div>
+    <div class="product-info">
+      <h2>Webinars</h2>
+      <p>Live &amp; on-demand sessions</p>
+    </div>
+    <div class="navigate-icon">
+      <span class="icon">
+        <iconify-icon icon="heroicons:arrow-up-right" width="1.2rem" height="1.2rem"></iconify-icon>
+      </span>
+    </div>
+  </a>
+
+  <a href="{{ $site.Params.learn_url }}" class="single-product">
+    <div class="product-logo">
+      <iconify-icon icon="heroicons:academic-cap" width="18" height="18"></iconify-icon>
+    </div>
+    <div class="product-info">
+      <h2>Learn</h2>
+      <p>Hands-on learning paths</p>
+    </div>
+    <div class="navigate-icon">
+      <span class="icon">
+        <iconify-icon icon="heroicons:arrow-up-right" width="1.2rem" height="1.2rem"></iconify-icon>
+      </span>
+    </div>
+  </a>
+
+  <a href="{{ $site.Params.youtube_url }}" target="_blank" rel="noopener" class="single-product">
+    <div class="product-logo">
+      <iconify-icon icon="heroicons:play-circle" width="18" height="18"></iconify-icon>
+    </div>
+    <div class="product-info">
+      <h2>Videos</h2>
+      <p>Tutorials, demos &amp; walkthroughs</p>
+    </div>
+    <div class="navigate-icon">
+      <span class="icon">
+        <iconify-icon icon="heroicons:arrow-up-right" width="1.2rem" height="1.2rem"></iconify-icon>
+      </span>
+    </div>
+  </a>
+
+</div>

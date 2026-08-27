@@ -3,45 +3,62 @@ const navItems = document.querySelectorAll(".navbar-appscode .nav-item");
 
 const navbarArea = document.querySelector(".navbar-area");
 
+const isTouchDevice = () => window.matchMedia("(max-width: 1023px)").matches;
+
 navItems.forEach((navItem) => {
   const item = navItem.querySelector(".link");
-  item.addEventListener("click", function (el) {
-    // to remove active class from previously selected navItem
+
+  function openNav() {
     const selectedNav = document.querySelector(".nav-item.is-active");
-    if (selectedNav && selectedNav !== item.parentElement) {
-      selectedNav.classList.toggle("is-active");
+    if (selectedNav && selectedNav !== navItem) {
+      selectedNav.classList.remove("is-active");
     }
+    navItem.classList.add("is-active");
+  }
 
-    // handle selected navItem class
-    const hasActiveClass = navItem.classList.contains("is-active");
-    navItem.classList.toggle("is-active");
+  function closeNav() {
+    navItem.classList.remove("is-active");
+  }
 
-    // handle background dark-shadow of navItem
-    const darkBodyEl = document.querySelector(".modal-backdrop");
+  // Desktop: hover to open/close
+  navItem.addEventListener("mouseenter", function () {
+    if (!isTouchDevice()) openNav();
+  });
+  navItem.addEventListener("mouseleave", function () {
+    if (!isTouchDevice()) closeNav();
+  });
 
-    function handleDarkBodyClickEvent(el) {
-      el.target.classList.remove("is-show");
-      navbarArea.classList.remove("has-background-white");
-      const selectedNavItem = document.querySelector(".nav-item.is-active");
-      selectedNavItem ? selectedNavItem.classList.toggle("is-active") : null;
-    }
-
-    if (hasActiveClass && darkBodyEl.classList.contains("is-show")) {
-      darkBodyEl.classList.toggle("is-show");
-      navbarArea.classList.toggle("has-background-white");
-
-      darkBodyEl.removeEventListener("click", handleDarkBodyClickEvent);
-    } else if (
-      !hasActiveClass &&
-      !darkBodyEl.classList.contains("is-show") &&
-      !!navItem.querySelector(".mega-menu-wrapper")
-    ) {
-      darkBodyEl.classList.toggle("is-show");
-      navbarArea.classList.add("has-background-white");
-      darkBodyEl.addEventListener("click", handleDarkBodyClickEvent);
+  // Mobile/touch: keep click behaviour
+  item.addEventListener("click", function () {
+    if (!isTouchDevice()) return;
+    if (navItem.classList.contains("is-active")) {
+      closeNav();
+    } else {
+      openNav();
     }
   });
 });
+
+// Sticky header: once scrolled off the hero, the bar pins to top:0
+// (position:fixed, toggled below) over plain page content, so it needs the
+// solid white / dark-text treatment instead of the white-on-hero one used
+// at rest.
+if (navbarArea) {
+  const STICKY_THRESHOLD = 40;
+
+  const updateStickyState = () => {
+    navbarArea.classList.toggle("is-sticky-solid", window.scrollY > STICKY_THRESHOLD);
+  };
+
+  updateStickyState();
+  window.addEventListener("scroll", updateStickyState, { passive: true });
+}
+
+// Keep --fixed-header-height (set in baseof.html, used by anything that
+// sticks below the fixed header) in sync with the navbar's real rendered
+// height, since it changes with viewport width (e.g. the burger row).
+window.updateFixedHeaderHeight?.();
+window.addEventListener("resize", () => window.updateFixedHeaderHeight?.(), { passive: true });
 
 // mega menu active class
 var navbarItems = document.querySelectorAll(".navbar-item");
@@ -59,45 +76,6 @@ navbarItems.forEach((navbarItem) => {
     });
   });
 });
-
-// Responsive menu back button
-const backButtonAll = document.querySelectorAll(".back-button");
-// create click event for all back button
-Array.from(backButtonAll).forEach((el) => {
-  el.addEventListener("click", () => {
-    // closeset nav item ancestor
-    const activeNavElement = el.closest(".nav-item.is-active");
-    if (activeNavElement) activeNavElement.classList.remove("is-active");
-  });
-});
-
-// ====================== MutationObserver -> for blog site navbar white-bg changes ================
-const embedButton = document.querySelector("#embedButton");
-
-// Observer to monitor changes to the class attribute of the navbar
-const classChangeObserver = new MutationObserver((mutationsList) => {
-  mutationsList.forEach((mutation) => {
-    if (mutation.attributeName === "class") {
-      updateNavbarContent();
-    }
-  });
-});
-
-// Configuration for the observer
-const observerConfig = { attributes: true };
-
-// Start observing changes to the class attribute of the navbar
-classChangeObserver.observe(navbarArea, observerConfig);
-
-// Function to update navbar content based on class
-function updateNavbarContent() {
-  if (navbarArea.classList.contains("has-background-white")) {
-    embedButton.src = "https://appscode.com/embed/?color=00994a&text=ffffff";
-  } else {
-    embedButton.src = "https://appscode.com/embed/?color=ffffff&text=00994a";
-  }
-}
-// ====================== MutationObserver -> for blog site navbar white-bg changes ================
 
 // navbar area JS v.2022 end
 
@@ -195,12 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // navbar for mobile device
   let navbar = document.querySelector(".navbar-burger");
   navbar?.addEventListener("click", function () {
-    navbarArea.classList.add("has-background-white");
-    const hasActiveClass = navbar.classList.contains("is-active");
-    let dropdown = document.querySelector(".navbar-right");
     navbar.classList.toggle("is-active");
-    dropdown.style.opacity = 1 - dropdown.style.opacity;
-    dropdown.style.visibility = hasActiveClass ? "hidden" : "visible";
   });
   // scroll to top
   var basicScrollTop = function () {

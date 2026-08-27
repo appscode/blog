@@ -63,3 +63,26 @@
   left: 0;
   top: 0;
 }
+
+// Breakpoints — mirrors bulma's defaults (tablet:769, desktop:1024, widescreen:1216, fullhd:1408)
+// so components ported from hugo-appscode (e.g. the navbar) use identical responsive behavior,
+// without pulling the full bulma sass build into this site.
+@mixin mobile {
+  @media screen and (max-width: 768px) { @content; }
+}
+
+@mixin touch {
+  @media screen and (max-width: 1023px) { @content; }
+}
+
+@mixin desktop-only {
+  @media screen and (min-width: 1024px) and (max-width: 1215px) { @content; }
+}
+
+@mixin widescreen-only {
+  @media screen and (min-width: 1216px) and (max-width: 1407px) { @content; }
+}
+
+@mixin fullhd {
+  @media screen and (min-width: 1408px) { @content; }
+}
