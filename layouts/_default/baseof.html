@@ -68,15 +68,15 @@
   <meta property="og:site_name" content="{{ $p.fullname }}">
   <meta property="og:type" content="article">
   <!-- animate css  -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" async />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <!-- font-awesome css  -->
-  <link rel="stylesheet" href="{{.Site.Params.basePath}}assets/css/font-awesome.min.css" defer/>
+  <link rel="stylesheet" href="{{.Site.Params.basePath}}assets/css/font-awesome.min.css" />
    <!-- google fonts icon  -->
    <link
    href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
    rel="stylesheet">
   <!-- AOS css  -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" async>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <!-- bulma css  -->
   <link rel="stylesheet" href="{{.Site.Params.basePath}}assets/css/bulma.min.css" />
   <!-- Custom CSS -->
@@ -132,7 +132,12 @@
             );
           };
 
-   
+          // Primary path: in production the blog is served from
+          // appscode.com/blog/, the same origin as the iframe's
+          // appscode.com/notification-top/, so its DOM can be read
+          // directly. This measures the actual #notificationWrapper box
+          // exactly - no postMessage round-trip, no guessed fallback
+          // height, so no extra/short space versus the real content.
           function syncFromWrapper() {
             let wrapper;
             try {
@@ -161,7 +166,12 @@
             window.updateFixedHeaderHeight();
           }, false);
 
-        
+          // Last-resort default, used only when neither the direct DOM
+          // read nor postMessage got through (e.g. cross-origin dev,
+          // or the notification page hasn't shipped its height fix yet).
+          // Kept responsive per breakpoint - rather than one fixed
+          // number - so it still matches "1 line on desktop, wraps on
+          // mobile" instead of over/under-allocating space either way.
           const desktopQuery = window.matchMedia("(min-width: 1025px)");
           function fallbackHeight() {
             return desktopQuery.matches ? 28 : 36;
@@ -177,7 +187,10 @@
             setTimeout(applyFallbackHeight, 800);
           });
 
-       
+          // The banner's text can wrap onto more/fewer lines as the
+          // viewport is resized, so re-measure (or re-apply the
+          // breakpoint-appropriate fallback) instead of keeping the
+          // height captured at load.
           window.addEventListener("resize", function () {
             if (!syncFromWrapper()) {
               applyFallbackHeight();
@@ -221,7 +234,8 @@
                     <div class="mega-menu-inner container">
                       <!-- product start  -->
                       <div class="product-menu">
-                        {{ range $item := $.Site.Data.config.productMenu.c0 }}
+                        {{ range $col := slice "c0" "c1" "c2" "c3" }}
+                        {{ range $item := index $.Site.Data.config.productMenu $col }}
                         {{ $p := (index $.Site.Data.products $item) }}
                         <!-- single product start  -->
                         <a class="single-product"
@@ -245,93 +259,11 @@
                         </a>
                         <!-- single product end -->
                         {{ end }}
-
-                        {{ range $item := $.Site.Data.config.productMenu.c1 }}
-                        {{ $p := (index $.Site.Data.products $item) }}
-                        <!-- single product start  -->
-                        <a class="single-product"
-                          href="{{ index $.Site.Params $p.website.domainKey}}{{ $p.website.path }}">
-                          <div class="product-logo">
-                            <img src="{{$.Site.Params.basePath}}{{ strings.TrimPrefix "/" $p.icon.src }}" alt="{{ $p.icon.alt }}" loading="lazy">
-                          </div>
-                          <div class="product-info">
-                            <h2>{{ $p.name }}</h2>
-                            <p>{{ $p.tagline | plainify }}</p>
-                          </div>
-                          <div class="navigate-icon">
-                            <span class="icon">
-                              <iconify-icon icon="heroicons:arrow-up-right" width="1.2rem" height="1.2rem"></iconify-icon>
-                            </span>
-                          </div>
-                        </a>
-                        <!-- single product end -->
-                        {{ end }}
-
-                        {{ range $item := $.Site.Data.config.productMenu.c2 }}
-                        {{ $p := (index $.Site.Data.products $item) }}
-                        <!-- single product start  -->
-                        <a class="single-product"
-                          href="{{ index $.Site.Params $p.website.domainKey}}{{ $p.website.path }}">
-                          <div class="product-logo">
-                            <img src="{{$.Site.Params.basePath}}{{ strings.TrimPrefix "/" $p.icon.src }}" alt="{{ $p.icon.alt }}" loading="lazy">
-                          </div>
-                          <div class="product-info">
-                            <h2>{{ $p.name }}</h2>
-                            <p>{{ $p.tagline | plainify }}</p>
-                          </div>
-                          <div class="navigate-icon">
-                            <span class="icon">
-                              <iconify-icon icon="heroicons:arrow-up-right" width="1.2rem" height="1.2rem"></iconify-icon>
-                            </span>
-                          </div>
-                        </a>
-                        <!-- single product end -->
-                        {{ end }}
-
-                        {{ range $item := $.Site.Data.config.productMenu.c3 }}
-                        {{ $p := (index $.Site.Data.products $item) }}
-                        <!-- single product start  -->
-                        <a class="single-product"
-                          href="{{ index $.Site.Params $p.website.domainKey}}{{ $p.website.path }}">
-                          <div class="product-logo">
-                            <img src="{{$.Site.Params.basePath}}{{ strings.TrimPrefix "/" $p.icon.src }}" alt="{{ $p.icon.alt }}" loading="lazy">
-                          </div>
-                          <div class="product-info">
-                            <h2>{{ $p.name }}</h2>
-                            <p>{{ $p.tagline | plainify }}</p>
-                          </div>
-                          <div class="navigate-icon">
-                            <span class="icon">
-                              <iconify-icon icon="heroicons:arrow-up-right" width="1.2rem" height="1.2rem"></iconify-icon>
-                            </span>
-                          </div>
-                        </a>
-                        <!-- single product end -->
                         {{ end }}
                       </div>
                       <!-- product end -->
                     </div>
                   </div>
-                  <script type="text/javascript">
-                    const productDescriptions = document.querySelectorAll(".product-description");
-                    const products = document.querySelectorAll(".single-product");
-
-                    productDescriptions[0].classList.add("is-block");
-                    products[0].classList.add('is-active');
-
-                    products.forEach((product, index) => {
-                      product.addEventListener("mouseover", function () {
-                        const currentActiveProduct = document.querySelector(".product-description.is-block");
-                        const currentActiveItem = document.querySelector(".single-product.is-active");
-
-                        currentActiveProduct.classList.remove("is-block");
-                        currentActiveItem.classList.remove('is-active');
-
-                        productDescriptions[index].classList.add("is-block");
-                        products[index].classList.add("is-active");
-                      });
-                    });
-                  </script>
                 </li>
 
                 <!-- services start -->
@@ -475,7 +407,7 @@
     </div>
     <!-- new navbar area end -->
     {{ end }}
-    <!-- navabar product end  -->
+    <!-- navbar product end  -->
   </header>
   {{ end }}
   <!-- header-area end -->
@@ -784,7 +716,6 @@
   <script src="{{.Site.Params.basePath}}assets/js/search.js"></script>
   <!-- Main JS -->
   <script src="{{.Site.Params.basePath}}assets/js/main.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 
   <!--Start of Tawk.to Script-->
