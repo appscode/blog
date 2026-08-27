@@ -117,7 +117,7 @@
     <!-- new navbar area start  -->
     <div class="navbar-area">
        <!-- iframe for top notification; IMPORTANT:- "display: flex||none;" | display: none; overflow: hidden; height: 0px; -->
-         <iframe src="https://appscode.com/notification-top/" id="notification" frameborder="0" scrolling="no" style="display: flex; width: 100%; height: 0px; overflow: hidden;" title="notification"></iframe>
+         <iframe src="https://appscode.com/notification-top/" id="notification" frameborder="0" scrolling="no" style="display: flex; width: 100%; height: 0px; overflow: hidden; transition: height 0.2s ease;" title="notification"></iframe>
       <script>
         (function () {
           const notification = document.querySelector("#notification");
@@ -136,30 +136,69 @@
             );
           };
 
-          window.addEventListener("message", receiveMessageFromIframe, false);
+          // Primary path: in production the blog is served from
+          // appscode.com/blog/, the same origin as the iframe's
+          // appscode.com/notification-top/, so its DOM can be read
+          // directly. This measures the actual #notificationWrapper box
+          // exactly - no postMessage round-trip, no guessed fallback
+          // height, so no extra/short space versus the real content.
+          function syncFromWrapper() {
+            let wrapper;
+            try {
+              const doc = notification.contentDocument || notification.contentWindow.document;
+              wrapper = doc.getElementById("notificationWrapper");
+            } catch (e) {
+              // Cross-origin (e.g. local dev pointing at the live host) -
+              // can't reach into the iframe's document.
+              return false;
+            }
+            if (!wrapper) return false;
+            heightReceived = true;
+            notification.style.height = `${wrapper.scrollHeight}px`;
+            window.updateFixedHeaderHeight();
+            return true;
+          }
 
-          function receiveMessageFromIframe(event) {
-            // Check the origin of the message for security purposes
+          // Fallback path for cross-origin cases: listen for the iframe's
+          // own postMessage(height) call.
+          window.addEventListener("message", function (event) {
             if (event.origin !== "https://appscode.com") {
               return;
             }
             heightReceived = true;
             notification.style.height = `${event.data}px`;
             window.updateFixedHeaderHeight();
+          }, false);
+
+          // Last-resort default, used only when neither the direct DOM
+          // read nor postMessage got through (e.g. cross-origin dev,
+          // or the notification page hasn't shipped its height fix yet).
+          // Kept responsive per breakpoint - rather than one fixed
+          // number - so it still matches "1 line on desktop, wraps on
+          // mobile" instead of over/under-allocating space either way.
+          const desktopQuery = window.matchMedia("(min-width: 1025px)");
+          function fallbackHeight() {
+            return desktopQuery.matches ? 28 : 36;
+          }
+          function applyFallbackHeight() {
+            if (heightReceived) return;
+            notification.style.height = `${fallbackHeight()}px`;
+            window.updateFixedHeaderHeight();
           }
 
-          // Fallback: the notification page's own postMessage call is
-          // currently missing its required targetOrigin argument, so it
-          // throws before ever reaching us. If nothing arrives shortly
-          // after the iframe loads, reveal it at a sane default height
-          // instead of staying collapsed forever.
           notification.addEventListener("load", function () {
-            setTimeout(function () {
-              if (!heightReceived) {
-                notification.style.height = "36px";
-                window.updateFixedHeaderHeight();
-              }
-            }, 800);
+            if (syncFromWrapper()) return;
+            setTimeout(applyFallbackHeight, 800);
+          });
+
+          // The banner's text can wrap onto more/fewer lines as the
+          // viewport is resized, so re-measure (or re-apply the
+          // breakpoint-appropriate fallback) instead of keeping the
+          // height captured at load.
+          window.addEventListener("resize", function () {
+            if (!syncFromWrapper()) {
+              applyFallbackHeight();
+            }
           });
         })();
       </script>

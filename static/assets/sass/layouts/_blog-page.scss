@@ -135,7 +135,12 @@
     height: 80px;
     margin-right: 16px;
     border: 2px solid #fafbfc;
+    border-radius: 12px;
     overflow: hidden;
+
+    img {
+      border-radius: 12px;
+    }
   }
 
   .information {
@@ -211,6 +216,7 @@ a.inline-button {
   padding: 32px 16px;
   transition: 0.3s ease-in-out;
   border: 1px solid $color-border;
+  border-radius: 12px;
 
   &.list-view {
     height: auto;
@@ -218,6 +224,7 @@ a.inline-button {
     box-shadow: none;
     border: 1px solid transparent;
     border-bottom: 1px dotted $color-border;
+    border-radius: 0;
     padding: 16px 0;
 
     &:hover {
@@ -426,9 +433,6 @@ ul.social-share-button {
 }
 
 .search-filter-area {
-  // 998, just under the navbar's 999. top follows the navbar's *actual*
-  // rendered height (nav + notification bar, which varies), not a fixed
-  // 60px, so this sticks right below it instead of being covered by it.
   z-index: 998;
   background: #fff;
   box-shadow: 0 1px 3px rgba(15, 20, 40, 0.08);
@@ -436,7 +440,7 @@ ul.social-share-button {
   border-top: 1px solid $color-border;
   height: 64px;
   position: sticky;
-  top: 96px;
+  top: 86px;
   overflow: hidden;
 
   .filter-wrapper {
@@ -513,7 +517,7 @@ ul.social-share-button {
         height: 40px;
         border: none;
         background: #e5ebf0;
-        border-radius: 2px;
+        border-radius: 8px;
         font-size: 1rem;
         margin-right: 1rem;
         display: flex;
@@ -610,7 +614,7 @@ ul.social-share-button {
 
 .single-blog {
   border: 1px solid $color-border;
-  border-radius: 4px;
+  border-radius: 12px;
   transition: 0.3s ease-in-out;
   min-height: 400px;
   overflow: hidden;
@@ -646,7 +650,7 @@ ul.social-share-button {
   a {
     img {
       object-fit: cover;
-      border-radius: 4px 4px 0 0;
+      border-radius: 12px 12px 0 0;
       transition: 0.3s ease-in-out;
     }
   }

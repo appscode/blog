@@ -22,20 +22,20 @@ $color-text-muted: #6a7282;
 $color-surface-subtle: #fafafa;
 
 // Menu item interaction
-$menu-hover-bg:       #f0faf4;  // row hover background
-$menu-icon-bg:        #edf7f1;  // icon container resting fill
-$menu-icon-bg-active: #c8ecd6;  // icon container active/selected fill
-$menu-sidebar-bg:     #f5faf7;  // services left-panel background
+$menu-hover-bg: #f0faf4; // row hover background
+$menu-icon-bg: #edf7f1; // icon container resting fill
+$menu-icon-bg-active: #c8ecd6; // icon container active/selected fill
+$menu-sidebar-bg: #f5faf7; // services left-panel background
 
 // Shared transitions
-$t-fast:    0.13s ease;   // micro-interactions (hover, opacity)
-$t-medium:  0.2s ease;    // chevron rotate, menu reveal
+$t-fast: 0.13s ease; // micro-interactions (hover, opacity)
+$t-medium: 0.2s ease; // chevron rotate, menu reveal
 
 // Shared geometry
-$menu-icon-size:   40px;   // product-logo box
-$menu-icon-radius: 8px;    // product-logo corner
-$menu-row-radius:  6px;    // single-product row corner
-$menu-letter-sp:  -0.01em; // heading letter-spacing
+$menu-icon-size: 40px; // product-logo box
+$menu-icon-radius: 8px; // product-logo corner
+$menu-row-radius: 6px; // single-product row corner
+$menu-letter-sp: -0.01em; // heading letter-spacing
 
 
 // =============================================================================
@@ -61,35 +61,59 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
     background-color: $ac-white !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 
-    .white-logo { display: none !important; }
-    .color-logo { display: flex !important; }
+    .white-logo {
+      display: none !important;
+    }
 
-    .navbar-burger span { background-color: $ac-color-heading !important; }
+    .color-logo {
+      display: flex !important;
+    }
+
+    .navbar-burger span {
+      background-color: $ac-color-heading !important;
+    }
 
     .navbar-appscode ul .nav-item {
       .link {
         color: $ac-color-heading !important;
 
         &.is-active,
-        &:hover { color: $ac-primary !important; opacity: 1 !important; }
+        &:hover {
+          color: $ac-primary !important;
+          opacity: 1 !important;
+        }
       }
 
-      &.is-active .link { color: $ac-primary !important; opacity: 1 !important; }
+      &.is-active .link {
+        color: $ac-primary !important;
+        opacity: 1 !important;
+      }
     }
 
     .navbar-right-group .button.ac-button.is-primary {
       background-color: $ac-primary !important;
       color: $ac-white !important;
 
-      &:hover { background-color: $ac-primary !important; color: $ac-white !important; }
+      &:hover {
+        background-color: $ac-primary !important;
+        color: $ac-white !important;
+      }
     }
 
     .embeded-console-button {
-      box-shadow: none;
-      &.embed-on-hero { display: none !important; }
-      &.embed-on-white { display: block !important; }
+      &.embed-on-hero {
+        display: none !important;
+      }
+
+      &.embed-on-white {
+        display: block !important;
+      }
     }
   }
+}
+
+.embeded-console-button {
+  box-shadow: none !important;
 }
 
 .navbar-appscode-wrapper {
@@ -100,9 +124,17 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
     will-change: transform;
     transition: transform 200ms linear;
 
-    .mega-menu-wrapper { top: 57px; }
-    .navbar-left .navbar-brand a img { height: 1.58rem; }
-    .buttons.has-addons .button { font-size: $font-size-normal; }
+    .mega-menu-wrapper {
+      top: 57px;
+    }
+
+    .navbar-left .navbar-brand a img {
+      height: 1.58rem;
+    }
+
+    .buttons.has-addons .button {
+      font-size: $font-size-normal;
+    }
   }
 }
 
@@ -130,13 +162,17 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
     background-color: $ac-white;
     border-left: 1px solid $ac-white-light;
 
-    .mega-menu-wrapper { top: 104px; }
+    .mega-menu-wrapper {
+      top: 104px;
+    }
 
     .navbar-right {
       width: 100%;
       justify-content: space-between;
 
-      .ac-searchbar { width: 49%; }
+      .ac-searchbar {
+        width: 49%;
+      }
     }
 
     ul .nav-item .link.is-active {
@@ -158,7 +194,10 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
 
   // 8px matches the embedded sign-in button's own radius (appscode.com/embed),
   // so the two CTAs next to each other read as one consistent pair.
-  .navbar-right .button.ac-button { height: 40px; border-radius: 8px; }
+  .navbar-right .button.ac-button {
+    height: 40px;
+    border-radius: 8px;
+  }
 
   // The bar sits transparently over the (green) hero, so the primary CTA is
   // inverted here — white pill / green text — instead of green-on-green.
@@ -185,11 +224,15 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
         display: flex;
         align-items: center;
 
-        img { height: 1.875rem; }
+        img {
+          height: 1.875rem;
+        }
 
         // Desktop bar is transparent over the (green) hero -> light logo.
         // Mobile bar is fixed & solid white -> dark logo (swapped in touch below).
-        .color-logo { display: none; }
+        .color-logo {
+          display: none;
+        }
       }
     }
   }
@@ -218,7 +261,9 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
         display: flex;
         margin-left: 16px;
 
-        @include touch { margin-left: 0; }
+        @include touch {
+          margin-left: 0;
+        }
       }
 
       .buttons {
@@ -232,8 +277,14 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
         }
 
         .button {
-          &:has(.tag) { gap: 4px; }
-          .tag { background-color: $ac-primary; color: $ac-white; }
+          &:has(.tag) {
+            gap: 4px;
+          }
+
+          .tag {
+            background-color: $ac-primary;
+            color: $ac-white;
+          }
         }
       }
 
@@ -245,7 +296,11 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
 
         .buttons {
           width: 100%;
-          .button { width: 100%; margin-right: 0; }
+
+          .button {
+            width: 100%;
+            margin-right: 0;
+          }
         }
       }
     }
@@ -261,13 +316,18 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
   position: relative;
   margin-right: 2rem;
 
-  &:last-child { margin-right: 0; }
+  &:last-child {
+    margin-right: 0;
+  }
 
   &.is-active {
     .link {
       color: $ac-white;
       opacity: 0.85;
-      i.fa { transform: rotate(-180deg); }
+
+      i.fa {
+        transform: rotate(-180deg);
+      }
     }
 
     .mega-menu-wrapper {
@@ -302,7 +362,10 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
     z-index: 1;
 
     &.is-active,
-    &:hover { color: $ac-white; opacity: 0.85; }
+    &:hover {
+      color: $ac-white;
+      opacity: 0.85;
+    }
 
     .fa {
       font-size: $font-size-extra-small;
@@ -342,7 +405,7 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
   }
 
   &:before {
-    border-radius: 2px;
+    border-radius: 50px;
     animation: pulse-border 1500ms ease-out infinite;
   }
 
@@ -351,8 +414,15 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
   }
 
   @keyframes pulse-border {
-    0%   { transform: translateX(-50%) translateY(-50%) translateZ(0) scale(1);   opacity: 1; }
-    100% { transform: translateX(-50%) translateY(-50%) translateZ(0) scale(1.5); opacity: 0; }
+    0% {
+      transform: translateX(-50%) translateY(-50%) translateZ(0) scale(1);
+      opacity: 1;
+    }
+
+    100% {
+      transform: translateX(-50%) translateY(-50%) translateZ(0) scale(1.5);
+      opacity: 0;
+    }
   }
 }
 
@@ -372,7 +442,9 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
     transform-origin: 10px;
   }
 
-  span { height: 1.5px; }
+  span {
+    height: 1.5px;
+  }
 }
 
 
@@ -406,7 +478,9 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
   padding: 0 20px;
   border-left: 1px solid $ac-white-light;
 
-  label .fa { color: $ac-color-heading; }
+  label .fa {
+    color: $ac-color-heading;
+  }
 
   input[type="search"] {
     border: none;
@@ -416,8 +490,14 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
     width: 270px;
     padding: 0.2rem 0.875rem;
 
-    &:focus { border: none; outline: none; }
-    &::placeholder { color: $ac-gray-dark; }
+    &:focus {
+      border: none;
+      outline: none;
+    }
+
+    &::placeholder {
+      color: $ac-gray-dark;
+    }
   }
 }
 
@@ -434,9 +514,13 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
 
   // Two copies ship (light-on-hero / dark-on-white) since the embed only
   // colors its own border+text, never its background — see the touch swap.
-  &.embed-on-white { display: none; }
+  &.embed-on-white {
+    display: none;
+  }
 
-  @include mobile { width: 100%; }
+  @include mobile {
+    width: 100%;
+  }
 }
 
 
@@ -454,7 +538,7 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
   background: $ac-white;
   border-radius: 14px;
   border: 1px solid rgba(0, 0, 0, 0.07);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 8px 24px -4px rgba(0,0,0,0.10), 0 24px 48px -8px rgba(0,0,0,0.08);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 8px 24px -4px rgba(0, 0, 0, 0.10), 0 24px 48px -8px rgba(0, 0, 0, 0.08);
   padding: 0.75rem;
   width: auto;
   min-width: 380px;
@@ -466,9 +550,13 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
   .mega-menu-inner {
     overflow: visible;
 
-    .product-description:not(.offering-content) { display: none !important; }
+    .product-description:not(.offering-content) {
+      display: none !important;
+    }
 
-    .video-content { display: none; }
+    .video-content {
+      display: none;
+    }
 
     .product-menu {
       display: flex;
@@ -488,10 +576,14 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
             height: 36px;
             width: 36px;
 
-            img { height: 1.2rem; }
+            img {
+              height: 1.2rem;
+            }
           }
 
-          .navigate-icon .icon { width: 1rem; }
+          .navigate-icon .icon {
+            width: 1rem;
+          }
         }
       }
 
@@ -511,7 +603,7 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
 
           .product-logo {
             background: $ac-white;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
           }
 
           .navigate-icon .icon {
@@ -533,8 +625,15 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
           color: $ac-primary;
           transition: background-color $t-fast, box-shadow $t-fast;
 
-          img { height: 20px; width: 20px; object-fit: contain; }
-          iconify-icon { display: flex; }
+          img {
+            height: 20px;
+            width: 20px;
+            object-fit: contain;
+          }
+
+          iconify-icon {
+            display: flex;
+          }
         }
 
         .product-info {
@@ -638,7 +737,11 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
           justify-content: center;
           color: $ac-primary;
 
-          img { height: 20px; width: 20px; object-fit: contain; }
+          img {
+            height: 20px;
+            width: 20px;
+            object-fit: contain;
+          }
         }
 
         .product-info {
@@ -654,19 +757,32 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
             letter-spacing: $menu-letter-sp;
           }
 
-          p { display: none !important; }
+          p {
+            display: none !important;
+          }
         }
 
-        .navigate-icon { display: none !important; }
+        .navigate-icon {
+          display: none !important;
+        }
 
         &:hover {
           background-color: $menu-hover-bg;
-          .product-info h2 { color: $ac-color-heading; }
+
+          .product-info h2 {
+            color: $ac-color-heading;
+          }
         }
 
         &.is-active {
-          .product-logo { background: $menu-icon-bg-active; }
-          .product-info h2 { font-weight: 600; color: $ac-color-heading; }
+          .product-logo {
+            background: $menu-icon-bg-active;
+          }
+
+          .product-info h2 {
+            font-weight: 600;
+            color: $ac-color-heading;
+          }
         }
       }
 
@@ -695,7 +811,9 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
         flex-direction: column;
         gap: 2px;
 
-        &.is-block { display: flex !important; }
+        &.is-block {
+          display: flex !important;
+        }
 
         a.single-product {
           display: flex !important;
@@ -733,7 +851,10 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
                 flex-shrink: 0;
                 margin-left: 0.25rem;
 
-                svg { width: 13px; height: 13px; }
+                svg {
+                  width: 13px;
+                  height: 13px;
+                }
               }
             }
 
@@ -745,7 +866,9 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
             }
           }
 
-          .navigate-icon { display: none !important; }
+          .navigate-icon {
+            display: none !important;
+          }
 
           &:hover {
             background-color: $menu-hover-bg;
@@ -754,7 +877,10 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
               color: $ac-primary;
               font-weight: 600;
 
-              .arrow-right { opacity: 1; transform: translateX(3px); }
+              .arrow-right {
+                opacity: 1;
+                transform: translateX(3px);
+              }
             }
           }
         }
@@ -791,18 +917,23 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 2px;
+    border-radius: 8px;
     width: 2.5rem;
     height: 2.5rem;
     margin-right: 0.5rem;
     transition: 0.3s;
 
-    &:last-child { margin-right: 0; }
+    &:last-child {
+      margin-right: 0;
+    }
 
     &:hover {
       background-color: $ac-primary;
       border-color: $ac-primary;
-      img { filter: brightness(10); }
+
+      img {
+        filter: brightness(10);
+      }
     }
   }
 }
@@ -819,7 +950,9 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
     background-color: transparent;
     color: $ac-white;
 
-    &.is-active { color: #d2d2d2; }
+    &.is-active {
+      color: #d2d2d2;
+    }
   }
 }
 
@@ -829,12 +962,15 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
       font-size: 0.813rem;
       width: 210px;
       height: 2rem;
-      border-radius: 2px;
+      border-radius: 8px;
       padding: 2px 15px;
       color: $ac-color-heading;
       border: 1px solid $ac-white-light;
 
-      .arrow { color: #999999; font-size: 0.9rem; }
+      .arrow {
+        color: #999999;
+        font-size: 0.9rem;
+      }
     }
 
     .dropdown-menu {
@@ -843,8 +979,14 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
         scrollbar-color: #ebebeb #fafafd;
       }
 
-      *::-webkit-scrollbar { width: 12px; }
-      *::-webkit-scrollbar-track { background: #fafafd; }
+      *::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      *::-webkit-scrollbar-track {
+        background: #fafafd;
+      }
+
       *::-webkit-scrollbar-thumb {
         background-color: #ebebeb;
         border-radius: 10px;
@@ -855,7 +997,10 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
         max-height: 420px;
         overflow-y: auto;
 
-        .dropdown-item { font-size: 0.813rem; color: $ac-color-heading; }
+        .dropdown-item {
+          font-size: 0.813rem;
+          color: $ac-color-heading;
+        }
       }
     }
   }
@@ -864,7 +1009,7 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
     background-color: $ac-primary;
     font-size: 0.813rem;
     color: $ac-white;
-    border-radius: 2px;
+    border-radius: 50px;
     height: 1.2rem;
     padding: 2px 5px;
     line-height: 1.2;
@@ -884,7 +1029,10 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
     background-color: transparent;
     border: none;
     color: $ac-primary;
-    .material-icons { margin-left: 1rem; }
+
+    .material-icons {
+      margin-left: 1rem;
+    }
   }
 
   .material-icons {
@@ -900,6 +1048,7 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
 // =============================================================================
 
 @include touch {
+
   // Fixed to the viewport so it never scrolls away, with logo + burger
   // pinned tight to the top edge; solid white since it's no longer sitting
   // on the hero image once it's pinned over arbitrary scrolled content.
@@ -914,17 +1063,28 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
   }
 
   .navbar-brand a {
+
     // !important: the base (desktop) rule for .color-logo is nested under
     // .navbar-appscode .navbar-left .navbar-brand, so it's more specific
     // than this touch selector and would otherwise win even in this media
     // query and keep both logos hidden.
-    .white-logo { display: none !important; }
-    .color-logo { display: flex !important; }
+    .white-logo {
+      display: none !important;
+    }
+
+    .color-logo {
+      display: flex !important;
+    }
   }
 
   .embeded-console-button {
-    &.embed-on-hero { display: none; }
-    &.embed-on-white { display: block; }
+    &.embed-on-hero {
+      display: none;
+    }
+
+    &.embed-on-white {
+      display: block;
+    }
   }
 
   .navbar-burger {
@@ -936,10 +1096,13 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
     justify-content: center;
     cursor: pointer;
 
-    span { background-color: $ac-color-heading; }
+    span {
+      background-color: $ac-color-heading;
+    }
   }
 
   .navbar-appscode {
+
     &.container,
     & {
       height: 60px;
@@ -950,14 +1113,23 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
       background: transparent;
     }
 
-    &.container { padding: 0.5rem 15px; }
+    &.container {
+      padding: 0.5rem 15px;
+    }
 
     &.documentation-menu {
       margin-left: 0;
       padding: 0;
 
-      ul .nav-item .link.is-active:after { display: none; }
-      .navbar-right { position: fixed; width: 80%; border-right: 1px solid $ac-white-light; }
+      ul .nav-item .link.is-active:after {
+        display: none;
+      }
+
+      .navbar-right {
+        position: fixed;
+        width: 80%;
+        border-right: 1px solid $ac-white-light;
+      }
     }
 
     .navbar-left {
@@ -971,10 +1143,17 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
         align-items: center;
         justify-content: space-between;
 
-        a img { height: 1.5rem !important; }
+        a img {
+          height: 1.5rem !important;
+        }
       }
 
-      ul { position: absolute; right: 20%; opacity: 0; visibility: hidden; }
+      ul {
+        position: absolute;
+        right: 20%;
+        opacity: 0;
+        visibility: hidden;
+      }
     }
 
     .navbar-right {
@@ -996,7 +1175,9 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
       border-top: 1px solid $ac-white-light;
       gap: 0;
 
-      &.is-visible { display: flex; }
+      &.is-visible {
+        display: flex;
+      }
 
       .is-flex.is-justify-content-space-between {
         flex-direction: column;
@@ -1005,7 +1186,10 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
         gap: 0;
       }
 
-      .is-primary.ml-8 { margin-left: 0 !important; margin-top: 12px; }
+      .is-primary.ml-8 {
+        margin-left: 0 !important;
+        margin-top: 12px;
+      }
 
       .button.ac-button.is-primary {
         margin-left: 0;
@@ -1014,7 +1198,7 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
         font-size: $font-size-semi-normal;
       }
 
-      > .is-flex > ul,
+      >.is-flex>ul,
       ul.navbar-left-group {
         display: flex;
         flex-direction: column;
@@ -1028,7 +1212,9 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
           margin: 0;
           border-bottom: 1px solid $ac-white-lighter;
 
-          &:last-child { border-bottom: none; }
+          &:last-child {
+            border-bottom: none;
+          }
 
           .link {
             display: flex;
@@ -1043,7 +1229,10 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
             color: $ac-color-heading;
             transition: color $t-fast;
 
-            &:hover { color: $ac-primary; background: transparent; }
+            &:hover {
+              color: $ac-primary;
+              background: transparent;
+            }
 
             .fa {
               font-size: $font-size-extra-small;
@@ -1076,9 +1265,16 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
             .link {
               color: $ac-primary;
               background: transparent;
-              .fa { transform: rotate(-180deg); color: $ac-primary; }
+
+              .fa {
+                transform: rotate(-180deg);
+                color: $ac-primary;
+              }
             }
-            .mega-menu-wrapper { display: block !important; }
+
+            .mega-menu-wrapper {
+              display: block !important;
+            }
           }
         }
       }
@@ -1104,7 +1300,9 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
             margin: 0;
             border-bottom: 1px solid $ac-white-lighter;
 
-            &:last-child { border-bottom: none; }
+            &:last-child {
+              border-bottom: none;
+            }
 
             .link {
               display: flex;
@@ -1119,7 +1317,10 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
               color: $ac-color-heading;
               transition: color $t-fast;
 
-              &:hover { color: $ac-primary; background: transparent; }
+              &:hover {
+                color: $ac-primary;
+                background: transparent;
+              }
 
               .fa {
                 font-size: $font-size-extra-small;
@@ -1152,9 +1353,16 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
               .link {
                 color: $ac-primary;
                 background: transparent;
-                .fa { transform: rotate(-180deg); color: $ac-primary; }
+
+                .fa {
+                  transform: rotate(-180deg);
+                  color: $ac-primary;
+                }
               }
-              .mega-menu-wrapper { display: block !important; }
+
+              .mega-menu-wrapper {
+                display: block !important;
+              }
             }
           }
         }
@@ -1167,7 +1375,10 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
           margin-top: 8px;
           border-top: 1px solid $color-border-light;
 
-          iframe { width: 100%; height: 44px; }
+          iframe {
+            width: 100%;
+            height: 44px;
+          }
 
           .button.ac-button {
             width: 100%;
@@ -1181,7 +1392,10 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
               background-color: $ac-primary;
               color: $ac-white;
 
-              &:hover { background-color: $ac-primary; color: $ac-white; }
+              &:hover {
+                background-color: $ac-primary;
+                color: $ac-white;
+              }
             }
           }
         }
@@ -1239,12 +1453,24 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
             border-radius: 10px;
             background: $menu-icon-bg !important;
 
-            img { height: 24px; width: 24px; }
+            img {
+              height: 24px;
+              width: 24px;
+            }
           }
 
           .product-info {
-            h2 { font-size: $font-size-semi-normal; font-weight: 600; color: $ac-color-heading; }
-            p  { font-size: $font-size-extra-small; margin-top: 2px; color: $color-text-muted; }
+            h2 {
+              font-size: $font-size-semi-normal;
+              font-weight: 600;
+              color: $ac-color-heading;
+            }
+
+            p {
+              font-size: $font-size-extra-small;
+              margin-top: 2px;
+              color: $color-text-muted;
+            }
           }
 
           .navigate-icon .icon {
@@ -1257,13 +1483,27 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
           &:hover,
           &.is-active {
             background-color: $menu-hover-bg;
-            .product-logo { background: $ac-white !important; }
-            .navigate-icon .icon { opacity: 1; visibility: visible; }
+
+            .product-logo {
+              background: $ac-white !important;
+            }
+
+            .navigate-icon .icon {
+              opacity: 1;
+              visibility: visible;
+            }
           }
         }
 
-        &.database-list  { grid-template-columns: 1fr !important; }
-        &.services-grid  { grid-template-columns: 1fr !important; width: 100%; background: transparent; }
+        &.database-list {
+          grid-template-columns: 1fr !important;
+        }
+
+        &.services-grid {
+          grid-template-columns: 1fr !important;
+          width: 100%;
+          background: transparent;
+        }
       }
 
       .services-menu .mega-menu-inner,
@@ -1313,9 +1553,17 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
   }
 
   .product-version {
-    &.pl-20 { padding-left: 10px; }
-    .dropdown .dropdown-trigger .button { width: 190px; }
-    .dropdown-menu { z-index: 9999; }
+    &.pl-20 {
+      padding-left: 10px;
+    }
+
+    .dropdown .dropdown-trigger .button {
+      width: 190px;
+    }
+
+    .dropdown-menu {
+      z-index: 9999;
+    }
   }
 }
 
@@ -1325,22 +1573,43 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
 // =============================================================================
 
 @include desktop-only {
-  .navbar-burger { display: none !important; }
+  .navbar-burger {
+    display: none !important;
+  }
 
   .navbar-appscode {
-    &.documentation-menu { margin-left: 0; border-left: none; }
+    &.documentation-menu {
+      margin-left: 0;
+      border-left: none;
+    }
 
-    .navbar-left .navbar-brand { margin-right: 1rem; }
+    .navbar-left .navbar-brand {
+      margin-right: 1rem;
+    }
 
     .navbar-right {
       width: calc(100% - 180px);
-      .community-items.ml-70 { margin-left: 10px !important; }
-      .buttons { min-width: 354px !important; }
-      .button.ac-button { padding: 0.5rem 1rem; }
+
+      .community-items.ml-70 {
+        margin-left: 10px !important;
+      }
+
+      .buttons {
+        min-width: 354px !important;
+      }
+
+      .button.ac-button {
+        padding: 0.5rem 1rem;
+      }
     }
 
-    .navbar-right-group { gap: 8px !important; }
-    ul .nav-item { margin-right: 12px; }
+    .navbar-right-group {
+      gap: 8px !important;
+    }
+
+    ul .nav-item {
+      margin-right: 12px;
+    }
   }
 
   .mega-menu-wrapper .mega-menu-inner {
@@ -1352,23 +1621,39 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
   }
 
   .product-version {
-    &.ml-20 { margin-left: 4px !important; }
-    .dropdown .dropdown-trigger .button { width: 180px; padding: 2px 5px; }
+    &.ml-20 {
+      margin-left: 4px !important;
+    }
+
+    .dropdown .dropdown-trigger .button {
+      width: 180px;
+      padding: 2px 5px;
+    }
   }
 }
 
 @include widescreen-only {
-  .navbar-burger { display: none !important; }
+  .navbar-burger {
+    display: none !important;
+  }
 
   .navbar-appscode {
-    &.documentation-menu { margin-left: 0; border-left: none; }
+    &.documentation-menu {
+      margin-left: 0;
+      border-left: none;
+    }
 
     .navbar-right {
       width: calc(100% - 180px);
-      .community-items.ml-70 { margin-left: 10px !important; }
+
+      .community-items.ml-70 {
+        margin-left: 10px !important;
+      }
     }
 
-    ul .nav-item { margin-right: 1.5rem; }
+    ul .nav-item {
+      margin-right: 1.5rem;
+    }
   }
 
   .mega-menu-wrapper .mega-menu-inner {
@@ -1381,7 +1666,11 @@ $menu-letter-sp:  -0.01em; // heading letter-spacing
 }
 
 @include fullhd {
-  .navbar-appscode .navbar-left .navbar-brand { margin-right: 3rem; }
+  .navbar-appscode .navbar-left .navbar-brand {
+    margin-right: 3rem;
+  }
 
-  .mega-menu-wrapper .mega-menu-inner .video-content { display: block; }
+  .mega-menu-wrapper .mega-menu-inner .video-content {
+    display: block;
+  }
 }
