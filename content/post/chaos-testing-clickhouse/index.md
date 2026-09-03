@@ -79,8 +79,6 @@ mkdir -p clickhouse-chaos-testing/tests
 cd clickhouse-chaos-testing
 ```
 
-Output: none. These shell commands completed successfully.
-
 Confirm that the ClickHouse version and storage class used by this guide are
 available:
 
@@ -103,10 +101,6 @@ kubectl get storageclass local-path
 NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE
 local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer
 ```
-
-If your cluster does not provide `local-path`, replace
-`storageClassName: local-path` in the setup manifest with a storage class that
-supports `ReadWriteOnce` volumes in your cluster.
 
 ## Verify KubeDB and Chaos Mesh Installation
 
@@ -202,6 +196,7 @@ The test topology deliberately separates two different kinds of redundancy:
 - Two replicas protect each data shard.
 - Three Keeper members provide a coordination quorum.
 
+#### Create `setup/clickhouse-chaos-v2.yaml`
 Save the following manifest as `setup/clickhouse-chaos-v2.yaml`:
 
 ```yaml
@@ -345,12 +340,6 @@ clickhouse-chaos-v2-auth   kubernetes.io/basic-auth   2      118s
 | Container runtime | K3s containerd |
 | Chaos daemon socket | `/run/k3s/containerd/containerd.sock` |
 
-This campaign used a disposable single-node K3s cluster. NodeChaos was
-excluded because failing the only
-K3s node would also remove the control plane and Chaos Mesh. IOChaos `mistake`
-was excluded because it deliberately returns incorrect bytes and can cause
-silent persistent corruption.
-
 ## Chaos Testing
 
 We kept a write client active during the experiments so that availability
@@ -363,7 +352,7 @@ ClickHouse is a column-oriented analytical database with a SQL interface. We
 use database queries to create tables, insert test data, count unique IDs, and
 inspect replication state.
 
-The local table used `ReplicatedMergeTree`, while clients wrote through a
+The table used `ReplicatedMergeTree`, while clients wrote through a
 `Distributed` table across `chaos-v2-cluster`. Each batch inserted 100 rows
 with server-generated UUIDs and `insert_distributed_sync=1`.
 
@@ -411,9 +400,10 @@ ENGINE = Distributed(
 SQL
 ```
 
-The command printed nothing and exited successfully; ClickHouse created the
+The command exited successfully; ClickHouse created the
 database and both tables on the cluster.
 
+#### Create `setup/clickhouse-workload.yaml`
 Save this YAML as `setup/clickhouse-workload.yaml`. The client inserts 100 rows,
 waits for synchronous Distributed delivery, records whether the batch was
 acknowledged, then repeats:
@@ -1142,6 +1132,7 @@ manifest creation as proof of injection would have produced a false pass.
 
 ### Chaos#1: Kill One ClickHouse Replica
 
+#### Create `tests/01-pod-kill.yaml`
 Save this YAML as `tests/01-pod-kill.yaml`:
 
 ```yaml
@@ -1184,6 +1175,7 @@ data.
 
 ### Chaos#2: Hold One Replica Failed
 
+#### Create `tests/02-pod-failure.yaml`
 Save this YAML as `tests/02-pod-failure.yaml`:
 
 ```yaml
@@ -1223,6 +1215,7 @@ Result: **PASS** — the cluster degraded and healed automatically.
 
 ### Chaos#3: Kill Only the ClickHouse Container
 
+#### Create `tests/03-container-kill.yaml`
 Save this YAML as `tests/03-container-kill.yaml`:
 
 ```yaml
@@ -1264,6 +1257,7 @@ rejoined replication without manual work.
 
 ### Chaos#4: Repeat Alternating Pod Kills
 
+#### Create `tests/04-a-pod-kill.yaml`
 Save the first fault as `tests/04-a-pod-kill.yaml`:
 
 ```yaml
@@ -1284,6 +1278,7 @@ spec:
   gracePeriod: 0
 ```
 
+#### Create `tests/04-b-pod-kill.yaml`
 Save the second fault as `tests/04-b-pod-kill.yaml`:
 
 ```yaml
@@ -1304,6 +1299,7 @@ spec:
   gracePeriod: 0
 ```
 
+#### Create `tests/04-c-pod-kill.yaml`
 Save the third fault as `tests/04-c-pod-kill.yaml`:
 
 ```yaml
@@ -1465,6 +1461,7 @@ Result: **PASS** — repeated isolated failures did not cause recovery drift.
 
 ### Chaos#5: Lose an Entire Shard
 
+#### Create `tests/05-full-shard-outage.yaml`
 Save this YAML as `tests/05-full-shard-outage.yaml`:
 
 ```yaml
@@ -1509,6 +1506,7 @@ data inconsistency.
 
 ### Chaos#6: Lose the Entire ClickHouse Data Plane
 
+#### Create `tests/06-data-plane-outage.yaml`
 Save this YAML as `tests/06-data-plane-outage.yaml`:
 
 ```yaml
@@ -1554,6 +1552,7 @@ acknowledged data loss.
 
 Discover the Keeper roles immediately before the test.
 
+#### Create `tests/07-keeper-follower-kill.yaml`
 Save this YAML as `tests/07-keeper-follower-kill.yaml`, using a current
 follower as the target:
 
@@ -1597,6 +1596,7 @@ Result: **PASS** — one Keeper failure did not interrupt writes.
 
 Rediscover the Keeper roles immediately before the test.
 
+#### Create `tests/08-keeper-leader-kill.yaml`
 Save this YAML as `tests/08-keeper-leader-kill.yaml`, using the current leader
 as the target:
 
@@ -1637,6 +1637,7 @@ Result: **PASS** — Keeper leader election was automatic and safe.
 
 ### Chaos#9: Lose Keeper Quorum
 
+#### Create `tests/09-keeper-quorum-loss.yaml`
 Save this YAML as `tests/09-keeper-quorum-loss.yaml`:
 
 ```yaml
@@ -1686,6 +1687,7 @@ not describe Keeper availability.
 
 ### Chaos#10: Fail All Keeper Members
 
+#### Create `tests/10-full-keeper-outage.yaml`
 Save this YAML as `tests/10-full-keeper-outage.yaml`:
 
 ```yaml
@@ -1730,6 +1732,7 @@ Result: **PASS** — coordination outage was safe and recoverable.
 
 ### Chaos#11: Add Network Delay
 
+#### Create `tests/11-network-delay.yaml`
 Save this YAML as `tests/11-network-delay.yaml`:
 
 ```yaml
@@ -1772,6 +1775,7 @@ Result: **PASS** — latency reduced responsiveness but did not break integrity.
 
 ### Chaos#12: Drop 30 Percent of Packets
 
+#### Create `tests/12-network-loss.yaml`
 Save this YAML as `tests/12-network-loss.yaml`:
 
 ```yaml
@@ -1814,6 +1818,7 @@ Result: **PASS** — packet loss caused no lasting replication damage.
 
 ### Chaos#13: Duplicate 50 Percent of Packets
 
+#### Create `tests/13-network-duplicate.yaml`
 Save this YAML as `tests/13-network-duplicate.yaml`:
 
 ```yaml
@@ -1855,6 +1860,7 @@ Result: **PASS** — ClickHouse and TCP tolerated duplicated packets.
 
 ### Chaos#14: Limit Bandwidth to 1 Mbps
 
+#### Create `tests/14-bandwidth.yaml`
 Save this YAML as `tests/14-bandwidth.yaml`:
 
 ```yaml
@@ -1897,6 +1903,7 @@ Result: **PASS** — this small workload fit within the constrained bandwidth.
 
 ### Chaos#15: Partition One Replica from Data Peers
 
+#### Create `tests/15-data-partition.yaml`
 Save this YAML as `tests/15-data-partition.yaml`:
 
 ```yaml
@@ -1946,6 +1953,7 @@ Result: **PASS** — the replica rejoined without manual synchronization.
 
 ### Chaos#16: Partition One Replica from Keeper
 
+#### Create `tests/16-keeper-partition.yaml`
 Save this YAML as `tests/16-keeper-partition.yaml`:
 
 ```yaml
@@ -2000,6 +2008,7 @@ Result: **PASS** — short Keeper isolation was tolerated and fully recovered.
 
 ### Chaos#17: Stress CPU
 
+#### Create `tests/17-cpu-stress.yaml`
 Save this YAML as `tests/17-cpu-stress.yaml`:
 
 ```yaml
@@ -2043,6 +2052,7 @@ Result: **PASS** — the tested CPU pressure caused no availability loss.
 
 ### Chaos#18: Stress Memory
 
+#### Create `tests/18-memory-stress.yaml`
 Save this YAML as `tests/18-memory-stress.yaml`:
 
 ```yaml
@@ -2142,6 +2152,7 @@ an operational warning.
 
 ### Chaos#19: Add Filesystem Latency
 
+#### Create `tests/19-io-latency.yaml`
 Save this YAML as `tests/19-io-latency.yaml`:
 
 ```yaml
@@ -2262,6 +2273,7 @@ the FUSE mount was removed, but this IOChaos cleanup required `SIGCONT`.
 
 ### Chaos#20: Return Recoverable EIO
 
+#### Create `tests/20-io-fault.yaml`
 Save this YAML as `tests/20-io-fault.yaml`:
 
 ```yaml
@@ -2330,6 +2342,7 @@ Result: **PASS** — explicit temporary disk errors were visible and recoverable
 
 ### Chaos#21: Return Keeper DNS Errors
 
+#### Create `tests/21-keeper-dns-error.yaml`
 Save this YAML as `tests/21-keeper-dns-error.yaml`. Use the complete
 `.svc.cluster.local` names; a pattern ending at `.svc` does not match the DNS
 query made by the resolver.
@@ -2411,6 +2424,7 @@ connections masked application impact.
 
 ### Chaos#22: Skew the Clock Back Two Hours
 
+#### Create `tests/22-clock-skew.yaml`
 Save this YAML as `tests/22-clock-skew.yaml`:
 
 ```yaml
@@ -2739,6 +2753,7 @@ storage and sibling failure, but IOChaos cleanup required `SIGCONT`.
 
 ### Chaos#24: Run Three Recovery-Soak Cycles
 
+#### Create `tests/24-1-recovery-soak.yaml`
 Save the first cycle as `tests/24-1-recovery-soak.yaml`:
 
 ```yaml
@@ -2759,6 +2774,7 @@ spec:
   gracePeriod: 0
 ```
 
+#### Create `tests/24-2-recovery-soak.yaml`
 Save the second cycle as `tests/24-2-recovery-soak.yaml`:
 
 ```yaml
@@ -2779,6 +2795,7 @@ spec:
   gracePeriod: 0
 ```
 
+#### Create `tests/24-3-recovery-soak.yaml`
 Save the third cycle as `tests/24-3-recovery-soak.yaml`:
 
 ```yaml
@@ -2919,6 +2936,7 @@ This experiment requires a KubeDB ClickHouse operator with replica recovery
 support. It was executed separately from the earlier workload so that the
 previous campaign's counters remained unchanged.
 
+#### Create `clickhouse-replica-recovery.yaml`
 Save this manifest as `clickhouse-replica-recovery.yaml`:
 
 ```yaml
