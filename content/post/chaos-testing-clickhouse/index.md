@@ -1207,13 +1207,18 @@ Before injecting the fault, the fresh cluster was healthy:
 
 ```bash
 kubectl get clickhouse -n demo clickhouse-chaos
-kubectl get pods -n demo -l app.kubernetes.io/instance=clickhouse-chaos
 ```
 
 ```text
 NAME               VERSION   STATUS   AGE
 clickhouse-chaos   26.2.6    Ready    120m
+```
 
+```bash
+kubectl get pods -n demo -l app.kubernetes.io/instance=clickhouse-chaos
+```
+
+```text
 NAME                                             READY   STATUS    RESTARTS   AGE
 clickhouse-chaos-keeper-0                        1/1     Running   0          120m
 clickhouse-chaos-keeper-1                        1/1     Running   0          120m
@@ -1229,12 +1234,18 @@ created object alone is not evidence that the fault reached the target:
 
 ```bash
 kubectl apply -f tests/02-pod-failure.yaml
-kubectl get podchaos -n demo clickhouse-chaos-exp-02 \
-  -o jsonpath='{range .status.conditions[*]}{.type}={.status}{"\\n"}{end}'
 ```
 
 ```text
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-02 created
+```
+
+```bash
+kubectl get podchaos -n demo clickhouse-chaos-exp-02 \
+  -o jsonpath='{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'
+```
+
+```text
 Selected=True
 AllInjected=True
 AllRecovered=False
@@ -1247,13 +1258,18 @@ healthy sibling could serve the shard:
 
 ```bash
 kubectl get clickhouse -n demo clickhouse-chaos
-kubectl get pods -n demo -l app.kubernetes.io/instance=clickhouse-chaos
 ```
 
 ```text
 NAME               VERSION   STATUS   AGE
 clickhouse-chaos   26.2.6    Ready    120m
+```
 
+```bash
+kubectl get pods -n demo -l app.kubernetes.io/instance=clickhouse-chaos
+```
+
+```text
 NAME                                             READY   STATUS    RESTARTS
 clickhouse-chaos-chaos-cluster-shard-0-1         1/1     Running   1
 ```
@@ -1269,22 +1285,46 @@ following the continuous-workload section above, use its corresponding
 
 ```bash
 kubectl get podchaos -n demo clickhouse-chaos-exp-02 \
-  -o jsonpath='{range .status.conditions[*]}{.type}={.status}{"\\n"}{end}'
+  -o jsonpath='{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'
+```
+
+```text
+AllRecovered=True
+```
+
+```bash
 kubectl delete -f tests/02-pod-failure.yaml
+```
+
+```text
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-02" deleted from demo namespace
+```
+
+```bash
 kubectl wait --for=condition=Ready clickhouse/clickhouse-chaos \
   -n demo --timeout=5m
+```
+
+```text
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+```bash
 kubectl get clickhouse -n demo clickhouse-chaos
+```
+
+```text
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    121m
+```
+
+```bash
 kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
   bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
   --query "SELECT count(), uniqExact(id) FROM recovery_test.events"'
 ```
 
 ```text
-AllRecovered=True
-podchaos.chaos-mesh.org "clickhouse-chaos-exp-02" deleted from demo namespace
-clickhouse.kubedb.com/clickhouse-chaos condition met
-NAME               VERSION   STATUS   AGE
-clickhouse-chaos   26.2.6    Ready    121m
 100100  100100
 ```
 
