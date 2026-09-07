@@ -20,6 +20,8 @@ as the PostgreSQL chaos article.
 The campaign uses disposable test data. Any existing ClickHouse resource used
 by the earlier recovery experiment is removed before creating the fresh
 `clickhouse-chaos` resource. Unrelated resources in `demo` are not modified.
+The same `clickhouse-chaos` resource and accumulated dataset are used for all
+25 experiments. Experiment 25 does not deploy a second ClickHouse resource.
 
 ## Evidence Format
 
