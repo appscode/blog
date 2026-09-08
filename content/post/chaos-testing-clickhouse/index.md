@@ -559,7 +559,7 @@ required all of the
 following before continuing:
 
 1. Pause the workload and confirm its active client stopped.
-2. Require KubeDB `Ready` and all four ClickHouse plus three Keeper pods Ready.
+2. Require the ClickHouse resource and all four ClickHouse plus three Keeper pods to be `Ready`.
 3. Confirm that no test Chaos Mesh object remains.
 4. Perform an authenticated probe insert and require `count() == uniqExact(id)`
    on the Distributed table.
@@ -592,7 +592,7 @@ $ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c   '
 workload paused
 ```
 
-Require KubeDB and all seven database pods to be healthy:
+Require ClickHouse and all seven database pods to be healthy:
 
 ```bash
 ➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -919,7 +919,7 @@ recovered. After deletion, run every command in the **Mandatory Recovery Gate**
 section immediately above. In this guide, “run the full gate” means:
 
 1. Pause the workload and confirm its active client has stopped.
-2. Wait for KubeDB `Ready` and check all seven database pods.
+2. Wait for ClickHouse to become `Ready` and check all seven database pods.
 3. Confirm that no Chaos Mesh resource from the test remains.
 4. Perform the one-row probe insert and query the Distributed table.
 5. Check every local replica twice, five seconds apart.
@@ -1091,7 +1091,7 @@ Delete the experiment:
 podchaos.chaos-mesh.org "clickhouse-chaos-exp-01" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 ➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -1116,7 +1116,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-The target pod UID changed from `0f32c2fb-1869-4521-ad03-8aead8f55a20` to `0421be3e-436b-492d-ab6d-c2998debb5fc`. KubeDB may briefly report `Critical`, but the workload advanced from 35 to 59 acknowledged batches with no failures. After cleanup, the replica was writable with an empty queue and two active replicas.
+The target pod UID changed from `0f32c2fb-1869-4521-ad03-8aead8f55a20` to `0421be3e-436b-492d-ab6d-c2998debb5fc`. ClickHouse may briefly report `Critical`, but the workload advanced from 35 to 59 acknowledged batches with no failures. After cleanup, the replica was writable with an empty queue and two active replicas.
 
 Result: **PASS** — the sibling kept the shard available and the replacement converged automatically.
 
@@ -1146,7 +1146,7 @@ spec:
 What this chaos does: Makes shard-0 replica-1 continuously unavailable for
 45 seconds instead of allowing Kubernetes to replace it immediately.
 
-**Expected behavior:** KubeDB should report a degraded state while the sibling
+**Expected behavior:** ClickHouse should report a degraded state while the sibling
 replica continues serving the shard. When the fault ends, the same pod should
 become reachable and converge without manual repair.
 
@@ -1271,7 +1271,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-The 45-second failure restarted the target twice. KubeDB was initially `Ready`, then became `Critical` while the replica reconnected. The workload moved from 98 successful/0 failed to 138 successful/13 failed or ambiguous attempts. `AllRecovered=True` was not treated as complete database recovery; the test waited until KubeDB returned to `Ready`.
+The 45-second failure restarted the target twice. ClickHouse was initially `Ready`, then became `Critical` while the replica reconnected. The workload moved from 98 successful/0 failed to 138 successful/13 failed or ambiguous attempts. `AllRecovered=True` was not treated as complete database recovery; the test waited until ClickHouse returned to `Ready`.
 
 Result: **PASS** — the sustained replica failure was visible and the replica healed without manual repair.
 
@@ -1376,7 +1376,7 @@ podchaos.chaos-mesh.org "clickhouse-chaos-exp-03" deleted from demo namespace
 ```
 
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 ➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -1399,7 +1399,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-The pod UID remained `dccddd40-8e34-478f-bc06-02bff2e82a5e`, while its restart count changed from 0 to 1. KubeDB briefly reported `Critical`; 16 further batches were acknowledged and no new failure was recorded.
+The pod UID remained `dccddd40-8e34-478f-bc06-02bff2e82a5e`, while its restart count changed from 0 to 1. ClickHouse briefly reported `Critical`; 16 further batches were acknowledged and no new failure was recorded.
 
 Result: **PASS** — Kubernetes restarted only the ClickHouse container and it rejoined replication.
 
@@ -1616,7 +1616,7 @@ seconds.
 
 **Expected behavior:** Distributed inserts that require shard 0 should fail
 clearly; the remaining shard cannot substitute for missing shard data.
-KubeDB should report `Critical`, then both replicas should return with equal
+ClickHouse should report `Critical`, then both replicas should return with equal
 data.
 
 #### Resume the workload
@@ -1691,7 +1691,7 @@ Delete the experiment:
 podchaos.chaos-mesh.org "clickhouse-chaos-exp-05" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 ➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -1715,7 +1715,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-Both shard-0 replicas were unavailable. A Distributed query from shard 1 returned `ALL_CONNECTION_TRIES_FAILED`, KubeDB progressed to `NotReady`, and 42 attempts failed or became ambiguous. After `AllRecovered`, the test still waited for KubeDB `Ready`; the shard replicas then matched.
+Both shard-0 replicas were unavailable. A Distributed query from shard 1 returned `ALL_CONNECTION_TRIES_FAILED`, ClickHouse progressed to `NotReady`, and 42 attempts failed or became ambiguous. After `AllRecovered`, the test still waited for ClickHouse to return to `Ready`; the shard replicas then matched.
 
 Result: **PASS** — loss of a complete shard caused an explicit outage and recovered without silent inconsistency.
 
@@ -1825,7 +1825,7 @@ Delete the experiment:
 podchaos.chaos-mesh.org "clickhouse-chaos-exp-06" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 ➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -1850,7 +1850,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-All four data containers were failed while Keeper stayed online. KubeDB reported `Critical` and then `NotReady`; the measured window added 42 failed or ambiguous attempts. All four pods reopened their existing PVCs and the cluster returned to `Ready`.
+All four data containers were failed while Keeper stayed online. ClickHouse reported `Critical` and then `NotReady`; the measured window added 42 failed or ambiguous attempts. All four pods reopened their existing PVCs and ClickHouse returned to `Ready`.
 
 Result: **PASS** — the full data-plane outage was recoverable and did not lose acknowledged rows.
 
@@ -1960,7 +1960,7 @@ podchaos.chaos-mesh.org "clickhouse-chaos-exp-07" deleted from demo namespace
 ```
 
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 ➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -1983,7 +1983,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-Keeper-1, a follower, was killed and received a new pod UID. Keeper-2 remained leader, KubeDB stayed `Ready`, and the workload added 39 acknowledged batches without a new error.
+Keeper-1, a follower, was killed and received a new pod UID. Keeper-2 remained leader, ClickHouse stayed `Ready`, and the workload added 39 acknowledged batches without a new error.
 
 Result: **PASS** — the remaining two Keeper members retained quorum.
 
@@ -2089,7 +2089,7 @@ Delete the experiment:
 podchaos.chaos-mesh.org "clickhouse-chaos-exp-08" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 ➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -2114,7 +2114,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-Keeper-2 was the leader before injection. After it was killed, Keeper-1 reported `leader`, Keeper-1 remained a follower, and the replacement Keeper-0 rejoined as a follower. KubeDB stayed `Ready`.
+Keeper-2 was the leader before injection. After it was killed, Keeper-1 reported `leader`, Keeper-1 remained a follower, and the replacement Keeper-0 rejoined as a follower. ClickHouse stayed `Ready`.
 
 Result: **PASS** — Keeper elected a new leader automatically.
 
@@ -2224,7 +2224,7 @@ Delete the experiment:
 podchaos.chaos-mesh.org "clickhouse-chaos-exp-09" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 ➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -2247,7 +2247,7 @@ After any in-flight batch finishes, run the mandatory recovery gate and record t
 
 **Observed behavior:**
 
-Keeper-0 and Keeper-1 were failed together. The survivor returned `This instance is not currently serving requests`, which proved that a `leader` label alone would not establish quorum. KubeDB still showed `Ready`; four batches succeeded and two attempts failed before quorum returned.
+Keeper-0 and Keeper-1 were failed together. The survivor returned `This instance is not currently serving requests`, which proved that a `leader` label alone would not establish quorum. ClickHouse still showed `Ready`; four batches succeeded and two attempts failed before quorum returned.
 
 Result: **PASS** — Keeper quorum reformed and all replica queues drained.
 
@@ -2303,7 +2303,7 @@ Resume the workload before injecting the fault:
 The command prints nothing. Keep the workload running while observing the
 fault and recovery transition.
 
-During injection, check `mntr` directly even if KubeDB still reports `Ready`.
+During injection, check `mntr` directly even if ClickHouse still reports `Ready`.
 
 
 #### Demonstrate impact and recovery
@@ -2359,7 +2359,7 @@ podchaos.chaos-mesh.org "clickhouse-chaos-exp-10" deleted from demo namespace
 ```
 
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 ➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -2497,7 +2497,7 @@ networkchaos.chaos-mesh.org "clickhouse-chaos-exp-11" deleted from demo namespac
 ```
 
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 ➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -2522,7 +2522,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-The target received 500ms inbound delay with 50ms jitter. KubeDB remained `Ready`; 27 batches were acknowledged and no new failure appeared during the measured window. The target finished writable with an empty queue.
+The target received 500ms inbound delay with 50ms jitter. ClickHouse remained `Ready`; 27 batches were acknowledged and no new failure appeared during the measured window. The target finished writable with an empty queue.
 
 Result: **PASS** — the healthy sibling and TCP retries absorbed the delay.
 
@@ -2644,7 +2644,7 @@ kubectl delete -f tests/12-network-loss.yaml
 networkchaos.chaos-mesh.org "clickhouse-chaos-exp-12" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -2670,7 +2670,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-Thirty percent packet loss was injected into one replica. KubeDB remained `Ready`; 39 batches were acknowledged without a new client failure, and the replica converged after recovery.
+Thirty percent packet loss was injected into one replica. ClickHouse remained `Ready`; 39 batches were acknowledged without a new client failure, and the replica converged after recovery.
 
 Result: **PASS** — packet loss caused no lasting replica damage.
 
@@ -2793,7 +2793,7 @@ kubectl delete -f tests/13-network-duplicate.yaml
 networkchaos.chaos-mesh.org "clickhouse-chaos-exp-13" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -2944,7 +2944,7 @@ kubectl delete -f tests/14-bandwidth.yaml
 networkchaos.chaos-mesh.org "clickhouse-chaos-exp-14" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -3099,7 +3099,7 @@ kubectl delete -f tests/15-data-partition.yaml
 networkchaos.chaos-mesh.org "clickhouse-chaos-exp-15" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -3125,7 +3125,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-Shard-0 replica-0 was isolated from the other data pods. KubeDB stayed `Ready`, one attempt failed during the observed window, and after reconnection both shard-0 replicas returned 33,777 rows with the same checksum.
+Shard-0 replica-0 was isolated from the other data pods. ClickHouse stayed `Ready`, one attempt failed during the observed window, and after reconnection both shard-0 replicas returned 33,777 rows with the same checksum.
 
 Result: **PASS** — the isolated replica fetched missing work and converged.
 
@@ -3257,7 +3257,7 @@ kubectl delete -f tests/16-keeper-partition.yaml
 networkchaos.chaos-mesh.org "clickhouse-chaos-exp-16" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -3410,7 +3410,7 @@ kubectl delete -f tests/17-cpu-stress.yaml
 stresschaos.chaos-mesh.org "clickhouse-chaos-exp-17" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -3436,7 +3436,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-Two CPU workers at 80 percent load increased cgroup throttling to 339 periods and 51,868,624 microseconds. The target restart count remained 4 before and after the fault, KubeDB stayed `Ready`, and no new workload failure appeared.
+Two CPU workers at 80 percent load increased cgroup throttling to 339 periods and 51,868,624 microseconds. The target restart count remained 4 before and after the fault, ClickHouse stayed `Ready`, and no new workload failure appeared.
 
 Result: **PASS** — CPU throttling increased without restarting ClickHouse or damaging replication.
 
@@ -3788,7 +3788,7 @@ kubectl exec -n demo \
       1 Ssl  clickhouse-serv
 ```
 
-Wait for KubeDB recovery after resuming the process:
+Wait for ClickHouse recovery after resuming the process:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -3814,7 +3814,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-IOChaos installed a `toda` FUSE mount and delayed half of the selected filesystem operations by 100ms. It restored the ext4 mount after `AllRecovered`, but PID 1 was `Tsl`. `kill -CONT 1` changed it to `Ssl`, after which KubeDB and replica checks passed.
+IOChaos installed a `toda` FUSE mount and delayed half of the selected filesystem operations by 100ms. It restored the ext4 mount after `AllRecovered`, but PID 1 was `Tsl`. `kill -CONT 1` changed it to `Ssl`, after which ClickHouse and replica checks passed.
 
 Result: **PASS WITH MANUAL CLEANUP** — data and the filesystem were intact, but Chaos Mesh did not resume the process.
 
@@ -3956,7 +3956,7 @@ kubectl delete -f tests/20-io-fault.yaml
 iochaos.chaos-mesh.org "clickhouse-chaos-exp-20" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -4141,7 +4141,7 @@ kubectl delete -f tests/21-keeper-dns-error.yaml
 dnschaos.chaos-mesh.org "clickhouse-chaos-exp-21" deleted from demo namespace
 ```
 
-Wait for KubeDB to report full recovery:
+Wait for ClickHouse to report full recovery:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -4167,7 +4167,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-Before injection, the Keeper FQDN resolved to `10.42.0.119`. During DNSChaos, the same `getent` command returned exit code 2. KubeDB remained `Ready` because established Keeper sessions continued; after recovery, the name resolved again and the failure counter had not increased.
+Before injection, the Keeper FQDN resolved to `10.42.0.119`. During DNSChaos, the same `getent` command returned exit code 2. ClickHouse remained `Ready` because established Keeper sessions continued; after recovery, the name resolved again and the failure counter had not increased.
 
 Result: **PASS** — the DNS fault was proved independently from cached coordination connections.
 
@@ -4614,7 +4614,7 @@ kubectl exec -n demo \
 Unlike experiments 19 and 22, this process was not stopped after cleanup, so
 we did not run `kill -CONT 1`.
 
-Finally, wait for KubeDB to return to `Ready`:
+Finally, wait for ClickHouse to return to `Ready`:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -4640,7 +4640,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-Shard-0 replica-0 had a `toda` latency mount while replica-1 was failed. KubeDB became `Critical` and three attempts failed or became ambiguous. In this fresh run, deleting the PodChaos and then IOChaos restored ext4 and PID `Ssl` automatically; no `SIGCONT` was required.
+Shard-0 replica-0 had a `toda` latency mount while replica-1 was failed. ClickHouse became `Critical` and three attempts failed or became ambiguous. In this fresh run, deleting the PodChaos and then IOChaos restored ext4 and PID `Ssl` automatically; no `SIGCONT` was required.
 
 Result: **PASS** — the combined shard fault recovered fully and Chaos Mesh cleanup succeeded this time.
 
@@ -4790,7 +4790,7 @@ kubectl wait -n demo --for=condition=Ready \
 pod/clickhouse-chaos-chaos-cluster-shard-1-0 condition met
 ```
 
-Run the KubeDB recovery gate before continuing:
+Run the ClickHouse recovery gate before continuing:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -4859,7 +4859,7 @@ kubectl wait -n demo --for=condition=Ready \
 pod/clickhouse-chaos-chaos-cluster-shard-0-0 condition met
 ```
 
-Run the KubeDB recovery gate before continuing:
+Run the ClickHouse recovery gate before continuing:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -4928,7 +4928,7 @@ kubectl wait -n demo --for=condition=Ready \
 pod/clickhouse-chaos-chaos-cluster-shard-1-1 condition met
 ```
 
-Run the KubeDB recovery gate before continuing:
+Run the ClickHouse recovery gate before continuing:
 
 ```bash
 kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
@@ -4965,7 +4965,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-Three one-shot kills replaced shard-1 replica-0, shard-0 replica-0, and shard-1 replica-1. Their UIDs changed to `38d0b075-4ed0-4209-8178-e8c1f8cdd37c`, `813edc0a-8d71-42fb-b02d-d543e583abbb`, and `90b19b88-8f26-45da-b187-7d68792b7bcb`. The full KubeDB gate passed between cycles and only one attempt became ambiguous across the soak.
+Three one-shot kills replaced shard-1 replica-0, shard-0 replica-0, and shard-1 replica-1. Their UIDs changed to `38d0b075-4ed0-4209-8178-e8c1f8cdd37c`, `813edc0a-8d71-42fb-b02d-d543e583abbb`, and `90b19b88-8f26-45da-b187-7d68792b7bcb`. The full ClickHouse gate passed between cycles and only one attempt became ambiguous across the soak.
 
 Result: **PASS** — repeated recovery remained stable with no accumulating backlog.
 
@@ -5351,18 +5351,18 @@ automatically from its sibling without manual schema or data repair.
 
 | # | Fault | Fresh observed impact | Recovery |
 | ---: | --- | --- | --- |
-| 1 | Single replica pod kill | KubeDB became `Critical`; target UID changed; no workload error | `Ready`; replica queue empty |
+| 1 | Single replica pod kill | ClickHouse became `Critical`; target UID changed; no workload error | `Ready`; replica queue empty |
 | 2 | Replica pod failure, 45s | Target restarted twice; 13 failed/ambiguous attempts | `Critical` → `Ready` |
 | 3 | ClickHouse container kill | Same pod UID; restart count 0 → 1 | `Critical` → `Ready` |
 | 4 | Three alternating pod kills | Three new pod UIDs; one failed/ambiguous attempt | Full gate passed after every kill |
-| 5 | Both replicas of shard 0 failed | Distributed query returned `ALL_CONNECTION_TRIES_FAILED`; KubeDB became `NotReady` | Both replicas returned equal |
-| 6 | All four data pods failed | Complete SQL outage; KubeDB became `Critical` then `NotReady` | Four pods reopened their PVC data |
+| 5 | Both replicas of shard 0 failed | Distributed query returned `ALL_CONNECTION_TRIES_FAILED`; ClickHouse became `NotReady` | Both replicas returned equal |
+| 6 | All four data pods failed | Complete SQL outage; ClickHouse became `Critical` then `NotReady` | Four pods reopened their PVC data |
 | 7 | Keeper follower kill | Existing leader remained leader; writes continued | Quorum stayed available |
 | 8 | Keeper leader kill | Keeper-2 became leader | One leader and two followers restored |
-| 9 | Keeper quorum loss | Survivor said it was not serving requests; KubeDB still showed `Ready` | Two failed/ambiguous attempts; quorum reformed |
+| 9 | Keeper quorum loss | Survivor said it was not serving requests; ClickHouse still showed `Ready` | Two failed/ambiguous attempts; quorum reformed |
 | 10 | All Keeper members failed | Keeper container exec unavailable; replicated writes stalled | Two failed/ambiguous attempts; quorum reformed |
-| 11 | 500ms network delay | KubeDB remained `Ready`; no new workload error | Queue drained |
-| 12 | 30% packet loss | KubeDB remained `Ready`; no new workload error | Replica converged |
+| 11 | 500ms network delay | ClickHouse remained `Ready`; no new workload error | Queue drained |
+| 12 | 30% packet loss | ClickHouse remained `Ready`; no new workload error | Replica converged |
 | 13 | 50% packet duplication | 59,500 rows and 59,500 unique IDs | No duplicate database rows |
 | 14 | 1Mbps bandwidth limit | Workload continued without a new error | Replica queue empty |
 | 15 | Data-replica partition | One transient workload failure | Shard-0 replicas matched at 33,777 rows |
@@ -5373,7 +5373,7 @@ automatically from its sibling without manual schema or data repair.
 | 20 | 10% EIO | 261 matching storage errors observed during injection | ext4 and PID `Ssl` returned |
 | 21 | Keeper DNS errors | Direct lookup failed with exit code 2; existing sessions kept writes alive | DNS resolved after recovery |
 | 22 | Clock skew −2h | One running query moved from 08:18 to 06:18 | Clock restored; `SIGCONT` required |
-| 23 | I/O latency plus sibling failure | KubeDB became `Critical`; `toda` active | ext4 and PID `Ssl` returned automatically |
+| 23 | I/O latency plus sibling failure | ClickHouse became `Critical`; `toda` active | ext4 and PID `Ssl` returned automatically |
 | 24 | Three-cycle recovery soak | Three targets received new UIDs; one ambiguous attempt | Full gate passed after every cycle |
 | 25 | Existing replica and PVC deletion | New pod/PVC/PV; `EXISTS TABLE` initially returned 0 | 61,712 rows restored from sibling; new writes succeeded |
 
@@ -5414,9 +5414,9 @@ before its timeout. They are not duplicate IDs.
 - **Client timeout or connection failure:** the selected shard, all data pods,
   Keeper, network, or storage was temporarily unavailable. Failed attempts are
   expected during those tests.
-- **`Critical` KubeDB phase:** at least part of the desired cluster was not
+- **`Critical` ClickHouse phase:** at least part of the desired cluster was not
   healthy. It does not always mean every query is unavailable.
-- **KubeDB stayed `Ready` during Keeper loss:** the health check could still
+- **ClickHouse stayed `Ready` during Keeper loss:** the health check could still
   connect to ClickHouse, but Keeper-dependent operations were degraded. Check
   Keeper directly rather than relying on one status field.
 - **Temporary replica count mismatch:** a part accepted around Keeper recovery
@@ -5440,7 +5440,7 @@ before its timeout. They are not duplicate IDs.
 
 1. Replica and Keeper redundancy protected acknowledged data across every
    tested recoverable failure.
-2. KubeDB `Ready` is useful but insufficient for Keeper-specific faults. A real
+2. ClickHouse `Ready` is useful but insufficient for Keeper-specific faults. A real
    database query, replica state, and Keeper `mntr` must be checked.
 3. Unique row IDs are essential because a timed-out Distributed insert can
    have an ambiguous partial result.
