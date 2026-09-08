@@ -504,6 +504,9 @@ deployment "clickhouse-chaos-workload" successfully rolled out
 clickhouse-chaos-workload-64d7d5c85f-sgzlc
 ```
 
+Kubernetes generates the suffix in this pod name. In the commands below, use
+the workload pod name returned by your own cluster.
+
 ```bash
 $ kubectl logs -n demo -f clickhouse-chaos-workload-64d7d5c85f-sgzlc
 2026-09-08T04:44:40+00:00 success attempt=1 rows=100
@@ -992,6 +995,29 @@ shutdown.
 PetSet should create a replacement pod, and replication should catch it up.
 The target pod UID must change, but acknowledged data must not.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
 Record the target UID before applying the manifest, then confirm that it
 changes after injection.
 
@@ -1084,6 +1110,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 The target pod UID changed from `0f32c2fb-1869-4521-ad03-8aead8f55a20` to `0421be3e-436b-492d-ab6d-c2998debb5fc`. KubeDB may briefly report `Critical`, but the workload advanced from 35 to 59 acknowledged batches with no failures. After cleanup, the replica was writable with an empty queue and two active replicas.
@@ -1119,6 +1158,29 @@ What this chaos does: Makes shard-0 replica-1 continuously unavailable for
 **Expected behavior:** KubeDB should report a degraded state while the sibling
 replica continues serving the shard. When the fault ends, the same pod should
 become reachable and converge without manual repair.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 Before injecting the fault, the fresh cluster was healthy:
 
@@ -1240,6 +1302,19 @@ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
 0  0  2  2
 ```
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 The 45-second failure restarted the target twice. KubeDB was initially `Ready`, then became `Critical` while the replica reconnected. The workload moved from 98 successful/0 failed to 138 successful/13 failed or ambiguous attempts. `AllRecovered=True` was not treated as complete database recovery; the test waited until KubeDB returned to `Ready`.
@@ -1276,6 +1351,29 @@ leaving the pod object and its PVC in place.
 **Expected behavior:** Kubernetes should restart the container, ClickHouse
 should reconnect to Keeper and replication, and the restart count should
 increase without a pod UID change.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 Compare the `clickhouse` container restart count before and after injection.
 
@@ -1341,6 +1439,19 @@ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
 clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
@@ -1420,15 +1531,32 @@ with 20 seconds between injections.
 fault is injected. Replication queues, restarts, and checksums should return to
 baseline after the sequence.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
 Apply the files one at a time. Wait 20 seconds between kills, delete each
 one-shot `PodChaos` after `AllInjected`, and run the complete recovery gate
 after the third kill.
-
-```bash
-kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- rm -f /state/pause
-```
-
-The command prints nothing on success.
 
 ```bash
 kubectl apply -f tests/04-a-pod-kill.yaml
@@ -1571,6 +1699,19 @@ kubectl wait -n demo --for=condition=Ready \
 pod/clickhouse-chaos-chaos-cluster-shard-0-1 condition met
 ```
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Shard-0 replica-0, shard-1 replica-1, and shard-0 replica-1 each received a new UID. The full gate passed before each following kill. Across the sequence, 136 batches were acknowledged and one attempt became failed or ambiguous; both replica pairs ended with matching counts and checksums.
@@ -1608,6 +1749,29 @@ seconds.
 clearly; the remaining shard cannot substitute for missing shard data.
 KubeDB should report `Critical`, then both replicas should return with equal
 data.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 
 #### Demonstrate impact and recovery
@@ -1681,6 +1845,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Both shard-0 replicas were unavailable. A Distributed query from shard 1 returned `ALL_CONNECTION_TRIES_FAILED`, KubeDB progressed to `NotReady`, and 42 attempts failed or became ambiguous. After `AllRecovered`, the test still waited for KubeDB `Ready`; the shard replicas then matched.
@@ -1719,6 +1896,29 @@ while leaving the three Keeper members running.
 **Expected behavior:** SQL clients should see a complete outage and no batch
 should be acknowledged during it. When the fault ends, all four replicas
 should reopen their existing PVC data and converge automatically.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 
 #### Demonstrate impact and recovery
@@ -1792,6 +1992,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 All four data containers were failed while Keeper stayed online. KubeDB reported `Critical` and then `NotReady`; the measured window added 42 failed or ambiguous attempts. All four pods reopened their existing PVCs and the cluster returned to `Ready`.
@@ -1830,6 +2043,29 @@ kills one current follower.
 **Expected behavior:** The leader and remaining follower still form a
 two-member majority, so coordination and writes should continue. The recreated
 member should rejoin as a follower.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 The example uses `keeper-1`; replace it if `mntr` reports that member as the
 leader.
@@ -1897,6 +2133,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Keeper-1, a follower, was killed and received a new pod UID. Keeper-0 remained leader, KubeDB stayed `Ready`, and the workload added 39 acknowledged batches without a new error.
@@ -1934,6 +2183,29 @@ What this chaos does: Discovers and kills the current Keeper leader.
 **Expected behavior:** The two surviving members should elect a new leader
 quickly. ClickHouse should tolerate the short election, and the old leader
 should return as a follower rather than forming a second leader.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 The example uses `keeper-0`; replace it with the actual leader. Time how long
 another member takes to report `leader`.
@@ -2001,6 +2273,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Keeper-0 was the leader before injection. After it was killed, Keeper-2 reported `leader`, Keeper-1 remained a follower, and the replacement Keeper-0 rejoined as a follower. KubeDB stayed `Ready`.
@@ -2038,6 +2323,29 @@ seconds, removing the majority required for coordination.
 writes or replication can stall or fail. After quorum returns, queued work
 should settle and both replicas of every shard should converge without data
 repair.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 Do not repair a brief replica mismatch while queues are still moving. Require
 two consecutive equal checks within ten minutes.
@@ -2114,6 +2422,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Keeper-0 and Keeper-1 were failed together. The survivor returned `This instance is not currently serving requests`, which proved that a `leader` label alone would not establish quorum. KubeDB still showed `Ready`; four batches succeeded and two attempts failed before quorum returned.
@@ -2151,6 +2472,29 @@ seconds.
 **Expected behavior:** ClickHouse processes can remain reachable, but Keeper
 operations should be unavailable and replicated writes may fail. Recovery
 requires a new one-leader/two-follower quorum and drained replica queues.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 During injection, check `mntr` directly even if KubeDB still reports `Ready`.
 
@@ -2226,6 +2570,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 All three Keeper containers were failed. An exec attempt returned an OCI error because Chaos Mesh had replaced the container entrypoint. ClickHouse data processes remained present, 13 batches succeeded around existing sessions, and two attempts failed. Keeper returned with one leader and two followers.
@@ -2268,6 +2625,29 @@ reaching one data replica for 45 seconds.
 **Expected behavior:** Queries may slow down, but TCP and the healthy replica
 should keep the tested workload available. The target must finish with no
 replication delay or queued work.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 
 #### Demonstrate impact and recovery
@@ -2341,6 +2721,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 The target received 500ms inbound delay with 50ms jitter. KubeDB remained `Ready`; 27 batches were acknowledged and no new failure appeared during the measured window. The target finished writable with an empty queue.
@@ -2380,6 +2773,29 @@ replica.
 **Expected behavior:** TCP retransmission should absorb some loss. Timeouts
 are acceptable, but after the fault the replica must be writable, caught up,
 and byte-for-byte equivalent at the logical checksum level.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 
 #### Demonstrate impact and recovery
@@ -2453,6 +2869,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Thirty percent packet loss was injected into one replica. KubeDB remained `Ready`; 39 batches were acknowledged without a new client failure, and the replica converged after recovery.
@@ -2492,6 +2921,29 @@ replica.
 **Expected behavior:** TCP and ClickHouse should not turn duplicated network
 packets into duplicated table rows. `count()` must still equal
 `uniqExact(id)` after recovery.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 
 #### Demonstrate impact and recovery
@@ -2566,6 +3018,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Fifty percent of inbound packets were duplicated. The workload continued, and the post-fault query returned 59,500 total rows and 59,500 unique IDs.
@@ -2606,6 +3071,29 @@ for 45 seconds.
 **Expected behavior:** Throughput and latency may degrade. The client may
 timeout if demand exceeds the cap, but replication should drain completely
 after normal bandwidth returns.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 
 #### Demonstrate impact and recovery
@@ -2681,6 +3169,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Inbound bandwidth to one replica was limited to 1Mbps. The small 100-row workload continued from 590 to 645 acknowledged batches without increasing the failure counter, and the replication queue was empty afterward.
@@ -2727,6 +3228,29 @@ the other three ClickHouse data pods.
 **Expected behavior:** The isolated replica can fall behind while its sibling
 serves the shard. After reconnection it should fetch missing parts and match
 the sibling without deleting its pod or PVC.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 
 #### Demonstrate impact and recovery
@@ -2800,6 +3324,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Shard-0 replica-0 was isolated from the other data pods. KubeDB stayed `Ready`, one attempt failed during the observed window, and after reconnection both shard-0 replicas returned 33,777 rows with the same checksum.
@@ -2847,6 +3384,29 @@ three Keeper members for 45 seconds.
 If the session expires, replicated-table operations on that replica should
 stop safely rather than accept uncoordinated state. It should become writable
 again after reconnection.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 
 #### Demonstrate impact and recovery
@@ -2922,6 +3482,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 The target lost all Keeper connectivity. After 20 seconds it reported `is_readonly=1` and `is_session_expired=1`, correctly refusing uncoordinated replicated writes. After cleanup it returned `is_readonly=0`, `queue_size=0`, and `active_replicas=2`.
@@ -2964,6 +3537,29 @@ ClickHouse container for 60 seconds.
 **Expected behavior:** Latency can increase, but Kubernetes should not restart
 the pod merely because CPU is throttled. Writes and replication should recover
 with no lasting queue.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 
 #### Demonstrate impact and recovery
@@ -3039,6 +3635,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Two CPU workers at 80 percent load increased cgroup throttling to 339 periods and 51,868,624 microseconds. The target restart count remained 4 before and after the fault, KubeDB stayed `Ready`, and no new workload failure appeared.
@@ -3080,6 +3689,29 @@ memory limit is 4GiB.
 intentionally forcing an OOM kill. The process should remain alive and cgroup
 usage should fall after cleanup. A restart or sustained near-limit usage would
 fail the test.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 #### Demonstrate impact and recovery
 
@@ -3182,6 +3814,19 @@ stresschaos.chaos-mesh.org/clickhouse-chaos-exp-18 condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Before injection, memory usage was 1,305,341,952 bytes against a 4,294,967,296-byte limit. A 1GiB stress worker raised usage to 2,417,717,248 bytes without an OOM or restart. Fifteen seconds after cleanup it fell to 1,400,053,760 bytes.
@@ -3225,6 +3870,29 @@ What this chaos does: Uses IOChaos to delay 50 percent of operations below
 **Expected behavior:** Queries can slow or timeout, but ClickHouse must not
 lose acknowledged parts. Chaos Mesh must remove its `toda` FUSE layer and
 restore the normal data mount when the experiment ends.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 #### Demonstrate impact and recovery
 
@@ -3345,6 +4013,19 @@ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
 clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 IOChaos installed a `toda` FUSE mount and delayed half of the selected filesystem operations by 100ms. It restored the ext4 mount after `AllRecovered`, but PID 1 was `Tsl`. `kill -CONT 1` changed it to `Ssl`, after which KubeDB and replica checks passed.
@@ -3387,6 +4068,29 @@ return errno 5 (`EIO`) for 30 seconds.
 than silently accepting bad data. Some writes may fail. After injection ends,
 the normal mount, writable replicas, equal checksums, and empty queues must
 return.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 This returns explicit errors; it does not intentionally return incorrect file
 contents.
@@ -3477,6 +4181,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Ten percent of selected filesystem operations returned errno 5. During injection, 261 `Input/output error` or `CANNOT_STATVFS` messages were counted and the workload recorded failures. After recovery, the mount was ext4 and PID 1 was `Ssl`; no signal or pod replacement was required.
@@ -3522,6 +4239,29 @@ FQDNs when queried from one ClickHouse container.
 **Expected behavior:** A direct lookup must fail during injection and succeed
 afterward. Established Keeper TCP sessions may keep working, so uninterrupted
 writes do not by themselves prove that DNSChaos failed to inject.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 Prove the injection with a direct lookup. This command must fail during the
 fault:
@@ -3626,6 +4366,19 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Before injection, the Keeper FQDN resolved to `10.42.0.119`. During DNSChaos, the same `getent` command returned exit code 2. KubeDB remained `Ready` because established Keeper sessions continued; after recovery, the name resolved again and the failure counter had not increased.
@@ -3670,6 +4423,29 @@ should continue serving data, replication should converge, and no unique ID shou
 be lost or duplicated. When the fault expires, Chaos Mesh should restore the
 clock automatically and leave PID 1 running; no manual signal or pod restart
 should be necessary.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 An incorrect timezone and an incorrect clock are different conditions. A
 wrong timezone normally changes only how local time is displayed; the
@@ -3804,6 +4580,19 @@ kubectl exec -n demo \
       1 Ssl  clickhouse-serv
 ```
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 The already-running timestamp stream first returned `08:18`, then `06:18` while TimeChaos was active, and returned to current time after cleanup. Chaos Mesh reported `AllRecovered` but PID 1 was `Tsl`; `SIGCONT` restored `Ssl`. The workload ended this window with 1,083 acknowledged batches and 130 failed or ambiguous attempts.
@@ -3864,6 +4653,29 @@ while holding its sibling replica-1 failed.
 **Expected behavior:** This removes the healthy fast path for the shard, so
 errors and `Critical` are acceptable. Once both faults clear, the siblings
 must converge and the IOChaos FUSE mount must disappear without PVC changes.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 #### Demonstrate impact and recovery
 
@@ -4027,6 +4839,19 @@ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
 clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Shard-0 replica-0 had a `toda` latency mount while replica-1 was failed. KubeDB became `Critical` and three attempts failed or became ambiguous. In this fresh run, deleting the PodChaos and then IOChaos restored ext4 and PID `Ssl` automatically; no `SIGCONT` was required.
@@ -4104,6 +4929,29 @@ running the complete recovery gate between cycles.
 **Expected behavior:** Every cycle should return to the same healthy baseline.
 No replication backlog, checksum difference, stopped process, stale FUSE
 mount, or restart instability may accumulate across cycles.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```bash
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Resume the workload before injecting the fault:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
 Apply the files in numeric order. Each cycle must recover completely before
 the next pod is killed.
@@ -4316,6 +5164,19 @@ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-1-1 \
 
 
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
 Three one-shot kills replaced shard-1 replica-0, shard-0 replica-0, and shard-1 replica-1. Their UIDs changed to `38d0b075-4ed0-4209-8178-e8c1f8cdd37c`, `813edc0a-8d71-42fb-b02d-d543e583abbb`, and `90b19b88-8f26-45da-b187-7d68792b7bcb`. The full KubeDB gate passed between cycles and only one attempt became ambiguous across the soak.
@@ -4355,12 +5216,6 @@ Use the returned pod name to pause the workload:
 ```bash
 kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
   touch /state/pause
-```
-
-Output: none.
-
-```bash
-sleep 5
 ```
 
 Output: none.
@@ -4659,12 +5514,6 @@ Resume the existing workload to prove new writes still work:
 ```bash
 kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
   rm -f /state/pause
-```
-
-Output: none.
-
-```bash
-sleep 5
 ```
 
 Output: none.
