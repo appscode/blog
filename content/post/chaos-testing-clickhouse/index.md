@@ -499,13 +499,13 @@ deployment "clickhouse-chaos-workload" successfully rolled out
 
 
 ```bash
-workload_pod=$(kubectl get pod -n demo \
-  -l app=clickhouse-chaos-workload \
-  -o jsonpath='{.items[0].metadata.name}')
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+    -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
 ```
 
 ```bash
-$ kubectl logs -n demo -f "$workload_pod"
+$ kubectl logs -n demo -f clickhouse-chaos-workload-64d7d5c85f-sgzlc
 2026-09-08T04:44:40+00:00 success attempt=1 rows=100
 2026-09-08T04:44:41+00:00 success attempt=2 rows=100
 2026-09-08T04:44:43+00:00 success attempt=3 rows=100
@@ -575,17 +575,17 @@ following before continuing:
 Pause the workload and let the active client finish:
 
 ```bash
-workload_pod=$(kubectl get pod -n demo \
-  -l app=clickhouse-chaos-workload \
-  -o jsonpath='{.items[0].metadata.name}')
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+    -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
 ```
 
 ```bash
-kubectl exec -n demo "$workload_pod" -- touch /state/pause
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- touch /state/pause
 ```
 
 ```bash
-$ kubectl exec -n demo "$workload_pod" -- bash -c   'if pgrep -x clickhouse-client >/dev/null; then echo "client still active"; else echo "workload paused"; fi'
+$ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c   'if pgrep -x clickhouse-client >/dev/null; then echo "client still active"; else echo "workload paused"; fi'
 workload paused
 ```
 
@@ -631,7 +631,7 @@ Check the Distributed table. The first two values must match, and the count
 must be at least `successful_batches × 100`:
 
 ```bash
-kubectl exec -n demo "$workload_pod" -- bash -c '
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c '
   clickhouse-client \
     --host clickhouse-chaos.demo.svc \
     --user "$CH_USER" \
@@ -644,7 +644,7 @@ kubectl exec -n demo "$workload_pod" -- bash -c '
 
 
 ```bash
-$ kubectl exec -n demo "$workload_pod" -- bash -c '
+$ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c '
   clickhouse-client \
     --host clickhouse-chaos.demo.svc \
     --user "$CH_USER" \
@@ -826,15 +826,18 @@ prove Keeper availability, replica equality, or complete Chaos Mesh cleanup.
 For every test, we used the same safe sequence:
 
 ```bash
-workload_pod=$(kubectl get pod -n demo \
-  -l app=clickhouse-chaos-workload \
-  -o jsonpath='{.items[0].metadata.name}')
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
 ```
 
-The variable assignment prints nothing. Start the workload:
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Start the workload using the pod name returned above:
 
 ```bash
-kubectl exec -n demo "$workload_pod" -- rm -f /state/pause
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- rm -f /state/pause
 ```
 
 The command prints nothing on success. Validate the manifest against the
@@ -883,7 +886,7 @@ clickhouse-chaos   26.2.6    Critical
 Read the workload counters:
 
 ```bash
-kubectl exec -n demo "$workload_pod" -- bash -c '
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c '
   printf "attempts="; cat /state/attempt_batches
   printf "success="; cat /state/success_batches
   printf "failed="; cat /state/failed_batches
@@ -1429,7 +1432,7 @@ one-shot `PodChaos` after `AllInjected`, and run the complete recovery gate
 after the third kill.
 
 ```bash
-kubectl exec -n demo "$workload_pod" -- rm -f /state/pause
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- rm -f /state/pause
 ```
 
 The command prints nothing on success.
@@ -2646,7 +2649,7 @@ networkchaos.chaos-mesh.org/clickhouse-chaos-exp-14 condition met
 Observe the live impact:
 
 ```bash
-kubectl exec -n demo deployment/clickhouse-chaos-workload -- bash -c '
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c '
 printf "successful="; cat /state/success_batches
 printf "failed="; cat /state/failed_batches'
 ```
@@ -3692,15 +3695,18 @@ In terminal 1, start this 60-second timestamp stream before applying the
 TimeChaos manifest:
 
 ```bash
-workload_pod=$(kubectl get pod -n demo \
-  -l app=clickhouse-chaos-workload \
-  -o jsonpath='{.items[0].metadata.name}')
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
 ```
 
-The variable assignment prints nothing. Start the timestamp stream:
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Start the timestamp stream using the pod name returned above:
 
 ```bash
-kubectl exec -n demo "$workload_pod" -- bash -c '
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c '
   clickhouse-client \
     --host clickhouse-chaos-chaos-cluster-shard-1-1.clickhouse-chaos-pods.demo.svc \
     --user "$CH_USER" \
@@ -3936,7 +3942,7 @@ TARGET              SOURCE FSTYPE OPTIONS
 The workload counters during the combined fault were:
 
 ```bash
-kubectl exec -n demo deployment/clickhouse-chaos-workload -- bash -c '
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c '
 printf "attempted="; cat /state/attempt_batches
 printf "successful="; cat /state/success_batches
 printf "failed="; cat /state/failed_batches'
@@ -4343,7 +4349,18 @@ creation, part attachment, or data copy is allowed.
 Pause the continuous workload so the baseline remains stable:
 
 ```bash
-kubectl exec -n demo deployment/clickhouse-chaos-workload -- \
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+```
+
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Use the returned pod name to pause the workload:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
   touch /state/pause
 ```
 
@@ -4356,7 +4373,7 @@ sleep 5
 Output: none.
 
 ```bash
-kubectl exec -n demo deployment/clickhouse-chaos-workload -- bash -c '
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c '
 if pgrep -x clickhouse-client >/dev/null; then
   echo "client still active"
 else
@@ -4371,7 +4388,7 @@ workload paused
 Record the workload counters accumulated across experiments 1–24:
 
 ```bash
-kubectl exec -n demo deployment/clickhouse-chaos-workload -- bash -c '
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c '
 printf "attempted="; cat /state/attempt_batches
 printf "successful="; cat /state/success_batches
 printf "failed="; cat /state/failed_batches'
@@ -4647,7 +4664,7 @@ clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
 Resume the existing workload to prove new writes still work:
 
 ```bash
-kubectl exec -n demo deployment/clickhouse-chaos-workload -- \
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
   rm -f /state/pause
 ```
 
@@ -4662,14 +4679,14 @@ Output: none.
 Pause it again for the final stable check:
 
 ```bash
-kubectl exec -n demo deployment/clickhouse-chaos-workload -- \
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
   touch /state/pause
 ```
 
 Output: none.
 
 ```bash
-kubectl exec -n demo deployment/clickhouse-chaos-workload -- bash -c '
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c '
 printf "attempted="; cat /state/attempt_batches
 printf "successful="; cat /state/success_batches
 printf "failed="; cat /state/failed_batches'
@@ -4845,21 +4862,24 @@ Save the final evidence before removing anything. Pause the workload, record
 its counters, then scale it down:
 
 ```bash
-workload_pod=$(kubectl get pod -n demo \
-  -l app=clickhouse-chaos-workload \
-  -o jsonpath='{.items[0].metadata.name}')
+kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
 ```
 
-The variable assignment prints nothing. Pause the workload:
+```text
+clickhouse-chaos-workload-64d7d5c85f-sgzlc
+```
+
+Pause the workload using the pod name returned above:
 
 ```bash
-kubectl exec -n demo "$workload_pod" -- touch /state/pause
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- touch /state/pause
 ```
 
 The command prints nothing. Read the final counters:
 
 ```bash
-kubectl exec -n demo "$workload_pod" -- bash -c '
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c '
   printf "attempts="; cat /state/attempt_batches
   printf "success="; cat /state/success_batches
   printf "failed="; cat /state/failed_batches
