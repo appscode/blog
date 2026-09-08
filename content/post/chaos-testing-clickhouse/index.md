@@ -2430,19 +2430,17 @@ replication delay or queued work.
 Discover the workload pod by its label:
 
 ```bash
-kubectl get pods -n demo -l app=clickhouse-chaos-workload \
-  -o jsonpath='{.items[0].metadata.name}{"\n"}'
-```
-
-```text
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
 clickhouse-chaos-workload-64d7d5c85f-sgzlc
+
 ```
 
 Resume the workload before injecting the fault:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
-  rm -f /state/pause
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+        rm -f /state/pause
 ```
 
 The command prints nothing. Keep the workload running while observing the
@@ -2454,69 +2452,58 @@ fault and recovery transition.
 Before injection, confirm the database is healthy:
 
 ```bash
-kubectl get clickhouse -n demo clickhouse-chaos
-```
-```text
-NAME               VERSION   STATUS
-clickhouse-chaos   26.2.6    Ready
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    5h51m
 ```
 
 Apply this experiment:
 
 ```bash
-kubectl apply -f tests/11-network-delay.yaml
-```
-```text
+➤ kubectl apply -f tests/11-network-delay.yaml
 networkchaos.chaos-mesh.org/clickhouse-chaos-exp-11 created
 ```
 
 Confirm that Chaos Mesh reached the target:
 
 ```bash
-kubectl wait -n demo --for=condition=AllInjected \
-  networkchaos/clickhouse-chaos-exp-11 --timeout=90s
-```
-```text
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        networkchaos/clickhouse-chaos-exp-11 --timeout=90s
 networkchaos.chaos-mesh.org/clickhouse-chaos-exp-11 condition met
 ```
 
 Observe the live impact:
 
 ```bash
-kubectl get clickhouse -n demo clickhouse-chaos
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    5h51m
 ```
-```text
-NAME               VERSION   STATUS
-clickhouse-chaos   26.2.6    Ready
-```
+
 
 Wait for Chaos Mesh to remove the fault:
 
 ```bash
-kubectl wait -n demo --for=condition=AllRecovered \
-  networkchaos/clickhouse-chaos-exp-11 --timeout=2m
-```
-```text
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+        networkchaos/clickhouse-chaos-exp-11 --timeout=2m
 networkchaos.chaos-mesh.org/clickhouse-chaos-exp-11 condition met
 ```
 
 Delete the experiment:
 
 ```bash
-kubectl delete -f tests/11-network-delay.yaml
-```
-```text
+➤ kubectl delete -f tests/11-network-delay.yaml
 networkchaos.chaos-mesh.org "clickhouse-chaos-exp-11" deleted from demo namespace
 ```
+
 
 Wait for KubeDB to report full recovery:
 
 ```bash
-kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
-  clickhouse/clickhouse-chaos --timeout=5m
-```
-```text
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
 clickhouse.kubedb.com/clickhouse-chaos condition met
+
 ```
 
 
@@ -2526,8 +2513,8 @@ After capturing the recovery transition, stop the workload from starting new
 batches:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
-  touch /state/pause
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+        touch /state/pause
 ```
 
 The command prints nothing. After any in-flight batch finishes, run the
