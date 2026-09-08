@@ -1311,19 +1311,16 @@ increase without a pod UID change.
 Discover the workload pod by its label:
 
 ```bash
-kubectl get pods -n demo -l app=clickhouse-chaos-workload \
-  -o jsonpath='{.items[0].metadata.name}{"\n"}'
-```
-
-```text
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
 clickhouse-chaos-workload-64d7d5c85f-sgzlc
 ```
 
 Resume the workload before injecting the fault:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
-  rm -f /state/pause
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+        rm -f /state/pause
 ```
 
 The command prints nothing. Keep the workload running while observing the
@@ -1337,62 +1334,55 @@ Compare the `clickhouse` container restart count before and after injection.
 Before injection, confirm the database is healthy:
 
 ```bash
-kubectl get clickhouse -n demo clickhouse-chaos
-```
-```text
-NAME               VERSION   STATUS
-clickhouse-chaos   26.2.6    Ready
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    130m
 ```
 
 Apply this experiment:
 
 ```bash
-kubectl apply -f tests/03-container-kill.yaml
-```
-```text
+➤ kubectl apply -f tests/03-container-kill.yaml
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-03 created
 ```
-
 Confirm that Chaos Mesh reached the target:
 
 ```bash
-kubectl wait -n demo --for=condition=AllInjected \
-  podchaos/clickhouse-chaos-exp-03 --timeout=90s
-```
-```text
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        podchaos/clickhouse-chaos-exp-03 --timeout=90s
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-03 condition met
 ```
 
 Observe the live impact:
 
 ```bash
-kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
-  -o jsonpath='{.metadata.uid}{"\n"}{.status.containerStatuses[0].restartCount}{"\n"}'
-```
-```text
-7b2c478c-f034-464e-bfce-6040f068a6ba
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
+        -o jsonpath='{.metadata.uid}{"\n"}{.status.containerStatuses[0].restartCount}{"\n"}'
+dccddd40-8e34-478f-bc06-02bff2e82a5e
 1
+```
+
+```bash
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Critical    131m
 ```
 
 Delete the experiment:
 
 ```bash
-kubectl delete -f tests/03-container-kill.yaml
-```
-```text
+➤ kubectl delete -f tests/03-container-kill.yaml
 podchaos.chaos-mesh.org "clickhouse-chaos-exp-03" deleted from demo namespace
 ```
+
 
 Wait for KubeDB to report full recovery:
 
 ```bash
-kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
-  clickhouse/clickhouse-chaos --timeout=5m
-```
-```text
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
 clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
-
 
 #### Pause the workload
 
@@ -1400,8 +1390,8 @@ After capturing the recovery transition, stop the workload from starting new
 batches:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
-  touch /state/pause
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+        touch /state/pause
 ```
 
 The command prints nothing. After any in-flight batch finishes, run the
@@ -1409,7 +1399,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-The pod UID remained `7b2c478c-f034-464e-bfce-6040f068a6ba`, while its restart count changed from 0 to 1. KubeDB briefly reported `Critical`; 16 further batches were acknowledged and no new failure was recorded.
+The pod UID remained `dccddd40-8e34-478f-bc06-02bff2e82a5e`, while its restart count changed from 0 to 1. KubeDB briefly reported `Critical`; 16 further batches were acknowledged and no new failure was recorded.
 
 Result: **PASS** — Kubernetes restarted only the ClickHouse container and it rejoined replication.
 
@@ -1490,166 +1480,91 @@ baseline after the sequence.
 Discover the workload pod by its label:
 
 ```bash
-kubectl get pods -n demo -l app=clickhouse-chaos-workload \
-  -o jsonpath='{.items[0].metadata.name}{"\n"}'
-```
-
-```text
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
 clickhouse-chaos-workload-64d7d5c85f-sgzlc
 ```
 
 Resume the workload before injecting the fault:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
-  rm -f /state/pause
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+        rm -f /state/pause
 ```
 
-The command prints nothing. Keep the workload running while observing the
-fault and recovery transition.
+Keep the workload running while observing the fault and recovery transition.
 
 Apply the files one at a time. Wait 20 seconds between kills, delete each
 one-shot `PodChaos` after `AllInjected`, and run the complete recovery gate
 after the third kill.
 
 ```bash
-kubectl apply -f tests/04-a-pod-kill.yaml
-```
-
-```text
+➤ kubectl apply -f tests/04-a-pod-kill.yaml
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-04-a created
 ```
 
 ```bash
-kubectl wait -n demo --for=condition=AllInjected \
-  -f tests/04-a-pod-kill.yaml --timeout=90s
-```
-
-```text
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        -f tests/04-a-pod-kill.yaml --timeout=90s
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-04-a condition met
 ```
 
 ```bash
-kubectl delete -f tests/04-a-pod-kill.yaml
-```
-
-```text
+➤ kubectl delete -f tests/04-a-pod-kill.yaml
 podchaos.chaos-mesh.org "clickhouse-chaos-exp-04-a" deleted from demo namespace
 ```
 
 ```bash
-kubectl wait -n demo --for=create \
-  pod/clickhouse-chaos-chaos-cluster-shard-0-0 --timeout=5m
-```
-
-```text
+➤ kubectl wait -n demo --for=condition=Ready \
+        pod/clickhouse-chaos-chaos-cluster-shard-0-0 --timeout=5m
 pod/clickhouse-chaos-chaos-cluster-shard-0-0 condition met
+
 ```
 
 ```bash
-kubectl wait -n demo --for=condition=Ready \
-  pod/clickhouse-chaos-chaos-cluster-shard-0-0 --timeout=5m
-```
-
-```text
-pod/clickhouse-chaos-chaos-cluster-shard-0-0 condition met
-```
-
-```bash
-sleep 20
-```
-
-Output: none.
-
-```bash
-kubectl apply -f tests/04-b-pod-kill.yaml
-```
-
-```text
+➤ kubectl apply -f tests/04-b-pod-kill.yaml
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-04-b created
 ```
 
 ```bash
-kubectl wait -n demo --for=condition=AllInjected \
-  -f tests/04-b-pod-kill.yaml --timeout=90s
-```
-
-```text
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        -f tests/04-b-pod-kill.yaml --timeout=90s
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-04-b condition met
 ```
 
-```bash
-kubectl delete -f tests/04-b-pod-kill.yaml
-```
 
-```text
+```bash
+➤ kubectl delete -f tests/04-b-pod-kill.yaml
 podchaos.chaos-mesh.org "clickhouse-chaos-exp-04-b" deleted from demo namespace
 ```
 
 ```bash
-kubectl wait -n demo --for=create \
-  pod/clickhouse-chaos-chaos-cluster-shard-1-1 --timeout=5m
-```
-
-```text
+➤ kubectl wait -n demo --for=condition=Ready \
+        pod/clickhouse-chaos-chaos-cluster-shard-1-1 --timeout=5m
 pod/clickhouse-chaos-chaos-cluster-shard-1-1 condition met
 ```
 
 ```bash
-kubectl wait -n demo --for=condition=Ready \
-  pod/clickhouse-chaos-chaos-cluster-shard-1-1 --timeout=5m
-```
+➤ kubectl apply -f tests/04-c-pod-kill.yaml
 
-```text
-pod/clickhouse-chaos-chaos-cluster-shard-1-1 condition met
-```
-
-```bash
-sleep 20
-```
-
-Output: none.
-
-```bash
-kubectl apply -f tests/04-c-pod-kill.yaml
-```
-
-```text
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-04-c created
 ```
 
 ```bash
-kubectl wait -n demo --for=condition=AllInjected \
-  -f tests/04-c-pod-kill.yaml --timeout=90s
-```
-
-```text
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        -f tests/04-c-pod-kill.yaml --timeout=90s
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-04-c condition met
 ```
 
 ```bash
-kubectl delete -f tests/04-c-pod-kill.yaml
-```
-
-```text
+➤ kubectl delete -f tests/04-c-pod-kill.yaml
 podchaos.chaos-mesh.org "clickhouse-chaos-exp-04-c" deleted from demo namespace
+
 ```
 
 ```bash
-kubectl wait -n demo --for=create \
-  pod/clickhouse-chaos-chaos-cluster-shard-0-1 --timeout=5m
-```
-
-```text
-pod/clickhouse-chaos-chaos-cluster-shard-0-1 condition met
-```
-
-```bash
-kubectl wait -n demo --for=condition=Ready \
-  pod/clickhouse-chaos-chaos-cluster-shard-0-1 --timeout=5m
-```
-
-```text
+➤ kubectl wait -n demo --for=condition=Ready \
+        pod/clickhouse-chaos-chaos-cluster-shard-0-1 --timeout=5m
 pod/clickhouse-chaos-chaos-cluster-shard-0-1 condition met
 ```
 
@@ -1659,8 +1574,8 @@ After capturing the recovery transition, stop the workload from starting new
 batches:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
-  touch /state/pause
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+        touch /state/pause
 ```
 
 The command prints nothing. After any in-flight batch finishes, run the
@@ -1709,23 +1624,20 @@ data.
 Discover the workload pod by its label:
 
 ```bash
-kubectl get pods -n demo -l app=clickhouse-chaos-workload \
-  -o jsonpath='{.items[0].metadata.name}{"\n"}'
-```
-
-```text
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
 clickhouse-chaos-workload-64d7d5c85f-sgzlc
+
 ```
 
 Resume the workload before injecting the fault:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
-  rm -f /state/pause
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+        rm -f /state/pause
 ```
 
-The command prints nothing. Keep the workload running while observing the
-fault and recovery transition.
+Keep the workload running while observing the fault and recovery transition.
 
 
 #### Demonstrate impact and recovery
@@ -1733,68 +1645,57 @@ fault and recovery transition.
 Before injection, confirm the database is healthy:
 
 ```bash
-kubectl get clickhouse -n demo clickhouse-chaos
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    167m
 ```
-```text
-NAME               VERSION   STATUS
-clickhouse-chaos   26.2.6    Ready
-```
+
 
 Apply this experiment:
 
 ```bash
-kubectl apply -f tests/05-full-shard-outage.yaml
-```
-```text
+➤ kubectl apply -f tests/05-full-shard-outage.yaml
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-05 created
 ```
 
 Confirm that Chaos Mesh reached the target:
 
 ```bash
-kubectl wait -n demo --for=condition=AllInjected \
-  podchaos/clickhouse-chaos-exp-05 --timeout=90s
-```
-```text
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        podchaos/clickhouse-chaos-exp-05 --timeout=90s
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-05 condition met
 ```
 
 Observe the live impact:
 
 ```bash
-kubectl get clickhouse -n demo clickhouse-chaos
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS     AGE
+clickhouse-chaos   26.2.6    NotReady   167m
 ```
-```text
-NAME               VERSION   STATUS
-clickhouse-chaos   26.2.6    NotReady
-```
+
 
 Wait for Chaos Mesh to remove the fault:
 
 ```bash
-kubectl wait -n demo --for=condition=AllRecovered \
-  podchaos/clickhouse-chaos-exp-05 --timeout=2m
-```
-```text
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+        podchaos/clickhouse-chaos-exp-05 --timeout=2m
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-05 condition met
+
 ```
 
 Delete the experiment:
 
 ```bash
-kubectl delete -f tests/05-full-shard-outage.yaml
-```
-```text
+➤ kubectl delete -f tests/05-full-shard-outage.yaml
 podchaos.chaos-mesh.org "clickhouse-chaos-exp-05" deleted from demo namespace
 ```
 
 Wait for KubeDB to report full recovery:
 
 ```bash
-kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
-  clickhouse/clickhouse-chaos --timeout=5m
-```
-```text
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
 clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
@@ -1805,8 +1706,8 @@ After capturing the recovery transition, stop the workload from starting new
 batches:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
-  touch /state/pause
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+        touch /state/pause
 ```
 
 The command prints nothing. After any in-flight batch finishes, run the
