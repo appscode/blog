@@ -652,7 +652,7 @@ $ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c '
     --query "SELECT count(), uniqExact(id), sum(payload)
              FROM chaos_v2.events FORMAT TSV"
 '
-17302	17302	18251318426044052401
+4201	4201	18251318426044052401
 ```
 
 Check every local replica:
@@ -664,7 +664,7 @@ Check every local replica:
       --query "SELECT count(), uniqExact(id), sum(payload)
                FROM chaos_v2.events_local FORMAT TSV"
   '
-8651	8651	15819459328062010837
+2100	2100	15819459328062010837
 
 ➤ kubectl exec -n demo \
         clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
@@ -672,7 +672,7 @@ Check every local replica:
       --query "SELECT count(), uniqExact(id), sum(payload)
                FROM chaos_v2.events_local FORMAT TSV"
   '
-8651	8651	15819459328062010837
+2100	2100	15819459328062010837
 
 ➤ kubectl exec -n demo \
         clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c '
@@ -680,7 +680,7 @@ Check every local replica:
       --query "SELECT count(), uniqExact(id), sum(payload)
                FROM chaos_v2.events_local FORMAT TSV"
   '
-8651	8651	2431859097982041564
+2101	2101	2431859097982041564
 
 ➤ kubectl exec -n demo \
         clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c '
@@ -688,7 +688,7 @@ Check every local replica:
       --query "SELECT count(), uniqExact(id), sum(payload)
                FROM chaos_v2.events_local FORMAT TSV"
   '
-8651	8651	2431859097982041564
+2101	2101	2431859097982041564
 ```
 
 
@@ -896,8 +896,8 @@ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- bash -c '
 Output from test 1 before its recovery gate:
 
 ```text
-attempts=59
-success=59
+attempts=173
+success=173
 failed=0
 ```
 
@@ -1000,41 +1000,34 @@ changes after injection.
 Before injection, confirm the database is healthy:
 
 ```bash
-kubectl get clickhouse -n demo clickhouse-chaos
-```
-```text
-NAME               VERSION   STATUS
-clickhouse-chaos   26.2.6    Ready
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    67m
 ```
 
 Record the original pod UID:
 
 ```bash
-kubectl get pod -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-0 \
-  -o jsonpath='{.metadata.uid}{"\n"}'
+➤ kubectl get pod -n demo \
+        clickhouse-chaos-chaos-cluster-shard-0-0 \
+        -o jsonpath='{.metadata.uid}{"\n"}'
+9feb08ef-57ff-4256-8e29-ca14b9769000
 ```
 
-```text
-0f32c2fb-1869-4521-ad03-8aead8f55a20
-```
 
 Apply this experiment:
 
 ```bash
-kubectl apply -f tests/01-pod-kill.yaml
-```
-```text
+➤ kubectl apply -f tests/01-pod-kill.yaml
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-01 created
+
 ```
 
 Confirm that Chaos Mesh reached the target:
 
 ```bash
-kubectl wait -n demo --for=condition=AllInjected \
-  podchaos/clickhouse-chaos-exp-01 --timeout=90s
-```
-```text
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        podchaos/clickhouse-chaos-exp-01 --timeout=90s
 podchaos.chaos-mesh.org/clickhouse-chaos-exp-01 condition met
 ```
 
@@ -1093,7 +1086,7 @@ clickhouse.kubedb.com/clickhouse-chaos condition met
 
 **Observed behavior:**
 
-The target pod UID changed from `0f32c2fb-1869-4521-ad03-8aead8f55a20` to `0421be3e-436b-492d-ab6d-c2998debb5fc`. KubeDB briefly reported `Critical`, but the workload advanced from 35 to 59 acknowledged batches with no failures. After cleanup, the replica was writable with an empty queue and two active replicas.
+The target pod UID changed from `0f32c2fb-1869-4521-ad03-8aead8f55a20` to `0421be3e-436b-492d-ab6d-c2998debb5fc`. KubeDB may briefly report `Critical`, but the workload advanced from 35 to 59 acknowledged batches with no failures. After cleanup, the replica was writable with an empty queue and two active replicas.
 
 Result: **PASS** — the sibling kept the shard available and the replacement converged automatically.
 
