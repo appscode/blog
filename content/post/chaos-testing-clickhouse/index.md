@@ -34,26 +34,23 @@ To follow this tutorial, you need:
 For K3s, Chaos Mesh must use `/run/k3s/containerd/containerd.sock`:
 
 ```bash
-helm upgrade --install chaos-mesh chaos-mesh/chaos-mesh \
-  --namespace chaos-mesh \
-  --create-namespace \
-  --version 2.8.4 \
-  --set dashboard.create=true \
-  --set dashboard.securityMode=false \
-  --set dnsServer.create=true \
-  --set chaosDaemon.runtime=containerd \
-  --set chaosDaemon.socketPath=/run/k3s/containerd/containerd.sock \
-  --set chaosDaemon.privileged=true
-```
-
-Output from our installation:
-
-```text
+➤ helm upgrade --install chaos-mesh chaos-mesh/chaos-mesh \
+        --namespace chaos-mesh \
+        --create-namespace \
+        --version 2.8.4 \
+        --set dashboard.create=true \
+        --set dashboard.securityMode=false \
+        --set dnsServer.create=true \
+        --set chaosDaemon.runtime=containerd \
+        --set chaosDaemon.socketPath=/run/k3s/containerd/containerd.sock \
+        --set chaosDaemon.privileged=true
+Release "chaos-mesh" does not exist. Installing it now.
 NAME: chaos-mesh
+LAST DEPLOYED: Tue Sep  8 10:13:50 2026
 NAMESPACE: chaos-mesh
 STATUS: deployed
-REVISION: 2
-DESCRIPTION: Upgrade complete
+REVISION: 1
+DESCRIPTION: Install complete
 ```
 
 If you use a different Kubernetes distribution, change the runtime and socket
@@ -63,12 +60,6 @@ Create the disposable namespace:
 
 ```bash
 kubectl create ns demo
-```
-
-Output:
-
-```text
-namespace/demo created
 ```
 
 Create the local manifest directories:
@@ -83,68 +74,52 @@ Confirm that the ClickHouse version and storage class used by this guide are
 available:
 
 ```bash
-kubectl get clickhouseversion 26.2.6
-```
-
-Output from our cluster:
-
-```text
-NAME     VERSION   DB_IMAGE
-26.2.6   26.2.6    docker.io/clickhouse/clickhouse-server:26.2.6
+➤ kubectl get clickhouseversion 26.2.6
+NAME     VERSION   DB_IMAGE                                        DEPRECATED   AGE
+26.2.6   26.2.6    docker.io/clickhouse/clickhouse-server:26.2.6                27d
 ```
 
 ```bash
-kubectl get storageclass local-path
-```
+➤ kubectl get storageclass local-path
+NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   true                   27d
 
-```text
-NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE
-local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer
 ```
 
 ## Verify KubeDB and Chaos Mesh Installation
 
 ```bash
-kubectl get pods -n kubedb
-```
-
-Output from our cluster:
-
-```text
-NAME                                            READY   STATUS    RESTARTS   AGE
-kubedb-kubedb-autoscaler-0                      1/1     Running   2          15d
-kubedb-kubedb-ops-manager-0                     1/1     Running   0          2d2h
-kubedb-kubedb-provisioner-0                     1/1     Running   0          2d2h
-kubedb-kubedb-webhook-server-65949766c4-xlfpz   1/1     Running   0          6d4h
-kubedb-petset-85c9d79865-lfqww                  1/1     Running   2          15d
-kubedb-sidekick-86f897c579-djk65                1/1     Running   2          15d
+➤ kubectl get pods -n kubedb
+NAME                                            READY   STATUS             RESTARTS         AGE
+kubedb-kubedb-autoscaler-0                      1/1     Running            3 (2d9h ago)     21d
+kubedb-kubedb-ops-manager-0                     1/1     Running            1 (2d9h ago)     7d22h
+kubedb-kubedb-provisioner-0                     1/1     Running            1 (2d9h ago)     5d13h
+kubedb-kubedb-webhook-server-65949766c4-xlfpz   1/1     Running            1 (2d9h ago)     12d
+kubedb-petset-85c9d79865-lfqww                  1/1     Running            3 (2d9h ago)     21d
+kubedb-sidekick-86f897c579-djk65                1/1     Running            3 (2d9h ago)     21d
 ```
 
 ```bash
-kubectl get pods -n chaos-mesh
-```
+➤ kubectl get pods -n chaos-mesh
 
-```text
 NAME                                        READY   STATUS    RESTARTS   AGE
-chaos-controller-manager-7ddc79b6dc-65qr6   1/1     Running   1          4d23h
-chaos-controller-manager-7ddc79b6dc-ksfxm   1/1     Running   1          4d23h
-chaos-controller-manager-7ddc79b6dc-lb8qr   1/1     Running   1          4d23h
-chaos-daemon-vmc4j                          1/1     Running   0          4d23h
-chaos-dashboard-5db97f969f-prb94            1/1     Running   0          5d
-chaos-dns-server-6d8fd4b8b5-6lws4           1/1     Running   0          5d
+chaos-controller-manager-7d44d6dd54-7chxr   1/1     Running   0          3m50s
+chaos-controller-manager-7d44d6dd54-fd5cv   1/1     Running   0          3m50s
+chaos-controller-manager-7d44d6dd54-prstq   1/1     Running   0          3m50s
+chaos-daemon-dkfxd                          1/1     Running   0          3m50s
+chaos-dashboard-5db97f969f-gwm96            1/1     Running   0          3m50s
+chaos-dns-server-6d8fd4b8b5-kjwg7           1/1     Running   0          3m50s
+
 ```
 
 ```bash
-kubectl get crd \
-  podchaos.chaos-mesh.org \
-  networkchaos.chaos-mesh.org \
-  stresschaos.chaos-mesh.org \
-  iochaos.chaos-mesh.org \
-  dnschaos.chaos-mesh.org \
-  timechaos.chaos-mesh.org
-```
-
-```text
+➤ kubectl get crd \
+        podchaos.chaos-mesh.org \
+        networkchaos.chaos-mesh.org \
+        stresschaos.chaos-mesh.org \
+        iochaos.chaos-mesh.org \
+        dnschaos.chaos-mesh.org \
+        timechaos.chaos-mesh.org
 NAME                          CREATED AT
 podchaos.chaos-mesh.org       2026-08-28T07:50:32Z
 networkchaos.chaos-mesh.org   2026-08-28T07:50:32Z
@@ -152,6 +127,7 @@ stresschaos.chaos-mesh.org    2026-08-28T07:50:32Z
 iochaos.chaos-mesh.org        2026-08-28T07:50:32Z
 dnschaos.chaos-mesh.org       2026-08-28T07:50:32Z
 timechaos.chaos-mesh.org      2026-08-28T07:50:33Z
+
 ```
 
 All operator and Chaos Mesh pods must be Ready before continuing.
@@ -183,8 +159,7 @@ dataset. They preserved ClickHouse data and passed their availability and
 integrity gates. Experiments 19 and 22 required one manual `SIGCONT` command
 because Chaos Mesh did not resume the target process while cleaning up
 IOChaos or TimeChaos. Experiment 23 cleaned up automatically in this fresh
-run. These were Chaos Mesh cleanup observations, not ClickHouse data failures.
-The campaign finished with 122,695 rows and 122,695 unique IDs. Both replicas
+run. These were Chaos Mesh cleanup observations, not ClickHouse data failures. Both replicas
 of each shard had identical row counts and payload checksums, replication
 queues were empty, and Keeper had exactly one leader and two followers.
 
@@ -261,65 +236,52 @@ spec:
 Create the cluster and wait for the database:
 
 ```bash
-kubectl apply -f setup/clickhouse-chaos.yaml
-```
-
-```text
+➤ kubectl apply -f setup/clickhouse-chaos.yaml
 clickhouse.kubedb.com/clickhouse-chaos created
 ```
 
 ```bash
-kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
-  clickhouse/clickhouse-chaos --timeout=15m
-```
-
-```text
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=15m
 clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 ```bash
-kubectl get clickhouse,petset,pods,pvc -n demo
-```
+➤ kubectl get clickhouse,petset,pods,pvc -n demo
+NAME                                     VERSION   STATUS   AGE
+clickhouse.kubedb.com/clickhouse-chaos   26.2.6    Ready    2m21s
 
-Output from our fresh deployment, with unrelated `demo` resources omitted:
+NAME                                                                  AGE
+petset.apps.k8s.appscode.com/clickhouse-chaos-chaos-cluster-shard-0   2m16s
+petset.apps.k8s.appscode.com/clickhouse-chaos-chaos-cluster-shard-1   2m13s
+petset.apps.k8s.appscode.com/clickhouse-chaos-keeper                  2m18s
 
-```text
-NAME                  VERSION   STATUS   AGE
-clickhouse-chaos   26.2.6    Ready    84s
+NAME                                           READY   STATUS    RESTARTS   AGE
+pod/clickhouse-chaos-chaos-cluster-shard-0-0   1/1     Running   0          2m15s
+pod/clickhouse-chaos-chaos-cluster-shard-0-1   1/1     Running   0          2m9s
+pod/clickhouse-chaos-chaos-cluster-shard-1-0   1/1     Running   0          2m13s
+pod/clickhouse-chaos-chaos-cluster-shard-1-1   1/1     Running   0          2m8s
+pod/clickhouse-chaos-keeper-0                  1/1     Running   0          2m17s
+pod/clickhouse-chaos-keeper-1                  1/1     Running   0          2m11s
+pod/clickhouse-chaos-keeper-2                  1/1     Running   0          2m6s
 
-NAME                                                                        AGE
-petset.apps.k8s.appscode.com/clickhouse-chaos-chaos-cluster-shard-0   78s
-petset.apps.k8s.appscode.com/clickhouse-chaos-chaos-cluster-shard-1   76s
-petset.apps.k8s.appscode.com/clickhouse-chaos-keeper                     81s
+NAME                                                                  STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-0-0   Bound    pvc-ff62c4b6-3ab2-420f-afe1-0cbaa951cadc   4Gi        RWO            local-path     <unset>                 2m15s
+persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-0-1   Bound    pvc-4ce90a1f-0135-42aa-895f-8a84c2bb5506   4Gi        RWO            local-path     <unset>                 2m9s
+persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-1-0   Bound    pvc-e858eab7-2a22-4fd9-8543-957efaeb6b85   4Gi        RWO            local-path     <unset>                 2m13s
+persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-1-1   Bound    pvc-5c795565-f990-4af8-880f-c110bb1b96df   4Gi        RWO            local-path     <unset>                 2m8s
+persistentvolumeclaim/data-clickhouse-chaos-keeper-0                  Bound    pvc-62b1a8b4-13e8-4485-9a18-5ffd6e4165f4   1Gi        RWO            local-path     <unset>                 2m17s
+persistentvolumeclaim/data-clickhouse-chaos-keeper-1                  Bound    pvc-63f6a03b-b4fb-4a5a-903b-d54e278d8508   1Gi        RWO            local-path     <unset>                 2m11s
+persistentvolumeclaim/data-clickhouse-chaos-keeper-2                  Bound    pvc-65ecb3a0-d259-4cdc-b8df-0c61b863afd1   1Gi        RWO            local-path     <unset>                 2m6s
 
-NAME                                               READY   STATUS    RESTARTS   AGE
-clickhouse-chaos-chaos-cluster-shard-0-0   1/1   Running   0   78s
-clickhouse-chaos-chaos-cluster-shard-0-1   1/1   Running   0   74s
-clickhouse-chaos-chaos-cluster-shard-1-0   1/1   Running   0   76s
-clickhouse-chaos-chaos-cluster-shard-1-1   1/1   Running   0   70s
-clickhouse-chaos-keeper-0                     1/1   Running   0   80s
-clickhouse-chaos-keeper-1                     1/1   Running   0   76s
-clickhouse-chaos-keeper-2                     1/1   Running   0   71s
-
-NAME                                                                        STATUS   CAPACITY   STORAGECLASS
-persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-0-0   Bound    4Gi        local-path
-persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-0-1   Bound    4Gi        local-path
-persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-1-0   Bound    4Gi        local-path
-persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-1-1   Bound    4Gi        local-path
-persistentvolumeclaim/data-clickhouse-chaos-keeper-0                     Bound    1Gi        local-path
-persistentvolumeclaim/data-clickhouse-chaos-keeper-1                     Bound    1Gi        local-path
-persistentvolumeclaim/data-clickhouse-chaos-keeper-2                     Bound    1Gi        local-path
 ```
 
 KubeDB creates and references `clickhouse-chaos-auth` automatically:
 
 ```bash
-kubectl get secret -n demo clickhouse-chaos-auth
-```
-
-```text
-NAME                       TYPE                       DATA   AGE
-clickhouse-chaos-auth   kubernetes.io/basic-auth   2      118s
+➤ kubectl get secret -n demo clickhouse-chaos-auth
+NAME                    TYPE                       DATA   AGE
+clickhouse-chaos-auth   kubernetes.io/basic-auth   2      4m18s
 ```
 
 ### Test Environment
@@ -523,22 +485,18 @@ spec:
 Start the client and wait for at least ten successful batches:
 
 ```bash
-kubectl apply -f setup/clickhouse-workload.yaml
-```
-
-```text
-configmap/clickhouse-chaos-workload created
+➤ kubectl apply -f setup/clickhouse-workload.yaml
+configmap/clickhouse-chaos-workload configured
 deployment.apps/clickhouse-chaos-workload created
+
 ```
 
 ```bash
-kubectl rollout status -n demo \
-  deployment/clickhouse-chaos-workload --timeout=3m
-```
-
-```text
+➤ kubectl rollout status -n demo \
+        deployment/clickhouse-chaos-workload --timeout=3m
 deployment "clickhouse-chaos-workload" successfully rolled out
 ```
+
 
 ```bash
 workload_pod=$(kubectl get pod -n demo \
@@ -546,19 +504,18 @@ workload_pod=$(kubectl get pod -n demo \
   -o jsonpath='{.items[0].metadata.name}')
 ```
 
-Output: none. The variable contains the workload pod name.
-
 ```bash
-kubectl logs -n demo -f "$workload_pod"
-```
-
-Output from our fresh deployment:
-
-```text
-2026-09-07T07:51:54+00:00 success attempt=1 rows=100
-2026-09-07T07:51:56+00:00 success attempt=2 rows=100
-2026-09-07T07:52:02+00:00 success attempt=7 rows=100
-2026-09-07T07:52:05+00:00 success attempt=10 rows=100
+$ kubectl logs -n demo -f "$workload_pod"
+2026-09-08T04:44:40+00:00 success attempt=1 rows=100
+2026-09-08T04:44:41+00:00 success attempt=2 rows=100
+2026-09-08T04:44:43+00:00 success attempt=3 rows=100
+2026-09-08T04:44:44+00:00 success attempt=4 rows=100
+2026-09-08T04:44:45+00:00 success attempt=5 rows=100
+2026-09-08T04:44:46+00:00 success attempt=6 rows=100
+2026-09-08T04:44:47+00:00 success attempt=7 rows=100
+2026-09-08T04:44:48+00:00 success attempt=8 rows=100
+2026-09-08T04:44:49+00:00 success attempt=9 rows=100
+2026-09-08T04:44:51+00:00 success attempt=10 rows=100
 ```
 
 When the log shows at least ten `success` lines, press `Ctrl-C`. This stops
@@ -623,78 +580,52 @@ workload_pod=$(kubectl get pod -n demo \
   -o jsonpath='{.items[0].metadata.name}')
 ```
 
-Output: none. The variable contains the workload pod name.
-
 ```bash
 kubectl exec -n demo "$workload_pod" -- touch /state/pause
 ```
 
-Output: none.
-
 ```bash
-sleep 5
-```
-
-Output: none.
-
-```bash
-kubectl exec -n demo "$workload_pod" -- bash -c \
-  'if pgrep -x clickhouse-client >/dev/null; then echo "client still active"; else echo "workload paused"; fi'
-```
-
-Output from our cluster:
-
-```text
+$ kubectl exec -n demo "$workload_pod" -- bash -c   'if pgrep -x clickhouse-client >/dev/null; then echo "client still active"; else echo "workload paused"; fi'
 workload paused
 ```
 
 Require KubeDB and all seven database pods to be healthy:
 
 ```bash
-kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
-  clickhouse/clickhouse-chaos --timeout=10m
-```
-
-```text
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=10m
 clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 ```bash
-kubectl get clickhouse,petset,pods -n demo
-```
+➤ kubectl get clickhouse,petset,pods -n demo
+NAME                                     VERSION   STATUS   AGE
+clickhouse.kubedb.com/clickhouse-chaos   26.2.6    Ready    28m
 
-Output from our cluster, with unrelated `demo` resources omitted:
+NAME                                                                  AGE
+petset.apps.k8s.appscode.com/clickhouse-chaos-chaos-cluster-shard-0   28m
+petset.apps.k8s.appscode.com/clickhouse-chaos-chaos-cluster-shard-1   28m
+petset.apps.k8s.appscode.com/clickhouse-chaos-keeper                  28m
 
-```text
-NAME                                           VERSION   STATUS   AGE
-clickhouse.kubedb.com/clickhouse-chaos      26.2.6    Ready    84s
+NAME                                             READY   STATUS    RESTARTS   AGE
+pod/clickhouse-chaos-chaos-cluster-shard-0-0     1/1     Running   0          28m
+pod/clickhouse-chaos-chaos-cluster-shard-0-1     1/1     Running   0          28m
+pod/clickhouse-chaos-chaos-cluster-shard-1-0     1/1     Running   0          28m
+pod/clickhouse-chaos-chaos-cluster-shard-1-1     1/1     Running   0          28m
+pod/clickhouse-chaos-keeper-0                    1/1     Running   0          28m
+pod/clickhouse-chaos-keeper-1                    1/1     Running   0          28m
+pod/clickhouse-chaos-keeper-2                    1/1     Running   0          28m
+pod/clickhouse-chaos-workload-64d7d5c85f-sgzlc   1/1     Running   0          6m39s
 
-NAME                                                                        AGE
-petset.apps.k8s.appscode.com/clickhouse-chaos-chaos-cluster-shard-0   78s
-petset.apps.k8s.appscode.com/clickhouse-chaos-chaos-cluster-shard-1   76s
-petset.apps.k8s.appscode.com/clickhouse-chaos-keeper                     81s
-
-NAME                                                     READY   STATUS    RESTARTS   AGE
-pod/clickhouse-chaos-chaos-cluster-shard-0-0       1/1     Running   0          78s
-pod/clickhouse-chaos-chaos-cluster-shard-0-1       1/1     Running   0          74s
-pod/clickhouse-chaos-chaos-cluster-shard-1-0       1/1     Running   0          76s
-pod/clickhouse-chaos-chaos-cluster-shard-1-1       1/1     Running   0          70s
-pod/clickhouse-chaos-keeper-0                         1/1     Running   0          80s
-pod/clickhouse-chaos-keeper-1                         1/1     Running   0          76s
-pod/clickhouse-chaos-keeper-2                         1/1     Running   0          71s
 ```
 
 Confirm that no test fault remains:
 
 ```bash
-kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos,timechaos -n demo
-```
-
-Output from our cluster:
-
-```text
+➤ kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos,timechaos -n demo
 No resources found in demo namespace.
 ```
+
 
 Check the Distributed table. The first two values must match, and the count
 must be at least `successful_batches × 100`:
@@ -711,10 +642,9 @@ kubectl exec -n demo "$workload_pod" -- bash -c '
 '
 ```
 
-The insert returns no text when ClickHouse accepts it.
 
 ```bash
-kubectl exec -n demo "$workload_pod" -- bash -c '
+$ kubectl exec -n demo "$workload_pod" -- bash -c '
   clickhouse-client \
     --host clickhouse-chaos.demo.svc \
     --user "$CH_USER" \
@@ -722,75 +652,45 @@ kubectl exec -n demo "$workload_pod" -- bash -c '
     --query "SELECT count(), uniqExact(id), sum(payload)
              FROM chaos_v2.events FORMAT TSV"
 '
-```
-
-Output from the fresh reader-validation cluster:
-
-```text
-4201	4201	6381530584011999872
+17302	17302	18251318426044052401
 ```
 
 Check every local replica:
 
 ```bash
-kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id), sum(payload)
-             FROM chaos_v2.events_local FORMAT TSV"
-'
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --query "SELECT count(), uniqExact(id), sum(payload)
+               FROM chaos_v2.events_local FORMAT TSV"
+  '
+8651	8651	15819459328062010837
+
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --query "SELECT count(), uniqExact(id), sum(payload)
+               FROM chaos_v2.events_local FORMAT TSV"
+  '
+8651	8651	15819459328062010837
+
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --query "SELECT count(), uniqExact(id), sum(payload)
+               FROM chaos_v2.events_local FORMAT TSV"
+  '
+8651	8651	2431859097982041564
+
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --query "SELECT count(), uniqExact(id), sum(payload)
+               FROM chaos_v2.events_local FORMAT TSV"
+  '
+8651	8651	2431859097982041564
 ```
 
-Output:
-
-```text
-2100	2100	14543385160371786853
-```
-
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id), sum(payload)
-             FROM chaos_v2.events_local FORMAT TSV"
-'
-```
-
-Output:
-
-```text
-2100	2100	14543385160371786853
-```
-
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id), sum(payload)
-             FROM chaos_v2.events_local FORMAT TSV"
-'
-```
-
-Output:
-
-```text
-2101	2101	10284889497349764635
-```
-
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id), sum(payload)
-             FROM chaos_v2.events_local FORMAT TSV"
-'
-```
-
-Output:
-
-```text
-2101	2101	10284889497349764635
-```
 
 Shard-0's two lines match, and shard-1's two lines match. Wait five seconds
 and run the same four commands again. The second check must return the same
@@ -799,71 +699,46 @@ four lines before you continue.
 Now check `system.replicas` on each pod, one at a time:
 
 ```bash
-kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --database chaos_v2 \
-    --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
-                    lost_part_count, absolute_delay
-             FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
-'
-```
-
-Output:
-
-```text
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --database chaos_v2 \
+      --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
+                      lost_part_count, absolute_delay
+               FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
+  '
 0	0	2	2	0	0
-```
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --database chaos_v2 \
-    --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
-                    lost_part_count, absolute_delay
-             FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
-'
-```
-
-Output:
-
-```text
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --database chaos_v2 \
+      --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
+                      lost_part_count, absolute_delay
+               FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
+  '
 0	0	2	2	0	0
-```
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --database chaos_v2 \
-    --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
-                    lost_part_count, absolute_delay
-             FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
-'
-```
-
-Output:
-
-```text
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --database chaos_v2 \
+      --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
+                      lost_part_count, absolute_delay
+               FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
+  '
 0	0	2	2	0	0
-```
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --database chaos_v2 \
-    --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
-                    lost_part_count, absolute_delay
-             FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
-'
-```
-
-Output:
-
-```text
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --database chaos_v2 \
+      --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
+                      lost_part_count, absolute_delay
+               FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
+  '
 0	0	2	2	0	0
+
 ```
 
 The values mean writable, empty queue, two configured replicas, two active
@@ -872,128 +747,73 @@ replicas, no lost parts, and no replication delay.
 Check Keeper directly rather than inferring quorum from ClickHouse status:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-keeper-0 \
-  -c clickhouse-keeper -- bash -c '
-  exec 3<>/dev/tcp/127.0.0.1/9181
-  printf "mntr\n" >&3
-  timeout 3 cat <&3
-' | awk '$1=="zk_server_state" {print $2}'
-```
+➤ kubectl exec -n demo clickhouse-chaos-keeper-0 \
+        -c clickhouse-keeper -- bash -c '
+    exec 3<>/dev/tcp/127.0.0.1/9181
+    printf "mntr\n" >&3
+    timeout 3 cat <&3
+  ' | awk '$1=="zk_server_state" {print $2}'
+follower
 
-Output:
+➤ kubectl exec -n demo clickhouse-chaos-keeper-1 \
+        -c clickhouse-keeper -- bash -c '
+    exec 3<>/dev/tcp/127.0.0.1/9181
+    printf "mntr\n" >&3
+    timeout 3 cat <&3
+  ' | awk '$1=="zk_server_state" {print $2}'
+follower
 
-```text
+➤ kubectl exec -n demo clickhouse-chaos-keeper-2 \
+        -c clickhouse-keeper -- bash -c '
+    exec 3<>/dev/tcp/127.0.0.1/9181
+    printf "mntr\n" >&3
+    timeout 3 cat <&3
+  ' | awk '$1=="zk_server_state" {print $2}'
 leader
-```
-
-```bash
-kubectl exec -n demo clickhouse-chaos-keeper-1 \
-  -c clickhouse-keeper -- bash -c '
-  exec 3<>/dev/tcp/127.0.0.1/9181
-  printf "mntr\n" >&3
-  timeout 3 cat <&3
-' | awk '$1=="zk_server_state" {print $2}'
-```
-
-Output:
-
-```text
-follower
-```
-
-```bash
-kubectl exec -n demo clickhouse-chaos-keeper-2 \
-  -c clickhouse-keeper -- bash -c '
-  exec 3<>/dev/tcp/127.0.0.1/9181
-  printf "mntr\n" >&3
-  timeout 3 cat <&3
-' | awk '$1=="zk_server_state" {print $2}'
-```
-
-Output:
-
-```text
-follower
 ```
 
 The leader can change, but the result must contain exactly one leader and two
 followers. Finally, verify each ClickHouse PID 1 one at a time:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 \
-  -c clickhouse -- ps -o pid,stat,comm -p 1
-```
-
-```text
-PID STAT COMMAND
-  1 Ssl  clickhouse-serv
-```
-
-```bash
-kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 \
-  -c clickhouse -- ps -o pid,stat,comm -p 1
-```
-
-```text
-PID STAT COMMAND
-  1 Ssl  clickhouse-serv
-```
-
-```bash
-kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
-  -c clickhouse -- ps -o pid,stat,comm -p 1
-```
-
-```text
-PID STAT COMMAND
-  1 Ssl  clickhouse-serv
-```
-
-```bash
-kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 \
-  -c clickhouse -- ps -o pid,stat,comm -p 1
-```
-
-```text
-PID STAT COMMAND
-  1 Ssl  clickhouse-serv
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 \
+        -c clickhouse -- ps -o pid,stat,comm -p 1
+    PID STAT COMMAND
+      1 Ssl  clickhouse-serv
+      
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 \
+        -c clickhouse -- ps -o pid,stat,comm -p 1
+    PID STAT COMMAND
+      1 Ssl  clickhouse-serv
+      
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
+        -c clickhouse -- ps -o pid,stat,comm -p 1
+    PID STAT COMMAND
+      1 Ssl  clickhouse-serv
+      
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 \
+        -c clickhouse -- ps -o pid,stat,comm -p 1
+    PID STAT COMMAND
+      1 Ssl  clickhouse-serv
 ```
 
 Check each data mount separately:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 \
-  -c clickhouse -- mount | grep /var/lib/clickhouse
-```
-
-```text
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 \
+        -c clickhouse -- mount | grep /var/lib/clickhouse
 /dev/vda1 on /var/lib/clickhouse type ext4 (rw,relatime,discard,errors=remount-ro,commit=30)
-```
 
-```bash
-kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 \
-  -c clickhouse -- mount | grep /var/lib/clickhouse
-```
-
-```text
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 \
+        -c clickhouse -- mount | grep /var/lib/clickhouse
 /dev/vda1 on /var/lib/clickhouse type ext4 (rw,relatime,discard,errors=remount-ro,commit=30)
-```
 
-```bash
-kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
-  -c clickhouse -- mount | grep /var/lib/clickhouse
-```
-
-```text
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
+        -c clickhouse -- mount | grep /var/lib/clickhouse
 /dev/vda1 on /var/lib/clickhouse type ext4 (rw,relatime,discard,errors=remount-ro,commit=30)
-```
 
-```bash
-kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 \
-  -c clickhouse -- mount | grep /var/lib/clickhouse
-```
-
-```text
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 \
+        -c clickhouse -- mount | grep /var/lib/clickhouse
 /dev/vda1 on /var/lib/clickhouse type ext4 (rw,relatime,discard,errors=remount-ro,commit=30)
 ```
 
