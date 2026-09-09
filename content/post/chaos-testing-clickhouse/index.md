@@ -34,26 +34,23 @@ To follow this tutorial, you need:
 For K3s, Chaos Mesh must use `/run/k3s/containerd/containerd.sock`:
 
 ```bash
-helm upgrade --install chaos-mesh chaos-mesh/chaos-mesh \
-  --namespace chaos-mesh \
-  --create-namespace \
-  --version 2.8.4 \
-  --set dashboard.create=true \
-  --set dashboard.securityMode=false \
-  --set dnsServer.create=true \
-  --set chaosDaemon.runtime=containerd \
-  --set chaosDaemon.socketPath=/run/k3s/containerd/containerd.sock \
-  --set chaosDaemon.privileged=true
-```
-
-Output from our installation:
-
-```text
+➤ helm upgrade --install chaos-mesh chaos-mesh/chaos-mesh \
+        --namespace chaos-mesh \
+        --create-namespace \
+        --version 2.8.4 \
+        --set dashboard.create=true \
+        --set dashboard.securityMode=false \
+        --set dnsServer.create=true \
+        --set chaosDaemon.runtime=containerd \
+        --set chaosDaemon.socketPath=/run/k3s/containerd/containerd.sock \
+        --set chaosDaemon.privileged=true
+Release "chaos-mesh" does not exist. Installing it now.
 NAME: chaos-mesh
+LAST DEPLOYED: Tue Sep  8 10:13:50 2026
 NAMESPACE: chaos-mesh
 STATUS: deployed
-REVISION: 2
-DESCRIPTION: Upgrade complete
+REVISION: 1
+DESCRIPTION: Install complete
 ```
 
 If you use a different Kubernetes distribution, change the runtime and socket
@@ -65,12 +62,6 @@ Create the disposable namespace:
 kubectl create ns demo
 ```
 
-Output:
-
-```text
-namespace/demo created
-```
-
 Create the local manifest directories:
 
 ```bash
@@ -79,78 +70,56 @@ mkdir -p clickhouse-chaos-testing/tests
 cd clickhouse-chaos-testing
 ```
 
-Output: none. These shell commands completed successfully.
-
 Confirm that the ClickHouse version and storage class used by this guide are
 available:
 
 ```bash
-kubectl get clickhouseversion 26.2.6
-```
-
-Output from our cluster:
-
-```text
-NAME     VERSION   DB_IMAGE
-26.2.6   26.2.6    docker.io/clickhouse/clickhouse-server:26.2.6
+➤ kubectl get clickhouseversion 26.2.6
+NAME     VERSION   DB_IMAGE                                        DEPRECATED   AGE
+26.2.6   26.2.6    docker.io/clickhouse/clickhouse-server:26.2.6                27d
 ```
 
 ```bash
-kubectl get storageclass local-path
-```
+➤ kubectl get storageclass local-path
+NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   true                   27d
 
-```text
-NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE
-local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer
 ```
-
-If your cluster does not provide `local-path`, replace
-`storageClassName: local-path` in the setup manifest with a storage class that
-supports `ReadWriteOnce` volumes in your cluster.
 
 ## Verify KubeDB and Chaos Mesh Installation
 
 ```bash
-kubectl get pods -n kubedb
-```
-
-Output from our cluster:
-
-```text
-NAME                                            READY   STATUS    RESTARTS   AGE
-kubedb-kubedb-autoscaler-0                      1/1     Running   2          15d
-kubedb-kubedb-ops-manager-0                     1/1     Running   0          2d2h
-kubedb-kubedb-provisioner-0                     1/1     Running   0          2d2h
-kubedb-kubedb-webhook-server-65949766c4-xlfpz   1/1     Running   0          6d4h
-kubedb-petset-85c9d79865-lfqww                  1/1     Running   2          15d
-kubedb-sidekick-86f897c579-djk65                1/1     Running   2          15d
+➤ kubectl get pods -n kubedb
+NAME                                            READY   STATUS             RESTARTS         AGE
+kubedb-kubedb-autoscaler-0                      1/1     Running            3 (2d9h ago)     21d
+kubedb-kubedb-ops-manager-0                     1/1     Running            1 (2d9h ago)     7d22h
+kubedb-kubedb-provisioner-0                     1/1     Running            1 (2d9h ago)     5d13h
+kubedb-kubedb-webhook-server-65949766c4-xlfpz   1/1     Running            1 (2d9h ago)     12d
+kubedb-petset-85c9d79865-lfqww                  1/1     Running            3 (2d9h ago)     21d
+kubedb-sidekick-86f897c579-djk65                1/1     Running            3 (2d9h ago)     21d
 ```
 
 ```bash
-kubectl get pods -n chaos-mesh
-```
+➤ kubectl get pods -n chaos-mesh
 
-```text
 NAME                                        READY   STATUS    RESTARTS   AGE
-chaos-controller-manager-7ddc79b6dc-65qr6   1/1     Running   1          4d23h
-chaos-controller-manager-7ddc79b6dc-ksfxm   1/1     Running   1          4d23h
-chaos-controller-manager-7ddc79b6dc-lb8qr   1/1     Running   1          4d23h
-chaos-daemon-vmc4j                          1/1     Running   0          4d23h
-chaos-dashboard-5db97f969f-prb94            1/1     Running   0          5d
-chaos-dns-server-6d8fd4b8b5-6lws4           1/1     Running   0          5d
+chaos-controller-manager-7d44d6dd54-7chxr   1/1     Running   0          3m50s
+chaos-controller-manager-7d44d6dd54-fd5cv   1/1     Running   0          3m50s
+chaos-controller-manager-7d44d6dd54-prstq   1/1     Running   0          3m50s
+chaos-daemon-dkfxd                          1/1     Running   0          3m50s
+chaos-dashboard-5db97f969f-gwm96            1/1     Running   0          3m50s
+chaos-dns-server-6d8fd4b8b5-kjwg7           1/1     Running   0          3m50s
+
 ```
 
 ```bash
-kubectl get crd \
-  podchaos.chaos-mesh.org \
-  networkchaos.chaos-mesh.org \
-  stresschaos.chaos-mesh.org \
-  iochaos.chaos-mesh.org \
-  dnschaos.chaos-mesh.org \
-  timechaos.chaos-mesh.org
-```
-
-```text
+➤ kubectl get crd \
+        podchaos.chaos-mesh.org \
+        networkchaos.chaos-mesh.org \
+        stresschaos.chaos-mesh.org \
+        iochaos.chaos-mesh.org \
+        dnschaos.chaos-mesh.org \
+        timechaos.chaos-mesh.org
 NAME                          CREATED AT
 podchaos.chaos-mesh.org       2026-08-28T07:50:32Z
 networkchaos.chaos-mesh.org   2026-08-28T07:50:32Z
@@ -158,6 +127,7 @@ stresschaos.chaos-mesh.org    2026-08-28T07:50:32Z
 iochaos.chaos-mesh.org        2026-08-28T07:50:32Z
 dnschaos.chaos-mesh.org       2026-08-28T07:50:32Z
 timechaos.chaos-mesh.org      2026-08-28T07:50:33Z
+
 ```
 
 All operator and Chaos Mesh pods must be Ready before continuing.
@@ -184,16 +154,13 @@ The experiments were executed against a fresh KubeDB-managed ClickHouse
 26.2.6 cluster with two shards, two replicas per shard, and three dedicated
 ClickHouse Keeper members.
 
-All 25 experiments preserved ClickHouse data and eventually passed their
-availability and integrity gates. Experiments 19, 22, and 23 each required one
-manual `SIGCONT` command because Chaos Mesh did not resume the target process
-while cleaning up IOChaos or TimeChaos. These were Chaos Mesh cleanup issues,
-not ClickHouse data failures. The first 24 experiments finished with 50,987
-rows and 50,987 unique IDs. Experiment 25 used a separate fresh 100,000-row
-cluster to test complete loss of one replica's PVC. In both campaigns, the
-replicas of each shard finished with identical row counts and payload
-checksums, replication queues were empty, and Keeper had exactly one leader
-and two followers.
+All 25 experiments used the same `clickhouse-chaos` resource and accumulated
+dataset. They preserved ClickHouse data through the recoverable database
+faults. TimeChaos did not demonstrate a live clock skew: it stopped the target
+process and required manual `SIGCONT` after cleanup, so experiment 22 is
+reported as a chaos-tool limitation rather than a pass. Both replicas
+of each shard had identical row counts and payload checksums, replication
+queues were empty, and Keeper had exactly one leader and two followers.
 
 ## Create a ClickHouse Cluster
 
@@ -202,21 +169,22 @@ The test topology deliberately separates two different kinds of redundancy:
 - Two replicas protect each data shard.
 - Three Keeper members provide a coordination quorum.
 
-Save the following manifest as `setup/clickhouse-chaos-v2.yaml`:
+#### Create `setup/clickhouse-chaos.yaml`
+Save the following manifest as `setup/clickhouse-chaos.yaml`:
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
 kind: ClickHouse
 metadata:
-  name: clickhouse-chaos-v2
+  name: clickhouse-chaos
   namespace: demo
   labels:
-    chaos-test.kubedb.com/suite: clickhouse-chaos-v2
+    chaos-test.kubedb.com/suite: clickhouse-chaos
 spec:
   version: 26.2.6
   clusterTopology:
     cluster:
-      name: chaos-v2-cluster
+      name: chaos-cluster
       shards: 2
       replicas: 2
       storageType: Durable
@@ -226,7 +194,7 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 1Gi
+            storage: 4Gi
       podTemplate:
         spec:
           containers:
@@ -234,10 +202,10 @@ spec:
               resources:
                 requests:
                   cpu: 250m
-                  memory: 512Mi
+                  memory: 1Gi
                 limits:
                   cpu: "1"
-                  memory: 1Gi
+                  memory: 4Gi
     clickHouseKeeper:
       externallyManaged: false
       spec:
@@ -267,65 +235,52 @@ spec:
 Create the cluster and wait for the database:
 
 ```bash
-kubectl apply -f setup/clickhouse-chaos-v2.yaml
-```
-
-```text
-clickhouse.kubedb.com/clickhouse-chaos-v2 created
+➤ kubectl apply -f setup/clickhouse-chaos.yaml
+clickhouse.kubedb.com/clickhouse-chaos created
 ```
 
 ```bash
-kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
-  clickhouse/clickhouse-chaos-v2 --timeout=15m
-```
-
-```text
-clickhouse.kubedb.com/clickhouse-chaos-v2 condition met
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=15m
+clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 ```bash
-kubectl get clickhouse,petset,pods,pvc -n demo
+➤ kubectl get clickhouse,petset,pods,pvc -n demo
+NAME                                     VERSION   STATUS   AGE
+clickhouse.kubedb.com/clickhouse-chaos   26.2.6    Ready    2m21s
+
+NAME                                                                  AGE
+petset.apps.k8s.appscode.com/clickhouse-chaos-chaos-cluster-shard-0   2m16s
+petset.apps.k8s.appscode.com/clickhouse-chaos-chaos-cluster-shard-1   2m13s
+petset.apps.k8s.appscode.com/clickhouse-chaos-keeper                  2m18s
+
+NAME                                           READY   STATUS    RESTARTS   AGE
+pod/clickhouse-chaos-chaos-cluster-shard-0-0   1/1     Running   0          2m15s
+pod/clickhouse-chaos-chaos-cluster-shard-0-1   1/1     Running   0          2m9s
+pod/clickhouse-chaos-chaos-cluster-shard-1-0   1/1     Running   0          2m13s
+pod/clickhouse-chaos-chaos-cluster-shard-1-1   1/1     Running   0          2m8s
+pod/clickhouse-chaos-keeper-0                  1/1     Running   0          2m17s
+pod/clickhouse-chaos-keeper-1                  1/1     Running   0          2m11s
+pod/clickhouse-chaos-keeper-2                  1/1     Running   0          2m6s
+
+NAME                                                                  STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-0-0   Bound    pvc-9773c0e0-8bd6-4a67-b445-444255b61074   4Gi        RWO            local-path     <unset>                 2m15s
+persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-0-1   Bound    pvc-af84e532-ec8b-4ddc-938f-34d6a21bdeeb   4Gi        RWO            local-path     <unset>                 2m9s
+persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-1-0   Bound    pvc-eecf7db8-b9b5-4888-b1aa-71e70ea65119   4Gi        RWO            local-path     <unset>                 2m13s
+persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-1-1   Bound    pvc-35ef4112-0c9d-42b1-973a-f26389b04864   4Gi        RWO            local-path     <unset>                 2m8s
+persistentvolumeclaim/data-clickhouse-chaos-keeper-0                  Bound    pvc-531f098d-5196-490d-b6ba-b3584755b06c   1Gi        RWO            local-path     <unset>                 2m17s
+persistentvolumeclaim/data-clickhouse-chaos-keeper-1                  Bound    pvc-41c5eecc-1f51-477d-aa7f-22e2e1c88ba9   1Gi        RWO            local-path     <unset>                 2m11s
+persistentvolumeclaim/data-clickhouse-chaos-keeper-2                  Bound    pvc-e893bff9-8ba5-4da4-92f7-b0b125e4777f   1Gi        RWO            local-path     <unset>                 2m6s
+
 ```
 
-Output from our fresh deployment, with unrelated `demo` resources omitted:
-
-```text
-NAME                  VERSION   STATUS   AGE
-clickhouse-chaos-v2   26.2.6    Ready    84s
-
-NAME                                                                        AGE
-petset.apps.k8s.appscode.com/clickhouse-chaos-v2-chaos-v2-cluster-shard-0   78s
-petset.apps.k8s.appscode.com/clickhouse-chaos-v2-chaos-v2-cluster-shard-1   76s
-petset.apps.k8s.appscode.com/clickhouse-chaos-v2-keeper                     81s
-
-NAME                                               READY   STATUS    RESTARTS   AGE
-clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0   1/1   Running   0   78s
-clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1   1/1   Running   0   74s
-clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0   1/1   Running   0   76s
-clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1   1/1   Running   0   70s
-clickhouse-chaos-v2-keeper-0                     1/1   Running   0   80s
-clickhouse-chaos-v2-keeper-1                     1/1   Running   0   76s
-clickhouse-chaos-v2-keeper-2                     1/1   Running   0   71s
-
-NAME                                                                        STATUS   CAPACITY   STORAGECLASS
-persistentvolumeclaim/data-clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0   Bound    1Gi        local-path
-persistentvolumeclaim/data-clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1   Bound    1Gi        local-path
-persistentvolumeclaim/data-clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0   Bound    1Gi        local-path
-persistentvolumeclaim/data-clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1   Bound    1Gi        local-path
-persistentvolumeclaim/data-clickhouse-chaos-v2-keeper-0                     Bound    1Gi        local-path
-persistentvolumeclaim/data-clickhouse-chaos-v2-keeper-1                     Bound    1Gi        local-path
-persistentvolumeclaim/data-clickhouse-chaos-v2-keeper-2                     Bound    1Gi        local-path
-```
-
-KubeDB creates and references `clickhouse-chaos-v2-auth` automatically:
+KubeDB creates and references `clickhouse-chaos-auth` automatically:
 
 ```bash
-kubectl get secret -n demo clickhouse-chaos-v2-auth
-```
-
-```text
-NAME                       TYPE                       DATA   AGE
-clickhouse-chaos-v2-auth   kubernetes.io/basic-auth   2      118s
+➤ kubectl get secret -n demo clickhouse-chaos-auth
+NAME                    TYPE                       DATA   AGE
+clickhouse-chaos-auth   kubernetes.io/basic-auth   2      4m18s
 ```
 
 ### Test Environment
@@ -334,22 +289,16 @@ clickhouse-chaos-v2-auth   kubernetes.io/basic-auth   2      118s
 | --- | --- |
 | Kubernetes | K3s v1.36.3+k3s1, single node |
 | Namespace | `demo` |
-| ClickHouse resource | `clickhouse-chaos-v2` |
+| ClickHouse resource | `clickhouse-chaos` |
 | ClickHouse version | `26.2.6` |
 | Data topology | 2 shards × 2 replicas |
 | Coordination | 3 ClickHouse Keeper members |
-| Storage | 1 GiB `local-path` PVC per pod |
-| ClickHouse limit | 1 CPU, 1 GiB memory |
+| Storage | 4Gi `local-path` PVC per ClickHouse pod |
+| ClickHouse limit | 1 CPU, 4Gi memory |
 | Keeper limit | 500m CPU, 512 MiB memory |
 | Chaos Mesh | 2.8.4 |
 | Container runtime | K3s containerd |
 | Chaos daemon socket | `/run/k3s/containerd/containerd.sock` |
-
-This campaign used a disposable single-node K3s cluster. NodeChaos was
-excluded because failing the only
-K3s node would also remove the control plane and Chaos Mesh. IOChaos `mistake`
-was excluded because it deliberately returns incorrect bytes and can cause
-silent persistent corruption.
 
 ## Chaos Testing
 
@@ -363,8 +312,8 @@ ClickHouse is a column-oriented analytical database with a SQL interface. We
 use database queries to create tables, insert test data, count unique IDs, and
 inspect replication state.
 
-The local table used `ReplicatedMergeTree`, while clients wrote through a
-`Distributed` table across `chaos-v2-cluster`. Each batch inserted 100 rows
+The table used `ReplicatedMergeTree`, while clients wrote through a
+`Distributed` table across `chaos-cluster`. Each batch inserted 100 rows
 with server-generated UUIDs and `insert_distributed_sync=1`.
 
 A UUID is a randomly generated unique identifier assigned to each row. Unique
@@ -377,17 +326,17 @@ no credential needs to be copied into the command:
 
 ```bash
 kubectl exec -i -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- \
+  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
   bash -c '
     clickhouse-client \
       --user "$CLICKHOUSE_USER" \
       --password "$CLICKHOUSE_PASSWORD" \
       --multiquery
   ' <<'SQL'
-CREATE DATABASE IF NOT EXISTS chaos_v2 ON CLUSTER `chaos-v2-cluster`;
+CREATE DATABASE IF NOT EXISTS chaos_v2 ON CLUSTER `chaos-cluster`;
 
 CREATE TABLE IF NOT EXISTS chaos_v2.events_local
-ON CLUSTER `chaos-v2-cluster`
+ON CLUSTER `chaos-cluster`
 (
   id UUID,
   inserted_at DateTime64(3),
@@ -400,10 +349,10 @@ ENGINE = ReplicatedMergeTree(
 ORDER BY id;
 
 CREATE TABLE IF NOT EXISTS chaos_v2.events
-ON CLUSTER `chaos-v2-cluster`
+ON CLUSTER `chaos-cluster`
 AS chaos_v2.events_local
 ENGINE = Distributed(
-  'chaos-v2-cluster',
+  'chaos-cluster',
   'chaos_v2',
   'events_local',
   cityHash64(id)
@@ -411,12 +360,15 @@ ENGINE = Distributed(
 SQL
 ```
 
-The command printed nothing and exited successfully; ClickHouse created the
+The command exited successfully; ClickHouse created the
 database and both tables on the cluster.
 
-Save this YAML as `setup/clickhouse-workload.yaml`. The client inserts 100 rows,
-waits for synchronous Distributed delivery, records whether the batch was
-acknowledged, then repeats:
+#### Create `setup/clickhouse-workload.yaml`
+
+The workload client inserts 100 rows, waits for synchronous Distributed
+delivery, records whether the batch was acknowledged, then repeats.
+
+Save the following manifest as `setup/clickhouse-workload.yaml`:
 
 The `while true` below belongs inside the workload container's script. It is
 not a loop that the reader runs manually; Kubernetes starts this script once
@@ -426,10 +378,10 @@ and it keeps producing traffic until the workload is paused.
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: clickhouse-chaos-v2-workload
+  name: clickhouse-chaos-workload
   namespace: demo
   labels:
-    chaos-test.kubedb.com/suite: clickhouse-chaos-v2
+    chaos-test.kubedb.com/suite: clickhouse-chaos
 data:
   run.sh: |
     #!/usr/bin/env bash
@@ -449,7 +401,7 @@ data:
       printf '%s\n' "$attempt" > /state/attempt_batches
 
       if timeout --signal=TERM --kill-after=5s 20s clickhouse-client \
-        --host clickhouse-chaos-v2.demo.svc \
+        --host clickhouse-chaos.demo.svc \
         --user "$CH_USER" \
         --password "$CH_PASSWORD" \
         --connect_timeout 5 \
@@ -475,20 +427,20 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: clickhouse-chaos-v2-workload
+  name: clickhouse-chaos-workload
   namespace: demo
   labels:
-    chaos-test.kubedb.com/suite: clickhouse-chaos-v2
+    chaos-test.kubedb.com/suite: clickhouse-chaos
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: clickhouse-chaos-v2-workload
+      app: clickhouse-chaos-workload
   template:
     metadata:
       labels:
-        app: clickhouse-chaos-v2-workload
-        chaos-test.kubedb.com/suite: clickhouse-chaos-v2
+        app: clickhouse-chaos-workload
+        chaos-test.kubedb.com/suite: clickhouse-chaos
     spec:
       containers:
         - name: workload
@@ -500,12 +452,12 @@ spec:
             - name: CH_USER
               valueFrom:
                 secretKeyRef:
-                  name: clickhouse-chaos-v2-auth
+                  name: clickhouse-chaos-auth
                   key: username
             - name: CH_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: clickhouse-chaos-v2-auth
+                  name: clickhouse-chaos-auth
                   key: password
           resources:
             requests:
@@ -523,7 +475,7 @@ spec:
       volumes:
         - name: script
           configMap:
-            name: clickhouse-chaos-v2-workload
+            name: clickhouse-chaos-workload
             defaultMode: 365
         - name: state
           emptyDir: {}
@@ -532,42 +484,40 @@ spec:
 Start the client and wait for at least ten successful batches:
 
 ```bash
-kubectl apply -f setup/clickhouse-workload.yaml
-```
+➤ kubectl apply -f setup/clickhouse-workload.yaml
+configmap/clickhouse-chaos-workload configured
+deployment.apps/clickhouse-chaos-workload created
 
-```text
-configmap/clickhouse-chaos-v2-workload created
-deployment.apps/clickhouse-chaos-v2-workload created
-```
-
-```bash
-kubectl rollout status -n demo \
-  deployment/clickhouse-chaos-v2-workload --timeout=3m
-```
-
-```text
-deployment "clickhouse-chaos-v2-workload" successfully rolled out
 ```
 
 ```bash
-workload_pod=$(kubectl get pod -n demo \
-  -l app=clickhouse-chaos-v2-workload \
-  -o jsonpath='{.items[0].metadata.name}')
+➤ kubectl rollout status -n demo \
+        deployment/clickhouse-chaos-workload --timeout=3m
+deployment "clickhouse-chaos-workload" successfully rolled out
 ```
 
-Output: none. The variable contains the workload pod name.
 
 ```bash
-kubectl logs -n demo -f "$workload_pod"
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+    -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
 ```
 
-Output from our fresh deployment:
+Kubernetes generates the suffix in this pod name. In the commands below, use
+the workload pod name returned by your own cluster.
 
-```text
-2026-09-02T06:16:43+00:00 success attempt=2 rows=100
-2026-09-02T06:16:44+00:00 success attempt=3 rows=100
-2026-09-02T06:16:53+00:00 success attempt=10 rows=100
-2026-09-02T06:16:56+00:00 success attempt=13 rows=100
+```bash
+$ kubectl logs -n demo -f clickhouse-chaos-workload-64d7d5c85f-fqjdp
+2026-09-08T04:44:40+00:00 success attempt=1 rows=100
+2026-09-08T04:44:41+00:00 success attempt=2 rows=100
+2026-09-08T04:44:43+00:00 success attempt=3 rows=100
+2026-09-08T04:44:44+00:00 success attempt=4 rows=100
+2026-09-08T04:44:45+00:00 success attempt=5 rows=100
+2026-09-08T04:44:46+00:00 success attempt=6 rows=100
+2026-09-08T04:44:47+00:00 success attempt=7 rows=100
+2026-09-08T04:44:48+00:00 success attempt=8 rows=100
+2026-09-08T04:44:49+00:00 success attempt=9 rows=100
+2026-09-08T04:44:51+00:00 success attempt=10 rows=100
 ```
 
 When the log shows at least ten `success` lines, press `Ctrl-C`. This stops
@@ -581,23 +531,23 @@ client recorded the attempt as failed. Therefore, `acknowledged batches ×
 100` is the minimum number of rows known to have been accepted, not
 necessarily the final row count.
 
-Before the first test, the client had 42 successful batches, zero failures,
-and 4,201 unique rows including one gate-probe row. At the end it had:
+Before the first test, the client had 35 successful batches, zero failures,
+and 3,500 unique rows. At the end it had:
 
 ```text
-attempted batches:     611
-acknowledged batches:  491
-failed/ambiguous:      120
-acknowledged rows:     49,100
-actual rows:           50,987
-unique IDs:            50,987
+attempted batches:     1,342
+acknowledged batches:  1,208
+failed/ambiguous:      134
+acknowledged rows:     120,800
+actual rows:           122,695
+unique IDs:            122,695
 ```
 
-The client attempted 611 batches. It received success for 491 batches, so
-`491 × 100 = 49,100` rows were definitely acknowledged. Another 120 attempts
+The client attempted 1,342 batches. It received success for 1,208 batches, so
+`1,208 × 100 = 120,800` rows were definitely acknowledged. Another 134 attempts
 timed out or returned an error. Some rows from those attempts had already
-reached ClickHouse, and the recovery checks also inserted small probe rows.
-Together they account for the additional 1,887 rows. Since all 50,987 IDs
+reached ClickHouse.
+Together they account for the additional 1,895 rows. Since all 122,695 IDs
 were unique, these additional rows were neither duplicate rows nor evidence
 of corruption.
 
@@ -608,12 +558,12 @@ required all of the
 following before continuing:
 
 1. Pause the workload and confirm its active client stopped.
-2. Require KubeDB `Ready` and all four ClickHouse plus three Keeper pods Ready.
+2. Require the ClickHouse resource and all four ClickHouse plus three Keeper pods to be `Ready`.
 3. Confirm that no test Chaos Mesh object remains.
 4. Perform an authenticated probe insert and require `count() == uniqExact(id)`
    on the Distributed table.
 5. Require matching local counts and checksums for each shard in two
-   consecutive checks five seconds apart. A check is a set of query results
+   consecutive checks. A check is a set of query results
    collected at one moment, not a volume snapshot or backup. Repeating it
    avoids judging a brief part-visibility delay immediately after Keeper
    returns.
@@ -627,77 +577,67 @@ following before continuing:
 Pause the workload and let the active client finish:
 
 ```bash
-workload_pod=$(kubectl get pod -n demo \
-  -l app=clickhouse-chaos-v2-workload \
-  -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -n demo "$workload_pod" -- touch /state/pause
-sleep 5
-kubectl exec -n demo "$workload_pod" -- bash -c \
-  'if pgrep -x clickhouse-client >/dev/null; then echo "client still active"; else echo "workload paused"; fi'
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+    -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
 ```
 
-Output from our cluster:
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- touch /state/pause
+```
 
-```text
+The command prints nothing.
+
+```bash
+$ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- bash -c   'if pgrep -x clickhouse-client >/dev/null; then echo "client still active"; else echo "workload paused"; fi'
 workload paused
 ```
 
-Require KubeDB and all seven database pods to be healthy:
+Require ClickHouse and all seven database pods to be healthy:
 
 ```bash
-kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
-  clickhouse/clickhouse-chaos-v2 --timeout=10m
-```
-
-```text
-clickhouse.kubedb.com/clickhouse-chaos-v2 condition met
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=10m
+clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
 ```bash
-kubectl get clickhouse,petset,pods -n demo
-```
+➤ kubectl get clickhouse,petset,pods -n demo
+NAME                                     VERSION   STATUS   AGE
+clickhouse.kubedb.com/clickhouse-chaos   26.2.6    Ready    28m
 
-Output from our cluster, with unrelated `demo` resources omitted:
+NAME                                                                  AGE
+petset.apps.k8s.appscode.com/clickhouse-chaos-chaos-cluster-shard-0   28m
+petset.apps.k8s.appscode.com/clickhouse-chaos-chaos-cluster-shard-1   28m
+petset.apps.k8s.appscode.com/clickhouse-chaos-keeper                  28m
 
-```text
-NAME                                           VERSION   STATUS   AGE
-clickhouse.kubedb.com/clickhouse-chaos-v2      26.2.6    Ready    84s
+NAME                                             READY   STATUS    RESTARTS   AGE
+pod/clickhouse-chaos-chaos-cluster-shard-0-0     1/1     Running   0          28m
+pod/clickhouse-chaos-chaos-cluster-shard-0-1     1/1     Running   0          28m
+pod/clickhouse-chaos-chaos-cluster-shard-1-0     1/1     Running   0          28m
+pod/clickhouse-chaos-chaos-cluster-shard-1-1     1/1     Running   0          28m
+pod/clickhouse-chaos-keeper-0                    1/1     Running   0          28m
+pod/clickhouse-chaos-keeper-1                    1/1     Running   0          28m
+pod/clickhouse-chaos-keeper-2                    1/1     Running   0          28m
+pod/clickhouse-chaos-workload-64d7d5c85f-fqjdp   1/1     Running   0          6m39s
 
-NAME                                                                        AGE
-petset.apps.k8s.appscode.com/clickhouse-chaos-v2-chaos-v2-cluster-shard-0   78s
-petset.apps.k8s.appscode.com/clickhouse-chaos-v2-chaos-v2-cluster-shard-1   76s
-petset.apps.k8s.appscode.com/clickhouse-chaos-v2-keeper                     81s
-
-NAME                                                     READY   STATUS    RESTARTS   AGE
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0       1/1     Running   0          78s
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1       1/1     Running   0          74s
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0       1/1     Running   0          76s
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1       1/1     Running   0          70s
-pod/clickhouse-chaos-v2-keeper-0                         1/1     Running   0          80s
-pod/clickhouse-chaos-v2-keeper-1                         1/1     Running   0          76s
-pod/clickhouse-chaos-v2-keeper-2                         1/1     Running   0          71s
 ```
 
 Confirm that no test fault remains:
 
 ```bash
-kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos,timechaos \
-  -n demo
-```
-
-Output from our cluster:
-
-```text
+➤ kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos,timechaos -n demo
 No resources found in demo namespace.
 ```
+
 
 Check the Distributed table. The first two values must match, and the count
 must be at least `successful_batches × 100`:
 
 ```bash
-kubectl exec -n demo "$workload_pod" -- bash -c '
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- bash -c '
   clickhouse-client \
-    --host clickhouse-chaos-v2.demo.svc \
+    --host clickhouse-chaos.demo.svc \
     --user "$CH_USER" \
     --password "$CH_PASSWORD" \
     --query "INSERT INTO chaos_v2.events
@@ -706,159 +646,103 @@ kubectl exec -n demo "$workload_pod" -- bash -c '
 '
 ```
 
-The insert returns no text when ClickHouse accepts it.
 
 ```bash
-kubectl exec -n demo "$workload_pod" -- bash -c '
+$ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- bash -c '
   clickhouse-client \
-    --host clickhouse-chaos-v2.demo.svc \
+    --host clickhouse-chaos.demo.svc \
     --user "$CH_USER" \
     --password "$CH_PASSWORD" \
     --query "SELECT count(), uniqExact(id), sum(payload)
              FROM chaos_v2.events FORMAT TSV"
 '
-```
-
-Output from the fresh reader-validation cluster:
-
-```text
-4201	4201	6381530584011999872
+4201	4201	18251318426044052401
 ```
 
 Check every local replica:
 
 ```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id), sum(payload)
-             FROM chaos_v2.events_local FORMAT TSV"
-'
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --query "SELECT count(), uniqExact(id), sum(payload)
+               FROM chaos_v2.events_local FORMAT TSV"
+  '
+2100	2100	15819459328062010837
+
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --query "SELECT count(), uniqExact(id), sum(payload)
+               FROM chaos_v2.events_local FORMAT TSV"
+  '
+2100	2100	15819459328062010837
+
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --query "SELECT count(), uniqExact(id), sum(payload)
+               FROM chaos_v2.events_local FORMAT TSV"
+  '
+2101	2101	2431859097982041564
+
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --query "SELECT count(), uniqExact(id), sum(payload)
+               FROM chaos_v2.events_local FORMAT TSV"
+  '
+2101	2101	2431859097982041564
 ```
 
-Output:
 
-```text
-2100	2100	14543385160371786853
-```
-
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id), sum(payload)
-             FROM chaos_v2.events_local FORMAT TSV"
-'
-```
-
-Output:
-
-```text
-2100	2100	14543385160371786853
-```
-
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id), sum(payload)
-             FROM chaos_v2.events_local FORMAT TSV"
-'
-```
-
-Output:
-
-```text
-2101	2101	10284889497349764635
-```
-
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id), sum(payload)
-             FROM chaos_v2.events_local FORMAT TSV"
-'
-```
-
-Output:
-
-```text
-2101	2101	10284889497349764635
-```
-
-Shard-0's two lines match, and shard-1's two lines match. Wait five seconds
-and run the same four commands again. The second check must return the same
+Shard-0's two lines match, and shard-1's two lines match. Run the same four
+commands again. The second check must return the same
 four lines before you continue.
 
 Now check `system.replicas` on each pod, one at a time:
 
 ```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --database chaos_v2 \
-    --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
-                    lost_part_count, absolute_delay
-             FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
-'
-```
-
-Output:
-
-```text
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --database chaos_v2 \
+      --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
+                      lost_part_count, absolute_delay
+               FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
+  '
 0	0	2	2	0	0
-```
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --database chaos_v2 \
-    --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
-                    lost_part_count, absolute_delay
-             FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
-'
-```
-
-Output:
-
-```text
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --database chaos_v2 \
+      --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
+                      lost_part_count, absolute_delay
+               FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
+  '
 0	0	2	2	0	0
-```
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --database chaos_v2 \
-    --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
-                    lost_part_count, absolute_delay
-             FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
-'
-```
-
-Output:
-
-```text
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --database chaos_v2 \
+      --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
+                      lost_part_count, absolute_delay
+               FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
+  '
 0	0	2	2	0	0
-```
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 -c clickhouse -- bash -c '
-  clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
-    --database chaos_v2 \
-    --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
-                    lost_part_count, absolute_delay
-             FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
-'
-```
-
-Output:
-
-```text
+➤ kubectl exec -n demo \
+        clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c '
+    clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+      --database chaos_v2 \
+      --query "SELECT is_readonly, queue_size, total_replicas, active_replicas,
+                      lost_part_count, absolute_delay
+               FROM system.replicas WHERE database=currentDatabase() FORMAT TSV"
+  '
 0	0	2	2	0	0
+
 ```
 
 The values mean writable, empty queue, two configured replicas, two active
@@ -867,128 +751,73 @@ replicas, no lost parts, and no replication delay.
 Check Keeper directly rather than inferring quorum from ClickHouse status:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-v2-keeper-0 \
-  -c clickhouse-keeper -- bash -c '
-  exec 3<>/dev/tcp/127.0.0.1/9181
-  printf "mntr\n" >&3
-  timeout 3 cat <&3
-' | awk '$1=="zk_server_state" {print $2}'
-```
+➤ kubectl exec -n demo clickhouse-chaos-keeper-0 \
+        -c clickhouse-keeper -- bash -c '
+    exec 3<>/dev/tcp/127.0.0.1/9181
+    printf "mntr\n" >&3
+    timeout 3 cat <&3
+  ' | awk '$1=="zk_server_state" {print $2}'
+follower
 
-Output:
+➤ kubectl exec -n demo clickhouse-chaos-keeper-1 \
+        -c clickhouse-keeper -- bash -c '
+    exec 3<>/dev/tcp/127.0.0.1/9181
+    printf "mntr\n" >&3
+    timeout 3 cat <&3
+  ' | awk '$1=="zk_server_state" {print $2}'
+follower
 
-```text
+➤ kubectl exec -n demo clickhouse-chaos-keeper-2 \
+        -c clickhouse-keeper -- bash -c '
+    exec 3<>/dev/tcp/127.0.0.1/9181
+    printf "mntr\n" >&3
+    timeout 3 cat <&3
+  ' | awk '$1=="zk_server_state" {print $2}'
 leader
-```
-
-```bash
-kubectl exec -n demo clickhouse-chaos-v2-keeper-1 \
-  -c clickhouse-keeper -- bash -c '
-  exec 3<>/dev/tcp/127.0.0.1/9181
-  printf "mntr\n" >&3
-  timeout 3 cat <&3
-' | awk '$1=="zk_server_state" {print $2}'
-```
-
-Output:
-
-```text
-follower
-```
-
-```bash
-kubectl exec -n demo clickhouse-chaos-v2-keeper-2 \
-  -c clickhouse-keeper -- bash -c '
-  exec 3<>/dev/tcp/127.0.0.1/9181
-  printf "mntr\n" >&3
-  timeout 3 cat <&3
-' | awk '$1=="zk_server_state" {print $2}'
-```
-
-Output:
-
-```text
-follower
 ```
 
 The leader can change, but the result must contain exactly one leader and two
 followers. Finally, verify each ClickHouse PID 1 one at a time:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 \
-  -c clickhouse -- ps -o pid,stat,comm -p 1
-```
-
-```text
-PID STAT COMMAND
-  1 Ssl  clickhouse-serv
-```
-
-```bash
-kubectl exec -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1 \
-  -c clickhouse -- ps -o pid,stat,comm -p 1
-```
-
-```text
-PID STAT COMMAND
-  1 Ssl  clickhouse-serv
-```
-
-```bash
-kubectl exec -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 \
-  -c clickhouse -- ps -o pid,stat,comm -p 1
-```
-
-```text
-PID STAT COMMAND
-  1 Ssl  clickhouse-serv
-```
-
-```bash
-kubectl exec -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 \
-  -c clickhouse -- ps -o pid,stat,comm -p 1
-```
-
-```text
-PID STAT COMMAND
-  1 Ssl  clickhouse-serv
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 \
+        -c clickhouse -- ps -o pid,stat,comm -p 1
+    PID STAT COMMAND
+      1 Ssl  clickhouse-serv
+      
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 \
+        -c clickhouse -- ps -o pid,stat,comm -p 1
+    PID STAT COMMAND
+      1 Ssl  clickhouse-serv
+      
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
+        -c clickhouse -- ps -o pid,stat,comm -p 1
+    PID STAT COMMAND
+      1 Ssl  clickhouse-serv
+      
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 \
+        -c clickhouse -- ps -o pid,stat,comm -p 1
+    PID STAT COMMAND
+      1 Ssl  clickhouse-serv
 ```
 
 Check each data mount separately:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 \
-  -c clickhouse -- mount | grep /var/lib/clickhouse
-```
-
-```text
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 \
+        -c clickhouse -- mount | grep /var/lib/clickhouse
 /dev/vda1 on /var/lib/clickhouse type ext4 (rw,relatime,discard,errors=remount-ro,commit=30)
-```
 
-```bash
-kubectl exec -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1 \
-  -c clickhouse -- mount | grep /var/lib/clickhouse
-```
-
-```text
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 \
+        -c clickhouse -- mount | grep /var/lib/clickhouse
 /dev/vda1 on /var/lib/clickhouse type ext4 (rw,relatime,discard,errors=remount-ro,commit=30)
-```
 
-```bash
-kubectl exec -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 \
-  -c clickhouse -- mount | grep /var/lib/clickhouse
-```
-
-```text
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
+        -c clickhouse -- mount | grep /var/lib/clickhouse
 /dev/vda1 on /var/lib/clickhouse type ext4 (rw,relatime,discard,errors=remount-ro,commit=30)
-```
 
-```bash
-kubectl exec -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 \
-  -c clickhouse -- mount | grep /var/lib/clickhouse
-```
-
-```text
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 \
+        -c clickhouse -- mount | grep /var/lib/clickhouse
 /dev/vda1 on /var/lib/clickhouse type ext4 (rw,relatime,discard,errors=remount-ro,commit=30)
 ```
 
@@ -1000,93 +829,67 @@ prove Keeper availability, replica equality, or complete Chaos Mesh cleanup.
 
 For every test, we used the same safe sequence:
 
-```bash
-workload_pod=$(kubectl get pod -n demo \
-  -l app=clickhouse-chaos-v2-workload \
-  -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -n demo "$workload_pod" -- rm -f /state/pause
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
 ```
 
-These commands print nothing on success. Validate the manifest against the
+Start the workload using the pod name returned above:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- rm -f /state/pause
+```
+
+The command prints nothing on success. Validate the manifest against the
 API server:
 
-```bash
-kubectl apply --dry-run=server -f tests/01-pod-kill.yaml
-```
-
-```text
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-01 created (server dry run)
+```shell
+➤ kubectl apply --dry-run=server -f tests/01-pod-kill.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-01 created (server dry run)
 ```
 
 Inject the fault:
 
-```bash
-kubectl apply -f tests/01-pod-kill.yaml
-```
-
-```text
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-01 created
+```shell
+➤ kubectl apply -f tests/01-pod-kill.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-01 created
 ```
 
 Prove that Chaos Mesh injected it:
 
-```bash
-kubectl wait -n demo --for=condition=AllInjected \
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
   -f tests/01-pod-kill.yaml --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-01 condition met
 ```
 
-```text
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-01 condition met
-```
+Observe ClickHouse during the fault:
 
-Observe ClickHouse and the pods:
-
-```bash
-kubectl get clickhouse,petset,pods -n demo
-```
-
-Output from our recovered cluster, with unrelated `demo` resources omitted:
-
-```text
-NAME                                        VERSION   STATUS   AGE
-clickhouse.kubedb.com/clickhouse-chaos-v2   26.2.6    Ready    69m
-
-NAME                                                          READY   STATUS    RESTARTS   AGE
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0            1/1     Running   0          10m
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1            1/1     Running   6          49m
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0            1/1     Running   0          11m
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1            1/1     Running   0          10m
-pod/clickhouse-chaos-v2-keeper-0                              1/1     Running   4          43m
-pod/clickhouse-chaos-v2-keeper-1                              1/1     Running   4          45m
-pod/clickhouse-chaos-v2-keeper-2                              1/1     Running   2          69m
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    7m
 ```
 
 Read the workload counters:
 
-```bash
-kubectl exec -n demo "$workload_pod" -- bash -c '
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- bash -c '
   printf "attempts="; cat /state/attempt_batches
   printf "success="; cat /state/success_batches
   printf "failed="; cat /state/failed_batches
 '
-```
-
-Output from test 1 before its recovery gate:
-
-```text
-attempts=47
-success=47
+attempts=46
+success=46
 failed=0
 ```
 
 Remove the experiment:
 
-```bash
-kubectl delete -f tests/01-pod-kill.yaml
-```
-
-```text
-podchaos.chaos-mesh.org "clickhouse-chaos-v2-exp-01" deleted from demo namespace
+```shell
+➤ kubectl delete -f tests/01-pod-kill.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-01" deleted from demo namespace
 ```
 
 Deletion only removes the injected fault; it does not prove that ClickHouse
@@ -1094,10 +897,10 @@ recovered. After deletion, run every command in the **Mandatory Recovery Gate**
 section immediately above. In this guide, “run the full gate” means:
 
 1. Pause the workload and confirm its active client has stopped.
-2. Wait for KubeDB `Ready` and check all seven database pods.
+2. Wait for ClickHouse to become `Ready` and check all seven database pods.
 3. Confirm that no Chaos Mesh resource from the test remains.
 4. Perform the one-row probe insert and query the Distributed table.
-5. Check every local replica twice, five seconds apart.
+5. Check every local replica in two stable snapshots.
 6. Check `system.replicas` on all four data pods.
 7. Check all three Keeper roles.
 8. Check PID 1 and the data mount on all four ClickHouse pods.
@@ -1113,21 +916,15 @@ mandatory recovery gate passes.
 For a timed experiment, wait for its duration to expire before deletion. For
 example, test 2 uses:
 
-```bash
-kubectl wait -n demo --for=condition=AllRecovered \
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
   -f tests/02-pod-failure.yaml --timeout=150s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-02 condition met
 ```
 
-```text
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-02 condition met
-```
-
-```bash
-kubectl delete -f tests/02-pod-failure.yaml
-```
-
-```text
-podchaos.chaos-mesh.org "clickhouse-chaos-v2-exp-02" deleted from demo namespace
+```shell
+➤ kubectl delete -f tests/02-pod-failure.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-02" deleted from demo namespace
 ```
 
 For one-shot `pod-kill` and `container-kill` tests, delete the Chaos object
@@ -1142,13 +939,14 @@ manifest creation as proof of injection would have produced a false pass.
 
 ### Chaos#1: Kill One ClickHouse Replica
 
+#### Create `tests/01-pod-kill.yaml`
 Save this YAML as `tests/01-pod-kill.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-01
+  name: clickhouse-chaos-exp-01
   namespace: demo
 spec:
   action: pod-kill
@@ -1158,7 +956,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-0
   gracePeriod: 0
 ```
 
@@ -1169,28 +967,157 @@ shutdown.
 PetSet should create a replacement pod, and replication should catch it up.
 The target pod UID must change, but acknowledged data must not.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+
+```
+
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  rm -f /state/pause
+```
+
+Keep the workload running while observing the fault and recovery transition.
+
 Record the target UID before applying the manifest, then confirm that it
 changes after injection.
 
+#### Demonstrate impact and recovery
+
+Confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    6m
+```
+
+Record the original pod UID:
+
+```shell
+➤ kubectl get pod -n demo \
+        clickhouse-chaos-chaos-cluster-shard-0-0 \
+        -o jsonpath='{.metadata.uid}{"\n"}'
+e8970f8d-477f-42ba-87ed-edc6d0f41a89
+```
+
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/01-pod-kill.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-01 created
+
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        podchaos/clickhouse-chaos-exp-01 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-01 condition met
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    7m
+```
+
+Wait for PetSet to make the replacement pod ready:
+
+```shell
+➤ kubectl wait -n demo --for=condition=Ready \
+        pod/clickhouse-chaos-chaos-cluster-shard-0-0 --timeout=5m
+pod/clickhouse-chaos-chaos-cluster-shard-0-0 condition met
+```
+
+Confirm that the replacement has a new UID:
+
+```shell
+➤ kubectl get pod -n demo \
+        clickhouse-chaos-chaos-cluster-shard-0-0 \
+        -o jsonpath='{.metadata.uid}{"\n"}'
+a1519479-69cf-45a5-b50a-550bcc5f941c
+```
+
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/01-pod-kill.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-01" deleted from demo namespace
+```
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  touch /state/pause
+```
+
+The command prints nothing. Record the stable workload counters:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+46 46 0
+```
+
+Verify the two shard-0 replicas separately:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+        bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+2319	2319	13499264341016960427
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- \
+        bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+2319	2319	13499264341016960427
+```
+
 **Observed behavior:**
 
-Chaos Mesh killed shard-0 replica-0 with zero grace period. Its pod UID
-changed, proving that the old pod was actually removed and replaced. KubeDB
-remained `Ready`; the writer had five successful batches and no failures.
-The replacement caught up and the complete gate passed.
+The target pod UID changed from `e8970f8d-477f-42ba-87ed-edc6d0f41a89` to `a1519479-69cf-45a5-b50a-550bcc5f941c`. ClickHouse stayed `Ready`; the workload advanced from `18 18 0` to `46 46 0`. After cleanup, the replica was writable with an empty queue and two active replicas.
 
-Result: **PASS** — a single replica can disappear without losing acknowledged
-data.
+Result: **PASS** — the sibling kept the shard available and the replacement converged automatically.
 
 ### Chaos#2: Hold One Replica Failed
 
+#### Create `tests/02-pod-failure.yaml`
 Save this YAML as `tests/02-pod-failure.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-02
+  name: clickhouse-chaos-exp-02
   namespace: demo
 spec:
   action: pod-failure
@@ -1201,35 +1128,176 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1
+        - clickhouse-chaos-chaos-cluster-shard-0-1
 ```
 
 What this chaos does: Makes shard-0 replica-1 continuously unavailable for
 45 seconds instead of allowing Kubernetes to replace it immediately.
 
-**Expected behavior:** KubeDB should report a degraded state while the sibling
+**Expected behavior:** ClickHouse should report a degraded state while the sibling
 replica continues serving the shard. When the fault ends, the same pod should
 become reachable and converge without manual repair.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+```
+
+Keep the workload running while observing the fault and recovery transition.
+
+Before injecting the fault, the fresh cluster was healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    8m
+```
+
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-0-1 \
+  -o jsonpath='{.metadata.uid}{" "}{.status.containerStatuses[0].restartCount}{"\n"}'
+61f18b79-43f9-44a8-b9bc-d1db5baf6b29 0
+```
+
+
+Apply the file and confirm that Chaos Mesh really injected the failure. A
+created object alone is not evidence that the fault reached the target:
+
+```shell
+➤ kubectl apply -f tests/02-pod-failure.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-02 created
+```
+
+
+```shell
+➤ kubectl get podchaos -n demo clickhouse-chaos-exp-02 \
+        -o jsonpath='{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'
+Selected=True
+AllInjected=True
+AllRecovered=False
+Paused=False
+```
+
+While the 45-second fault was active, the target pod stayed present but its
+container restarted. ClickHouse status may be `Critical` at this sample but the
+healthy sibling could serve the shard:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS     AGE
+clickhouse-chaos   26.2.6    Critical   9m
+```
+
+Prove that the selected replica rejects a direct SQL connection while the
+fault is active:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'clickhouse-client --host clickhouse-chaos-chaos-cluster-shard-0-1.clickhouse-chaos-pods.demo.svc --user "$CH_USER" --password "$CH_PASSWORD" --query "SELECT 1"; echo exit_code=$?'
+Code: 210. DB::NetException: Connection refused
+exit_code=210
+```
+
+```shell
+➤ kubectl get pod -n demo \
+        clickhouse-chaos-chaos-cluster-shard-0-1
+NAME                                       READY   STATUS    RESTARTS      AGE
+clickhouse-chaos-chaos-cluster-shard-0-1   1/1     Running   1              9m
+```
+
+After the duration elapsed, Chaos Mesh reported recovery.
+
+```shell
+➤ kubectl get podchaos -n demo clickhouse-chaos-exp-02 \
+        -o jsonpath='{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'
+Selected=True
+AllInjected=False
+AllRecovered=True
+Paused=False
+
+```
+
+
+```shell
+➤ kubectl delete -f tests/02-pod-failure.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-02" deleted from demo namespace
+```
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    10m
+```
+
+The UID is unchanged and the final restart count is two:
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-0-1 \
+  -o jsonpath='{.metadata.uid}{" "}{.status.containerStatuses[0].restartCount}{"\n"}'
+61f18b79-43f9-44a8-b9bc-d1db5baf6b29 2
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+        bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+    --query "SELECT is_readonly, queue_size, total_replicas, active_replicas
+             FROM system.replicas
+             WHERE database='\''chaos_v2'\'' AND table='\''events_local'\''
+  FORMAT TSV"'
+0	0	2	2
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+```
+
+The command prints nothing.
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+107 99 8
+```
+
+After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
-`pod-failure` kept shard-0 replica-1 unavailable for 45 seconds. KubeDB still
-reported `Ready` at the 15-second sample, showing that status can lag a
-container-level failure. The workload recorded 27 successes and ten failed or
-ambiguous attempts while the healthy sibling served the shard. The full gate
-passed 26 seconds after cleanup began.
+The target kept the same UID, `61f18b79-43f9-44a8-b9bc-d1db5baf6b29`, and restarted twice. A direct query returned `Connection refused`, ClickHouse became `Critical`, and the workload moved from `46 46 0` to `107 99 8`. After `AllRecovered=True`, the test still waited for SQL and ClickHouse `Ready`.
 
-Result: **PASS** — the cluster degraded and healed automatically.
+Result: **PASS** — the sustained replica failure was visible and the replica healed without manual repair.
 
 ### Chaos#3: Kill Only the ClickHouse Container
 
+#### Create `tests/03-container-kill.yaml`
 Save this YAML as `tests/03-container-kill.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-03
+  name: clickhouse-chaos-exp-03
   namespace: demo
 spec:
   action: container-kill
@@ -1241,7 +1309,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0
+        - clickhouse-chaos-chaos-cluster-shard-1-0
 ```
 
 What this chaos does: Kills only the `clickhouse` process container while
@@ -1251,26 +1319,129 @@ leaving the pod object and its PVC in place.
 should reconnect to Keeper and replication, and the restart count should
 increase without a pod UID change.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
 Compare the `clickhouse` container restart count before and after injection.
+
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    11m
+```
+
+Record the pod UID and restart count before injection:
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
+        -o jsonpath='{.metadata.uid}{" "}{.status.containerStatuses[0].restartCount}{"\n"}'
+326909c8-1fe4-4c3e-99f8-3c14f8680d4b 0
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/03-container-kill.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-03 created
+```
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        podchaos/clickhouse-chaos-exp-03 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-03 condition met
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
+        -o jsonpath='{.metadata.uid}{"\n"}{.status.containerStatuses[0].restartCount}{"\n"}'
+326909c8-1fe4-4c3e-99f8-3c14f8680d4b
+1
+```
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    12m
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/03-container-kill.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-03" deleted from demo namespace
+```
+
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+```
+
+The command prints nothing.
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+134 126 8
+```
+
+After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-This test killed the `clickhouse` container without deleting its pod. The
-container restart count changed from 0 to 1. One batch succeeded and none
-failed. Both replicas remained consistent after restart.
+The pod UID remained `326909c8-1fe4-4c3e-99f8-3c14f8680d4b`, while its restart count changed from 0 to 1. ClickHouse stayed `Ready`; the workload moved from `107 99 8` to `134 126 8`.
 
-Result: **PASS** — Kubernetes restarted the database process and ClickHouse
-rejoined replication without manual work.
+Result: **PASS** — Kubernetes restarted only the ClickHouse container and it rejoined replication.
 
 ### Chaos#4: Repeat Alternating Pod Kills
 
+#### Create `tests/04-a-pod-kill.yaml`
 Save the first fault as `tests/04-a-pod-kill.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-04-a
+  name: clickhouse-chaos-exp-04-a
   namespace: demo
 spec:
   action: pod-kill
@@ -1280,17 +1451,18 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-0
   gracePeriod: 0
 ```
 
+#### Create `tests/04-b-pod-kill.yaml`
 Save the second fault as `tests/04-b-pod-kill.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-04-b
+  name: clickhouse-chaos-exp-04-b
   namespace: demo
 spec:
   action: pod-kill
@@ -1300,17 +1472,18 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1
+        - clickhouse-chaos-chaos-cluster-shard-1-1
   gracePeriod: 0
 ```
 
+#### Create `tests/04-c-pod-kill.yaml`
 Save the third fault as `tests/04-c-pod-kill.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-04-c
+  name: clickhouse-chaos-exp-04-c
   namespace: demo
 spec:
   action: pod-kill
@@ -1320,7 +1493,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1
+        - clickhouse-chaos-chaos-cluster-shard-0-1
   gracePeriod: 0
 ```
 
@@ -1331,147 +1504,182 @@ with 20 seconds between injections.
 fault is injected. Replication queues, restarts, and checksums should return to
 baseline after the sequence.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+```
+
+Keep the workload running while observing the fault and recovery transition.
+
 Apply the files one at a time. Wait 20 seconds between kills, delete each
 one-shot `PodChaos` after `AllInjected`, and run the complete recovery gate
 after the third kill.
 
-```bash
-kubectl exec -n demo "$workload_pod" -- rm -f /state/pause
+```shell
+➤ kubectl apply -f tests/04-a-pod-kill.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-04-a created
 ```
 
-The command prints nothing on success.
-
-```bash
-kubectl apply -f tests/04-a-pod-kill.yaml
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        -f tests/04-a-pod-kill.yaml --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-04-a condition met
 ```
 
-```text
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-04-a created
+```shell
+➤ kubectl delete -f tests/04-a-pod-kill.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-04-a" deleted from demo namespace
 ```
 
-```bash
-kubectl wait -n demo --for=condition=AllInjected \
-  -f tests/04-a-pod-kill.yaml --timeout=90s
+```shell
+➤ kubectl wait -n demo --for=condition=Ready \
+        pod/clickhouse-chaos-chaos-cluster-shard-0-0 --timeout=5m
+pod/clickhouse-chaos-chaos-cluster-shard-0-0 condition met
+
 ```
 
-```text
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-04-a condition met
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-0-0 \
+        -o jsonpath='{.metadata.uid}{"\n"}'
+add2a88c-ed3c-46f3-bbb4-b2cb61fec420
 ```
 
-```bash
-kubectl delete -f tests/04-a-pod-kill.yaml
+Before starting the next fault, compare both shard-0 replicas:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+7810  7810  18036471919944389959
 ```
 
-```text
-podchaos.chaos-mesh.org "clickhouse-chaos-v2-exp-04-a" deleted from demo namespace
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+7810  7810  18036471919944389959
 ```
 
-```bash
-kubectl wait -n demo --for=create \
-  pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 --timeout=5m
-kubectl wait -n demo --for=condition=Ready \
-  pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 --timeout=5m
-sleep 20
+```shell
+➤ kubectl apply -f tests/04-b-pod-kill.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-04-b created
 ```
 
-```text
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 condition met
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 condition met
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        -f tests/04-b-pod-kill.yaml --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-04-b condition met
 ```
 
-```bash
-kubectl apply -f tests/04-b-pod-kill.yaml
+
+```shell
+➤ kubectl delete -f tests/04-b-pod-kill.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-04-b" deleted from demo namespace
 ```
 
-```text
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-04-b created
+```shell
+➤ kubectl wait -n demo --for=condition=Ready \
+        pod/clickhouse-chaos-chaos-cluster-shard-1-1 --timeout=5m
+pod/clickhouse-chaos-chaos-cluster-shard-1-1 condition met
 ```
 
-```bash
-kubectl wait -n demo --for=condition=AllInjected \
-  -f tests/04-b-pod-kill.yaml --timeout=90s
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-1-1 \
+        -o jsonpath='{.metadata.uid}{"\n"}'
+d8da0cb3-168b-40ad-840b-ecb835c27cea
 ```
 
-```text
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-04-b condition met
+Before starting the third fault, compare both shard-1 replicas:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+8846  8846  12894136727626022465
 ```
 
-```bash
-kubectl delete -f tests/04-b-pod-kill.yaml
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+8846  8846  12894136727626022465
 ```
 
-```text
-podchaos.chaos-mesh.org "clickhouse-chaos-v2-exp-04-b" deleted from demo namespace
+```shell
+➤ kubectl apply -f tests/04-c-pod-kill.yaml
+
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-04-c created
 ```
 
-```bash
-kubectl wait -n demo --for=create \
-  pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 --timeout=5m
-kubectl wait -n demo --for=condition=Ready \
-  pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 --timeout=5m
-sleep 20
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        -f tests/04-c-pod-kill.yaml --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-04-c condition met
 ```
 
-```text
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 condition met
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 condition met
+```shell
+➤ kubectl delete -f tests/04-c-pod-kill.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-04-c" deleted from demo namespace
+
 ```
 
-```bash
-kubectl apply -f tests/04-c-pod-kill.yaml
+```shell
+➤ kubectl wait -n demo --for=condition=Ready \
+        pod/clickhouse-chaos-chaos-cluster-shard-0-1 --timeout=5m
+pod/clickhouse-chaos-chaos-cluster-shard-0-1 condition met
 ```
 
-```text
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-04-c created
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-0-1 \
+        -o jsonpath='{.metadata.uid}{"\n"}'
+0a753027-af14-428b-8b78-9192f190cfeb
 ```
 
-```bash
-kubectl wait -n demo --for=condition=AllInjected \
-  -f tests/04-c-pod-kill.yaml --timeout=90s
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
 ```
 
-```text
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-04-c condition met
+The command prints nothing.
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+204 195 9
 ```
 
-```bash
-kubectl delete -f tests/04-c-pod-kill.yaml
-```
-
-```text
-podchaos.chaos-mesh.org "clickhouse-chaos-v2-exp-04-c" deleted from demo namespace
-```
-
-```bash
-kubectl wait -n demo --for=create \
-  pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1 --timeout=5m
-kubectl wait -n demo --for=condition=Ready \
-  pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1 --timeout=5m
-```
-
-```text
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1 condition met
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1 condition met
-```
+After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-Three one-shot pod kills targeted shard-0 replica-0, shard-1 replica-1, then
-shard-0 replica-1, with 20 seconds between injections. Each target received a
-new pod UID. The workload completed 36 batches with one failed or ambiguous
-attempts, and no queue or restart instability accumulated.
+Shard-0 replica-0, shard-1 replica-1, and shard-0 replica-1 each received a new UID. The explicit SQL, replica-state, and checksum checks passed before each following kill. The workload moved from `134 126 8` to `204 195 9`; both replica pairs ended with matching counts and checksums.
 
-Result: **PASS** — repeated isolated failures did not cause recovery drift.
+Result: **PASS** — three sequential recoveries did not accumulate replica drift.
 
 ### Chaos#5: Lose an Entire Shard
 
+#### Create `tests/05-full-shard-outage.yaml`
 Save this YAML as `tests/05-full-shard-outage.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-05
+  name: clickhouse-chaos-exp-05
   namespace: demo
 spec:
   action: pod-failure
@@ -1482,8 +1690,8 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1
+        - clickhouse-chaos-chaos-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-1
 ```
 
 What this chaos does: Holds both replicas of shard 0 unavailable for 45
@@ -1491,31 +1699,164 @@ seconds.
 
 **Expected behavior:** Distributed inserts that require shard 0 should fail
 clearly; the remaining shard cannot substitute for missing shard data.
-KubeDB should report `Critical`, then both replicas should return with equal
+ClickHouse should report `Critical`, then both replicas should return with equal
 data.
+
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+```
+
+Keep the workload running while observing the fault and recovery transition.
+
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    19m
+```
+
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/05-full-shard-outage.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-05 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        podchaos/clickhouse-chaos-exp-05 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-05 condition met
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS     AGE
+clickhouse-chaos   26.2.6    Critical   20m
+```
+
+Prove that each selected replica is unreachable:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        sh -c 'clickhouse-client --host clickhouse-chaos-chaos-cluster-shard-0-0.clickhouse-chaos-pods.demo.svc --user "$CH_USER" --password "$CH_PASSWORD" --query "SELECT 1"; echo exit_code=$?'
+Code: 210. DB::NetException: Connection refused
+exit_code=210
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        sh -c 'clickhouse-client --host clickhouse-chaos-chaos-cluster-shard-0-1.clickhouse-chaos-pods.demo.svc --user "$CH_USER" --password "$CH_PASSWORD" --query "SELECT 1"; echo exit_code=$?'
+Code: 210. DB::NetException: Connection refused
+exit_code=210
+```
+
+Run a Distributed query from the healthy shard. It fails explicitly because
+the unavailable shard cannot be silently skipped:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count() FROM chaos_v2.events"'
+Code: 279. DB::Exception: All connection tries failed. (ALL_CONNECTION_TRIES_FAILED)
+command terminated with exit code 279
+```
+
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+        podchaos/clickhouse-chaos-exp-05 --timeout=2m
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-05 condition met
+
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/05-full-shard-outage.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-05" deleted from demo namespace
+```
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+```
+
+The command prints nothing.
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1491 1441 50
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+        bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+72274	72274	17024341840210372511
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- \
+        bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+72274	72274	17024341840210372511
+```
+
+After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-Both replicas of shard 0 were failed for 45 seconds. A two-second status probe
-showed KubeDB progress from `Ready` to `Critical`, then `NotReady` as the
-health checks observed the sustained outage. Every workload attempt in the
-measured fault window failed because a Distributed insert needs all selected
-shards: 39 failed or ambiguous attempts and no acknowledged writes. Once both
-replicas returned, their counts and checksums matched; the gate passed in 25
-seconds.
+Both shard-0 replicas were unavailable. Direct queries returned `Connection refused`, a Distributed query from shard 1 returned `ALL_CONNECTION_TRIES_FAILED`, and ClickHouse became `Critical`. At the recovery checkpoint the workload was `1491 1441 50`; both replicas then matched at `72274` rows with queue 0.
 
-Result: **PASS** — shard loss caused an honest availability failure, not silent
-data inconsistency.
+Result: **PASS** — loss of a complete shard caused an explicit outage and recovered without silent inconsistency.
 
 ### Chaos#6: Lose the Entire ClickHouse Data Plane
 
+#### Create `tests/06-data-plane-outage.yaml`
 Save this YAML as `tests/06-data-plane-outage.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-06
+  name: clickhouse-chaos-exp-06
   namespace: demo
 spec:
   action: pod-failure
@@ -1526,10 +1867,10 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1
+        - clickhouse-chaos-chaos-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-1
+        - clickhouse-chaos-chaos-cluster-shard-1-0
+        - clickhouse-chaos-chaos-cluster-shard-1-1
 ```
 
 What this chaos does: Makes all four ClickHouse data pods unavailable
@@ -1539,21 +1880,130 @@ while leaving the three Keeper members running.
 should be acknowledged during it. When the fault ends, all four replicas
 should reopen their existing PVC data and converge automatically.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    36m
+
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/06-data-plane-outage.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-06 created
+
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        podchaos/clickhouse-chaos-exp-06 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-06 condition met
+
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS     AGE
+clickhouse-chaos   26.2.6    Critical   36m
+```
+
+Prove that the SQL service is unavailable:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        sh -c 'clickhouse-client --host clickhouse-chaos.demo.svc --user "$CH_USER" --password "$CH_PASSWORD" --query "SELECT 1"; echo exit_code=$?'
+Code: 210. DB::NetException: Connection refused (clickhouse-chaos.demo.svc:9000). (NETWORK_ERROR)
+exit_code=210
+```
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+        podchaos/clickhouse-chaos-exp-06 --timeout=2m
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-06 condition met
+
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/06-data-plane-outage.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-06" deleted from demo namespace
+```
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+```
+
+The command prints nothing.
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1531 1441 90
+```
+
+After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
-All four ClickHouse pods were failed for 45 seconds while Keeper remained up.
-The client had 39 failures and no successes. Kubernetes still displayed the
-containers as Ready during `pod-failure`; real SQL and KubeDB's `Critical`
-phase were the reliable signals. All acknowledged data returned afterward,
-and the gate passed in 16 seconds.
+All four data containers were failed while Keeper stayed online. The service query returned `Connection refused`, ClickHouse became `Critical`, and the workload moved from `1491 1441 50` to `1531 1441 90`: 40 attempts, no acknowledgements. All four pods reopened their existing PVCs and ClickHouse returned to `Ready`.
 
-Result: **PASS** — complete client outage recovered automatically with no
-acknowledged data loss.
+Result: **PASS** — the full data-plane outage was recoverable and did not lose acknowledged rows.
 
 ### Chaos#7: Kill a Keeper Follower
 
 Discover the Keeper roles immediately before the test.
 
+#### Create `tests/07-keeper-follower-kill.yaml`
 Save this YAML as `tests/07-keeper-follower-kill.yaml`, using a current
 follower as the target:
 
@@ -1561,7 +2011,7 @@ follower as the target:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-07
+  name: clickhouse-chaos-exp-07
   namespace: demo
 spec:
   action: pod-kill
@@ -1571,7 +2021,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-keeper-1
+        - clickhouse-chaos-keeper-1
   gracePeriod: 0
 ```
 
@@ -1582,21 +2032,144 @@ kills one current follower.
 two-member majority, so coordination and writes should continue. The recreated
 member should rejoin as a follower.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
 The example uses `keeper-1`; replace it if `mntr` reports that member as the
 leader.
 
+
+#### Demonstrate impact and recovery
+
+Confirm the role of each Keeper member before selecting the follower:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-0 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+leader
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-1 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+follower
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-2 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+follower
+```
+
+Record the selected follower UID:
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-keeper-1 -o jsonpath='{.metadata.uid}{"\n"}'
+2eb512bc-c64f-448e-a6bc-ad43cdaffa82
+```
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    37m
+
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/07-keeper-follower-kill.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-07 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        podchaos/clickhouse-chaos-exp-07 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-07 condition met
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-0 -c clickhouse-keeper -- \
+        bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | \
+        awk '$1=="zk_server_state" {print $2}'
+leader
+
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/07-keeper-follower-kill.yaml
+
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-07" deleted from demo namespace
+```
+
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+```
+
+The command prints nothing.
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-keeper-1 -o jsonpath='{.metadata.uid}{" "}{.status.phase}{"\n"}'
+cd8ef14e-548d-4bd6-8784-8c964cf877eb Running
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1557 1467 90
+```
+
+After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
-The suite discovered Keeper roles through `mntr` and killed one follower.
-The leader and remaining follower retained quorum. Three batches succeeded and
-none failed; the replacement member rejoined as a follower.
+Keeper-1 was verified as a follower before it was killed. Its UID changed from `2eb512bc-c64f-448e-a6bc-ad43cdaffa82` to `cd8ef14e-548d-4bd6-8784-8c964cf877eb`; Keeper-0 remained leader, ClickHouse stayed `Ready`, and all 26 new attempts were acknowledged.
 
-Result: **PASS** — one Keeper failure did not interrupt writes.
+Result: **PASS** — the remaining two Keeper members retained quorum.
 
 ### Chaos#8: Kill the Keeper Leader
 
 Rediscover the Keeper roles immediately before the test.
 
+#### Create `tests/08-keeper-leader-kill.yaml`
 Save this YAML as `tests/08-keeper-leader-kill.yaml`, using the current leader
 as the target:
 
@@ -1604,7 +2177,7 @@ as the target:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-08
+  name: clickhouse-chaos-exp-08
   namespace: demo
 spec:
   action: pod-kill
@@ -1614,7 +2187,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-keeper-0
+        - clickhouse-chaos-keeper-0
   gracePeriod: 0
 ```
 
@@ -1624,41 +2197,173 @@ What this chaos does: Discovers and kills the current Keeper leader.
 quickly. ClickHouse should tolerate the short election, and the old leader
 should return as a follower rather than forming a second leader.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+```
+
+ Keep the workload running while observing the fault and recovery transition.
+
 The example uses `keeper-0`; replace it with the actual leader. Time how long
 another member takes to report `leader`.
 
+
+#### Demonstrate impact and recovery
+
+Before injection, verify that Keeper-0 is the leader:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-0 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+leader
+```
+
+Record its UID:
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-keeper-0 -o jsonpath='{.metadata.uid}{"\n"}'
+2a540a7e-dbad-4fd6-a7b1-f57d75d7a643
+```
+
+Confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    38m
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/08-keeper-leader-kill.yaml
+
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-08 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        podchaos/clickhouse-chaos-exp-08 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-08 condition met
+
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-1 -c clickhouse-keeper -- \
+        bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | \
+        awk '$1=="zk_server_state" {print $2}'
+leader
+
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/08-keeper-leader-kill.yaml
+
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-08" deleted from demo namespace
+```
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+Confirm the recovered quorum one member at a time:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-0 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+follower
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-1 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+leader
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-2 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+follower
+```
+
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+```
+
+The command prints nothing.
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-keeper-0 -o jsonpath='{.metadata.uid}{" "}{.status.phase}{"\n"}'
+838451cd-cc02-42b5-8a5c-fbc023c33d9d Running
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1567 1476 91
+```
+
+After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
-The current leader, Keeper-0, was discovered dynamically and killed. Keeper-2
-became the new leader in about four seconds. Three batches succeeded with zero errors,
-and the old leader rejoined as a follower.
+Keeper-0 was the leader before injection. Its UID changed from `2a540a7e-dbad-4fd6-a7b1-f57d75d7a643` to `838451cd-cc02-42b5-8a5c-fbc023c33d9d`; Keeper-1 became leader and the other two members reported follower. ClickHouse stayed `Ready`.
 
-Result: **PASS** — Keeper leader election was automatic and safe.
+Result: **PASS** — Keeper elected a new leader automatically.
 
 ### Chaos#9: Lose Keeper Quorum
 
+#### Create `tests/09-keeper-quorum-loss.yaml`
 Save this YAML as `tests/09-keeper-quorum-loss.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-09
+  name: clickhouse-chaos-exp-09
   namespace: demo
 spec:
   action: pod-failure
   mode: all
-  duration: 45s
+  duration: 90s
   selector:
     namespaces:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-keeper-0
-        - clickhouse-chaos-v2-keeper-1
+        - clickhouse-chaos-keeper-0
+        - clickhouse-chaos-keeper-2
 ```
 
-What this chaos does: Holds two of the three Keeper members failed for 45
+What this chaos does: Holds two of the three Keeper members failed for 90
 seconds, removing the majority required for coordination.
 
 **Expected behavior:** Existing reads may continue, but coordination-dependent
@@ -1666,33 +2371,140 @@ writes or replication can stall or fail. After quorum returns, queued work
 should settle and both replicas of every shard should converge without data
 repair.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
 Do not repair a brief replica mismatch while queues are still moving. Require
 two consecutive equal checks within ten minutes.
 
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    42m
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/09-keeper-quorum-loss.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-09 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        podchaos/clickhouse-chaos-exp-09 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-09 condition met
+
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-1 -c clickhouse-keeper -- \
+        bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3'
+This instance is not currently serving requests
+```
+
+Prove a coordination-dependent write stalls instead of being acknowledged:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+        bash -c 'timeout 8 clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "INSERT INTO chaos_v2.events_local VALUES (generateUUIDv4(), now(), 9)"; echo exit_code=$?'
+exit_code=124
+```
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+        podchaos/clickhouse-chaos-exp-09 --timeout=2m
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-09 condition met
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/09-keeper-quorum-loss.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-09" deleted from demo namespace
+```
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+Verify that the recovered replica queue is empty:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT is_readonly, is_session_expired, queue_size, total_replicas, active_replicas FROM system.replicas WHERE database='\''chaos_v2'\'' AND table='\''events_local'\''"'
+0  0  0  2  2
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+```
+
+The command prints nothing.
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1611 1513 97
+```
+
+After any in-flight batch finishes, run the mandatory recovery gate and record the stable integrity result.
+
 **Observed behavior:**
 
-Two Keeper members were failed for 45 seconds. The surviving Keeper-2 still
-answered `mntr` as `leader`, but one member cannot form a majority; the role
-label alone therefore did not prove quorum. KubeDB still reported `Ready`.
-Four batches succeeded before or around session loss and two attempts failed.
+Keeper-0 and Keeper-2 were selected together for 90 seconds. The lone Keeper-1 returned `This instance is not currently serving requests`, and a replicated insert timed out with exit code 124. ClickHouse still showed `Ready`; recovery restored an empty replica queue.
 
-After quorum returned, both replicas converged without repair. The gate
-required two equal count-and-checksum checks five seconds apart and passed in
-30 seconds. This prevents a brief part-visibility race from being mistaken for
-permanent divergence. The gate passed in 23 seconds.
-
-Result: **PASS** — automatic convergence occurred, but KubeDB `Ready` alone did
-not describe Keeper availability.
+Result: **PASS** — Keeper quorum reformed and all replica queues drained.
 
 ### Chaos#10: Fail All Keeper Members
 
+#### Create `tests/10-full-keeper-outage.yaml`
 Save this YAML as `tests/10-full-keeper-outage.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-10
+  name: clickhouse-chaos-exp-10
   namespace: demo
 spec:
   action: pod-failure
@@ -1703,9 +2515,9 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-keeper-0
-        - clickhouse-chaos-v2-keeper-1
-        - clickhouse-chaos-v2-keeper-2
+        - clickhouse-chaos-keeper-0
+        - clickhouse-chaos-keeper-1
+        - clickhouse-chaos-keeper-2
 ```
 
 What this chaos does: Holds all three Keeper members unavailable for 45
@@ -1715,28 +2527,155 @@ seconds.
 operations should be unavailable and replicated writes may fail. Recovery
 requires a new one-leader/two-follower quorum and drained replica queues.
 
-During injection, check `mntr` directly even if KubeDB still reports `Ready`.
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+During injection, check `mntr` directly even if ClickHouse still reports `Ready`.
+
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    43m
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/10-full-keeper-outage.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-10 created
+```
+
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        podchaos/clickhouse-chaos-exp-10 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-10 condition met
+
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-0 -c clickhouse-keeper -- \
+        bash -c 'printf "mntr\n"'
+error: Internal error occurred: Internal error occurred: error executing command in container: failed to exec in container: failed to start exec "628453296b89642b1b9551dfba67fe273943dc7f77f1bd17c3c2ae9965933a96": OCI runtime exec failed: exec failed: unable to start container process: exec: "bash": executable file not found in $PATH
+
+```
+
+Prove a replicated write cannot complete without Keeper:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+        bash -c 'timeout 8 clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "INSERT INTO chaos_v2.events_local VALUES (generateUUIDv4(), now(), 10)"; echo exit_code=$?'
+exit_code=124
+```
+
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+        podchaos/clickhouse-chaos-exp-10 --timeout=2m
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-10 condition met
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/10-full-keeper-outage.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-10" deleted from demo namespace
+```
+
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+
+```
+
+Confirm that Keeper formed one leader and two followers again:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-0 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+leader
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-1 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+follower
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-2 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+follower
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+```
+
+The command prints nothing.
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1618 1517 100
+```
+
+After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-All three Keeper pods were held failed for 45 seconds. ClickHouse processes
-remained reachable and KubeDB still showed `Ready`, but Keeper-dependent work
-stalled. Two batches succeeded around the session boundary and two attempts
-failed. Quorum reformed with one leader and the full gate passed in 26 seconds.
+`AllInjected=True` selected all three Keeper pods, the sampled Keeper-0 exec was rejected while the fault was active, and a replicated insert timed out with exit code 124. ClickHouse data processes remained present and ClickHouse still showed `Ready`. Keeper returned with one leader and two followers.
 
-Result: **PASS** — coordination outage was safe and recoverable.
+Result: **PASS** — a complete coordination outage recovered automatically.
 
 ## Network Chaos
 
 ### Chaos#11: Add Network Delay
 
+#### Create `tests/11-network-delay.yaml`
 Save this YAML as `tests/11-network-delay.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-11
+  name: clickhouse-chaos-exp-11
   namespace: demo
 spec:
   action: delay
@@ -1747,7 +2686,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-0
   direction: to
   delay:
     latency: 500ms
@@ -1762,23 +2701,131 @@ reaching one data replica for 45 seconds.
 should keep the tested workload available. The target must finish with no
 replication delay or queued work.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    45m
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/11-network-delay.yaml
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-11 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        networkchaos/clickhouse-chaos-exp-11 --timeout=90s
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-11 condition met
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        ping -c 5 -W 2 10.42.0.42
+5 packets transmitted, 5 packets received, 0% packet loss
+round-trip min/avg/max = 468.815/517.919/548.130 ms
+```
+
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+        networkchaos/clickhouse-chaos-exp-11 --timeout=2m
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-11 condition met
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/11-network-delay.yaml
+networkchaos.chaos-mesh.org "clickhouse-chaos-exp-11" deleted from demo namespace
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- ping -c 5 -W 2 10.42.0.42
+5 packets transmitted, 5 packets received, 0% packet loss
+round-trip min/avg/max = 0.049/0.070/0.087 ms
+```
+
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+```
+
+The command prints nothing. Record the stable counters:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1633 1532 100
+```
+
+After any in-flight batch finishes, run the mandatory recovery gate.
+
 **Observed behavior:**
 
-The suite added 500ms latency with 50ms jitter to traffic reaching one
-replica. Seventeen batches succeeded without errors, KubeDB stayed `Ready`, and
-the final replication queue was empty. The gate passed in 14 seconds.
+Ping average rose from `0.113 ms` to `517.919 ms` under the configured delay and returned to `0.070 ms` after cleanup. ClickHouse remained `Ready`; the counters moved from `1618 1517 100` to `1633 1532 100`, so all 15 new attempts were acknowledged. The target finished writable with queue 0.
 
-Result: **PASS** — latency reduced responsiveness but did not break integrity.
+Result: **PASS** — the healthy sibling and TCP retries absorbed the delay.
 
 ### Chaos#12: Drop 30 Percent of Packets
 
+#### Create `tests/12-network-loss.yaml`
 Save this YAML as `tests/12-network-loss.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-12
+  name: clickhouse-chaos-exp-12
   namespace: demo
 spec:
   action: loss
@@ -1789,7 +2836,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-0
   direction: to
   loss:
     loss: "30"
@@ -1803,24 +2850,131 @@ replica.
 are acceptable, but after the fault the replica must be writable, caught up,
 and byte-for-byte equivalent at the logical checksum level.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+
+```
+
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    46m
+```
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/12-network-loss.yaml
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-12 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        networkchaos/clickhouse-chaos-exp-12 --timeout=90s
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-12 condition met
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        ping -c 20 -W 1 10.42.0.42
+20 packets transmitted, 13 packets received, 35% packet loss
+round-trip min/avg/max = 0.063/0.082/0.120 ms
+```
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+        networkchaos/clickhouse-chaos-exp-12 --timeout=2m
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-12 condition met
+
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/12-network-loss.yaml
+networkchaos.chaos-mesh.org "clickhouse-chaos-exp-12" deleted from demo namespace
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- ping -c 5 -W 2 10.42.0.42
+5 packets transmitted, 5 packets received, 0% packet loss
+round-trip min/avg/max = 0.045/0.106/0.234 ms
+```
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+```
+
+The command prints nothing. Record the stable counters:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1658 1558 100
+```
+
+After any in-flight batch finishes, run the mandatory recovery gate.
+
 **Observed behavior:**
 
-Thirty percent packet loss was applied to one replica. Twenty-two batches
-succeeded and none failed. TCP retries and the healthy replica absorbed the
-fault; the target later showed zero queue and zero delay, and the gate passed
-in 12 seconds.
+The 20-packet probe received 13 replies and reported `35% packet loss`; the post-recovery probe received all five replies. ClickHouse remained `Ready`, the workload advanced to `1658 1558 100`, and the target finished writable with queue 0.
 
-Result: **PASS** — packet loss caused no lasting replication damage.
+Result: **PASS** — packet loss caused no lasting replica damage.
 
 ### Chaos#13: Duplicate 50 Percent of Packets
 
+#### Create `tests/13-network-duplicate.yaml`
 Save this YAML as `tests/13-network-duplicate.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-13
+  name: clickhouse-chaos-exp-13
   namespace: demo
 spec:
   action: duplicate
@@ -1831,7 +2985,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-0
   direction: to
   duplicate:
     duplicate: "50"
@@ -1845,23 +2999,137 @@ replica.
 packets into duplicated table rows. `count()` must still equal
 `uniqExact(id)` after recovery.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    48m
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/13-network-duplicate.yaml
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-13 created
+```
+
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        networkchaos/clickhouse-chaos-exp-13 --timeout=90s
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-13 condition met
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        ping -c 20 -W 1 10.42.0.42
+20 packets transmitted, 20 packets received, 8 duplicates, 0% packet loss
+round-trip min/avg/max = 0.049/0.082/0.140 ms
+
+```
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+        networkchaos/clickhouse-chaos-exp-13 --timeout=2m
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-13 condition met
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/13-network-duplicate.yaml
+networkchaos.chaos-mesh.org "clickhouse-chaos-exp-13" deleted from demo namespace
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+80556	80556	11545698640526106827
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+80556	80556	11545698640526106827
+```
+
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+
+```
+The command prints nothing. Record the stable counters:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1697 1597 100
+```
+
+After any in-flight batch finishes, run the mandatory recovery gate.
+
 **Observed behavior:**
 
-Half of the selected replica's incoming packets were duplicated. Thirty-eight
-batches succeeded. The final equality `count() == uniqExact(id)` proved that
-network duplication did not create duplicate database rows.
+The 20-packet probe reported eight `DUP!` replies. After recovery, both shard-0 replicas returned `80556` rows, `80556` unique IDs, and the same checksum.
 
-Result: **PASS** — ClickHouse and TCP tolerated duplicated packets.
+Result: **PASS** — network duplication did not create duplicate table rows.
 
 ### Chaos#14: Limit Bandwidth to 1 Mbps
 
+#### Create `tests/14-bandwidth.yaml`
 Save this YAML as `tests/14-bandwidth.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-14
+  name: clickhouse-chaos-exp-14
   namespace: demo
 spec:
   action: bandwidth
@@ -1872,8 +3140,16 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
-  direction: to
+        - clickhouse-chaos-workload-64d7d5c85f-fqjdp
+  direction: both
+  target:
+    mode: all
+    selector:
+      namespaces:
+        - demo
+      pods:
+        demo:
+          - clickhouse-chaos-chaos-cluster-shard-0-0
   bandwidth:
     rate: 1mbps
     limit: 20971520
@@ -1887,23 +3163,135 @@ for 45 seconds.
 timeout if demand exceeds the cap, but replication should drain completely
 after normal bandwidth returns.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    49m
+```
+
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/14-bandwidth.yaml
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-14 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        networkchaos/clickhouse-chaos-exp-14 --timeout=90s
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-14 condition met
+
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- sh -c \
+        '/usr/bin/time -f "elapsed=%e" clickhouse-client --host 10.42.0.42 --user "$CH_USER" --password "$CH_PASSWORD" --compression=0 --query "SELECT hex(randomString(450000)) FROM numbers(5) FORMAT TSV" >/dev/null'
+elapsed=4.80
+
+```
+
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+        networkchaos/clickhouse-chaos-exp-14 --timeout=2m
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-14 condition met
+
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/14-bandwidth.yaml
+networkchaos.chaos-mesh.org "clickhouse-chaos-exp-14" deleted from demo namespace
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- sh -c \
+        '/usr/bin/time -f "elapsed=%e" clickhouse-client --host 10.42.0.42 --user "$CH_USER" --password "$CH_PASSWORD" --compression=0 --query "SELECT hex(randomString(450000)) FROM numbers(5) FORMAT TSV" >/dev/null'
+elapsed=0.21
+```
+
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+```
+
+The command prints nothing. Record the stable counters:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1849 1749 100
+```
+
+After any in-flight batch finishes, run the mandatory recovery gate.
+
 **Observed behavior:**
 
-Traffic reaching one replica was restricted to 1 Mbps for 45 seconds.
-Thirty-eight batches still completed without error. Replica queues were empty
-after the limit was removed.
+With compression disabled, the same 4.5 MB response took `4.80s` under the 1 Mbps cap and `0.21s` after recovery. The workload moved from `1729 1629 100` to `1849 1749 100`, and the replication queue was empty afterward.
 
-Result: **PASS** — this small workload fit within the constrained bandwidth.
+Result: **PASS** — the workload fit within the constrained link and recovered cleanly.
 
 ### Chaos#15: Partition One Replica from Data Peers
 
+#### Create `tests/15-data-partition.yaml`
 Save this YAML as `tests/15-data-partition.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-15
+  name: clickhouse-chaos-exp-15
   namespace: demo
 spec:
   action: partition
@@ -1914,7 +3302,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-0
   direction: both
   target:
     mode: all
@@ -1923,9 +3311,9 @@ spec:
         - demo
       pods:
         demo:
-          - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1
-          - clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0
-          - clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1
+          - clickhouse-chaos-chaos-cluster-shard-0-1
+          - clickhouse-chaos-chaos-cluster-shard-1-0
+          - clickhouse-chaos-chaos-cluster-shard-1-1
 ```
 
 What this chaos does: Isolates shard-0 replica-0 in both directions from
@@ -1935,24 +3323,156 @@ the other three ClickHouse data pods.
 serves the shard. After reconnection it should fetch missing parts and match
 the sibling without deleting its pod or PVC.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+        -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    8h
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/15-data-partition.yaml
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-15 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+        networkchaos/clickhouse-chaos-exp-15 --timeout=90s
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-15 condition met
+
+```
+
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+        bash -c 'timeout 3 bash -c "</dev/tcp/10.42.0.44/9000"; echo exit_code=$?'
+exit_code=124
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+        bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id) FROM chaos_v2.events_local; SELECT queue_size FROM system.replicas WHERE database='\''chaos_v2'\''"'
+88120	88120
+12
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- \
+        bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id) FROM chaos_v2.events_local; SELECT queue_size FROM system.replicas WHERE database='\''chaos_v2'\''"'
+88532	88532
+0
+```
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+        networkchaos/clickhouse-chaos-exp-15 --timeout=2m
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-15 condition met
+
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/15-data-partition.yaml
+networkchaos.chaos-mesh.org "clickhouse-chaos-exp-15" deleted from demo namespace
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c 'timeout 3 bash -c "</dev/tcp/10.42.0.44/9000"; echo exit_code=$?'
+exit_code=0
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local; SELECT queue_size FROM system.replicas WHERE database='\''chaos_v2'\''"'
+89357	89357	2709723990317646529
+0
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local; SELECT queue_size FROM system.replicas WHERE database='\''chaos_v2'\''"'
+89357	89357	2709723990317646529
+0
+```
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+        clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+        touch /state/pause
+```
+
+The command prints nothing. Record the stable counters:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1875 1773 102
+```
+
+After any in-flight batch finishes, run the mandatory recovery gate.
+
 **Observed behavior:**
 
-Shard-0 replica-0 was isolated in both directions from the other three data
-pods. The workload completed eight batches and saw three transient failures.
-KubeDB stayed `Ready`; after reconnection, the isolated replica matched its
-shard sibling and the gate passed in 18 seconds.
+Peer TCP changed from exit code 0 to timeout exit code 124. During isolation, replica-0 had `88120` rows and queue 12 while its sibling had `88532` rows and queue 0. Without `SYSTEM SYNC REPLICA`, both automatically converged to `89357` rows with the same checksum and queue 0. The workload ended at `1875 1773 102`.
 
-Result: **PASS** — the replica rejoined without manual synchronization.
+Result: **PASS** — the isolated replica fetched missing work and converged.
 
 ### Chaos#16: Partition One Replica from Keeper
 
+#### Create `tests/16-keeper-partition.yaml`
 Save this YAML as `tests/16-keeper-partition.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-16
+  name: clickhouse-chaos-exp-16
   namespace: demo
 spec:
   action: partition
@@ -1963,7 +3483,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-0
   direction: both
   target:
     mode: all
@@ -1972,9 +3492,9 @@ spec:
         - demo
       pods:
         demo:
-          - clickhouse-chaos-v2-keeper-0
-          - clickhouse-chaos-v2-keeper-1
-          - clickhouse-chaos-v2-keeper-2
+          - clickhouse-chaos-keeper-0
+          - clickhouse-chaos-keeper-1
+          - clickhouse-chaos-keeper-2
 ```
 
 What this chaos does: Blocks one data replica from communicating with all
@@ -1985,28 +3505,140 @@ If the session expires, replicated-table operations on that replica should
 stop safely rather than accept uncoordinated state. It should become writable
 again after reconnection.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS
+clickhouse-chaos   26.2.6    Ready
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/16-keeper-partition.yaml
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-16 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+  networkchaos/clickhouse-chaos-exp-16 --timeout=90s
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-16 condition met
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+  --query "SELECT is_readonly, is_session_expired, queue_size FROM system.replicas \
+  WHERE database='\''chaos_v2'\'' AND table='\''events_local'\'' FORMAT TSV"'
+1  1  0
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+        bash -c 'timeout 8 clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "INSERT INTO chaos_v2.events_local VALUES (generateUUIDv4(), now(), 16)"; echo exit_code=$?'
+exit_code=124
+```
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+  networkchaos/clickhouse-chaos-exp-16 --timeout=2m
+networkchaos.chaos-mesh.org/clickhouse-chaos-exp-16 condition met
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/16-keeper-partition.yaml
+networkchaos.chaos-mesh.org "clickhouse-chaos-exp-16" deleted from demo namespace
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c 'timeout 3 bash -c "</dev/tcp/10.42.0.46/9181"; echo exit_code=$?'
+exit_code=0
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT is_readonly, is_session_expired, queue_size, total_replicas, active_replicas FROM system.replicas WHERE database='\''chaos_v2'\''"'
+0	0	0	2	2
+```
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+  clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  touch /state/pause
+```
+
+The command prints nothing. Record the stable counters:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1889 1784 105
+```
+
+After any in-flight batch finishes, run the mandatory recovery gate.
+
 **Observed behavior:**
 
-One ClickHouse replica was isolated from all three Keeper members. At ten
-seconds it still reported writable because its existing Keeper session had not
-expired. It switched to read-only at about 15 seconds. Four batches succeeded
-and two attempts failed during the measured
-window. After reconnection, the replica was writable with two active replicas,
-and the gate passed in 24 seconds.
+The target lost all Keeper connectivity. After 20 seconds it reported `is_readonly=1` and `is_session_expired=1`, correctly refusing uncoordinated replicated writes. After cleanup it returned `is_readonly=0`, `queue_size=0`, and `active_replicas=2`. The workload ended at `1889 1784 105`.
 
-Result: **PASS** — short Keeper isolation was tolerated and fully recovered.
+Result: **PASS** — Keeper session loss failed safely and recovered automatically.
 
 ## Resource Stress
 
 ### Chaos#17: Stress CPU
 
+#### Create `tests/17-cpu-stress.yaml`
 Save this YAML as `tests/17-cpu-stress.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: StressChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-17
+  name: clickhouse-chaos-exp-17
   namespace: demo
 spec:
   mode: one
@@ -2016,7 +3648,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-0
   containerNames:
     - clickhouse
   stressors:
@@ -2032,24 +3664,160 @@ ClickHouse container for 60 seconds.
 the pod merely because CPU is throttled. Writes and replication should recover
 with no lasting queue.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS
+clickhouse-chaos   26.2.6    Ready
+```
+
+Record the CPU limit and baseline throttling counters:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+        bash -c 'cat /sys/fs/cgroup/cpu.max; grep -E "usage_usec|nr_throttled|throttled_usec" /sys/fs/cgroup/cpu.stat'
+100000 100000
+usage_usec 117916959
+nr_throttled 203
+throttled_usec 23817473
+```
+
+Record the restart count before stress:
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-0-0 \
+  -o jsonpath='{.status.containerStatuses[0].restartCount}{"\n"}'
+4
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/17-cpu-stress.yaml
+stresschaos.chaos-mesh.org/clickhouse-chaos-exp-17 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+  stresschaos/clickhouse-chaos-exp-17 --timeout=90s
+stresschaos.chaos-mesh.org/clickhouse-chaos-exp-17 condition met
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+        bash -c 'ps -eo pid,pcpu,comm | grep -E "stress-ng|clickhouse" | head; grep -E "usage_usec|nr_throttled|throttled_usec" /sys/fs/cgroup/cpu.stat'
+      1 10.4 clickhouse-serv
+   1249 44.2 stress-ng-cpu
+   1250 44.2 stress-ng-cpu
+usage_usec 143313148
+nr_throttled 455
+throttled_usec 58200837
+```
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+  stresschaos/clickhouse-chaos-exp-17 --timeout=2m
+stresschaos.chaos-mesh.org/clickhouse-chaos-exp-17 condition met
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/17-cpu-stress.yaml
+stresschaos.chaos-mesh.org "clickhouse-chaos-exp-17" deleted from demo namespace
+```
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+  clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+Verify that CPU stress did not restart ClickHouse:
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-0-0 \
+  -o jsonpath='{.status.containerStatuses[0].restartCount}{"\n"}'
+4
+```
+
+Verify that the replication queue is empty:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT queue_size FROM system.replicas WHERE database='\''chaos_v2'\'' AND table='\''events_local'\''"'
+0
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  touch /state/pause
+```
+
+The command prints nothing. Record the stable counters:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1940 1835 105
+```
+
+After any in-flight batch finishes, run the mandatory recovery gate.
+
 **Observed behavior:**
 
-Two stress workers requested 80 percent CPU load inside one ClickHouse
-container for 60 seconds. Fifty batches succeeded, none failed, and the
-pod did not restart. The database stayed `Ready`, and the gate passed in 12
-seconds.
+Two CPU workers each consumed about 44% CPU. Cgroup throttling rose from 203 to 455 periods and from 23,817,473 to 58,200,837 microseconds. The target restart count remained 4, ClickHouse stayed `Ready`, the replication queue returned to 0, and the workload ended at `1940 1835 105`.
 
-Result: **PASS** — the tested CPU pressure caused no availability loss.
+Result: **PASS** — CPU throttling increased without restarting ClickHouse or damaging replication.
 
 ### Chaos#18: Stress Memory
 
+#### Create `tests/18-memory-stress.yaml`
 Save this YAML as `tests/18-memory-stress.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: StressChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-18
+  name: clickhouse-chaos-exp-18
   namespace: demo
 spec:
   mode: one
@@ -2059,96 +3827,173 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0
+        - clickhouse-chaos-chaos-cluster-shard-1-0
   containerNames:
     - clickhouse
   stressors:
     memory:
       workers: 1
-      size: 256MiB
+      size: 1GiB
 ```
 
-What this chaos does: Allocates an additional 256 MiB in a ClickHouse pod
-whose memory limit is 1 GiB.
+What this chaos does: Allocates an additional 1GiB in a ClickHouse pod whose
+memory limit is 4GiB.
 
 **Expected behavior:** This test should create strong pressure without
 intentionally forcing an OOM kill. The process should remain alive and cgroup
 usage should fall after cleanup. A restart or sustained near-limit usage would
 fail the test.
 
-While the fault is injected, compare `memory.current` with `memory.max`:
+#### Resume the workload
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 -c clickhouse -- bash -c '
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy and record the cgroup
+baseline:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS
+clickhouse-chaos   26.2.6    Ready
+```
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c '
   printf "memory_current="; cat /sys/fs/cgroup/memory.current
   printf "memory_max="; cat /sys/fs/cgroup/memory.max
 '
+memory_current=1301417984
+memory_max=4294967296
 ```
 
-Output during the fault:
+Record the restart count before memory stress:
 
-```text
-memory_current=1061523456
-memory_max=1073741824
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
+  -o jsonpath='{.status.containerStatuses[0].restartCount}{"\n"}'
+3
 ```
 
-For this experiment, use the following commands for cleanup instead of the
-generic deletion step. Delete the fault, wait 60 seconds, and measure again:
+Apply this experiment:
 
-```bash
-kubectl delete -f tests/18-memory-stress.yaml
+```shell
+➤ kubectl apply -f tests/18-memory-stress.yaml
+stresschaos.chaos-mesh.org/clickhouse-chaos-exp-18 created
 ```
 
-```text
-stresschaos.chaos-mesh.org "clickhouse-chaos-v2-exp-18" deleted from demo namespace
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+  stresschaos/clickhouse-chaos-exp-18 --timeout=90s
+stresschaos.chaos-mesh.org/clickhouse-chaos-exp-18 condition met
 ```
 
-Wait for cgroup usage to settle:
+Observe the live impact:
 
-```bash
-sleep 60
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c '
+printf "memory_current="; cat /sys/fs/cgroup/memory.current
+printf "memory_max="; cat /sys/fs/cgroup/memory.max
+ps -o pid,stat,comm -p 1'
+memory_current=2407194624
+memory_max=4294967296
+    PID STAT COMMAND
+      1 Ssl  clickhouse-serv
 ```
 
-Output: none. `sleep` returned after 60 seconds.
+Confirm that the restart count did not change:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 -c clickhouse -- bash -c '
-  printf "memory_current="; cat /sys/fs/cgroup/memory.current
-  printf "memory_max="; cat /sys/fs/cgroup/memory.max
-'
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
+  -o jsonpath='{.status.containerStatuses[0].restartCount}{"\n"}'
+3
 ```
 
-Output after recovery:
+Wait for Chaos Mesh to remove the fault:
 
-```text
-memory_current=852787200
-memory_max=1073741824
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+  stresschaos/clickhouse-chaos-exp-18 --timeout=2m
+stresschaos.chaos-mesh.org/clickhouse-chaos-exp-18 condition met
 ```
+
+Delete the experiment and measure recovery:
+
+```shell
+➤ kubectl delete -f tests/18-memory-stress.yaml
+stresschaos.chaos-mesh.org "clickhouse-chaos-exp-18" deleted from demo namespace
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c '
+printf "memory_current="; cat /sys/fs/cgroup/memory.current
+printf "memory_max="; cat /sys/fs/cgroup/memory.max
+ps -o pid,stat,comm -p 1'
+memory_current=1358225408
+memory_max=4294967296
+    PID STAT COMMAND
+      1 Ssl  clickhouse-serv
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  touch /state/pause
+```
+
+The command prints nothing. Record the stable counters:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+1978 1873 105
+```
+
+After any in-flight batch finishes, run the mandatory recovery gate.
 
 **Observed behavior:**
 
-One worker allocated 256 MiB inside a pod limited to 1 GiB. Cgroup usage rose
-to 1,061,523,456 bytes against a 1,073,741,824-byte maximum—about 98.9%.
-During the fault and the 60-second cooldown observation, 88 batches succeeded,
-none failed, and no OOM restart occurred. After 60 seconds, usage settled to
-852,787,200 bytes.
+Before injection, memory usage was 1,301,417,984 bytes against a 4,294,967,296-byte limit. A 1GiB stress worker raised usage to 2,407,194,624 bytes without an OOM or restart. After cleanup it fell to 1,358,225,408 bytes, PID 1 remained `Ssl`, and the workload ended at `1978 1873 105`.
 
-Result: **PASS** — memory pressure recovered, but the narrow peak headroom is
-an operational warning.
+Result: **PASS** — the 4GiB limit provided safe headroom and memory returned toward baseline.
 
 ## IO Chaos
 
 ### Chaos#19: Add Filesystem Latency
 
+#### Create `tests/19-io-latency.yaml`
 Save this YAML as `tests/19-io-latency.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: IOChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-19
+  name: clickhouse-chaos-exp-19
   namespace: demo
 spec:
   action: latency
@@ -2159,7 +4004,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-0
   containerNames:
     - clickhouse
   volumePath: /var/lib/clickhouse
@@ -2175,100 +4020,156 @@ What this chaos does: Uses IOChaos to delay 50 percent of operations below
 lose acknowledged parts. Chaos Mesh must remove its `toda` FUSE layer and
 restore the normal data mount when the experiment ends.
 
-Before running the full experiment, use the same manifest for a 10-second
-capability probe with `delay: 10ms` and `percent: 5`. Continue only if it
-reaches `AllInjected`, reaches `AllRecovered`, and leaves no FUSE mount.
+#### Resume the workload
 
-During the full fault, confirm that IOChaos installed its FUSE layer:
+Discover the workload pod by its label:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- \
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS
+clickhouse-chaos   26.2.6    Ready
+```
+
+Measure the same read-only operation before injection:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c \
+        '/usr/bin/time -f "elapsed=%e" sh -c "find /var/lib/clickhouse/store -type f | head -n 20 | xargs stat >/dev/null"'
+elapsed=0.00
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/19-io-latency.yaml
+iochaos.chaos-mesh.org/clickhouse-chaos-exp-19 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+  iochaos/clickhouse-chaos-exp-19 --timeout=90s
+iochaos.chaos-mesh.org/clickhouse-chaos-exp-19 condition met
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
   findmnt -T /var/lib/clickhouse
-```
-
-Output during injection:
-
-```text
 TARGET              SOURCE FSTYPE OPTIONS
-/var/lib/clickhouse toda   fuse   rw,nosuid,nodev,relatime,user_id=0,group_id=0,default_permissions,allow_other
+/var/lib/clickhouse toda   fuse   rw,nosuid,nodev,relatime,user_id=0,group_id=0
 ```
 
-After `AllRecovered`, check both the mount and PID 1:
+Run the read-only latency probe while the FUSE layer is active:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- \
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c \
+        '/usr/bin/time -f "elapsed=%e" sh -c "find /var/lib/clickhouse/store -type f | head -n 20 | xargs stat >/dev/null"'
+stat: cannot statx '/var/lib/clickhouse/store/...': Transport endpoint is not connected
+Command exited with non-zero status 123
+elapsed=5.78
+```
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+  iochaos/clickhouse-chaos-exp-19 --timeout=2m
+iochaos.chaos-mesh.org/clickhouse-chaos-exp-19 condition met
+```
+
+Delete the recovered experiment:
+
+```shell
+➤ kubectl delete -f tests/19-io-latency.yaml
+iochaos.chaos-mesh.org "clickhouse-chaos-exp-19" deleted from demo namespace
+```
+
+Check that Chaos Mesh removed its FUSE layer:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
   mount | grep /var/lib/clickhouse
-```
-
-Output immediately after our fault recovered:
-
-```text
 /dev/vda1 on /var/lib/clickhouse type ext4 (rw,relatime,discard,errors=remount-ro,commit=30)
 ```
 
-The normal `ext4` mount had returned. Next, check the process:
+Confirm that PID 1 is still running:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- \
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
   ps -o pid,stat,comm -p 1
-```
-
-Output immediately after our fault recovered:
-
-```text
-    PID STAT COMMAND
-      1 Tsl  clickhouse-serv
-```
-
-The mount should be the normal filesystem and the process state should not
-contain `T`. If the mount is clean but PID 1 is stopped, resume the existing
-process and rerun the complete gate:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- \
-  kill -CONT 1
-```
-
-`kill -CONT` prints nothing when it succeeds. Check PID 1 again:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- \
-  ps -o pid,stat,comm -p 1
-```
-
-Output after `SIGCONT`:
-
-```text
     PID STAT COMMAND
       1 Ssl  clickhouse-serv
 ```
 
+Wait for ClickHouse recovery after the fault has been removed:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+  clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  touch /state/pause
+```
+
+The command prints nothing. Record the stable counters:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+2014 1890 124
+```
+
+After any in-flight batch finishes, run the mandatory recovery gate.
+
 **Observed behavior:**
 
-IOChaos mounted its `toda` FUSE layer over `/var/lib/clickhouse` and delayed
-half of file operations by 100ms for 45 seconds. Three batches were
-acknowledged and three attempts failed or became ambiguous. Chaos Mesh reported
-`AllRecovered`, removed `toda`, and restored ext4, but left ClickHouse PID 1 in
-stopped state `Tsl`. `kill -CONT 1` resumed the same process; both replicas
-then matched and the full gate passed.
+IOChaos changed the mount from ext4 to `toda`; the read-only metadata scan changed from `0.00s` to `5.78s` and returned explicit transport errors. After `AllRecovered`, ext4 returned, the scan took `0.00s`, PID 1 was already `Ssl`, and the workload ended at `2014 1890 124`.
 
-Result: **PASS WITH MANUAL CLEANUP** — ClickHouse data remained correct and
-the FUSE mount was removed, but this IOChaos cleanup required `SIGCONT`.
+Result: **PASS** — the latency was directly visible and Chaos Mesh restored the mount and running process automatically.
 
 ### Chaos#20: Return Recoverable EIO
 
+#### Create `tests/20-io-fault.yaml`
 Save this YAML as `tests/20-io-fault.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: IOChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-20
+  name: clickhouse-chaos-exp-20
   namespace: demo
 spec:
   action: fault
@@ -2279,7 +4180,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0
+        - clickhouse-chaos-chaos-cluster-shard-1-0
   containerNames:
     - clickhouse
   volumePath: /var/lib/clickhouse
@@ -2291,45 +4192,213 @@ spec:
 What this chaos does: Makes 10 percent of selected data-volume operations
 return errno 5 (`EIO`) for 30 seconds.
 
+`EIO` is the operating-system error for an input/output failure. It is
+recoverable in this experiment because Chaos Mesh returns the error only while
+the experiment is active; it does not deliberately corrupt stored bytes.
+
 **Expected behavior:** ClickHouse should expose explicit disk errors rather
 than silently accepting bad data. Some writes may fail. After injection ends,
-the normal mount, writable replicas, equal checksums, and empty queues must
-return.
+the normal mount, SQL service, and equal replica checksums must return.
 
-This returns explicit errors; it does not intentionally return incorrect file
-contents.
+#### Resume the workload
 
-Count the relevant ClickHouse log messages after the fault:
+Discover the workload pod by its label:
 
-```bash
-kubectl logs -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 -c clickhouse | \
-  grep -E 'Input/output error|CANNOT_STATVFS' | wc -l
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
 ```
 
-Output from our run:
+Resume the workload before injecting the fault:
 
-```text
-337
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  rm -f /state/pause
 ```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+Record the workload counters before applying the experiment. The values are
+attempted, acknowledged, and failed batches, in that order:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+2014 1890 124
+```
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm that ClickHouse is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS
+clickhouse-chaos   26.2.6    Ready
+```
+
+Confirm that the selected replica is using its normal ext4-backed PVC:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  findmnt -T /var/lib/clickhouse
+TARGET              SOURCE                                                                                                                              FSTYPE OPTIONS
+/var/lib/clickhouse /dev/vda1[/var/lib/rancher/k3s/storage/pvc-eecf7db8-b9b5-4888-b1aa-71e70ea65119_demo_data-clickhouse-chaos-chaos-cluster-shard-1-0] ext4   rw,relatime,discard,errors=remount-ro,commit=30
+```
+
+Run the read-only probe against existing ClickHouse part files. Before fault
+injection, it must finish successfully:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  sh -c 'find /var/lib/clickhouse/store -type f -exec stat {} + >/dev/null; echo exit_code=$?'
+exit_code=0
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/20-io-fault.yaml
+iochaos.chaos-mesh.org/clickhouse-chaos-exp-20 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+  iochaos/clickhouse-chaos-exp-20 --timeout=90s
+iochaos.chaos-mesh.org/clickhouse-chaos-exp-20 condition met
+```
+
+While `AllInjected=True`, inspect the data mount again:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  findmnt -T /var/lib/clickhouse
+TARGET              SOURCE FSTYPE OPTIONS
+/var/lib/clickhouse toda   fuse   rw,nosuid,nodev,relatime,user_id=0,group_id=0,default_permissions,allow_other
+```
+
+The `toda` FUSE source proves that Chaos Mesh has interposed its fault layer on
+the selected mount. Run the same read-only probe again. It performs a metadata
+lookup for every existing part file, giving the 10 percent fault enough
+operations to encounter `EIO` without creating or changing data:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  sh -c 'find /var/lib/clickhouse/store -type f -exec stat {} + >/dev/null; echo exit_code=$?'
+find: ‘/var/lib/clickhouse/store’: Input/output error
+exit_code=1
+```
+
+This is the direct proof that the experiment worked: the same path was ext4
+before injection, became the `toda` fault mount, and returned
+`Input/output error` with a non-zero exit code. `AllInjected=True` alone would
+only prove that Chaos Mesh attached the experiment, not that an operation
+actually encountered the configured error.
+
+Wait for Chaos Mesh to remove the fault:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+  iochaos/clickhouse-chaos-exp-20 --timeout=2m
+iochaos.chaos-mesh.org/clickhouse-chaos-exp-20 condition met
+```
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  touch /state/pause
+```
+
+The command prints nothing. Read the same three workload counters:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+2040 1903 137
+```
+
+During this test window, the client attempted 26 batches: 13 were
+acknowledged and 13 failed or were ambiguous. We do not claim that every one of
+those failures was an `EIO`; the read-only probe above proves the
+configured storage error, while the workload counters prove that ClickHouse
+experienced an availability impact during the same injection window.
+
+Verify that the original filesystem is mounted again:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  findmnt -T /var/lib/clickhouse
+TARGET              SOURCE                                                                                                                              FSTYPE OPTIONS
+/var/lib/clickhouse /dev/vda1[/var/lib/rancher/k3s/storage/pvc-eecf7db8-b9b5-4888-b1aa-71e70ea65119_demo_data-clickhouse-chaos-chaos-cluster-shard-1-0] ext4   rw,relatime,discard,errors=remount-ro,commit=30
+```
+
+Verify that ClickHouse PID 1 is runnable. `Ssl` is a normal sleeping server
+process; importantly, it does not contain `T`, which would mean stopped:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  ps -o pid,stat,comm -p 1
+    PID STAT COMMAND
+      1 Ssl  clickhouse-serv
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/20-io-fault.yaml
+iochaos.chaos-mesh.org "clickhouse-chaos-exp-20" deleted from demo namespace
+```
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+  clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+Prove the same read-only operation succeeds again after recovery:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  sh -c 'find /var/lib/clickhouse/store -type f -exec stat {} + >/dev/null; echo exit_code=$?'
+exit_code=0
+```
+
+The zero exit code proves that the selected filesystem became readable again
+after the fault.
 
 **Observed behavior:**
 
-Ten percent of selected data-volume operations returned errno 5 for 30
-seconds. ClickHouse logged messages including `Input/output error` and
-`CANNOT_STATVFS`. In simple terms, ClickHouse temporarily could not read file
-attributes or calculate free disk space. It did not corrupt bytes.
+The `toda` mount returned a real `Input/output error` to the read-only probe,
+and the workload recorded failed inserts during the fault window. After
+`AllRecovered`, the PVC was ext4 again, PID 1 was `Ssl`, SQL responded, and the
+same read-only traversal returned exit code 0. No signal or pod replacement
+was required.
 
-The workload had ten successes and 15 failures. The pod did not restart, the
-normal ext4 mount returned automatically, and the gate passed in 18 seconds.
-The logs contained 337 matching storage-error entries during the injection.
-
-Result: **PASS** — explicit temporary disk errors were visible and recoverable.
+Result: **PASS** — the transient EIO was visible, ClickHouse recovered without
+manual intervention, and the read-only recovery probe passed.
 
 ## DNS and Time Chaos
 
 ### Chaos#21: Return Keeper DNS Errors
 
+#### Create `tests/21-keeper-dns-error.yaml`
 Save this YAML as `tests/21-keeper-dns-error.yaml`. Use the complete
 `.svc.cluster.local` names; a pattern ending at `.svc` does not match the DNS
 query made by the resolver.
@@ -2338,7 +4407,7 @@ query made by the resolver.
 apiVersion: chaos-mesh.org/v1alpha1
 kind: DNSChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-21
+  name: clickhouse-chaos-exp-21
   namespace: demo
 spec:
   action: error
@@ -2349,13 +4418,13 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-0
   containerNames:
     - clickhouse
   patterns:
-    - clickhouse-chaos-v2-keeper-0.clickhouse-chaos-v2-keeper-pods.demo.svc.cluster.local
-    - clickhouse-chaos-v2-keeper-1.clickhouse-chaos-v2-keeper-pods.demo.svc.cluster.local
-    - clickhouse-chaos-v2-keeper-2.clickhouse-chaos-v2-keeper-pods.demo.svc.cluster.local
+    - clickhouse-chaos-keeper-0.clickhouse-chaos-keeper-pods.demo.svc.cluster.local
+    - clickhouse-chaos-keeper-1.clickhouse-chaos-keeper-pods.demo.svc.cluster.local
+    - clickhouse-chaos-keeper-2.clickhouse-chaos-keeper-pods.demo.svc.cluster.local
 ```
 
 What this chaos does: Returns DNS errors for the three full Keeper service
@@ -2365,59 +4434,145 @@ FQDNs when queried from one ClickHouse container.
 afterward. Established Keeper TCP sessions may keep working, so uninterrupted
 writes do not by themselves prove that DNSChaos failed to inject.
 
-Prove the injection with a direct lookup. This command must fail during the
-fault:
+#### Resume the workload
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- \
-  getent hosts \
-  clickhouse-chaos-v2-keeper-2.clickhouse-chaos-v2-keeper-pods.demo.svc.cluster.local
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
 ```
 
-Output during injection:
+Resume the workload before injecting the fault:
 
-```text
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS
+clickhouse-chaos   26.2.6    Ready
+```
+
+Prove the target can resolve Keeper before injection:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+        getent hosts clickhouse-chaos-keeper-2.clickhouse-chaos-keeper-pods.demo.svc.cluster.local
+10.42.0.39      clickhouse-chaos-keeper-2.clickhouse-chaos-keeper-pods.demo.svc.cluster.local
+```
+
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/21-keeper-dns-error.yaml
+dnschaos.chaos-mesh.org/clickhouse-chaos-exp-21 created
+```
+
+Confirm that Chaos Mesh reached the target:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+  dnschaos/clickhouse-chaos-exp-21 --timeout=90s
+dnschaos.chaos-mesh.org/clickhouse-chaos-exp-21 condition met
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+  getent hosts clickhouse-chaos-keeper-2.clickhouse-chaos-keeper-pods.demo.svc.cluster.local
 command terminated with exit code 2
 ```
 
-No address was returned. After `AllRecovered`, run the same command again:
+The sibling is the control and must still resolve the same name:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- \
-  getent hosts \
-  clickhouse-chaos-v2-keeper-2.clickhouse-chaos-v2-keeper-pods.demo.svc.cluster.local
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- \
+        sh -c 'getent hosts clickhouse-chaos-keeper-2.clickhouse-chaos-keeper-pods.demo.svc.cluster.local; echo exit_code=$?'
+10.42.0.39      clickhouse-chaos-keeper-2.clickhouse-chaos-keeper-pods.demo.svc.cluster.local
+exit_code=0
 ```
 
-Output after recovery:
+Wait for Chaos Mesh to remove the fault:
 
-```text
-10.42.0.232     clickhouse-chaos-v2-keeper-2.clickhouse-chaos-v2-keeper-pods.demo.svc.cluster.local
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+  dnschaos/clickhouse-chaos-exp-21 --timeout=2m
+dnschaos.chaos-mesh.org/clickhouse-chaos-exp-21 condition met
+```
+
+Delete the experiment:
+
+```shell
+➤ kubectl delete -f tests/21-keeper-dns-error.yaml
+dnschaos.chaos-mesh.org "clickhouse-chaos-exp-21" deleted from demo namespace
+```
+
+Prove DNS recovery on the original target:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+        sh -c 'getent hosts clickhouse-chaos-keeper-2.clickhouse-chaos-keeper-pods.demo.svc.cluster.local; echo exit_code=$?'
+10.42.0.39      clickhouse-chaos-keeper-2.clickhouse-chaos-keeper-pods.demo.svc.cluster.local
+exit_code=0
+```
+
+Wait for ClickHouse to report full recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+  clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  touch /state/pause
+```
+
+The command prints nothing.
+
+After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+2079 1942 137
 ```
 
 **Observed behavior:**
 
-The first attempt used names ending at `.svc`; the resolver actually queried
-the full `.svc.cluster.local` names, so a direct lookup still succeeded. That
-attempt was treated as inconclusive and not counted.
+Before injection, the Keeper FQDN resolved to `10.42.0.39`. During DNSChaos, the target returned exit code 2 while the sibling resolved the same name with exit code 0. After recovery, the target resolved it again; the workload moved from `2040 1903 137` to `2079 1942 137`.
 
-The test was rerun with exact full Keeper FQDNs. A direct `getent` probe failed
-during injection and resolved again after recovery. Existing Keeper sessions
-and cached addresses allowed 38 batches to succeed without errors.
-
-Result: **PASS** — DNS failure was proved, while established coordination
-connections masked application impact.
+Result: **PASS** — the DNS fault was proved independently from cached coordination connections.
 
 ### Chaos#22: Skew the Clock Back Two Hours
 
+#### Create `tests/22-clock-skew.yaml`
 Save this YAML as `tests/22-clock-skew.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: TimeChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-22
+  name: clickhouse-chaos-exp-22
   namespace: demo
 spec:
   mode: one
@@ -2427,7 +4582,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1
+        - clickhouse-chaos-chaos-cluster-shard-1-1
   containerNames:
     - clickhouse
   timeOffset: -2h
@@ -2447,6 +4602,26 @@ be lost or duplicated. When the fault expires, Chaos Mesh should restore the
 clock automatically and leave PID 1 running; no manual signal or pod restart
 should be necessary.
 
+#### Resume the workload
+
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
+```
+
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  rm -f /state/pause
+```
+
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
 An incorrect timezone and an incorrect clock are different conditions. A
 wrong timezone normally changes only how local time is displayed; the
 underlying UTC clock remains correct, and ClickHouse can continue functioning.
@@ -2455,94 +4630,82 @@ affect inserted timestamps, TTL processing, scheduled work, logs, certificate
 validation, and other time-based behavior. This experiment changes one
 ClickHouse process's real-time clock. It does not change the node timezone.
 
-Prove the skew with a ClickHouse query that is already running when the fault
-starts. A new process created by `kubectl exec date` may not share the
-injected process time namespace, and a new ClickHouse query may time out while
-Chaos Mesh is attaching to the server process.
+Record the target and control clocks before applying the fault:
 
-In terminal 1, start this 60-second timestamp stream before applying the
-TimeChaos manifest:
-
-```bash
-workload_pod=$(kubectl get pod -n demo \
-  -l app=clickhouse-chaos-v2-workload \
-  -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -n demo "$workload_pod" -- bash -c '
-  clickhouse-client \
-    --host clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1.clickhouse-chaos-v2-chaos-v2-cluster-shard-1-pods.demo.svc \
-    --user "$CH_USER" \
-    --password "$CH_PASSWORD" \
-    --query "SELECT nowInBlock64(3), sleepEachRow(0.5)
-             FROM numbers(120)
-             SETTINGS max_block_size=1 FORMAT TSV"
-'
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c \
+        'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT now(), toUnixTimestamp(now())"'
+2026-09-09 09:20:47	1788945647
 ```
 
-Captured output excerpt from terminal 1:
-
-```text
-2026-09-02 07:06:03.694    0
-2026-09-02 05:06:04.252    0
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c \
+        'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT now(), toUnixTimestamp(now())"'
+2026-09-09 09:20:47	1788945647
 ```
 
-The adjacent timestamps prove that the same ClickHouse query moved backward
-two hours. In terminal 2, validate and apply the fault:
+Validate and apply the fault:
 
-```bash
-kubectl apply --dry-run=server -f tests/22-clock-skew.yaml
+```shell
+➤ kubectl apply --dry-run=server -f tests/22-clock-skew.yaml
+timechaos.chaos-mesh.org/clickhouse-chaos-exp-22 created (server dry run)
 ```
 
-```text
-timechaos.chaos-mesh.org/clickhouse-chaos-v2-exp-22 created (server dry run)
+```shell
+➤ kubectl apply -f tests/22-clock-skew.yaml
+timechaos.chaos-mesh.org/clickhouse-chaos-exp-22 created
 ```
 
-```bash
-kubectl apply -f tests/22-clock-skew.yaml
-```
-
-```text
-timechaos.chaos-mesh.org/clickhouse-chaos-v2-exp-22 created
-```
-
-```bash
-kubectl wait -n demo --for=condition=AllInjected \
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
   -f tests/22-clock-skew.yaml --timeout=90s
+timechaos.chaos-mesh.org/clickhouse-chaos-exp-22 condition met
 ```
 
-```text
-timechaos.chaos-mesh.org/clickhouse-chaos-v2-exp-22 condition met
+The target SQL query did not return before the timeout:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
+  bash -c 'timeout 8 clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT now(), toUnixTimestamp(now())"; echo exit_code=$?'
+exit_code=124
+```
+
+Inspect PID 1 to explain the timeout:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
+        ps -o pid,stat,comm -p 1
+    PID STAT COMMAND
+      1 Tsl  clickhouse-serv
+```
+
+The control replica continued returning current time:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c \
+        'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT now(), toUnixTimestamp(now())"'
+2026-09-09 09:21:32	1788945692
 ```
 
 Wait for the 45-second fault to finish:
 
-```bash
-kubectl wait -n demo --for=condition=AllRecovered \
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
   -f tests/22-clock-skew.yaml --timeout=150s
+timechaos.chaos-mesh.org/clickhouse-chaos-exp-22 condition met
 ```
 
-```text
-timechaos.chaos-mesh.org/clickhouse-chaos-v2-exp-22 condition met
-```
-
-```bash
-kubectl delete -f tests/22-clock-skew.yaml
-```
-
-```text
-timechaos.chaos-mesh.org "clickhouse-chaos-v2-exp-22" deleted from demo namespace
+```shell
+➤ kubectl delete -f tests/22-clock-skew.yaml
+timechaos.chaos-mesh.org "clickhouse-chaos-exp-22" deleted from demo namespace
 ```
 
 After `AllRecovered`, inspect PID 1:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 -c clickhouse -- \
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
   ps -o pid,stat,comm -p 1
-```
-
-Output from our run:
-
-```text
     PID STAT COMMAND
       1 Tsl  clickhouse-serv
 ```
@@ -2551,55 +4714,61 @@ The expected state does not contain `T`. If it does, Chaos Mesh did not fully
 clean up the experiment. Resume the existing process and rerun the complete
 gate:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 -c clickhouse -- \
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
   kill -CONT 1
 ```
 
 `kill -CONT` printed nothing. Checking PID 1 again produced:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 -c clickhouse -- \
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
   ps -o pid,stat,comm -p 1
-```
-
-```text
     PID STAT COMMAND
       1 Ssl  clickhouse-serv
 ```
 
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  touch /state/pause
+```
+
+The command prints nothing.
+
+After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+2088 1947 140
+```
+
 **Observed behavior:**
 
-The pre-existing ClickHouse timestamp stream moved backward by two hours as
-soon as TimeChaos attached. The control replica kept the correct time. Twelve
-batches succeeded during the measured fault window without an error.
+Both replicas returned the same current timestamp before injection. After `AllInjected`, the target SQL call hung and PID 1 was `Tsl`; the control replica still returned current time. `AllRecovered=True` left PID 1 stopped, so `kill -CONT 1` was required to restore `Ssl`. This run did not produce a usable two-hour-skew observation.
 
-Chaos Mesh reported recovery but left ClickHouse PID 1 in stopped state `Tsl`.
-The documented `kill -CONT 1` action resumed it. The target and control then
-matched the host UTC time, and the full gate passed in 11 seconds. The stopped
-process was a TimeChaos cleanup problem: Chaos Mesh paused
-the process while removing the clock injection but did not resume it. It does
-not mean that ClickHouse stops simply because its timezone is wrong, and it is
-not a general consequence of running ClickHouse with Chaos Mesh installed.
-
-Result: **PASS WITH MANUAL CLEANUP** — ClickHouse data remained correct;
-the tested clock skew was tolerated, but this TimeChaos run required
-`SIGCONT` to finish cleanup.
+Result: **CHAOS TOOL LIMITATION** — ClickHouse data recovered, but Chaos Mesh stopped the process instead of demonstrating a live skewed clock and required manual `SIGCONT` cleanup.
 
 ## Combined Chaos and Recovery Soak
 
 ### Chaos#23: Combine I/O Latency with Sibling Failure
 
-Save both resources in `tests/23-io-plus-sibling-failure.yaml` and prove that
-both reach `AllInjected`:
+#### Create `tests/23-io-plus-sibling-failure.yaml`
+
+Save both resources in `tests/23-io-plus-sibling-failure.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: IOChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-23-io
+  name: clickhouse-chaos-exp-23-io
   namespace: demo
 spec:
   action: latency
@@ -2610,7 +4779,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-0
   containerNames:
     - clickhouse
   volumePath: /var/lib/clickhouse
@@ -2621,7 +4790,7 @@ spec:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-23-pod
+  name: clickhouse-chaos-exp-23-pod
   namespace: demo
 spec:
   action: pod-failure
@@ -2632,7 +4801,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-1
+        - clickhouse-chaos-chaos-cluster-shard-0-1
 ```
 
 What this chaos does: Adds 100 ms storage latency to shard-0 replica-0
@@ -2642,110 +4811,221 @@ while holding its sibling replica-1 failed.
 errors and `Critical` are acceptable. Once both faults clear, the siblings
 must converge and the IOChaos FUSE mount must disappear without PVC changes.
 
-For this experiment, use the following commands instead of the generic
-`kubectl delete -f` step. Delete `PodChaos` first and `IOChaos` second. If the
-I/O target still shows a `toda` mount or `Transport endpoint is not connected`,
-recreate only that pod while preserving its PVC, then rerun the complete gate:
+#### Resume the workload
 
-```bash
-kubectl delete podchaos -n demo clickhouse-chaos-v2-exp-23-pod
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
 ```
 
-```text
-podchaos.chaos-mesh.org "clickhouse-chaos-v2-exp-23-pod" deleted from demo namespace
+Resume the workload before injecting the fault:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  rm -f /state/pause
 ```
 
-```bash
-kubectl delete iochaos -n demo clickhouse-chaos-v2-exp-23-io
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
+
+#### Demonstrate impact and recovery
+
+Before injection, confirm the database is healthy:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS
+clickhouse-chaos   26.2.6    Ready
 ```
 
-```text
-iochaos.chaos-mesh.org "clickhouse-chaos-v2-exp-23-io" deleted from demo namespace
+Apply this experiment:
+
+```shell
+➤ kubectl apply -f tests/23-io-plus-sibling-failure.yaml
+iochaos.chaos-mesh.org/clickhouse-chaos-exp-23-io created
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-23-pod created
 ```
 
-Check the I/O target's mount before running the gate:
+Confirm that the I/O fault reached replica-0:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- \
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+  iochaos/clickhouse-chaos-exp-23-io --timeout=90s
+iochaos.chaos-mesh.org/clickhouse-chaos-exp-23-io condition met
+```
+
+Confirm that the sibling failure reached replica-1:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+  podchaos/clickhouse-chaos-exp-23-pod --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-23-pod condition met
+```
+
+Observe the live impact:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS
+clickhouse-chaos   26.2.6    Critical
+```
+
+Confirm that IOChaos replaced the normal data mount with its `toda` FUSE
+layer:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+  findmnt -T /var/lib/clickhouse
+TARGET              SOURCE FSTYPE OPTIONS
+/var/lib/clickhouse toda   fuse   rw,nosuid,nodev,relatime,user_id=0,group_id=0
+```
+
+Prove that the sibling failure also reached its target:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c 'printf ok'
+error: Internal error occurred: OCI runtime exec failed: exec: "bash": executable file not found in $PATH
+```
+
+The service had no healthy path for shard 0:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- sh -c \
+        'timeout 8 clickhouse-client --host clickhouse-chaos.demo.svc --user "$CH_USER" --password "$CH_PASSWORD" --query "SELECT count() FROM chaos_v2.events"; echo exit_code=$?'
+Code: 210. DB::NetException: Connection refused (clickhouse-chaos.demo.svc:9000). (NETWORK_ERROR)
+exit_code=210
+```
+
+The workload counters during the combined fault were:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- bash -c '
+printf "attempted="; cat /state/attempt_batches
+printf "successful="; cat /state/success_batches
+printf "failed="; cat /state/failed_batches'
+attempted=2121
+successful=1949
+failed=172
+```
+
+Wait for the I/O fault duration to finish:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+  iochaos/clickhouse-chaos-exp-23-io --timeout=2m
+iochaos.chaos-mesh.org/clickhouse-chaos-exp-23-io condition met
+```
+
+Wait for the sibling failure duration to finish:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllRecovered \
+  podchaos/clickhouse-chaos-exp-23-pod --timeout=2m
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-23-pod condition met
+```
+
+Delete the `PodChaos` first:
+
+```shell
+➤ kubectl delete podchaos -n demo clickhouse-chaos-exp-23-pod
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-23-pod" deleted from demo namespace
+```
+
+Delete the `IOChaos` second:
+
+```shell
+➤ kubectl delete iochaos -n demo clickhouse-chaos-exp-23-io
+iochaos.chaos-mesh.org "clickhouse-chaos-exp-23-io" deleted from demo namespace
+```
+
+Check that the normal filesystem is mounted again:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
   mount | grep /var/lib/clickhouse
-```
-
-Output from our run:
-
-```text
 /dev/vda1 on /var/lib/clickhouse type ext4 (rw,relatime,discard,errors=remount-ro,commit=30)
 ```
 
-The mount recovered, but the process still needed to be checked:
+Check the ClickHouse process state:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- \
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
   ps -o pid,stat,comm -p 1
-```
-
-Output from our run:
-
-```text
-    PID STAT COMMAND
-      1 Tsl  clickhouse-serv
-```
-
-If its state contains `T`, resume the existing ClickHouse process:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- \
-  kill -CONT 1
-```
-
-The signal command printed nothing. The next PID check showed:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 -c clickhouse -- \
-  ps -o pid,stat,comm -p 1
-```
-
-```text
     PID STAT COMMAND
       1 Ssl  clickhouse-serv
 ```
 
-If cleanup did not restore the normal mount, use:
+Unlike experiments 19 and 22, this process was not stopped after cleanup, so
+we did not run `kill -CONT 1`.
 
-```bash
-kubectl delete pod -n demo \
-  clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
-kubectl wait -n demo --for=condition=Ready \
-  pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 --timeout=5m
+Compare the replicas after automatic recovery:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c \
+        'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local; SELECT queue_size FROM system.replicas WHERE database='\''chaos_v2'\''"'
+99019	99019	2073066991253321069
+0
 ```
 
-We did not run this fallback because the mount had already returned to ext4;
-there is therefore no deletion output for this conditional command.
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c \
+        'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local; SELECT queue_size FROM system.replicas WHERE database='\''chaos_v2'\''"'
+99019	99019	2073066991253321069
+0
+```
+
+Finally, wait for ClickHouse to return to `Ready`:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+  clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  touch /state/pause
+```
+
+The command prints nothing.
+
+Record the stable counters after recovery:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+2121 1949 172
+```
+
+After any in-flight batch finishes, run the mandatory recovery gate.
 
 **Observed behavior:**
 
-Shard-0 replica-0 received 100ms I/O latency while replica-1 was failed. This
-made the shard degraded enough for KubeDB to report `Critical`. Five batches
-succeeded and two failed or became ambiguous. Both faults recovered and
-`toda` unmounted cleanly, but Chaos Mesh left the I/O target's PID 1 stopped in
-state `Tsl`. `kill -CONT 1` resumed the existing process; the complete gate
-then passed in 21 seconds without pod recreation.
+Shard-0 replica-0 had a `toda` latency mount and returned delayed transport errors while replica-1 rejected exec. The service query returned `Connection refused`, ClickHouse became `Critical`, and the workload ended at `2121 1949 172`. Cleanup restored ext4 and PID `Ssl`; both replicas matched at `99019` rows with queue 0.
 
-Result: **PASS WITH MANUAL CLEANUP** — the shard recovered from simultaneous
-storage and sibling failure, but IOChaos cleanup required `SIGCONT`.
+Result: **PASS** — the combined shard fault recovered fully and Chaos Mesh cleanup succeeded this time.
 
 ### Chaos#24: Run Three Recovery-Soak Cycles
 
+#### Create `tests/24-1-recovery-soak.yaml`
 Save the first cycle as `tests/24-1-recovery-soak.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-24-1
+  name: clickhouse-chaos-exp-24-1
   namespace: demo
 spec:
   action: pod-kill
@@ -2755,17 +5035,18 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0
+        - clickhouse-chaos-chaos-cluster-shard-1-0
   gracePeriod: 0
 ```
 
+#### Create `tests/24-2-recovery-soak.yaml`
 Save the second cycle as `tests/24-2-recovery-soak.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-24-2
+  name: clickhouse-chaos-exp-24-2
   namespace: demo
 spec:
   action: pod-kill
@@ -2775,17 +5056,18 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0
+        - clickhouse-chaos-chaos-cluster-shard-0-0
   gracePeriod: 0
 ```
 
+#### Create `tests/24-3-recovery-soak.yaml`
 Save the third cycle as `tests/24-3-recovery-soak.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-v2-exp-24-3
+  name: clickhouse-chaos-exp-24-3
   namespace: demo
 spec:
   action: pod-kill
@@ -2795,7 +5077,7 @@ spec:
       - demo
     pods:
       demo:
-        - clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1
+        - clickhouse-chaos-chaos-cluster-shard-1-1
   gracePeriod: 0
 ```
 
@@ -2806,1113 +5088,716 @@ running the complete recovery gate between cycles.
 No replication backlog, checksum difference, stopped process, stale FUSE
 mount, or restart instability may accumulate across cycles.
 
-Apply the files in numeric order. For each cycle, record the old UID, inject
-the kill, require a new UID, delete the `PodChaos`, and pass the full recovery
-gate before continuing.
+#### Resume the workload
 
-```console
-$ kubectl get pod -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 \
-    -o jsonpath='{.metadata.uid}{"\n"}'
-2faaa154-3abb-40cb-9b02-28b05aa04dbe
-$ kubectl exec -n demo "$workload_pod" -- rm -f /state/pause
-$ kubectl apply -f tests/24-1-recovery-soak.yaml
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-24-1 created
-$ kubectl wait -n demo --for=condition=AllInjected \
-    -f tests/24-1-recovery-soak.yaml --timeout=90s
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-24-1 condition met
-$ kubectl delete -f tests/24-1-recovery-soak.yaml
-podchaos.chaos-mesh.org "clickhouse-chaos-v2-exp-24-1" deleted from demo namespace
-$ kubectl wait -n demo --for=create \
-    pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 --timeout=5m
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 condition met
-$ kubectl wait -n demo --for=condition=Ready \
-    pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 --timeout=5m
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 condition met
-$ kubectl get pod -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-1-0 \
-    -o jsonpath='{.metadata.uid}{"\n"}'
-11fac46f-2b3f-45fb-a37f-08072c7de6b3
+Discover the workload pod by its label:
+
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
 ```
 
-Run the complete recovery gate, then perform cycle 2:
+Resume the workload before injecting the fault:
 
-```console
-$ kubectl get pod -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 \
-    -o jsonpath='{.metadata.uid}{"\n"}'
-e715653c-f75c-48ad-95b9-ec2991d298f4
-$ kubectl exec -n demo "$workload_pod" -- rm -f /state/pause
-$ kubectl apply -f tests/24-2-recovery-soak.yaml
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-24-2 created
-$ kubectl wait -n demo --for=condition=AllInjected \
-    -f tests/24-2-recovery-soak.yaml --timeout=90s
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-24-2 condition met
-$ kubectl delete -f tests/24-2-recovery-soak.yaml
-podchaos.chaos-mesh.org "clickhouse-chaos-v2-exp-24-2" deleted from demo namespace
-$ kubectl wait -n demo --for=create \
-    pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 --timeout=5m
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 condition met
-$ kubectl wait -n demo --for=condition=Ready \
-    pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 --timeout=5m
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 condition met
-$ kubectl get pod -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-0-0 \
-    -o jsonpath='{.metadata.uid}{"\n"}'
-4070efd2-d645-4d21-8c6c-aac4a758766d
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  rm -f /state/pause
 ```
 
-Run the complete recovery gate again, then perform cycle 3:
+The command prints nothing. Keep the workload running while observing the
+fault and recovery transition.
 
-```console
-$ kubectl get pod -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 \
-    -o jsonpath='{.metadata.uid}{"\n"}'
-0b5061db-202e-4965-85fc-1e591a4c043a
-$ kubectl exec -n demo "$workload_pod" -- rm -f /state/pause
-$ kubectl apply -f tests/24-3-recovery-soak.yaml
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-24-3 created
-$ kubectl wait -n demo --for=condition=AllInjected \
-    -f tests/24-3-recovery-soak.yaml --timeout=90s
-podchaos.chaos-mesh.org/clickhouse-chaos-v2-exp-24-3 condition met
-$ kubectl delete -f tests/24-3-recovery-soak.yaml
-podchaos.chaos-mesh.org "clickhouse-chaos-v2-exp-24-3" deleted from demo namespace
-$ kubectl wait -n demo --for=create \
-    pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 --timeout=5m
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 condition met
-$ kubectl wait -n demo --for=condition=Ready \
-    pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 --timeout=5m
-pod/clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 condition met
-$ kubectl get pod -n demo clickhouse-chaos-v2-chaos-v2-cluster-shard-1-1 \
-    -o jsonpath='{.metadata.uid}{"\n"}'
-3642c136-96d4-49b1-a175-6a8270972a35
+Apply the files in numeric order. Each cycle must recover completely before
+the next pod is killed.
+
+#### Cycle 1: clickhouse-chaos-chaos-cluster-shard-1-0
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
+  -o jsonpath='{.metadata.uid}{"\n"}'
+326909c8-1fe4-4c3e-99f8-3c14f8680d4b
 ```
 
-Run the complete recovery gate one final time.
+Inject the pod kill:
+
+```shell
+➤ kubectl apply -f tests/24-1-recovery-soak.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-24-1 created
+```
+
+Confirm injection:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+  podchaos/clickhouse-chaos-exp-24-1 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-24-1 condition met
+```
+
+Delete this one-shot experiment:
+
+```shell
+➤ kubectl delete -f tests/24-1-recovery-soak.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-24-1" deleted from demo namespace
+```
+
+Wait for this replica:
+
+```shell
+➤ kubectl wait -n demo --for=condition=Ready \
+  pod/clickhouse-chaos-chaos-cluster-shard-1-0 --timeout=5m
+pod/clickhouse-chaos-chaos-cluster-shard-1-0 condition met
+```
+
+Run the ClickHouse recovery gate before continuing:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+  clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+Confirm the replacement UID:
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-1-0 \
+  -o jsonpath='{.metadata.uid}{"\n"}'
+24daa5d8-08ab-48b8-aeec-d417b7f10d27
+```
+
+Verify cycle 1 with SQL on both replicas:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+101256	101256	6139974127982147424
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+101256	101256	6139974127982147424
+```
+
+
+#### Cycle 2: clickhouse-chaos-chaos-cluster-shard-0-0
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-0-0 \
+  -o jsonpath='{.metadata.uid}{"\n"}'
+add2a88c-ed3c-46f3-bbb4-b2cb61fec420
+```
+
+Inject the pod kill:
+
+```shell
+➤ kubectl apply -f tests/24-2-recovery-soak.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-24-2 created
+```
+
+Confirm injection:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+  podchaos/clickhouse-chaos-exp-24-2 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-24-2 condition met
+```
+
+Delete this one-shot experiment:
+
+```shell
+➤ kubectl delete -f tests/24-2-recovery-soak.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-24-2" deleted from demo namespace
+```
+
+Wait for this replica:
+
+```shell
+➤ kubectl wait -n demo --for=condition=Ready \
+  pod/clickhouse-chaos-chaos-cluster-shard-0-0 --timeout=5m
+pod/clickhouse-chaos-chaos-cluster-shard-0-0 condition met
+```
+
+Run the ClickHouse recovery gate before continuing:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+  clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+Confirm the replacement UID:
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-0-0 \
+  -o jsonpath='{.metadata.uid}{"\n"}'
+ce5234f0-f938-4927-9b3b-f9244ab22607
+```
+
+Verify cycle 2 with SQL on both replicas:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+101943	101943	14304192949753297155
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+101943	101943	14304192949753297155
+```
+
+
+#### Cycle 3: clickhouse-chaos-chaos-cluster-shard-1-1
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-1-1 \
+  -o jsonpath='{.metadata.uid}{"\n"}'
+d8da0cb3-168b-40ad-840b-ecb835c27cea
+```
+
+Inject the pod kill:
+
+```shell
+➤ kubectl apply -f tests/24-3-recovery-soak.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-24-3 created
+```
+
+Confirm injection:
+
+```shell
+➤ kubectl wait -n demo --for=condition=AllInjected \
+  podchaos/clickhouse-chaos-exp-24-3 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-24-3 condition met
+```
+
+Delete this one-shot experiment:
+
+```shell
+➤ kubectl delete -f tests/24-3-recovery-soak.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-24-3" deleted from demo namespace
+```
+
+Wait for this replica:
+
+```shell
+➤ kubectl wait -n demo --for=condition=Ready \
+  pod/clickhouse-chaos-chaos-cluster-shard-1-1 --timeout=5m
+pod/clickhouse-chaos-chaos-cluster-shard-1-1 condition met
+```
+
+Run the ClickHouse recovery gate before continuing:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+  clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+Confirm the replacement UID:
+
+```shell
+➤ kubectl get pod -n demo clickhouse-chaos-chaos-cluster-shard-1-1 \
+  -o jsonpath='{.metadata.uid}{"\n"}'
+b4d71c1f-6045-4fe5-93e1-1856b9e511cf
+```
+
+Verify cycle 3 with SQL on both replicas:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+105543	105543	10953483407728974470
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+105543	105543	10953483407728974470
+```
+
+
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  touch /state/pause
+```
+
+The command prints nothing.
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+2225 2053 172
+```
+
+After any in-flight batch finishes, run the
+mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-The final test killed and recovered three replicas one at a time, requiring
-the complete gate after every cycle. Gate times were 14, 12, and 11 seconds.
-Across all cycles, 29 batches succeeded and two failed or became ambiguous.
-Every target got a new UID; no backlog, checksum drift, or unhealthy process
-accumulated.
+Three one-shot kills replaced shard-1 replica-0, shard-0 replica-0, and shard-1 replica-1. Their new UIDs were `24daa5d8-08ab-48b8-aeec-d417b7f10d27`, `ce5234f0-f938-4927-9b3b-f9244ab22607`, and `b4d71c1f-6045-4fe5-93e1-1856b9e511cf`. SQL, replica-state, and checksum checks passed between cycles; the workload ended at `2225 2053 172`.
 
-Result: **PASS** — repeated recovery remained stable.
+Result: **PASS** — repeated recovery remained stable with no accumulating backlog.
 
 ### Chaos#25: Delete One Shard Replica and Its PVC
 
-This test is different from `PodChaos`. Killing a pod leaves its Persistent
-VolumeClaim intact, so the replacement pod simply mounts the same data again.
-Here we deliberately remove both the pod and its PVC to simulate permanent
-loss of one replica's disk. Chaos Mesh does not delete Kubernetes PVCs, so the
-fault is injected with `kubectl delete`.
+This final experiment reuses the same `clickhouse-chaos` cluster and the data
+written during experiments 1–24. It does not create a second ClickHouse
+resource. Killing a pod normally preserves its PVC, so here we delete both one
+replica's PVC and its pod to simulate permanent loss of that replica's disk.
 
-What this chaos does: Permanently removes the local metadata and data files of
-shard-0 replica-1. Shard-0 replica-0 remains available as its donor, while
-both replicas of shard 1 remain untouched as a control.
+**What this chaos does:** Removes the local metadata and data files of shard-0
+replica-1. Shard-0 replica-0 remains online as the donor. The two replicas of
+shard 1 remain untouched as a control.
 
-**Expected behavior:** KubeDB should create a new pod and PVC, detect that the
-new ClickHouse process has no local schema, remove the lost replica's stale
-Keeper registrations, recreate its schema from the sibling replica, and let
-`ReplicatedMergeTree` fetch all shard-0 parts. The rebuilt replica must have a
-new pod UID, PVC UID, and PV name, but its row count and checksum must match
-the sibling. No manual `CREATE TABLE`, `ATTACH PART`, or data copy is allowed
-after fault injection.
+**Expected behavior:** KubeDB should provision a new 4Gi PVC and pod, detect
+the missing local schema, remove the stale Keeper registration, recreate the
+schema from shard-0 replica-0, and let `ReplicatedMergeTree` fetch every part.
+The replacement pod, PVC, and PV must have new identities. No manual table
+creation, part attachment, or data copy is allowed.
 
-This experiment requires a KubeDB ClickHouse operator with replica recovery
-support. It was executed separately from the earlier workload so that the
-previous campaign's counters remained unchanged.
+#### Pause the workload
 
-Save this manifest as `clickhouse-replica-recovery.yaml`:
+Pause the continuous workload so the baseline remains stable:
 
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: ClickHouse
-metadata:
-  name: clickhouse-replica-recovery
-  namespace: demo
-  labels:
-    chaos-test.kubedb.com/suite: replica-pvc-loss
-spec:
-  version: 26.2.6
-  clusterTopology:
-    cluster:
-      name: recovery-cluster
-      shards: 2
-      replicas: 2
-      storageType: Durable
-      storage:
-        storageClassName: local-path
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 2Gi
-      podTemplate:
-        spec:
-          containers:
-            - name: clickhouse
-              resources:
-                requests:
-                  cpu: 500m
-                  memory: 1Gi
-                limits:
-                  cpu: "2"
-                  memory: 4Gi
-    clickHouseKeeper:
-      externallyManaged: false
-      spec:
-        replicas: 3
-        storageType: Durable
-        storage:
-          storageClassName: local-path
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 1Gi
-        podTemplate:
-          spec:
-            containers:
-              - name: clickhouse-keeper
-                resources:
-                  requests:
-                    cpu: 100m
-                    memory: 256Mi
-                  limits:
-                    cpu: 500m
-                    memory: 512Mi
-  deletionPolicy: WipeOut
+```shell
+➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
+  -o jsonpath='{.items[0].metadata.name}{"\n"}'
+clickhouse-chaos-workload-64d7d5c85f-fqjdp
 ```
 
-Validate and create the recovery cluster:
+Use the returned pod name to pause the workload:
 
-```bash
-kubectl apply --dry-run=server -f clickhouse-replica-recovery.yaml
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  touch /state/pause
 ```
 
-```text
-clickhouse.kubedb.com/clickhouse-replica-recovery created (server dry run)
+The command prints nothing on success.
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- bash -c '
+if pgrep -x clickhouse-client >/dev/null; then
+  echo "client still active"
+else
+  echo "workload paused"
+fi'
+workload paused
 ```
 
-```bash
-kubectl apply -f clickhouse-replica-recovery.yaml
+Record the workload counters accumulated across experiments 1–24:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- bash -c '
+printf "attempted="; cat /state/attempt_batches
+printf "successful="; cat /state/success_batches
+printf "failed="; cat /state/failed_batches'
+attempted=2225
+successful=2053
+failed=172
 ```
 
-```text
-clickhouse.kubedb.com/clickhouse-replica-recovery created
+Check the Distributed table before deleting anything:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c '
+clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+  --query "SELECT count(), uniqExact(id), sum(payload)
+           FROM chaos_v2.events FORMAT TSV"'
+209804  209804  13047809195631774027
 ```
 
-```bash
-kubectl wait -n demo clickhouse/clickhouse-replica-recovery \
-  --for=jsonpath='{.status.phase}'=Ready --timeout=10m
+The row count is higher than `2053 × 100` because some timed-out Distributed
+inserts reached ClickHouse even though the client did not receive a success
+response. Equality between `count()` and `uniqExact(id)` proves those rows are
+not duplicate IDs.
+
+Before deleting anything, compare the automatically synchronized replicas
+separately:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c '
+clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+  --query "SELECT count(), uniqExact(id), sum(payload)
+           FROM chaos_v2.events_local FORMAT TSV"'
+104261  104261  2094325787902799557
 ```
 
-```text
-clickhouse.kubedb.com/clickhouse-replica-recovery condition met
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
+clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+  --query "SELECT count(), uniqExact(id), sum(payload)
+           FROM chaos_v2.events_local FORMAT TSV"'
+104261  104261  2094325787902799557
 ```
 
-Confirm that the two-shard, two-replica data plane and three-member Keeper
-quorum are running:
+Record the donor pod UID:
 
-```bash
-kubectl get pods -n demo \
-  -l app.kubernetes.io/instance=clickhouse-replica-recovery
+```shell
+➤ kubectl get pod -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-0 \
+  -o jsonpath='{.metadata.uid}{"\n"}'
+ce5234f0-f938-4927-9b3b-f9244ab22607
 ```
 
-```text
-NAME                                                     READY   STATUS    RESTARTS   AGE
-clickhouse-replica-recovery-keeper-0                     1/1     Running   0          68s
-clickhouse-replica-recovery-keeper-1                     1/1     Running   0          62s
-clickhouse-replica-recovery-keeper-2                     1/1     Running   0          57s
-clickhouse-replica-recovery-recovery-cluster-shard-0-0   1/1     Running   0          66s
-clickhouse-replica-recovery-recovery-cluster-shard-0-1   1/1     Running   0          61s
-clickhouse-replica-recovery-recovery-cluster-shard-1-0   1/1     Running   0          64s
-clickhouse-replica-recovery-recovery-cluster-shard-1-1   1/1     Running   0          60s
+Record the target pod UID:
+
+```shell
+➤ kubectl get pod -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-1 \
+  -o jsonpath='{.metadata.uid}{"\n"}'
+0a753027-af14-428b-8b78-9192f190cfeb
 ```
 
-Create a replicated local table and a Distributed table. The local table owns
-the data on each shard; the Distributed table routes inserts and reads across
-both shards:
+Record the target PVC UID and PV:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --multiquery --query "
-      CREATE DATABASE IF NOT EXISTS recovery_test ON CLUSTER '\''{cluster}'\'';
-      CREATE TABLE IF NOT EXISTS recovery_test.events_local
-      ON CLUSTER '\''{cluster}'\'' (
-        id UInt64,
-        payload UInt64
-      )
-      ENGINE = ReplicatedMergeTree(
-        '\''/clickhouse/{installation}/{cluster}/tables/{shard}/{database}/{table}'\'',
-        '\''{replica}'\''
-      )
-      ORDER BY id;
-      CREATE TABLE IF NOT EXISTS recovery_test.events
-      ON CLUSTER '\''{cluster}'\'' AS recovery_test.events_local
-      ENGINE = Distributed(
-        '\''{cluster}'\'', recovery_test, events_local, id
-      );
-    "
-'
+```shell
+➤ kubectl get pvc -n demo \
+  data-clickhouse-chaos-chaos-cluster-shard-0-1 \
+  -o jsonpath='{.metadata.uid}{"\n"}{.spec.volumeName}{"\n"}'
+af84e532-ec8b-4ddc-938f-34d6a21bdeeb
+pvc-af84e532-ec8b-4ddc-938f-34d6a21bdeeb
 ```
 
-Each DDL returned one successful status row from every data pod. The three
-DDL statements therefore produced twelve rows:
+Delete the target pod first:
 
-```text
-clickhouse-replica-recovery-recovery-cluster-shard-0-0.clickhouse-replica-recovery-pods  9000  0    3  0
-clickhouse-replica-recovery-recovery-cluster-shard-1-1.clickhouse-replica-recovery-pods  9000  0    2  0
-clickhouse-replica-recovery-recovery-cluster-shard-1-0.clickhouse-replica-recovery-pods  9000  0    1  0
-clickhouse-replica-recovery-recovery-cluster-shard-0-1.clickhouse-replica-recovery-pods  9000  0    0  0
-clickhouse-replica-recovery-recovery-cluster-shard-0-0.clickhouse-replica-recovery-pods  9000  0    3  0
-clickhouse-replica-recovery-recovery-cluster-shard-1-1.clickhouse-replica-recovery-pods  9000  0    2  0
-clickhouse-replica-recovery-recovery-cluster-shard-1-0.clickhouse-replica-recovery-pods  9000  0    1  0
-clickhouse-replica-recovery-recovery-cluster-shard-0-1.clickhouse-replica-recovery-pods  9000  0    0  0
-clickhouse-replica-recovery-recovery-cluster-shard-0-0.clickhouse-replica-recovery-pods  9000  0    3  0
-clickhouse-replica-recovery-recovery-cluster-shard-1-1.clickhouse-replica-recovery-pods  9000  0    2  0
-clickhouse-replica-recovery-recovery-cluster-shard-1-0.clickhouse-replica-recovery-pods  9000  0    1  0
-clickhouse-replica-recovery-recovery-cluster-shard-0-1.clickhouse-replica-recovery-pods  9000  0    0  0
+```shell
+➤ kubectl delete pod -n demo clickhouse-chaos-chaos-cluster-shard-0-1 --wait=false
+pod "clickhouse-chaos-chaos-cluster-shard-0-1" deleted from demo namespace
 ```
 
-Insert 100,000 deterministic rows. `id` is both unique and the sharding key;
-`payload` is derived from `id`, so both count and checksum can be reproduced:
+Delete its PVC immediately afterward:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "INSERT INTO recovery_test.events
-      SELECT number, sipHash64(number)
-      FROM numbers(100000)
-      SETTINGS insert_distributed_sync=1"
-'
+```shell
+➤ kubectl delete pvc -n demo data-clickhouse-chaos-chaos-cluster-shard-0-1 --wait=false
+persistentvolumeclaim "data-clickhouse-chaos-chaos-cluster-shard-0-1" deleted from demo namespace
 ```
 
-The insert printed nothing on success. Check the whole cluster:
+Wait for the replacement pod:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id),
-      sum(cityHash64(id, payload))
-      FROM recovery_test.events FORMAT TSV"
-'
+```shell
+➤ kubectl wait -n demo --for=create \
+  pod/clickhouse-chaos-chaos-cluster-shard-0-1 --timeout=5m
+pod/clickhouse-chaos-chaos-cluster-shard-0-1 condition met
 ```
 
-```text
-100000  100000  6234091558740710151
+Wait for the replacement PVC:
+
+```shell
+➤ kubectl wait -n demo --for=create \
+  pvc/data-clickhouse-chaos-chaos-cluster-shard-0-1 --timeout=5m
+persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-0-1 condition met
 ```
 
-Run `SYSTEM SYNC REPLICA recovery_test.events_local` once on each data pod.
-Each successful command prints nothing:
+Wait for the replacement pod to become Ready:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SYSTEM SYNC REPLICA recovery_test.events_local"
-'
+```shell
+➤ kubectl wait -n demo --for=condition=Ready \
+  pod/clickhouse-chaos-chaos-cluster-shard-0-1 --timeout=5m
+pod/clickhouse-chaos-chaos-cluster-shard-0-1 condition met
 ```
 
-Output: none.
+The new pod UID is different:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SYSTEM SYNC REPLICA recovery_test.events_local"
-'
+```shell
+➤ kubectl get pod -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-1 \
+  -o jsonpath='{.metadata.uid}{"\n"}'
+ad93b11a-2e7a-492e-8aa3-e1f1048fe21d
 ```
 
-Output: none.
+The new PVC UID and PV are also different:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-1-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SYSTEM SYNC REPLICA recovery_test.events_local"
-'
+```shell
+➤ kubectl get pvc -n demo \
+  data-clickhouse-chaos-chaos-cluster-shard-0-1 \
+  -o jsonpath='{.metadata.uid}{"\n"}{.spec.volumeName}{"\n"}'
+11b51f42-bd68-483e-b537-e3bf349c40b3
+pvc-11b51f42-bd68-483e-b537-e3bf349c40b3
 ```
 
-Output: none.
+The old PV no longer exists:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-1-1 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SYSTEM SYNC REPLICA recovery_test.events_local"
-'
+```shell
+➤ kubectl get pv pvc-af84e532-ec8b-4ddc-938f-34d6a21bdeeb
+Error from server (NotFound): persistentvolumes "pvc-af84e532-ec8b-4ddc-938f-34d6a21bdeeb" not found
 ```
 
-Output: none.
+Immediately after the replacement starts, prove that its new disk has no copy
+of the workload table:
 
-Before deleting anything, query the local table on each pod separately. Use
-the same query for every pod:
-
-```sql
-SELECT count(), uniqExact(id), sum(cityHash64(id, payload))
-FROM recovery_test.events_local FORMAT TSV
-```
-
-Shard-0 replica-0:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id),
-      sum(cityHash64(id, payload))
-      FROM recovery_test.events_local FORMAT TSV"
-'
-```
-
-```text
-50000  50000  13247772413203435930
-```
-
-Shard-0 replica-1, which will be deleted:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id),
-      sum(cityHash64(id, payload))
-      FROM recovery_test.events_local FORMAT TSV"
-'
-```
-
-```text
-50000  50000  13247772413203435930
-```
-
-Shard-1 replica-0:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-1-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id),
-      sum(cityHash64(id, payload))
-      FROM recovery_test.events_local FORMAT TSV"
-'
-```
-
-```text
-50000  50000  11433063219246825837
-```
-
-Shard-1 replica-1:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-1-1 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id),
-      sum(cityHash64(id, payload))
-      FROM recovery_test.events_local FORMAT TSV"
-'
-```
-
-```text
-50000  50000  11433063219246825837
-```
-
-Record the donor identities:
-
-```bash
-kubectl get pod -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -o jsonpath='donor_pod_uid={.metadata.uid}{"\n"}'
-```
-
-```text
-donor_pod_uid=a66cf33b-4ac1-4ab9-90d1-3402a381bb16
-```
-
-```bash
-kubectl get pvc -n demo \
-  data-clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -o jsonpath='donor_pvc_uid={.metadata.uid}{" donor_pv="}{.spec.volumeName}{"\n"}'
-```
-
-```text
-donor_pvc_uid=20e36c93-de9f-4a84-9f8d-57d92b445308 donor_pv=pvc-20e36c93-de9f-4a84-9f8d-57d92b445308
-```
-
-Record the target identities:
-
-```bash
-kubectl get pod -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  -o jsonpath='target_pod_uid={.metadata.uid}{"\n"}'
-```
-
-```text
-target_pod_uid=0feb827f-f657-42b8-8806-ecba0635d44e
-```
-
-```bash
-kubectl get pvc -n demo \
-  data-clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  -o jsonpath='target_pvc_uid={.metadata.uid}{" target_pv="}{.spec.volumeName}{"\n"}'
-```
-
-```text
-target_pvc_uid=c0ee4206-2c61-4c6f-a2de-5b6c8ded81aa target_pv=pvc-c0ee4206-2c61-4c6f-a2de-5b6c8ded81aa
-```
-
-Delete the PVC first without waiting. Kubernetes keeps it protected while the
-pod is still using it:
-
-```bash
-kubectl delete pvc -n demo \
-  data-clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  --wait=false
-```
-
-```text
-persistentvolumeclaim "data-clickhouse-replica-recovery-recovery-cluster-shard-0-1" deleted from demo namespace
-```
-
-Now force-delete only the target pod. This releases the old PVC and allows the
-PetSet to create a new disk for the same replica ordinal:
-
-```bash
-kubectl delete pod -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  --grace-period=0 --force --wait=false
-```
-
-```text
-Warning: Immediate deletion does not wait for confirmation that the running resource has been terminated.
-pod "clickhouse-replica-recovery-recovery-cluster-shard-0-1" force deleted from demo namespace
-```
-
-Wait for the replacement pod and PVC objects:
-
-```bash
-kubectl wait -n demo --for=create \
-  pod/clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  --timeout=2m
-```
-
-```text
-pod/clickhouse-replica-recovery-recovery-cluster-shard-0-1 condition met
-```
-
-```bash
-kubectl wait -n demo --for=create \
-  pvc/data-clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  --timeout=2m
-```
-
-```text
-persistentvolumeclaim/data-clickhouse-replica-recovery-recovery-cluster-shard-0-1 condition met
-```
-
-Prove that Kubernetes supplied new storage rather than reattaching the old
-disk:
-
-```bash
-kubectl get pod -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  -o jsonpath='new_target_pod_uid={.metadata.uid}{"\n"}'
-```
-
-```text
-new_target_pod_uid=04b5455f-a021-45fd-bb1e-b678ed7e8a60
-```
-
-```bash
-kubectl get pvc -n demo \
-  data-clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  -o jsonpath='new_target_pvc_uid={.metadata.uid}{" new_target_pv="}{.spec.volumeName}{"\n"}'
-```
-
-```text
-new_target_pvc_uid=2e3c7b23-7ba7-4ed1-a022-c775ecd0f9f8 new_target_pv=pvc-2e3c7b23-7ba7-4ed1-a022-c775ecd0f9f8
-```
-
-```bash
-kubectl get pv pvc-c0ee4206-2c61-4c6f-a2de-5b6c8ded81aa
-```
-
-```text
-Error from server (NotFound): persistentvolumes "pvc-c0ee4206-2c61-4c6f-a2de-5b6c8ded81aa" not found
-```
-
-Wait for the replacement process to start, then immediately test for the
-local table:
-
-```bash
-kubectl wait -n demo \
-  pod/clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  --for=condition=Ready --timeout=2m
-```
-
-```text
-pod/clickhouse-replica-recovery-recovery-cluster-shard-0-1 condition met
-```
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "EXISTS TABLE recovery_test.events_local"
-'
-```
-
-```text
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
+clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+  --query "EXISTS TABLE chaos_v2.events_local"'
 0
 ```
 
-The zero is important: it proves that the new PVC was empty. The pod process
-being Ready only means ClickHouse can answer a request; it does not mean the
-lost schema and data have already returned. At this point KubeDB reported:
+This is the live impact: the pod is running, but its local table and data were
+really lost. ClickHouse reported why it was not ready while automatic recovery
+was in progress:
 
-```bash
-kubectl get clickhouse -n demo clickhouse-replica-recovery
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS     AGE
+clickhouse-chaos   26.2.6    NotReady   68m
 ```
 
-```text
-NAME                          VERSION   STATUS     AGE
-clickhouse-replica-recovery   26.2.6    Critical   3m
+Wait for ClickHouse to report recovery:
+
+```shell
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready clickhouse/clickhouse-chaos --timeout=5m
+clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
-Do not create the missing table manually. The recovery controller waits until
-the new pod has remained Ready for 60 seconds, then treats the missing schema
-as a wiped replica instead of a slow startup. Wait for KubeDB recovery:
+Compare the donor:
 
-```bash
-kubectl wait -n demo clickhouse/clickhouse-replica-recovery \
-  --for=jsonpath='{.status.phase}'=Ready --timeout=10m
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c '
+clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+  --query "SELECT count(), uniqExact(id), sum(payload)
+           FROM chaos_v2.events_local FORMAT TSV"'
+104261  104261  2094325787902799557
 ```
 
-```text
-clickhouse.kubedb.com/clickhouse-replica-recovery condition met
+Compare the rebuilt replica:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
+clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+  --query "SELECT count(), uniqExact(id), sum(payload)
+           FROM chaos_v2.events_local FORMAT TSV"'
+104261  104261  2094325787902799557
 ```
 
-Confirm that the operator—not a manual command—performed the repair:
+#### Resume and pause the workload
 
-```bash
-kubectl logs -n kubedb kubedb-kubedb-provisioner-0 \
-  -c operator --since=10m | \
-  grep 'replica recovery: repaired clickhouse-replica-recovery-recovery-cluster-shard-0-1'
+Resume the existing workload to prove new writes still work:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  rm -f /state/pause
 ```
 
-```text
-I0903 03:46:14.066272       1 replica_recovery.go:283] replica recovery: repaired clickhouse-replica-recovery-recovery-cluster-shard-0-1 from clickhouse-replica-recovery-recovery-cluster-shard-0-0, created 3 object(s)
+Watch until the workload reports a successful post-rebuild batch:
+
+```shell
+➤ timeout 15 kubectl logs -n demo -f clickhouse-chaos-workload-64d7d5c85f-fqjdp --tail=0 | head -n 1
+2026-09-09T09:32:37+00:00 success attempt=2226 rows=100
 ```
 
-The rebuilt target must now match its donor. Check the donor first:
+Pause it again for the final stable check:
 
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id),
-      sum(cityHash64(id, payload))
-      FROM recovery_test.events_local FORMAT TSV"
-'
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+  touch /state/pause
 ```
 
-```text
-50000  50000  13247772413203435930
+The command prints nothing on success.
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- bash -c '
+printf "attempted="; cat /state/attempt_batches
+printf "successful="; cat /state/success_batches
+printf "failed="; cat /state/failed_batches'
+attempted=2227
+successful=2055
+failed=172
 ```
 
-Check the rebuilt target:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id),
-      sum(cityHash64(id, payload))
-      FROM recovery_test.events_local FORMAT TSV"
-'
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c '
+clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+  --query "SELECT count(), uniqExact(id), sum(payload)
+           FROM chaos_v2.events FORMAT TSV"'
+210004  210004  309272090909017131
 ```
 
-```text
-50000  50000  13247772413203435930
-```
+**Observed behavior:** The same cluster retained all data accumulated during
+experiments 1–24. KubeDB created a new 4Gi PVC and repaired the empty replica
+from its sibling. The rebuilt replica matched the donor at 104,261 rows before
+the workload resumed, and two additional 100-row batches succeeded
+afterward.
 
-The matching count, unique-ID count, and checksum prove that the replacement
-downloaded the shard's data from its sibling.
-
-Check replication state on the rebuilt target:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT is_readonly, is_session_expired, queue_size,
-      inserts_in_queue, merges_in_queue, total_replicas, active_replicas
-      FROM system.replicas
-      WHERE database='\''recovery_test'\'' AND table='\''events_local'\''
-      FORMAT TSV"
-'
-```
-
-```text
-0  0  0  0  0  2  2
-```
-
-Read left to right, the rebuilt table is writable, its Keeper session is
-active, every queue is empty, and both replicas are active. Run the same check
-on shard-0 replica-0:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT is_readonly, is_session_expired, queue_size,
-      inserts_in_queue, merges_in_queue, total_replicas, active_replicas
-      FROM system.replicas
-      WHERE database='\''recovery_test'\'' AND table='\''events_local'\''
-      FORMAT TSV"
-'
-```
-
-```text
-0  0  0  0  0  2  2
-```
-
-Run it on shard-1 replica-0:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-1-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT is_readonly, is_session_expired, queue_size,
-      inserts_in_queue, merges_in_queue, total_replicas, active_replicas
-      FROM system.replicas
-      WHERE database='\''recovery_test'\'' AND table='\''events_local'\''
-      FORMAT TSV"
-'
-```
-
-```text
-0  0  0  0  0  2  2
-```
-
-Run it on shard-1 replica-1:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-1-1 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT is_readonly, is_session_expired, queue_size,
-      inserts_in_queue, merges_in_queue, total_replicas, active_replicas
-      FROM system.replicas
-      WHERE database='\''recovery_test'\'' AND table='\''events_local'\''
-      FORMAT TSV"
-'
-```
-
-```text
-0  0  0  0  0  2  2
-```
-
-Finally, prove that the recovered cluster accepts and replicates new data.
-Insert 100 new deterministic rows:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "INSERT INTO recovery_test.events
-      SELECT number, sipHash64(number)
-      FROM numbers(100000, 100)
-      SETTINGS insert_distributed_sync=1"
-'
-```
-
-The insert printed nothing on success. The final Distributed result was:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id),
-      sum(cityHash64(id, payload))
-      FROM recovery_test.events FORMAT TSV"
-'
-```
-
-```text
-100100  100100  8550420753814024808
-```
-
-Synchronize the four replicas again after the insert:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SYSTEM SYNC REPLICA recovery_test.events_local"
-'
-```
-
-Output: none.
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SYSTEM SYNC REPLICA recovery_test.events_local"
-'
-```
-
-Output: none.
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-1-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SYSTEM SYNC REPLICA recovery_test.events_local"
-'
-```
-
-Output: none.
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-1-1 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SYSTEM SYNC REPLICA recovery_test.events_local"
-'
-```
-
-Output: none.
-
-Check shard-0 replica-0:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id),
-      sum(cityHash64(id, payload))
-      FROM recovery_test.events_local FORMAT TSV"
-'
-```
-
-```text
-50050  50050  2504112362217261381
-```
-
-Check the rebuilt shard-0 replica-1:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-0-1 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id),
-      sum(cityHash64(id, payload))
-      FROM recovery_test.events_local FORMAT TSV"
-'
-```
-
-```text
-50050  50050  2504112362217261381
-```
-
-Check shard-1 replica-0:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-1-0 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id),
-      sum(cityHash64(id, payload))
-      FROM recovery_test.events_local FORMAT TSV"
-'
-```
-
-```text
-50050  50050  6046308391596763427
-```
-
-Check shard-1 replica-1:
-
-```bash
-kubectl exec -n demo \
-  clickhouse-replica-recovery-recovery-cluster-shard-1-1 \
-  -c clickhouse -- bash -c '
-  clickhouse-client \
-    --user "$CLICKHOUSE_USER" \
-    --password "$CLICKHOUSE_PASSWORD" \
-    --query "SELECT count(), uniqExact(id),
-      sum(cityHash64(id, payload))
-      FROM recovery_test.events_local FORMAT TSV"
-'
-```
-
-```text
-50050  50050  6046308391596763427
-```
-
-Check Keeper-0:
-
-```bash
-kubectl exec -n demo clickhouse-replica-recovery-keeper-0 \
-  -c clickhouse-keeper -- bash -c '
-  exec 3<>/dev/tcp/127.0.0.1/9181
-  printf "mntr\n" >&3
-  timeout 3 cat <&3
-' | awk '$1=="zk_server_state" {print $2}'
-```
-
-```text
-leader
-```
-
-Check Keeper-1:
-
-```bash
-kubectl exec -n demo clickhouse-replica-recovery-keeper-1 \
-  -c clickhouse-keeper -- bash -c '
-  exec 3<>/dev/tcp/127.0.0.1/9181
-  printf "mntr\n" >&3
-  timeout 3 cat <&3
-' | awk '$1=="zk_server_state" {print $2}'
-```
-
-```text
-follower
-```
-
-Check Keeper-2:
-
-```bash
-kubectl exec -n demo clickhouse-replica-recovery-keeper-2 \
-  -c clickhouse-keeper -- bash -c '
-  exec 3<>/dev/tcp/127.0.0.1/9181
-  printf "mntr\n" >&3
-  timeout 3 cat <&3
-' | awk '$1=="zk_server_state" {print $2}'
-```
-
-```text
-follower
-```
-
-The leader may be a different Keeper when you run the test. The required
-result is exactly one leader and two followers.
-
-Check the final KubeDB phase:
-
-```bash
-kubectl get clickhouse -n demo clickhouse-replica-recovery
-```
-
-```text
-NAME                          VERSION   STATUS   AGE
-clickhouse-replica-recovery   26.2.6    Ready    6m
-```
-
-Check the complete pod set:
-
-```bash
-kubectl get pods -n demo \
-  -l app.kubernetes.io/instance=clickhouse-replica-recovery
-```
-
-```text
-NAME                                                     READY   STATUS    RESTARTS   AGE
-clickhouse-replica-recovery-keeper-0                     1/1     Running   0          5m43s
-clickhouse-replica-recovery-keeper-1                     1/1     Running   0          5m37s
-clickhouse-replica-recovery-keeper-2                     1/1     Running   0          5m32s
-clickhouse-replica-recovery-recovery-cluster-shard-0-0   1/1     Running   0          5m41s
-clickhouse-replica-recovery-recovery-cluster-shard-0-1   1/1     Running   0          3m10s
-clickhouse-replica-recovery-recovery-cluster-shard-1-0   1/1     Running   0          5m39s
-clickhouse-replica-recovery-recovery-cluster-shard-1-1   1/1     Running   0          5m35s
-```
-
-The replacement pod was created at `03:44:53Z`; KubeDB returned to `Ready` at
-`03:46:33Z`, 100 seconds later. This includes the deliberate 60-second
-ready-pod grace period and subsequent schema and part synchronization.
-
-**Observed behavior:** The target pod initially started on a genuinely empty
-new disk and had no `recovery_test.events_local` table. KubeDB reported
-`Critical`, selected shard-0 replica-0 as the donor, removed the stale Keeper
-registrations, recreated three objects, and allowed `ReplicatedMergeTree` to
-download all 50,000 original rows. The rebuilt replica's checksum matched its
-sibling exactly, all queues returned to zero, and 100 post-recovery rows were
-accepted and replicated. The other shard remained unchanged.
-
-Result: **PASS** — one complete shard-replica disk loss recovered
-automatically from its sibling without data loss or manual database repair.
+Result: **PASS** — complete loss of one replica's pod and disk recovered
+automatically from its sibling without manual schema or data repair.
 
 ## Chaos Testing Results Summary
 
-| # | Fault | Workload success/error delta | Recovery observation | Verdict |
-| ---: | --- | ---: | --- | --- |
-| 1 | Single replica pod kill | +5 / +0 | Pod UID changed; full gate passed | PASS |
-| 2 | Replica pod failure, 45s | +27 / +10 | Status still `Ready` at 15s; gate in 26s | PASS |
-| 3 | ClickHouse container kill | +1 / +0 | Restart count increased; full gate passed | PASS |
-| 4 | Three alternating pod kills | +36 / +1 | All three UIDs changed; no cumulative backlog | PASS |
-| 5 | Both replicas of shard 0 failed | +0 / +39 | `Ready` → `Critical` → `NotReady`; gate in 25s | PASS |
-| 6 | All four data pods failed | +0 / +39 | Client outage; gate in 16s | PASS |
-| 7 | Keeper follower kill | +3 / +0 | Quorum retained; full gate passed | PASS |
-| 8 | Keeper leader kill | +3 / +0 | New leader in about 4s | PASS |
-| 9 | Keeper quorum loss | +4 / +2 | Survivor reported leader without quorum; gate in 23s | PASS |
-| 10 | All Keeper members failed | +2 / +2 | Quorum reformed; gate in 26s | PASS |
-| 11 | 500ms network delay | +17 / +0 | Stayed `Ready`; gate in 14s | PASS |
-| 12 | 30% packet loss | +22 / +0 | Stayed `Ready`; gate in 12s | PASS |
-| 13 | 50% packet duplication | +38 / +0 | No duplicate IDs; gate in 12s | PASS |
-| 14 | 1 Mbps bandwidth limit | +38 / +0 | No write errors; gate in 11s | PASS |
-| 15 | Data-replica partition | +8 / +3 | Rejoined and converged in 18s | PASS |
-| 16 | Replica-to-Keeper partition | +4 / +2 | Read-only after about 15s; gate in 24s | PASS |
-| 17 | CPU stress | +50 / +0 | No restart; gate in 12s | PASS |
-| 18 | 256 MiB memory stress | +88 / +0 | Includes cooldown; no restart | PASS |
-| 19 | 100ms I/O latency | +3 / +3 | ext4 restored; manual `SIGCONT` needed | PASS WITH MANUAL CLEANUP |
-| 20 | 10% EIO | +10 / +15 | 337 storage errors; gate in 18s | PASS |
-| 21 | Keeper DNS errors | +38 / +0 | DNS error proved; cached session kept writes alive | PASS |
-| 22 | Clock skew −2h | +12 / +0 | Skew proved; manual `SIGCONT` needed | PASS WITH MANUAL CLEANUP |
-| 23 | I/O latency plus sibling failure | +5 / +2 | `Critical`; manual `SIGCONT`; gate in 21s | PASS WITH MANUAL CLEANUP |
-| 24 | Three-cycle recovery soak | +29 / +2 | Gates: 14s, 12s, 11s | PASS |
-| 25 | Shard replica and PVC deletion | One-shot 100,000-row dataset | New pod/PVC/PV; schema and 50,000 shard rows restored in 100s | PASS |
-
-The table records the counters captured around each fault window. Six other
-successful batches completed during the short setup or recovery transitions,
-so the success deltas are not intended to sum to the final client counter.
+| # | Fault | Fresh observed impact | Recovery |
+| ---: | --- | --- | --- |
+| 1 | Single replica pod kill | Target UID changed; ClickHouse stayed `Ready` | Both replicas matched at 2,319 rows |
+| 2 | Replica pod failure, 45s | Direct query refused; target restarted twice; ClickHouse became `Critical` | SQL and `Ready` returned |
+| 3 | ClickHouse container kill | Same pod UID; restart count 0 → 1 | Queue returned to 0 |
+| 4 | Three alternating pod kills | Three target UIDs changed; one ambiguous attempt | SQL and checksum checks passed between kills |
+| 5 | Both replicas of shard 0 failed | Direct queries refused; Distributed query returned `ALL_CONNECTION_TRIES_FAILED` | Both replicas matched at 72,274 rows |
+| 6 | All four data pods failed | Complete SQL outage; 40 attempts and no acknowledgements | Four pods reopened their PVC data |
+| 7 | Keeper follower kill | Follower UID changed; Keeper-0 remained leader | 26/26 attempts acknowledged |
+| 8 | Keeper leader kill | Keeper-1 became leader | One leader and two followers restored |
+| 9 | Keeper quorum loss, 90s | Survivor stopped serving; replicated insert timed out | Quorum and queue 0 returned |
+| 10 | All Keeper members failed | All rejected exec; replicated insert timed out | Quorum reformed |
+| 11 | 500ms network delay | Ping average rose to 517.919ms | Returned to 0.070ms; queue 0 |
+| 12 | 30% packet loss | Probe measured 35% loss | Recovery probe measured 0% loss |
+| 13 | 50% packet duplication | Probe reported 8 duplicate packets | Both replicas had 80,556 unique rows |
+| 14 | 1Mbps bandwidth limit | 4.5MB transfer took 4.80s | Same transfer took 0.21s |
+| 15 | Data-replica partition | Peer TCP timed out; replicas diverged; queue reached 12 | Automatically matched at 89,357 rows |
+| 16 | Replica-to-Keeper partition | Target reported `is_readonly=1` and `is_session_expired=1` | Returned writable with two active replicas |
+| 17 | CPU stress | Two workers used ~44% each; throttling 203 → 455 | No restart; queue 0 |
+| 18 | 1GiB memory stress | Usage 1.30GB → 2.41GB under a 4GiB limit | Fell to 1.36GB; no OOM |
+| 19 | 100ms filesystem latency | `toda` active; scan 0.00s → 5.78s with transport errors | ext4 and PID `Ssl` returned automatically |
+| 20 | 10% EIO | Read-only probe returned `Input/output error` | Same probe returned exit 0; PID `Ssl` |
+| 21 | Keeper DNS errors | Target lookup failed; control lookup succeeded | Target DNS resolved again |
+| 22 | Clock skew −2h | Chaos Mesh stopped PID 1; live skew was not demonstrated | Manual `SIGCONT`; chaos-tool limitation |
+| 23 | I/O latency plus sibling failure | `toda`, sibling exec failure, SQL refusal, `Critical` | Both replicas matched at 99,019 rows |
+| 24 | Three-cycle recovery soak | Three target UIDs changed | SQL and checksum checks passed every cycle |
+| 25 | Existing replica and PVC deletion | New pod/PVC/PV; `EXISTS TABLE` initially returned 0 | 104,261 rows restored; new writes succeeded |
 
 ## Final Integrity Evidence
 
-The original 24-experiment workload finished with:
+The same cluster used by all 25 experiments finished healthy. Check the
+ClickHouse resource first:
 
-```text
-ClickHouse phase: Ready
-Ready database pods: 7/7
-Distributed rows: 50,987
-Unique IDs: 50,987
-
-Shard 0 replica 0: 25,968 rows, checksum 1308421401945657900
-Shard 0 replica 1: 25,968 rows, checksum 1308421401945657900
-Shard 1 replica 0: 25,019 rows, checksum 1106137736089666342
-Shard 1 replica 1: 25,019 rows, checksum 1106137736089666342
-
-Every replica: writable=1, queue=0, total=2, active=2, lost_parts=0, delay=0
-Keeper: 1 leader, 2 followers
-Data mounts: ext4 on all four pods
-ClickHouse PID 1 state: running on all four pods
-Remaining test chaos objects: 0
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    105m
 ```
 
-Here `writable=1` summarizes `is_readonly=0`.
+Check every database and workload pod:
 
-The separate replica-and-PVC-loss experiment finished with:
-
-```text
-ClickHouse phase: Ready
-Ready database pods: 7/7
-Distributed rows: 100,100
-Unique IDs: 100,100
-
-Shard 0 replica 0: 50,050 rows, checksum 2504112362217261381
-Shard 0 replica 1: 50,050 rows, checksum 2504112362217261381
-Shard 1 replica 0: 50,050 rows, checksum 6046308391596763427
-Shard 1 replica 1: 50,050 rows, checksum 6046308391596763427
-
-Every replica: is_readonly=0, queue_size=0, total_replicas=2, active_replicas=2
-Keeper: 1 leader, 2 followers
-Replacement pod restarts: 0
-Old PV: deleted
-Replacement PVC: Bound
+```shell
+➤ kubectl get pods -n demo | grep clickhouse-chaos
+clickhouse-chaos-chaos-cluster-shard-0-0      1/1   Running   0             39m
+clickhouse-chaos-chaos-cluster-shard-0-1      1/1   Running   0             37m
+clickhouse-chaos-chaos-cluster-shard-1-0      1/1   Running   0             40m
+clickhouse-chaos-chaos-cluster-shard-1-1      1/1   Running   1 (39m ago)   39m
+clickhouse-chaos-keeper-0                     1/1   Running   6 (61m ago)   66m
+clickhouse-chaos-keeper-1                     1/1   Running   2 (61m ago)   67m
+clickhouse-chaos-keeper-2                     1/1   Running   6 (61m ago)   105m
+clickhouse-chaos-workload-64d7d5c85f-fqjdp   1/1   Running   0             103m
 ```
+
+The Distributed table contained 210,004 rows and every UUID was unique:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id) FROM chaos_v2.events"'
+210004  210004
+```
+
+Compare the count, unique-ID count, and checksum on each replica. Matching
+results within each shard prove that its replicas converged automatically:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+104352  104352  403484691276693588
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+104352  104352  403484691276693588
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+105652  105652  18352531473341875159
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+105652  105652  18352531473341875159
+```
+
+Check replica health separately on all four data pods. The six columns are
+`is_readonly`, `is_session_expired`, `queue_size`, `total_replicas`,
+`active_replicas`, and `absolute_delay`:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT is_readonly, is_session_expired, queue_size, total_replicas, active_replicas, absolute_delay FROM system.replicas WHERE database = '\''chaos_v2'\'' AND table = '\''events_local'\''"'
+0  0  0  2  2  0
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT is_readonly, is_session_expired, queue_size, total_replicas, active_replicas, absolute_delay FROM system.replicas WHERE database = '\''chaos_v2'\'' AND table = '\''events_local'\''"'
+0  0  0  2  2  0
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT is_readonly, is_session_expired, queue_size, total_replicas, active_replicas, absolute_delay FROM system.replicas WHERE database = '\''chaos_v2'\'' AND table = '\''events_local'\''"'
+0  0  0  2  2  0
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT is_readonly, is_session_expired, queue_size, total_replicas, active_replicas, absolute_delay FROM system.replicas WHERE database = '\''chaos_v2'\'' AND table = '\''events_local'\''"'
+0  0  0  2  2  0
+```
+
+Check each Keeper member separately:
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-0 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+leader
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-1 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+follower
+```
+
+```shell
+➤ kubectl exec -n demo clickhouse-chaos-keeper-2 -c clickhouse-keeper -- bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181; printf "mntr\n" >&3; timeout 3 cat <&3' | awk '$1=="zk_server_state" {print $2}'
+follower
+```
+
+Verify that all data PVCs are 4Gi and all Keeper PVCs are 1Gi:
+
+```shell
+➤ kubectl get pvc -n demo | grep clickhouse-chaos
+data-clickhouse-chaos-chaos-cluster-shard-0-0   Bound   pvc-9773c0e0-8bd6-4a67-b445-444255b61074   4Gi   RWO   local-path   <unset>   105m
+data-clickhouse-chaos-chaos-cluster-shard-0-1   Bound   pvc-11b51f42-bd68-483e-b537-e3bf349c40b3   4Gi   RWO   local-path   <unset>   37m
+data-clickhouse-chaos-chaos-cluster-shard-1-0   Bound   pvc-eecf7db8-b9b5-4888-b1aa-71e70ea65119   4Gi   RWO   local-path   <unset>   105m
+data-clickhouse-chaos-chaos-cluster-shard-1-1   Bound   pvc-35ef4112-0c9d-42b1-973a-f26389b04864   4Gi   RWO   local-path   <unset>   105m
+data-clickhouse-chaos-keeper-0                  Bound   pvc-531f098d-5196-490d-b6ba-b3584755b06c   1Gi   RWO   local-path   <unset>   105m
+data-clickhouse-chaos-keeper-1                  Bound   pvc-41c5eecc-1f51-477d-aa7f-22e2e1c88ba9   1Gi   RWO   local-path   <unset>   105m
+data-clickhouse-chaos-keeper-2                  Bound   pvc-e893bff9-8ba5-4da4-92f7-b0b125e4777f   1Gi   RWO   local-path   <unset>   105m
+```
+
+Finally, prove that no experiment remains active:
+
+```shell
+➤ kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos,timechaos -n demo
+No resources found in demo namespace.
+```
+
+The final workload counters were 2,227 attempted batches, 2,055 acknowledged
+batches, and 172 failed or ambiguous attempts. The database contained 210,004
+unique rows. The 4,504 rows above `2,055 × 100` came from inserts for which
+ClickHouse accepted data but the client did not receive a success response
+before its timeout. They are not duplicate IDs.
 
 ## What the Errors Mean
 
 - **Client timeout or connection failure:** the selected shard, all data pods,
   Keeper, network, or storage was temporarily unavailable. Failed attempts are
   expected during those tests.
-- **`Critical` KubeDB phase:** at least part of the desired cluster was not
+- **`Critical` ClickHouse phase:** at least part of the desired cluster was not
   healthy. It does not always mean every query is unavailable.
-- **KubeDB stayed `Ready` during Keeper loss:** the health check could still
+- **ClickHouse stayed `Ready` during Keeper loss:** the health check could still
   connect to ClickHouse, but Keeper-dependent operations were degraded. Check
   Keeper directly rather than relying on one status field.
 - **Temporary replica count mismatch:** a part accepted around Keeper recovery
@@ -3927,8 +5812,8 @@ Replacement PVC: Bound
   caused real disk loss rather than an ordinary pod restart.
 - **`Input/output error` and `CANNOT_STATVFS`:** IOChaos deliberately made
   filesystem calls return EIO. These errors disappeared after the fault.
-- **PID state `Tsl`:** two IOChaos runs and the TimeChaos run left ClickHouse
-  stopped even after Chaos Mesh reported recovery. `SIGCONT` resumed the
+- **PID state `Tsl`:** the TimeChaos run left ClickHouse stopped even after
+  Chaos Mesh reported recovery. `SIGCONT` resumed the
   process without deleting data or recreating the pod. This indicates an
   incomplete chaos-tool cleanup, not data corruption.
 
@@ -3936,17 +5821,17 @@ Replacement PVC: Bound
 
 1. Replica and Keeper redundancy protected acknowledged data across every
    tested recoverable failure.
-2. KubeDB `Ready` is useful but insufficient for Keeper-specific faults. A real
+2. ClickHouse `Ready` is useful but insufficient for Keeper-specific faults. A real
    database query, replica state, and Keeper `mntr` must be checked.
 3. Unique row IDs are essential because a timed-out Distributed insert can
    have an ambiguous partial result.
 4. Recovery verification needs consecutive matching replica checks, not one
    instantaneous queue sample.
 5. Chaos Mesh 2.8.4 handled PodChaos, NetworkChaos, StressChaos, DNSChaos, and
-   the EIO case cleanly. The standalone I/O-latency run, combined I/O run, and
-   TimeChaos each required manual `SIGCONT` after cleanup reported success.
-6. Memory pressure reached 98.9% of the limit without OOM; production limits
-   should retain more safety headroom.
+   both I/O cases cleanly. TimeChaos stopped the target and required manual
+   `SIGCONT`, so this run did not validate a functioning live clock skew.
+6. Memory pressure rose to about 2.42GiB under a 4GiB limit without an OOM,
+   then fell toward baseline after cleanup.
 7. Losing both a replica pod and its PVC requires schema recovery before normal
    ClickHouse replication can resume. The recovery-enabled KubeDB operator
    removed stale Keeper registrations, restored the schema from the same-shard
@@ -3966,11 +5851,10 @@ complete health check. A trustworthy ClickHouse recovery decision combines a
 real read and write, shard-local count and checksum equality, `system.replicas`
 state, Keeper quorum, process state, and clean storage mounts.
 
-Experiments 19, 22, and 23 also separate database resilience from chaos-tool
-cleanup. ClickHouse data remained correct under storage latency and a two-hour
-clock offset, but Chaos Mesh 2.8.4 did not resume the affected process
-automatically in those three runs. Therefore the database-integrity checks
-passed, while the automatic cleanup expectation did not.
+Experiment 22 separates database resilience from chaos-tool behavior.
+ClickHouse data recovered, but Chaos Mesh 2.8.4 stopped the affected process
+and did not resume it automatically. Because a live two-hour skew was not
+observed, that experiment is reported as a chaos-tool limitation, not a pass.
 
 ## What Next?
 
@@ -3979,112 +5863,39 @@ storage, workload volume, resource limits, and monitoring. NodeChaos can then
 be added safely because losing one worker will not also remove the Kubernetes
 control plane and the chaos controller.
 
-## Cleanup
+## Optional Cleanup
 
-Save the final evidence before removing anything. Pause the workload, record
-its counters, then scale it down:
+The tested cluster was kept running after the final evidence was captured. If
+you created the cluster only for this campaign, first confirm that no chaos
+experiment remains active:
 
-```bash
-workload_pod=$(kubectl get pod -n demo \
-  -l app=clickhouse-chaos-v2-workload \
-  -o jsonpath='{.items[0].metadata.name}')
-```
-
-The variable assignment prints nothing. Pause and read the final counters:
-
-```bash
-kubectl exec -n demo "$workload_pod" -- touch /state/pause
-kubectl exec -n demo "$workload_pod" -- bash -c '
-  printf "attempts="; cat /state/attempt_batches
-  printf "success="; cat /state/success_batches
-  printf "failed="; cat /state/failed_batches
-'
-```
-
-```text
-attempts=611
-success=491
-failed=120
-```
-
-```bash
-kubectl scale deployment -n demo \
-  clickhouse-chaos-v2-workload --replicas=0
-```
-
-```text
-deployment.apps/clickhouse-chaos-v2-workload scaled
-```
-
-Repeat the complete recovery gate directly from a ClickHouse pod. Record the
-Distributed and local counts, unique-ID counts, checksums, `system.replicas`
-state, Keeper roles, pod state, PID states, mounts, and
-remaining Chaos Mesh resources.
-
-Delete only resources belonging to this disposable campaign:
-
-```bash
-kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos,timechaos \
-  -n demo
-```
-
-```text
+```shell
+➤ kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos,timechaos -n demo
 No resources found in demo namespace.
 ```
 
-```bash
-kubectl delete deployment -n demo clickhouse-chaos-v2-workload \
-  --ignore-not-found
+Then remove the workload resources and the ClickHouse resource:
+
+```shell
+➤ kubectl delete deployment -n demo clickhouse-chaos-workload --ignore-not-found
 ```
 
-```text
-deployment.apps "clickhouse-chaos-v2-workload" deleted
+```shell
+➤ kubectl delete configmap -n demo clickhouse-chaos-workload --ignore-not-found
 ```
 
-```bash
-kubectl delete configmap -n demo clickhouse-chaos-v2-workload \
-  --ignore-not-found
+```shell
+➤ kubectl delete clickhouse -n demo clickhouse-chaos --ignore-not-found
 ```
 
-```text
-configmap "clickhouse-chaos-v2-workload" deleted
+The test manifest uses `deletionPolicy: WipeOut`, so KubeDB also removes the
+managed pods, generated authentication Secret, and PVCs. Do not delete a PVC
+manually while its pod is terminating. Verify cleanup with:
+
+```shell
+➤ kubectl get clickhouse,petset,pods,pvc,secrets -n demo -o name | grep clickhouse-chaos
 ```
 
-```bash
-kubectl delete clickhouse -n demo clickhouse-chaos-v2 \
-  --ignore-not-found
-```
-
-```text
-clickhouse.kubedb.com "clickhouse-chaos-v2" deleted
-```
-
-Because the test ClickHouse uses `deletionPolicy: WipeOut`, its managed pods
-and PVCs should disappear. Give the operator time to finish, then inspect the
-namespace directly:
-
-```bash
-sleep 60
-```
-
-`sleep` prints nothing. If a campaign pod is still `Terminating`, wait another
-30 seconds. Do not delete its PVC manually.
-
-The generated auth Secret is owned by the ClickHouse resource and is removed
-by `WipeOut`; do not delete credentials manually. Verify that the campaign
-left nothing behind:
-
-```bash
-kubectl get clickhouse,petset,pods,pvc,secrets -n demo -o name | \
-  grep clickhouse-chaos-v2
-```
-
-Output from our final name check:
-
-```text
-(no output)
-```
-
-The ClickHouse, its PetSets, pods, PVCs, generated
-auth Secret, and Chaos Mesh resources no longer existed. Unrelated resources
-in `demo` remained unchanged.
+The final command should print nothing. These cleanup commands are intentionally
+shown without captured deletion output because they were not run against the
+cluster used to produce this article.
