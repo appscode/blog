@@ -3806,10 +3806,13 @@ spec:
 What this chaos does: Makes 10 percent of selected data-volume operations
 return errno 5 (`EIO`) for 30 seconds.
 
+`EIO` is the operating-system error for an input/output failure. It is
+recoverable in this experiment because Chaos Mesh returns the error only while
+the experiment is active; it does not deliberately corrupt stored bytes.
+
 **Expected behavior:** ClickHouse should expose explicit disk errors rather
 than silently accepting bad data. Some writes may fail. After injection ends,
-the normal mount, writable replicas, equal checksums, and empty queues must
-return.
+the normal mount, SQL service, and equal replica checksums must return.
 
 #### Resume the workload
 
@@ -3834,27 +3837,21 @@ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
 The command prints nothing. Keep the workload running while observing the
 fault and recovery transition.
 
-This returns explicit errors; it does not intentionally return incorrect file
-contents.
-
-Count the relevant ClickHouse log messages after the fault:
+Record the workload counters before applying the experiment. The values are
+attempted, acknowledged, and failed batches, in that order:
 
 ```bash
-kubectl logs -n demo \
-  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse | \
-  grep -E 'Input/output error|CANNOT_STATVFS' | wc -l
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
 ```
-
-Output from our run:
 
 ```text
-261
+2867 2753 114
 ```
-
 
 #### Demonstrate impact and recovery
 
-Before injection, confirm the database is healthy:
+Before injection, confirm that ClickHouse is healthy:
 
 ```bash
 kubectl get clickhouse -n demo clickhouse-chaos
@@ -3862,6 +3859,32 @@ kubectl get clickhouse -n demo clickhouse-chaos
 ```text
 NAME               VERSION   STATUS
 clickhouse-chaos   26.2.6    Ready
+```
+
+Confirm that the selected replica is using its normal ext4-backed PVC:
+
+```bash
+kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  findmnt -T /var/lib/clickhouse
+```
+
+```text
+TARGET              SOURCE                                                                                                                              FSTYPE OPTIONS
+/var/lib/clickhouse /dev/vda1[/var/lib/rancher/k3s/storage/pvc-e858eab7-2a22-4fd9-8543-957efaeb6b85_demo_data-clickhouse-chaos-chaos-cluster-shard-1-0] ext4   rw,relatime,discard,errors=remount-ro,commit=30
+```
+
+Run the read-only probe against existing ClickHouse part files. Before fault
+injection, it must finish successfully:
+
+```bash
+kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  sh -c 'find /var/lib/clickhouse/store -type f -exec stat {} + >/dev/null; echo exit_code=$?'
+```
+
+```text
+exit_code=0
 ```
 
 Apply this experiment:
@@ -3883,15 +3906,40 @@ kubectl wait -n demo --for=condition=AllInjected \
 iochaos.chaos-mesh.org/clickhouse-chaos-exp-20 condition met
 ```
 
-Observe the live impact:
+While `AllInjected=True`, inspect the data mount again:
 
 ```bash
-kubectl logs -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse | \
-  grep -E 'Input/output error|CANNOT_STATVFS' | wc -l
+kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  findmnt -T /var/lib/clickhouse
 ```
+
 ```text
-261
+TARGET              SOURCE FSTYPE OPTIONS
+/var/lib/clickhouse toda   fuse   rw,nosuid,nodev,relatime,user_id=0,group_id=0,default_permissions,allow_other
 ```
+
+The `toda` FUSE source proves that Chaos Mesh has interposed its fault layer on
+the selected mount. Run the same read-only probe again. It performs a metadata
+lookup for every existing part file, giving the 10 percent fault enough
+operations to encounter `EIO` without creating or changing data:
+
+```bash
+kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  sh -c 'find /var/lib/clickhouse/store -type f -exec stat {} + >/dev/null; echo exit_code=$?'
+```
+
+```text
+find: ‘/var/lib/clickhouse/store’: Input/output error
+exit_code=1
+```
+
+This is the direct proof that the experiment worked: the same path was ext4
+before injection, became the `toda` fault mount, and returned
+`Input/output error` with a non-zero exit code. `AllInjected=True` alone would
+only prove that Chaos Mesh attached the experiment, not that an operation
+actually encountered the configured error.
 
 Wait for Chaos Mesh to remove the fault:
 
@@ -3901,6 +3949,60 @@ kubectl wait -n demo --for=condition=AllRecovered \
 ```
 ```text
 iochaos.chaos-mesh.org/clickhouse-chaos-exp-20 condition met
+```
+
+#### Pause the workload
+
+After capturing the recovery transition, stop the workload from starting new
+batches:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  touch /state/pause
+```
+
+The command prints nothing. Read the same three workload counters:
+
+```bash
+kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
+  sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
+```
+
+```text
+2907 2784 123
+```
+
+During this test window, the client attempted 40 batches: 31 were
+acknowledged and 9 failed or were ambiguous. We do not claim that every one of
+those nine failures was an `EIO`; the read-only probe above proves the
+configured storage error, while the workload counters prove that ClickHouse
+experienced an availability impact during the same injection window.
+
+Verify that the original filesystem is mounted again:
+
+```bash
+kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  findmnt -T /var/lib/clickhouse
+```
+
+```text
+TARGET              SOURCE                                                                                                                              FSTYPE OPTIONS
+/var/lib/clickhouse /dev/vda1[/var/lib/rancher/k3s/storage/pvc-e858eab7-2a22-4fd9-8543-957efaeb6b85_demo_data-clickhouse-chaos-chaos-cluster-shard-1-0] ext4   rw,relatime,discard,errors=remount-ro,commit=30
+```
+
+Verify that ClickHouse PID 1 is runnable. `Ssl` is a normal sleeping server
+process; importantly, it does not contain `T`, which would mean stopped:
+
+```bash
+kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  ps -o pid,stat,comm -p 1
+```
+
+```text
+    PID STAT COMMAND
+      1 Ssl  clickhouse-serv
 ```
 
 Delete the experiment:
@@ -3922,25 +4024,63 @@ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
 clickhouse.kubedb.com/clickhouse-chaos condition met
 ```
 
-
-#### Pause the workload
-
-After capturing the recovery transition, stop the workload from starting new
-batches:
+Synchronize shard-1 replica-0 with its replication log:
 
 ```bash
-kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-sgzlc -- \
-  touch /state/pause
+kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SYSTEM SYNC REPLICA chaos_v2.events_local"'
 ```
 
-The command prints nothing. After any in-flight batch finishes, run the
-mandatory recovery gate and record the stable integrity result.
+The command prints nothing on success.
+
+Synchronize shard-1 replica-1 separately:
+
+```bash
+kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SYSTEM SYNC REPLICA chaos_v2.events_local"'
+```
+
+The command prints nothing on success.
+
+Read the integrity values from shard-1 replica-0:
+
+```bash
+kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+```
+
+```text
+148386  148386  5554841077194442522
+```
+
+Read the same values from shard-1 replica-1:
+
+```bash
+kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
+  bash -c 'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT count(), uniqExact(id), sum(payload) FROM chaos_v2.events_local"'
+```
+
+```text
+148386  148386  5554841077194442522
+```
+
+The matching `count()`, `uniqExact(id)`, and `sum(payload)` values prove that
+the two replicas converged to the same data after the fault.
 
 **Observed behavior:**
 
-Ten percent of selected filesystem operations returned errno 5. During injection, 261 `Input/output error` or `CANNOT_STATVFS` messages were counted and the workload recorded failures. After recovery, the mount was ext4 and PID 1 was `Ssl`; no signal or pod replacement was required.
+The `toda` mount returned a real `Input/output error` to the read-only probe,
+and the workload recorded failed inserts during the fault window. After
+`AllRecovered`, the PVC was ext4 again, PID 1 was `Ssl`, SQL responded, and the
+two shard-1 replicas had identical row counts, unique-ID counts, and payload
+checksums. No signal or pod replacement was required.
 
-Result: **PASS** — explicit storage errors stopped when the fault ended.
+Result: **PASS** — the transient EIO was visible, ClickHouse recovered without
+manual intervention, and replica integrity passed after synchronization.
 
 ## DNS and Time Chaos
 
@@ -5326,7 +5466,7 @@ automatically from its sibling without manual schema or data repair.
 | 17 | CPU stress | Cgroup throttling increased; restart count unchanged | `Ready` throughout |
 | 18 | 1GiB memory stress | Usage rose from 1.31GiB to 2.42GiB under a 4GiB limit | Fell to 1.40GiB; no OOM |
 | 19 | 100ms filesystem latency | `toda` FUSE mount active | ext4 returned; `SIGCONT` required |
-| 20 | 10% EIO | 261 matching storage errors observed during injection | ext4 and PID `Ssl` returned |
+| 20 | 10% EIO | read-only probe returned `Input/output error`; workload failures increased by 9 | ext4, PID `Ssl`, SQL, and equal replica checksums returned |
 | 21 | Keeper DNS errors | Direct lookup failed with exit code 2; existing sessions kept writes alive | DNS resolved after recovery |
 | 22 | Clock skew −2h | One running query moved from 08:18 to 06:18 | Clock restored; `SIGCONT` required |
 | 23 | I/O latency plus sibling failure | ClickHouse became `Critical`; `toda` active | ext4 and PID `Ssl` returned automatically |
