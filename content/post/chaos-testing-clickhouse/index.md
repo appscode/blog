@@ -5341,42 +5341,44 @@ Result: **PASS** — repeated recovery remained stable with no accumulating back
 
 ### Chaos#25: Delete One Shard Replica and Its PVC
 
-This final experiment reuses the same `clickhouse-chaos` cluster and the data
-written during experiments 1–24. It does not create a second ClickHouse
-resource. Killing a pod normally preserves its PVC, so here we delete both one
-replica's PVC and its pod to simulate permanent loss of that replica's disk.
+This final experiment reuses the existing `clickhouse-chaos` cluster. Killing
+a pod normally preserves its PVC, so here we delete one replica's PVC and pod
+to simulate permanent loss of that replica's disk. This experiment uses
+`kubectl` directly and does not require Chaos Mesh.
 
-**What this chaos does:** Removes the local metadata and data files of shard-0
-replica-1. Shard-0 replica-0 remains online as the donor. The two replicas of
-shard 1 remain untouched as a control.
+**What this chaos does:** Removes the local metadata and data files of shard-1
+replica-1. Shard-1 replica-0 remains online as the donor. The two replicas of
+shard 0 remain untouched as a control.
 
-**Expected behavior:** KubeDB should provision a new 4Gi PVC and pod, detect
-the missing local schema, remove the stale Keeper registration, recreate the
-schema from shard-0 replica-0, and let `ReplicatedMergeTree` fetch every part.
-The replacement pod, PVC, and PV must have new identities. No manual table
-creation, part attachment, or data copy is allowed.
+**Expected behavior:** KubeDB should provision a new 4Gi PVC and pod. The
+operator should detect that the PVC name is unchanged but its Kubernetes UID
+changed, keep the old UID in ClickHouse status while recovery is incomplete,
+remove the stale Keeper registration, recreate the schema from shard-1
+replica-0, and let `ReplicatedMergeTree` fetch every part. Only after verifying
+the rebuilt replica should it store the new PVC UID. No manual table creation,
+`SYSTEM SYNC REPLICA`, part attachment, or data copy is allowed.
 
 #### Pause the workload
 
-Pause the continuous workload so the baseline remains stable:
+Get the workload pod name:
 
 ```shell
 ➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
   -o jsonpath='{.items[0].metadata.name}{"\n"}'
-clickhouse-chaos-workload-64d7d5c85f-fqjdp
+clickhouse-chaos-workload-6bbd56c5fb-bb8jj
 ```
 
-Use the returned pod name to pause the workload:
+Use that pod name to pause the workload:
 
 ```shell
-➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+➤ kubectl exec -n demo clickhouse-chaos-workload-6bbd56c5fb-bb8jj -- \
   touch /state/pause
 ```
 
-The command prints nothing on success.
+The command prints nothing on success. Confirm that no insert is still active:
 
 ```shell
-➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- bash -c '
+➤ kubectl exec -n demo clickhouse-chaos-workload-6bbd56c5fb-bb8jj -- bash -c '
 if pgrep -x clickhouse-client >/dev/null; then
   echo "client still active"
 else
@@ -5385,16 +5387,16 @@ fi'
 workload paused
 ```
 
-Record the workload counters accumulated across experiments 1–24:
+Record the workload counters:
 
 ```shell
-➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- bash -c '
+➤ kubectl exec -n demo clickhouse-chaos-workload-6bbd56c5fb-bb8jj -- bash -c '
 printf "attempted="; cat /state/attempt_batches
 printf "successful="; cat /state/success_batches
 printf "failed="; cat /state/failed_batches'
-attempted=2225
-successful=2053
-failed=172
+attempted=32
+successful=32
+failed=0
 ```
 
 Check the Distributed table before deleting anything:
@@ -5405,175 +5407,234 @@ Check the Distributed table before deleting anything:
 clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
   --query "SELECT count(), uniqExact(id), sum(payload)
            FROM chaos_v2.events FORMAT TSV"'
-209804  209804  13047809195631774027
+103400  103400  3910055939419697122
 ```
 
-The row count is higher than `2053 × 100` because some timed-out Distributed
-inserts reached ClickHouse even though the client did not receive a success
-response. Equality between `count()` and `uniqExact(id)` proves those rows are
-not duplicate IDs.
+In this validation run, the table already contained 100,200 rows before this
+workload pod started. Its 32 acknowledged batches produced 103,400 rows. Equality
+between `count()` and `uniqExact(id)` proves every ID is unique.
 
-Before deleting anything, compare the automatically synchronized replicas
-separately:
+Compare the two shard-1 replicas before the fault. ClickHouse has already
+synchronized them; no manual synchronization command is needed:
 
 ```shell
 ➤ kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c '
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c '
 clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
   --query "SELECT count(), uniqExact(id), sum(payload)
            FROM chaos_v2.events_local FORMAT TSV"'
-104261  104261  2094325787902799557
+51921  51921  4372140365607959779
 ```
 
 ```shell
 ➤ kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
+  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c '
 clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
   --query "SELECT count(), uniqExact(id), sum(payload)
            FROM chaos_v2.events_local FORMAT TSV"'
-104261  104261  2094325787902799557
+51921  51921  4372140365607959779
 ```
 
 Record the donor pod UID:
 
 ```shell
 ➤ kubectl get pod -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-0 \
+  clickhouse-chaos-chaos-cluster-shard-1-0 \
   -o jsonpath='{.metadata.uid}{"\n"}'
-ce5234f0-f938-4927-9b3b-f9244ab22607
+a6566514-db0c-4056-bd79-db345830acd9
 ```
 
 Record the target pod UID:
 
 ```shell
 ➤ kubectl get pod -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-1 \
+  clickhouse-chaos-chaos-cluster-shard-1-1 \
   -o jsonpath='{.metadata.uid}{"\n"}'
-0a753027-af14-428b-8b78-9192f190cfeb
+fddf6596-046f-422d-a241-9a2792afcfdb
 ```
 
 Record the target PVC UID and PV:
 
 ```shell
 ➤ kubectl get pvc -n demo \
-  data-clickhouse-chaos-chaos-cluster-shard-0-1 \
+  data-clickhouse-chaos-chaos-cluster-shard-1-1 \
   -o jsonpath='{.metadata.uid}{"\n"}{.spec.volumeName}{"\n"}'
-af84e532-ec8b-4ddc-938f-34d6a21bdeeb
-pvc-af84e532-ec8b-4ddc-938f-34d6a21bdeeb
+fc211692-e490-4494-ab28-b7e94df817f4
+pvc-fc211692-e490-4494-ab28-b7e94df817f4
 ```
 
-Delete the target pod first:
+The same UID must already be present in ClickHouse status. This is the last
+PVC identity whose replica the operator verified:
 
 ```shell
-➤ kubectl delete pod -n demo clickhouse-chaos-chaos-cluster-shard-0-1 --wait=false
-pod "clickhouse-chaos-chaos-cluster-shard-0-1" deleted from demo namespace
+➤ kubectl get clickhouse -n demo clickhouse-chaos \
+  -o go-template='{{index .status.observedDataPVCUIDs "data-clickhouse-chaos-chaos-cluster-shard-1-1"}}{{"\n"}}'
+fc211692-e490-4494-ab28-b7e94df817f4
 ```
 
-Delete its PVC immediately afterward:
+Delete the PVC first. Because the pod still uses it, Kubernetes marks it for
+deletion but cannot remove the volume yet:
 
 ```shell
-➤ kubectl delete pvc -n demo data-clickhouse-chaos-chaos-cluster-shard-0-1 --wait=false
-persistentvolumeclaim "data-clickhouse-chaos-chaos-cluster-shard-0-1" deleted from demo namespace
+➤ kubectl delete pvc -n demo \
+  data-clickhouse-chaos-chaos-cluster-shard-1-1 --wait=false
+persistentvolumeclaim "data-clickhouse-chaos-chaos-cluster-shard-1-1" deleted from demo namespace
 ```
 
-Wait for the replacement pod:
+Now delete the consuming pod. This order prevents PetSet from recreating the
+pod against the old PVC before the deletion request reaches the API server:
 
 ```shell
-➤ kubectl wait -n demo --for=create \
-  pod/clickhouse-chaos-chaos-cluster-shard-0-1 --timeout=5m
-pod/clickhouse-chaos-chaos-cluster-shard-0-1 condition met
-```
-
-Wait for the replacement PVC:
-
-```shell
-➤ kubectl wait -n demo --for=create \
-  pvc/data-clickhouse-chaos-chaos-cluster-shard-0-1 --timeout=5m
-persistentvolumeclaim/data-clickhouse-chaos-chaos-cluster-shard-0-1 condition met
+➤ kubectl delete pod -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-1 --wait=false
+pod "clickhouse-chaos-chaos-cluster-shard-1-1" deleted from demo namespace
 ```
 
 Wait for the replacement pod to become Ready:
 
 ```shell
 ➤ kubectl wait -n demo --for=condition=Ready \
-  pod/clickhouse-chaos-chaos-cluster-shard-0-1 --timeout=5m
-pod/clickhouse-chaos-chaos-cluster-shard-0-1 condition met
+  pod/clickhouse-chaos-chaos-cluster-shard-1-1 --timeout=5m
+pod/clickhouse-chaos-chaos-cluster-shard-1-1 condition met
 ```
 
-The new pod UID is different:
+The operator gives a newly Ready pod a one-minute startup grace period before
+treating its missing schema as disk loss. Run the next identity and table
+checks during that window to observe the impact before repair starts.
+
+The replacement pod has a new UID:
 
 ```shell
 ➤ kubectl get pod -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-1 \
+  clickhouse-chaos-chaos-cluster-shard-1-1 \
   -o jsonpath='{.metadata.uid}{"\n"}'
-ad93b11a-2e7a-492e-8aa3-e1f1048fe21d
+0042bd3a-2dae-4515-be6b-c2d84b55812d
 ```
 
-The new PVC UID and PV are also different:
+The replacement PVC and PV also have new identities:
 
 ```shell
 ➤ kubectl get pvc -n demo \
-  data-clickhouse-chaos-chaos-cluster-shard-0-1 \
+  data-clickhouse-chaos-chaos-cluster-shard-1-1 \
   -o jsonpath='{.metadata.uid}{"\n"}{.spec.volumeName}{"\n"}'
-11b51f42-bd68-483e-b537-e3bf349c40b3
-pvc-11b51f42-bd68-483e-b537-e3bf349c40b3
+88b3caae-4e64-492a-a1b5-9ff683e0c310
+pvc-88b3caae-4e64-492a-a1b5-9ff683e0c310
 ```
 
 The old PV no longer exists:
 
 ```shell
-➤ kubectl get pv pvc-af84e532-ec8b-4ddc-938f-34d6a21bdeeb
-Error from server (NotFound): persistentvolumes "pvc-af84e532-ec8b-4ddc-938f-34d6a21bdeeb" not found
+➤ kubectl get pv pvc-fc211692-e490-4494-ab28-b7e94df817f4
+Error from server (NotFound): persistentvolumes "pvc-fc211692-e490-4494-ab28-b7e94df817f4" not found
 ```
 
-Immediately after the replacement starts, prove that its new disk has no copy
-of the workload table:
+The live PVC UID has changed, but status still contains the old verified UID:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos \
+  -o go-template='{{index .status.observedDataPVCUIDs "data-clickhouse-chaos-chaos-cluster-shard-1-1"}}{{"\n"}}'
+fc211692-e490-4494-ab28-b7e94df817f4
+```
+
+Immediately after startup, the new disk has no workload table:
 
 ```shell
 ➤ kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
+  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c '
 clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
   --query "EXISTS TABLE chaos_v2.events_local"'
 0
 ```
 
-This is the live impact: the pod is running, but its local table and data were
-really lost. ClickHouse reported why it was not ready while automatic recovery
-was in progress:
+This proves the old data directory was not reused. ClickHouse becomes
+`NotReady` while the operator verifies the replacement and rebuilds it:
 
 ```shell
 ➤ kubectl get clickhouse -n demo clickhouse-chaos
 NAME               VERSION   STATUS     AGE
-clickhouse-chaos   26.2.6    NotReady   68m
+clickhouse-chaos   26.2.6    NotReady   14m
 ```
 
-Wait for ClickHouse to report recovery:
+Wait for automatic recovery:
 
 ```shell
-➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready clickhouse/clickhouse-chaos --timeout=5m
+➤ kubectl wait -n demo --for=jsonpath='{.status.phase}'=Ready \
+  clickhouse/clickhouse-chaos --timeout=5m
 clickhouse.kubedb.com/clickhouse-chaos condition met
+```
+
+ClickHouse is healthy again:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos
+NAME               VERSION   STATUS   AGE
+clickhouse-chaos   26.2.6    Ready    15m
+```
+
+Only after recovery does status advance to the new PVC UID:
+
+```shell
+➤ kubectl get clickhouse -n demo clickhouse-chaos \
+  -o go-template='{{index .status.observedDataPVCUIDs "data-clickhouse-chaos-chaos-cluster-shard-1-1"}}{{"\n"}}'
+88b3caae-4e64-492a-a1b5-9ff683e0c310
+```
+
+The table now exists on the rebuilt replica:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c '
+clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+  --query "EXISTS TABLE chaos_v2.events_local"'
+1
 ```
 
 Compare the donor:
 
 ```shell
 ➤ kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-0 -c clickhouse -- bash -c '
+  clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c '
 clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
   --query "SELECT count(), uniqExact(id), sum(payload)
            FROM chaos_v2.events_local FORMAT TSV"'
-104261  104261  2094325787902799557
+51921  51921  4372140365607959779
 ```
 
 Compare the rebuilt replica:
 
 ```shell
 ➤ kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-0-1 -c clickhouse -- bash -c '
+  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c '
 clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
   --query "SELECT count(), uniqExact(id), sum(payload)
            FROM chaos_v2.events_local FORMAT TSV"'
-104261  104261  2094325787902799557
+51921  51921  4372140365607959779
+```
+
+The six values below are `is_readonly`, `is_session_expired`, `queue_size`,
+`total_replicas`, `active_replicas`, and `absolute_delay`:
+
+```shell
+➤ kubectl exec -n demo \
+  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c '
+clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
+  --query "SELECT is_readonly, is_session_expired, queue_size,
+                  total_replicas, active_replicas, absolute_delay
+           FROM system.replicas
+           WHERE database = '\''chaos_v2'\'' AND table = '\''events_local'\''
+           FORMAT TSV"'
+0  0  0  2  2  0
+```
+
+The replica is writable, its session is valid, the replication queue is
+empty, and both replicas are active. The provisioner log identifies both the
+UID change and the sibling used for recovery:
+
+```shell
+➤ kubectl logs -n kubedb kubedb-kubedb-provisioner-0 --since=10m | \
+  grep -E 'data-clickhouse-chaos-chaos-cluster-shard-1-1|repaired clickhouse-chaos-chaos-cluster-shard-1-1' | tail -n 2
+I0916 09:07:38.104993       1 pvc_identity.go:201] "Detected replacement ClickHouse data PVC" clickhouse="demo/clickhouse-chaos" pvc="data-clickhouse-chaos-chaos-cluster-shard-1-1" previousUID="fc211692-e490-4494-ab28-b7e94df817f4" currentUID="88b3caae-4e64-492a-a1b5-9ff683e0c310"
+I0916 09:07:38.433647       1 replica_recovery.go:327] replica recovery: repaired clickhouse-chaos-chaos-cluster-shard-1-1 from clickhouse-chaos-chaos-cluster-shard-1-0, created 3 object(s)
 ```
 
 #### Resume and pause the workload
@@ -5581,35 +5642,40 @@ clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
 Resume the existing workload to prove new writes still work:
 
 ```shell
-➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+➤ kubectl exec -n demo clickhouse-chaos-workload-6bbd56c5fb-bb8jj -- \
   rm -f /state/pause
 ```
 
-Watch until the workload reports a successful post-rebuild batch:
+The command prints nothing on success. Check its latest results:
 
 ```shell
-➤ timeout 15 kubectl logs -n demo -f clickhouse-chaos-workload-64d7d5c85f-fqjdp --tail=0 | head -n 1
-2026-09-09T09:32:37+00:00 success attempt=2226 rows=100
+➤ kubectl logs -n demo clickhouse-chaos-workload-6bbd56c5fb-bb8jj --tail=3
+2026-09-16T09:09:24+00:00 success attempt=39 rows=100
+2026-09-16T09:09:25+00:00 success attempt=40 rows=100
+2026-09-16T09:09:26+00:00 success attempt=41 rows=100
 ```
 
 Pause it again for the final stable check:
 
 ```shell
-➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
+➤ kubectl exec -n demo clickhouse-chaos-workload-6bbd56c5fb-bb8jj -- \
   touch /state/pause
 ```
 
 The command prints nothing on success.
 
 ```shell
-➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- bash -c '
+➤ kubectl exec -n demo clickhouse-chaos-workload-6bbd56c5fb-bb8jj -- bash -c '
 printf "attempted="; cat /state/attempt_batches
 printf "successful="; cat /state/success_batches
 printf "failed="; cat /state/failed_batches'
-attempted=2227
-successful=2055
-failed=172
+attempted=48
+successful=48
+failed=0
 ```
+
+The final Distributed-table check includes all 48 acknowledged workload
+batches and still has one unique UUID per row:
 
 ```shell
 ➤ kubectl exec -n demo \
@@ -5617,14 +5683,14 @@ failed=172
 clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" \
   --query "SELECT count(), uniqExact(id), sum(payload)
            FROM chaos_v2.events FORMAT TSV"'
-210004  210004  309272090909017131
+105000  105000  9881935531731920006
 ```
 
-**Observed behavior:** The same cluster retained all data accumulated during
-experiments 1–24. KubeDB created a new 4Gi PVC and repaired the empty replica
-from its sibling. The rebuilt replica matched the donor at 104,261 rows before
-the workload resumed, and two additional 100-row batches succeeded
-afterward.
+**Observed behavior:** KubeDB detected the replacement exclusively from the
+PVC UID change. Status retained the previous UID until the empty replica had
+been rebuilt from its shard sibling, then advanced to the new UID. The rebuilt
+replica matched the donor at 51,921 rows, and every post-recovery workload
+batch shown above succeeded.
 
 Result: **PASS** — complete loss of one replica's pod and disk recovered
 automatically from its sibling without manual schema or data repair.
@@ -5657,7 +5723,7 @@ automatically from its sibling without manual schema or data repair.
 | 22 | Clock skew −2h | Chaos Mesh stopped PID 1; live skew was not demonstrated | Manual `SIGCONT`; chaos-tool limitation |
 | 23 | I/O latency plus sibling failure | `toda`, sibling exec failure, SQL refusal, `Critical` | Both replicas matched at 99,019 rows |
 | 24 | Three-cycle recovery soak | Three target UIDs changed | SQL and checksum checks passed every cycle |
-| 25 | Existing replica and PVC deletion | New pod/PVC/PV; `EXISTS TABLE` initially returned 0 | 104,261 rows restored; new writes succeeded |
+| 25 | Existing replica and PVC deletion | PVC UID changed; status retained the old UID; `EXISTS TABLE` returned 0 | 51,921 rows restored; status advanced to the verified UID; new writes succeeded |
 
 ## Final Integrity Evidence
 
