@@ -693,7 +693,7 @@ Shard-0's two lines match, and shard-1's two lines match. Run the same four
 commands again. The second check must return the same
 four lines before continuing.
 
-Now check `system.replicas` on each pod, one at a time. The six values are
+Check `system.replicas` on each pod, one at a time. The six values are
 `is_readonly`, `queue_size`, `total_replicas`, `active_replicas`,
 `lost_part_count`, and `absolute_delay`:
 
@@ -5493,7 +5493,7 @@ deletion but cannot remove the volume yet:
 persistentvolumeclaim "data-clickhouse-chaos-chaos-cluster-shard-1-1" deleted from demo namespace
 ```
 
-Now delete the consuming pod. This order prevents PetSet from recreating the
+Delete the consuming pod. This order prevents PetSet from recreating the
 pod against the old PVC before the deletion request reaches the API server:
 
 ```shell
