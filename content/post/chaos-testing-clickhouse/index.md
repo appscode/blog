@@ -1,5 +1,5 @@
 ---
-title: 'Chaos Testing KubeDB ClickHouse with Chaos Mesh'
+title: Chaos Testing KubeDB ClickHouse with Chaos Mesh
 date: "2026-09-03"
 weight: 26
 authors:
