@@ -5,8 +5,8 @@ weight: 15
 authors:
 - Saurov Chandra Biswas
 tags:
-- cloud-native
 - clickhouse
+- cloud-native
 - database
 - documentdb
 - elasticsearch
