@@ -21,6 +21,10 @@ VMware Cloud Foundation (VCF) runs VMs and containers on one platform, and vSphe
 
 Hyperscaler database services work *only inside their own cloud*, each with its own APIs, tooling, backups and hard-to-predict costs, and they're often ruled out for regulated, sovereign or air-gapped sites. Running databases by hand on Kubernetes avoids that lock-in but brings back ticket-driven operations. KubeDB automates the databases instead, and its resources run on any conformant cluster, so hybrid estates get **the same database API everywhere**, with VCF as the validated home for the data they keep on premises. AppsCode and VMware published the validated stack as a [reference architecture](https://www.vmware.com/docs/isv-kubedb-vks-vcf), and KubeDB is listed among Broadcom's [Kubernetes software partners](https://www.broadcom.com/how-to-buy/software-partners/kubernetes-partners).
 
+![KubeDB adds the database layer on top of VKS and VCF](kubedb-vks-architecture.png)
+
+A developer declares the database it needs; the KubeDB operators create and keep reconciling the pods, vSAN-backed volumes, Services, Secrets and certificates. **Each layer handles its own failures:** vSphere HA and VKS replace failed nodes, while KubeDB promotes a standby when a database member fails. Backups leave the cluster for an S3-compatible store, outside the cluster's failure domain.
+
 ## VKS runs the clusters, KubeDB runs the databases
 
 VKS provides CNCF-conformant Kubernetes clusters governed with the same vSphere tools and policies teams already use for VMs. For databases, that foundation matters: vSAN storage policies decide how each volume is protected, NSX isolates and load-balances database traffic, vSphere HA and vSphere Zones keep the nodes available, and vSphere Namespaces with vCenter Single Sign-On control who can create clusters. **The vSphere administrator keeps those controls; application teams get self-service inside them.**
@@ -42,12 +46,6 @@ From the console, teams create databases, run backups and day-2 operations, and 
 | Operations | Supervisor services and VKS standard packages | Day-2 changes as OpsRequests, autoscaling, per-engine dashboards |
 
 A day-2 change, such as scaling or a TLS rotation, is a small YAML object (an *OpsRequest*) that the operator runs step by step and records. **Teams get an audit trail instead of a runbook.** Because databases and OpsRequests are plain Kubernetes objects, they can live in Git and be applied by Argo CD or Flux like any other workload.
-
-## How the pieces fit
-
-![KubeDB adds the database layer on top of VKS and VCF](kubedb-vks-architecture.png)
-
-A developer declares the database it needs; the KubeDB operators create and keep reconciling the pods, vSAN-backed volumes, Services, Secrets and certificates. **Each layer handles its own failures:** vSphere HA and VKS replace failed nodes, while KubeDB promotes a standby when a database member fails. Backups leave the cluster for an S3-compatible store, outside the cluster's failure domain.
 
 ## What we validated
 
