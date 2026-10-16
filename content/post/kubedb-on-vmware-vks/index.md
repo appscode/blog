@@ -1,5 +1,5 @@
 ---
-title: Database-as-a-Service on VMware Cloud Foundation with VKS and KubeDB
+title: 'KubeDB on VMware VKS: Validated Database-as-a-Service for VCF'
 date: "2026-10-16"
 weight: 14
 authors:
@@ -17,13 +17,19 @@ tags:
 - vmware
 ---
 
-VMware Cloud Foundation (VCF) runs VMs and containers on one platform, and vSphere Kubernetes Service (VKS) gives teams Kubernetes clusters on demand. The next ask is *databases* on demand. **KubeDB Platform is now validated on VKS**, so VCF customers can run a Database-as-a-Service (DBaaS) on infrastructure they already own.
+vSphere Kubernetes Service (VKS) gives your teams Kubernetes clusters on demand. Databases usually still come through a ticket queue. **KubeDB closes that gap, and it is now validated on VKS.** A production-ready database, with high availability, TLS, backups and monitoring built in, becomes one YAML object or a few clicks in a console, on the VMware Cloud Foundation (VCF) you already run.
 
-Hyperscaler database services work *only inside their own cloud*, each with its own APIs, tooling, backups and hard-to-predict costs, and they're often ruled out for regulated, sovereign or air-gapped sites. Running databases by hand on Kubernetes avoids that lock-in but brings back ticket-driven operations. KubeDB automates the databases instead, and its resources run on any conformant cluster, so hybrid estates get **the same database API everywhere**, with VCF as the validated home for the data they keep on premises. AppsCode and VMware published the validated stack as a [reference architecture](https://www.vmware.com/docs/isv-kubedb-vks-vcf), and KubeDB is listed among Broadcom's [Kubernetes software partners](https://www.broadcom.com/how-to-buy/software-partners/kubernetes-partners).
+Hyperscaler database services work *only inside their own cloud*, with their own APIs, tooling and hard-to-predict costs, and they're often ruled out for regulated, sovereign or air-gapped sites. KubeDB runs on any conformant cluster, so hybrid estates get **the same database API everywhere**, with VCF as the validated home for the data they keep on premises.
+
+AppsCode and VMware published the validated stack as a reference architecture, and KubeDB is listed among Broadcom's [Kubernetes software partners](https://www.broadcom.com/how-to-buy/software-partners/kubernetes-partners).
+
+- **Validated:** VCF 9.0, VKS 3.7 and KubeDB v2026.10.12; all eight PostgreSQL high-availability tests passed
+- **What you get:** 30+ database engines, automatic failover, backups, day-2 OpsRequests and monitoring
+- **Start here:** [reference architecture](https://www.vmware.com/docs/isv-kubedb-vks-vcf) · [step-by-step guide](https://github.com/vmware/vks-validated-solutions/tree/main/KubeDB)
 
 ![KubeDB adds the database layer on top of VKS and VCF](kubedb-vks-architecture.png)
 
-A developer declares the database it needs; the KubeDB operators create and keep reconciling the pods, vSAN-backed volumes, Services, Secrets and certificates. **Each layer handles its own failures:** vSphere HA and VKS replace failed nodes, while KubeDB promotes a standby when a database member fails. Backups leave the cluster for an S3-compatible store, outside the cluster's failure domain.
+**Each layer handles its own failures:** vSphere HA and VKS replace failed nodes, KubeDB promotes a standby when a database member fails, and backups leave the cluster for an S3-compatible store.
 
 ## VKS runs the clusters, KubeDB runs the databases
 
@@ -81,7 +87,7 @@ During failover, a standby was promoted in **31 s** and the old primary rejoined
 
 Similar patterns apply to the other engines: the installer enables Elasticsearch/OpenSearch, Kafka, MariaDB, MongoDB, MySQL, PostgreSQL, Pgpool and Redis/Valkey by default. This validation covered PostgreSQL.
 
-For production, the reference architecture recommends **three guaranteed-large control plane nodes**. With the full KubeDB Platform installed, our single best-effort-medium control plane ran at 95% memory or more.
+**Sizing tip:** when you run the full KubeDB Platform, use three guaranteed-large control plane nodes, as the reference architecture recommends.
 
 ## Try it
 
@@ -156,7 +162,7 @@ spec:
 - [KubeDB documentation](https://kubedb.com/docs) and [KubeStash documentation](https://kubestash.com/docs)
 - [vSphere Supervisor services documentation](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vsphere-supervisor-services-and-standalone-components/latest.html)
 
-To run a proof of value on your own VCF estate, contact the AppsCode team at [appscode.com](https://appscode.com/contact/).
+**Try it on your own VCF estate.** [Contact AppsCode](https://appscode.com/contact/) for a proof of value.
 
 ## Support
 
