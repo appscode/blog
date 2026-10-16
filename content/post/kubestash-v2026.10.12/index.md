@@ -22,199 +22,40 @@ tags:
 - vm-backup
 ---
 
-We are pleased to announce the release of [KubeStash v2026.10.12](https://kubestash.com/docs/v2026.10.12/setup/). This release brings **backup and restore for KubeVirt virtual machines** with two hot-backup modes, **physical backup for Oracle**, a **Milvus full backup and continuous archiver**, and backup support for **DocumentDB** and **Solr**. Neo4j gains **composite database backup** and **continuous archiving**. The release also introduces the **KubeStash UI server**, a new `ui.kubestash.com` API that tells you at a glance whether your data is protected, and a CLI that can now take a new repository password from **stdin**. You can check out the full changelog [HERE](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.10.12/README.md). In this post, we'll highlight the key changes.
+We are pleased to announce the release of [KubeStash v2026.10.12](https://kubestash.com/docs/v2026.10.12/setup/). This release brings **backup and restore for KubeVirt VMs**, **Oracle physical backup**, a **Milvus full backup and archiver**, **DocumentDB** and **Solr** backup, Neo4j **composite database** backup and **continuous archiving**, and the new **KubeStash UI server**. You can check out the full changelog [HERE](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.10.12/README.md). In this post, we'll highlight the key changes.
 
 ---
 
 ### Quick highlights
-- Added **KubeVirt VM backup & restore** with two modes for running VMs: `cbt` (KubeVirt changed block tracking) and `vmsnapshot` (`VirtualMachineSnapshot` backed by CSI `VolumeSnapshot`s).
-- Added **Oracle physical backup** using RMAN, streamed straight to S3-compatible storage.
-- Added **Neo4j composite database & alias backup** and **Neo4j continuous archiving** with manifest backup.
-- Added **Milvus full backup** (physical and logical) and a **`MilvusArchiver`** for continuous archiving and point-in-time recovery. Snapshots now record `milvusStats`.
-- Added **DocumentDB backup & restore** with logical, physical and volume-snapshot tasks.
-- Added **Solr backup & restore** to S3 and GCS.
-- Introduced the **KubeStash UI server**, the `ui.kubestash.com/v1alpha1` API group and the `kubestash-ui-server` and `kubestash-opscenter` Helm charts.
+- Added **KubeVirt VM backup & restore** with two modes for running VMs: `cbt` (changed block tracking) and `vmsnapshot` (CSI `VolumeSnapshot`s).
+- Added **Oracle physical backup** with RMAN, streamed straight to S3.
+- Added **Neo4j composite database & alias backup** and **continuous archiving** with manifest backup.
+- Added **Milvus full backup** and a **`MilvusArchiver`** for continuous archiving and PITR. Snapshots now record `milvusStats`.
+- Added **DocumentDB** backup & restore.
+- Added **Solr** backup & restore to S3 and GCS.
+- Introduced the **KubeStash UI server** and the `ui.kubestash.com/v1alpha1` API.
 - Added **`--new-password-stdin`** and **`--new-password`** to `kubectl kubestash password add` and `update`.
-- Exported the cloud storage constants in `apimachinery` and added a `SnapshotsDirectory` constant.
-- Moved the build to **Go 1.27**, the test matrix up to **Kubernetes 1.37**, the base images to **debian:13**, and bumped restic to **v0.5.1**.
+- Exported the cloud storage constants and added a `SnapshotsDirectory` constant in `apimachinery`.
+- Built with **Go 1.27**, tested on Kubernetes up to **1.37**, **debian:13** base images, restic bumped to **v0.5.1**.
 
 ---
 
 ### What's New
 
-The examples in this post use the namespace `demo` and share one storage setup: an S3 `BackupStorage` named `s3-storage`, a `RetentionPolicy` named `demo-retention`, and an encryption secret named `encrypt-secret`. If you already have these, you can skip this block. Replace the placeholders with your own values.
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: s3-secret
-  namespace: demo
-type: Opaque
-stringData:
-  AWS_ACCESS_KEY_ID: "<your-access-key-id>"
-  AWS_SECRET_ACCESS_KEY: "<your-secret-access-key>"
----
-apiVersion: storage.kubestash.com/v1alpha1
-kind: BackupStorage
-metadata:
-  name: s3-storage
-  namespace: demo
-spec:
-  storage:
-    provider: s3
-    s3:
-      bucket: <your-bucket-name>
-      endpoint: https://s3.amazonaws.com
-      region: us-east-1
-      prefix: demo
-      secretName: s3-secret
-  usagePolicy:
-    allowedNamespaces:
-      from: All
-  default: false
-  deletionPolicy: Delete
----
-apiVersion: storage.kubestash.com/v1alpha1
-kind: RetentionPolicy
-metadata:
-  name: demo-retention
-  namespace: demo
-spec:
-  maxRetentionPeriod: 2mo
-  successfulSnapshots:
-    last: 5
-  failedSnapshots:
-    last: 2
-  usagePolicy:
-    allowedNamespaces:
-      from: All
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: encrypt-secret
-  namespace: demo
-type: Opaque
-stringData:
-  RESTIC_PASSWORD: "<your-restic-repository-password>"
-```
-
----
+The examples assume the namespace `demo`, an S3 `BackupStorage` named `s3-storage`, a `RetentionPolicy` named `demo-retention` and an encryption secret named `encrypt-secret`.
 
 #### KubeVirt VM Backup & Restore [PR](https://github.com/kubestash/installer/pull/366)
 
-[KubeVirt](https://kubevirt.io/) lets you run virtual machines next to your containers. With v2026.10.12, KubeStash can back up and restore **running** KubeVirt VMs. The new `kubevirt` addon (plugin `v0.2.0`) ships in the KubeStash catalog and captures the VM manifest together with every disk, then stores them encrypted and deduplicated in any KubeStash backend.
-
-How the disks of a running VM are read is decided by the `backupMode` parameter:
+KubeStash can now back up and restore **running** [KubeVirt](https://kubevirt.io/) virtual machines. The new `kubevirt` addon captures the VM manifest and every disk, encrypted and deduplicated, in any KubeStash backend. The `backupMode` parameter decides how the disks of a running VM are read:
 
 | Mode | How the disks are read | What you need |
 |------|------------------------|---------------|
-| `vmsnapshot` (default) | KubeVirt creates a `VirtualMachineSnapshot`. The plugin backs up the resulting CSI `VolumeSnapshot` of each disk through a temporary PVC, then cleans everything up. | A snapshot-capable CSI driver and a `VolumeSnapshotClass`. |
-| `cbt` | KubeVirt **changed block tracking** and its pull-mode export read the disks directly. No CSI snapshot is involved. | Any StorageClass. KubeVirt v1.8 or newer. |
+| `vmsnapshot` (default) | KubeVirt creates a `VirtualMachineSnapshot`, and the plugin backs up the CSI `VolumeSnapshot` of each disk. | A snapshot-capable CSI driver and a `VolumeSnapshotClass`. |
+| `cbt` | KubeVirt **changed block tracking** and its pull-mode export read the disks directly. | Any StorageClass. KubeVirt v1.8 or newer. |
 
-The parameter also accepts `auto`. As a rule of thumb, pick `cbt` when your StorageClass cannot take CSI snapshots (such as `local-path`), and `vmsnapshot` when it can.
+Enable the KubeVirt feature gates first: `Snapshot` for `vmsnapshot`, and `VMExport`, `UtilityVolumes` and `IncrementalBackup` for `cbt`. For `cbt`, label the `VirtualMachine` itself with `cbt: enabled` (it must match a `changedBlockTrackingLabelSelectors` entry in the KubeVirt CR) and use `masquerade` networking, so the pull-mode export can reach the VM.
 
-**Step 1: Enable the KubeVirt features**
-
-Both modes need a few KubeVirt feature gates. `Snapshot` serves `vmsnapshot`; `VMExport`, `UtilityVolumes` and `IncrementalBackup` serve `cbt`. CBT is switched on per VM through a label selector. Apply this as a **patch**, never as a full `kubectl apply`, so the rest of your KubeVirt CR is left untouched:
-
-```yaml
-# kubectl -n kubevirt patch kubevirt kubevirt --type merge --patch-file kubevirt-feature-gates.patch.yaml
-spec:
-  configuration:
-    developerConfiguration:
-      featureGates:
-        - Snapshot
-        - VMExport
-        - UtilityVolumes
-        - IncrementalBackup
-    changedBlockTrackingLabelSelectors:
-      virtualMachineLabelSelector:
-        matchLabels:
-          cbt: enabled
-```
-
-> `featureGates` is a list, so a merge patch **replaces** it. If your KubeVirt CR already enables other gates, include them here too.
-
-**Step 2: A VM that is ready for CBT**
-
-Two details matter for CBT. The `cbt: enabled` label must sit on the `VirtualMachine` object itself, not on `spec.template`, and KubeVirt only applies it when the VM starts. The VM also needs `masquerade` networking, because the pull-mode export is served by `virt-launcher` dialling out to the export Service.
-
-```yaml
-apiVersion: kubevirt.io/v1
-kind: VirtualMachine
-metadata:
-  name: cbt-vm
-  namespace: demo
-  labels:
-    cbt: enabled                 # matches changedBlockTrackingLabelSelectors above
-spec:
-  runStrategy: Always
-  dataVolumeTemplates:
-  - metadata:
-      name: cbt-vm-root
-    spec:
-      source:
-        registry:
-          url: docker://quay.io/kubevirt/cirros-container-disk-demo:latest
-      storage:
-        accessModes: [ReadWriteOnce]
-        volumeMode: Filesystem
-        storageClassName: local-path     # CBT reads through KubeVirt, so no CSI snapshot is needed
-        resources:
-          requests:
-            storage: 2Gi
-  - metadata:
-      name: cbt-vm-data
-    spec:
-      source:
-        blank: {}
-      storage:
-        accessModes: [ReadWriteOnce]
-        volumeMode: Filesystem
-        storageClassName: local-path
-        resources:
-          requests:
-            storage: 1Gi
-  template:
-    metadata:
-      labels:
-        kubevirt.io/vm: cbt-vm
-    spec:
-      domain:
-        cpu:
-          cores: 1
-        resources:
-          requests:
-            memory: 256Mi
-        devices:
-          interfaces:
-          - name: default
-            masquerade: {}               # required for the CBT export
-          disks:
-          - name: rootdisk
-            disk:
-              bus: virtio
-          - name: datadisk
-            disk:
-              bus: virtio
-      networks:
-      - name: default
-        pod: {}
-      terminationGracePeriodSeconds: 30
-      volumes:
-      - name: rootdisk
-        dataVolume:
-          name: cbt-vm-root
-      - name: datadisk
-        dataVolume:
-          name: cbt-vm-data
-```
-
-**Step 3: Back up in `cbt` mode**
-
-The target of the `BackupConfiguration` is the `VirtualMachine` itself. The `kubevirt` addon's `logical-backup` task does the work, and `backupMode` selects the mechanism:
+The target of the `BackupConfiguration` is the `VirtualMachine`:
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -255,107 +96,23 @@ spec:
           - name: logical-backup
             params:
               backupMode: cbt
-              ## Every run reads each whole disk. Required in this release so the
-              ## restore can read the data back from the repository.
+              ## Every run reads each whole disk. Required in this release.
               forceFull: "true"
               ## KubeVirt needs a scratch PVC for each CBT run.
               cbtScratchStorageClass: local-path
               snapshotReadyTimeout: 10m
 ```
 
-**Step 4: Back up in `vmsnapshot` mode**
-
-For snapshot mode your VM disks must live on a CSI driver that can snapshot, with a matching `VolumeSnapshotClass`. The example below uses Longhorn; any CSI driver with snapshot support works the same way.
+For `vmsnapshot`, only the task parameters change:
 
 ```yaml
-apiVersion: snapshot.storage.k8s.io/v1
-kind: VolumeSnapshotClass
-metadata:
-  name: longhorn-snapshot-vsc
-  annotations:
-    snapshot.storage.kubernetes.io/is-default-class: "true"
-driver: driver.longhorn.io
-deletionPolicy: Delete
-parameters:
-  type: snap                  # an in-cluster Longhorn snapshot, which is what KubeVirt needs
-```
-
-The `BackupConfiguration` is the same shape. Only the target VM and the task parameters change. Notice that `vmsnapshot` needs no `forceFull` and no scratch StorageClass:
-
-```yaml
-apiVersion: core.kubestash.com/v1alpha1
-kind: BackupConfiguration
-metadata:
-  name: vmsnap-vm-backup
-  namespace: demo
-spec:
-  target:
-    apiGroup: kubevirt.io
-    kind: VirtualMachine
-    name: vmsnap-vm
-    namespace: demo
-  backends:
-    - name: s3-backend
-      storageRef:
-        name: s3-storage
-        namespace: demo
-      retentionPolicy:
-        name: demo-retention
-        namespace: demo
-  sessions:
-    - name: full
-      scheduler:
-        schedule: "0 */6 * * *"
-        jobTemplate:
-          backoffLimit: 1
-      repositories:
-        - name: vmsnap-vm-repo
-          backend: s3-backend
-          directory: /vmsnap-vm
-          encryptionSecret:
-            name: encrypt-secret
-            namespace: demo
-      addon:
-        name: kubevirt
-        tasks:
           - name: logical-backup
             params:
               backupMode: vmsnapshot
               snapshotReadyTimeout: 10m
 ```
 
-For each run, KubeVirt cuts one `VolumeSnapshot` per disk, the plugin clones a temporary PVC from each, backs those up, and then deletes the temporary PVCs, the `VirtualMachineSnapshot` and the worker Jobs.
-
-**Trigger a backup on demand**
-
-Besides the schedule, you can start a backup at any time with a `BackupSession`:
-
-```yaml
-apiVersion: core.kubestash.com/v1alpha1
-kind: BackupSession
-metadata:
-  name: cbt-vm-manual-1
-  namespace: demo
-spec:
-  invoker:
-    apiGroup: core.kubestash.com
-    kind: BackupConfiguration
-    name: cbt-vm-backup
-  session: full
-```
-
-Check the result. Use the fully qualified `Snapshot` name, because other projects (such as Longhorn) also define a `snapshots` resource:
-
-```bash
-$ kubectl get backupsession -n demo
-$ kubectl get snapshots.storage.kubestash.com -n demo
-```
-
-A successful `Snapshot` contains a `manifest` component, which holds the VM definition, and one volume component for each disk. A CBT snapshot also carries the `kubevirt.kubestash.com/raw-disk-image` label, which tells the restore to write raw disk images. You do not need to configure anything for that.
-
-**Restore the VM**
-
-To restore in place, make sure the source VM, its `DataVolume`s and its PVCs are gone, then create a `RestoreSession`. There is deliberately **no `spec.target`**: the VM does not exist at restore time, so the plugin reads its identity from the backed-up manifest and recreates the disks first, then the VM and its `DataVolume`s.
+To restore, delete the source VM with its `DataVolume`s and PVCs, then create a `RestoreSession`. There is deliberately **no `spec.target`**: the VM does not exist at restore time, so the plugin reads its identity from the backed-up manifest and recreates the disks, then the VM:
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -376,59 +133,13 @@ spec:
       - name: logical-restore
 ```
 
-The addon also exposes `volume-backup` / `volume-restore` and `manifest-backup` / `manifest-restore` tasks if you want to handle the disks and the VM definition separately.
-
-**Things to know in this release**
-- `cbt` backups are full backups. `forceFull: "true"` is required for now, so incremental CBT backups are not available yet.
+> `cbt` backups are full backups for now (`forceFull: "true"` is required), so incremental CBT backups are not available yet.
 
 ---
 
 #### Oracle Physical Backup with RMAN [PR](https://github.com/kubestash/apimachinery/pull/238)
 
-KubeStash can now take **full physical backups of KubeDB-managed Oracle databases** with the new `oracle-addon`. The backup runs Oracle RMAN and streams the backup pieces directly to S3-compatible object storage through the Oracle Secure Backup Cloud Module (OSBWS, the `SBT_TAPE` channel).
-
-Highlights:
-- **The OSBWS wallet is configured for you.** The plugin builds the wallet config secret from your `BackupStorage` and triggers a `Reconfigure` `OracleOpsRequest` to set the wallet up on the database. Later backups reuse the wallet and refresh it only when the backup storage changes.
-- **One consistent backup set.** Each run covers the database, the archived redo logs, the current control file and the SPFILE, all under a single RMAN tag (`KS-...`).
-- **Recovery metadata on the `Snapshot`.** The RMAN tag, DBID, until-SCN, incarnation, and the control file and SPFILE handles are recorded, so a restore knows exactly where to stop.
-- Works with **Standalone** and **DataGuard** Oracle deployments. Use the optional `targetPod` parameter to run RMAN on a specific pod.
-
-**BackupStorage**
-
-The credential secret must use the keys `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`:
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: oracle-s3-secret
-  namespace: demo
-type: Opaque
-stringData:
-  AWS_ACCESS_KEY_ID: "<your-access-key-id>"
-  AWS_SECRET_ACCESS_KEY: "<your-secret-access-key>"
----
-apiVersion: storage.kubestash.com/v1alpha1
-kind: BackupStorage
-metadata:
-  name: oracle-s3-storage
-  namespace: demo
-spec:
-  storage:
-    provider: s3
-    s3:
-      endpoint: s3.amazonaws.com
-      region: us-east-1
-      bucket: oracle-backup
-      secretName: oracle-s3-secret
-  usagePolicy:
-    allowedNamespaces:
-      from: All
-  default: false
-  deletionPolicy: WipeOut
-```
-
-**BackupConfiguration for Oracle**
+The new `oracle-addon` takes **full physical backups of KubeDB-managed Oracle databases**. It runs RMAN and streams the backup pieces directly to S3-compatible storage through the Oracle Secure Backup Cloud Module (OSBWS). The OSBWS wallet is set up for you from your `BackupStorage`. Each run covers the database, the archived redo logs, the control file and the SPFILE under a single RMAN tag, and the RMAN tag, DBID and until-SCN are recorded on the `Snapshot`. It works with Standalone and DataGuard deployments.
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -445,7 +156,7 @@ spec:
   backends:
     - name: s3-backend
       storageRef:
-        name: oracle-s3-storage
+        name: s3-storage
         namespace: demo
       retentionPolicy:
         name: demo-retention
@@ -471,9 +182,7 @@ spec:
             ##   targetPod: sa-test-0     # optional: run RMAN on a specific Oracle pod
 ```
 
-**RestoreSession for Oracle**
-
-The `physical-backup-restore` task restores the database and, by default, stops recovery exactly at the boundary recorded on the snapshot, so no redo written after the backup is applied. For point-in-time recovery, set `untilTime` (UTC, `YYYY-MM-DD HH24:MI:SS`). RMAN stops *before* that instant, so leave a few seconds of margin. `untilSCN` and `recoverToLatest` are the other recovery targets, and the three are mutually exclusive.
+A restore stops at the boundary recorded on the snapshot by default. For point-in-time recovery, set `untilTime` (UTC). `untilSCN` and `recoverToLatest` are the other recovery targets.
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -501,89 +210,15 @@ spec:
           untilTime: "2026-10-10 09:30:00"   # optional point-in-time target (UTC)
 ```
 
-**Limitations**
-- Only S3-compatible `BackupStorage` is supported.
-- Use **exactly one repository per session**. Multi-repository backup sessions are not supported.
-- The S3 `prefix` is **not** applied to RMAN data, because the SBT module writes backup pieces at the root of the bucket. The prefix applies only to KubeStash metadata, so do not rely on it for bucket lifecycle rules or manual cleanup.
+> Only S3-compatible storage is supported, with one repository per session.
 
 ---
 
 #### Neo4j: Composite Databases and Continuous Archiving [PR](https://github.com/kubestash/apimachinery/pull/246)
 
-Two Neo4j capabilities land in this release.
+**Composite databases and aliases.** The `neo4j-addon` logical backup now understands Neo4j composite databases. A backup contains the physical databases **plus** the metadata for composite databases and for local and remote aliases. To back up only some of them, set `databases: "media"` in the `logical-backup` task params. KubeStash also selects the physical databases the aliases depend on.
 
-**Backup and restore of composite databases and aliases**
-
-A Neo4j composite database provides one query context over several constituent databases. The `neo4j-addon` logical backup now understands them (see the full [composite database guide](https://github.com/kubedb/docs/blob/master/docs/guides/neo4j/backup/kubestash/logical/composite-database/index.md)). KubeStash discovers the catalog through Neo4j's `system` database, so a backup contains the physical database artifacts **plus** the metadata for composite databases, composite aliases and standalone (local and remote) aliases.
-
-Imagine a `source-neo4j` that owns a `movies` database and a `media` composite database. `media.movies` is a local alias, and `media.reviews` is a remote alias pointing at a `reviews` database on a different Neo4j deployment:
-
-```cypher
-CREATE DATABASE movies WAIT;
-CREATE COMPOSITE DATABASE media WAIT;
-CREATE ALIAS media.movies FOR DATABASE movies;
-```
-
-The backup configuration looks like any other logical backup. By default the `*` selector backs up every visible physical database and captures all composite and standalone alias definitions:
-
-```yaml
-apiVersion: core.kubestash.com/v1alpha1
-kind: BackupConfiguration
-metadata:
-  name: source-neo4j-backup
-  namespace: demo
-spec:
-  target:
-    apiGroup: kubedb.com
-    kind: Neo4j
-    namespace: demo
-    name: source-neo4j
-  backends:
-    - name: s3-backend
-      storageRef:
-        namespace: demo
-        name: s3-storage
-      retentionPolicy:
-        name: demo-retention
-        namespace: demo
-  sessions:
-    - name: frequent-backup
-      scheduler:
-        schedule: "*/5 * * * *"
-        jobTemplate:
-          backoffLimit: 1
-      repositories:
-        - name: s3-neo4j-composite-repo
-          backend: s3-backend
-          directory: /neo4j-composite
-      addon:
-        name: neo4j-addon
-        tasks:
-          - name: logical-backup
-```
-
-To back up only the `media` composite database, add `databases: "media"` to the task `params`. KubeStash then also selects `movies`, because the local alias `media.movies` depends on it. Do not exclude a physical database that a selected local alias needs.
-
-On restore, KubeStash works in dependency order: it restores the physical databases, waits for local alias targets to come online, creates the composite databases, restores the aliases and finally verifies the reconstructed catalog. Preflight checks run before any destructive step, so a conflicting database or alias fails fast unless overwrite is enabled.
-
-One thing is deliberately **not** in the backup: the password of a stored-native remote alias. You supply it at restore time through a Secret whose `credentials.yaml` key maps each alias name to its password:
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: neo4j-remote-alias-credentials
-  namespace: demo
-type: Opaque
-stringData:
-  credentials.yaml: |
-    media.reviews:
-      password: "<remote-database-password>"
-    reviews-remote:
-      password: "<remote-database-password>"
-```
-
-Reference that Secret from the `RestoreSession` with `remoteAliasCredentialsSecret`:
+On restore, KubeStash recreates the physical databases first, then the composite databases and the aliases. The password of a stored-native remote alias is deliberately **not** in the backup. Supply it at restore time through a Secret whose `credentials.yaml` key maps each alias name to its `password`, and reference that Secret with `remoteAliasCredentialsSecret`:
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -622,9 +257,7 @@ spec:
           runAsUser: 7474                                           # the neo4j user
 ```
 
-**Continuous archiving with manifest backup**
-
-For continuous protection, KubeDB's `Neo4jArchiver` combines KubeStash full backups, a **manifest backup** of the Kubernetes objects around the database, and differential backups every few minutes that carry the transaction logs. A restore can then recover the graph to a chosen point in time (see the full [continuous archiving guide](https://github.com/kubedb/docs/blob/master/docs/guides/neo4j/pitr/archiver.md)). One archiver serves every Neo4j database that selects it:
+**Continuous archiving.** KubeDB's `Neo4jArchiver` combines full backups, a **manifest backup** of the Kubernetes objects around the database, and differential backups every few minutes that carry the transaction logs. A Neo4j database joins the archiver with the label `archiver: neo4j-pitr` and `spec.archiver.ref`. See the full [continuous archiving guide](https://github.com/kubedb/docs/blob/master/docs/guides/neo4j/pitr/archiver.md).
 
 ```yaml
 apiVersion: archiver.kubedb.com/v1alpha1
@@ -669,34 +302,7 @@ spec:
   deletionPolicy: Delete
 ```
 
-A Neo4j database opts in with the matching label and an explicit archiver reference:
-
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: Neo4j
-metadata:
-  name: neo4j-pitr-source
-  namespace: demo
-  labels:
-    archiver: neo4j-pitr
-spec:
-  version: "2026.06.0"
-  replicas: 3
-  archiver:
-    ref:
-      name: neo4j-pitr-archiver
-      namespace: demo
-  storageType: Durable
-  storage:
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 2Gi
-  deletionPolicy: WipeOut
-```
-
-To recover, create a new Neo4j with `spec.init.archiver`. KubeDB creates the restore sessions for you and replays the differential chain up to `recoveryTimestamp`:
+To recover to a point in time, create a new Neo4j with `spec.init.archiver`. KubeDB creates the restore sessions for you:
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -729,87 +335,11 @@ spec:
   deletionPolicy: WipeOut
 ```
 
-A `recoveryTimestamp` newer than the latest archived transaction does not prove point-in-time recovery: the restore falls back to the latest available state. Pick a time that sits between two archived backups.
-
 ---
 
 #### Milvus: Full Backup and Continuous Archiver [PR](https://github.com/kubestash/apimachinery/pull/263)
 
-[Milvus](https://milvus.io/) is a vector database used for semantic search and RAG pipelines. KubeStash v2026.10.12 adds the `milvus-addon` with **full backups in two flavors**, plus a **`MilvusArchiver`** for continuous archiving and point-in-time recovery (PITR).
-
-| Task | Driver | What it does |
-|------|--------|--------------|
-| `physical-backup` | `Restic` | Captures the etcd metadata at a single revision together with the bucket objects, fenced so writes are quiesced for a consistent view. |
-| `logical-backup` | `Milvus` | Backs up collections. Use the `collections` parameter to pick them. |
-| `logical-backup-restore` | `Milvus` | Restores collections, appending `restoreSuffix` (default `_restored`) to their names. |
-| `physical-backup-restore` | `Restic` | Restores a physical backup and verifies it (`verify`: `sample`, `full` or `none`). |
-
-The backup tells you precisely what it captured. The `Snapshot` now carries `milvusStats`:
-
-| Field | Meaning |
-|-------|---------|
-| `metaRevision` | The etcd revision at which the metadata was captured. |
-| `tso` | The Milvus timestamp high-water mark at that revision. |
-| `fenceTime` | The wall-clock time of the metadata capture. This is the point in time the full backup restores to, and the base of PITR. |
-| `quiesce` | How Milvus was quiesced: `DenyWrites`, `Flush` or `None`. |
-| `objectCount`, `bytesCopied` | How many object versions and bytes this backup archived. |
-
-**A Milvus to protect**
-
-Milvus keeps its durable state in the meta etcd and in the object storage bucket (the Woodpecker write-ahead log lives in the same bucket). First point Milvus at its object storage:
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: milvus-storage
-  namespace: demo
-type: Opaque
-stringData:
-  address: "<object-storage-host>"
-  accessKeyID: "<access-key-id>"
-  secretAccessKey: "<secret-access-key>"
-  bucketName: "<milvus-bucket>"
-  rootPath: "files"
-  port: "9000"
-```
-
-The database opts in to the archiver with a label and a reference (a double opt-in, like the other archivers):
-
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: Milvus
-metadata:
-  name: milvus-pitr
-  namespace: demo
-  labels:
-    archiver: milvus-pitr
-spec:
-  version: "2.6.11"
-  topology:
-    mode: Standalone
-  objectStorage:
-    configSecret:
-      name: milvus-storage
-  archiver:
-    ref:
-      name: milvus-archiver
-      namespace: demo
-  storageType: Durable
-  storage:
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 5Gi
-  deletionPolicy: Delete
-```
-
-> A Standalone Milvus created by an older operator keeps its write-ahead log in RocksMQ on the data PVC. It cannot be archived. Migrate it with a logical backup restored into a new Milvus.
-
-**Full backup with a `BackupConfiguration`**
-
-A scheduled physical (full) backup of the Milvus above:
+The new `milvus-addon` takes **full backups** of [Milvus](https://milvus.io/). `physical-backup` captures the etcd metadata at a single revision together with the bucket objects, with writes quiesced for a consistent view. `logical-backup` backs up chosen collections through the `collections` parameter. Each `Snapshot` now records `milvusStats`: the etcd `metaRevision`, the `tso`, the `fenceTime` (the point the full backup restores to, and the base of PITR), how Milvus was `quiesce`d, and the `objectCount` and `bytesCopied`.
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -855,48 +385,7 @@ spec:
               parallelism: "16"       # parallel object copies
 ```
 
-To back up only some collections instead, swap the task for the logical one:
-
-```yaml
-      addon:
-        name: milvus-addon
-        tasks:
-          - name: logical-backup
-            params:
-              collections: "products,embeddings"   # empty means all collections
-```
-
-A logical restore recreates the collections next to the originals, so nothing is overwritten:
-
-```yaml
-apiVersion: core.kubestash.com/v1alpha1
-kind: RestoreSession
-metadata:
-  name: milvus-restore
-  namespace: demo
-spec:
-  target:
-    apiGroup: kubedb.com
-    kind: Milvus
-    namespace: demo
-    name: milvus-pitr
-  dataSource:
-    repository: milvus-s3-repo
-    snapshot: latest
-    encryptionSecret:
-      name: encrypt-secret
-      namespace: demo
-  addon:
-    name: milvus-addon
-    tasks:
-      - name: logical-backup-restore
-        params:
-          restoreSuffix: _restored    # "products" comes back as "products_restored"
-```
-
-**Continuous archiving and PITR**
-
-The `MilvusArchiver` takes periodic full backups with the `Restic` driver, continuously records every etcd change and every new object version in a log, and also backs up the manifests. Together they let you restore to any point inside the recorded window:
+For **continuous archiving and point-in-time recovery**, the new `MilvusArchiver` takes periodic full backups, records every etcd change and every new object version in a log, and backs up the manifests. A Milvus joins it with the label `archiver: milvus-pitr` and `spec.archiver.ref`:
 
 ```yaml
 apiVersion: archiver.kubedb.com/v1alpha1
@@ -947,7 +436,7 @@ spec:
   deletionPolicy: Delete
 ```
 
-Recover into a brand new Milvus with `spec.init.archiver`. Give the new Milvus its own **empty bucket** and the same `rootPath` as the source:
+Recover into a new Milvus with `spec.init.archiver`. Give it its own **empty bucket** and the same `rootPath` as the source:
 
 ```yaml
 apiVersion: kubedb.com/v1alpha2
@@ -985,38 +474,7 @@ spec:
 
 #### DocumentDB Backup & Restore [PR](https://github.com/kubedb/installer/pull/2431)
 
-DocumentDB speaks the MongoDB wire protocol on top of a PostgreSQL engine. Because that engine is PostgreSQL, KubeStash can protect it with the same proven tools. The new `documentdb-addon` provides three backup tasks:
-
-| Task | Driver | What it does |
-|------|--------|--------------|
-| `logical-backup` | `Restic` | Dumps the database with `pg_dumpall` (or `pg_dump`). |
-| `physical-backup` | `Restic` | Takes a physical base backup with `pg_basebackup`. |
-| `volume-snapshot` | `VolumeSnapshotter` | Takes a CSI `VolumeSnapshot` of the data volume. |
-
-The restore tasks are `logical-backup-restore` and `physical-backup-restore`, and every backup can be paired with a `manifest-backup` of the surrounding Kubernetes objects. The backup plugins connect to the backend PostgreSQL through a `<db>-admin` `AppBinding` that the operator publishes for you.
-
-**A DocumentDB to protect**
-
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: DocumentDB
-metadata:
-  name: sample-documentdb
-  namespace: demo
-spec:
-  version: "pg17-0.109.0"
-  replicas: 3
-  storageType: Durable
-  storage:
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 5Gi
-  deletionPolicy: WipeOut
-```
-
-**BackupConfiguration for a logical backup**
+DocumentDB runs on a PostgreSQL engine, so the new `documentdb-addon` protects it with the proven PostgreSQL tools: `logical-backup` (`pg_dumpall` or `pg_dump`), `physical-backup` (`pg_basebackup`) and `volume-snapshot` (CSI `VolumeSnapshot`). The backup plugins connect through a `<db>-admin` `AppBinding` that the operator publishes for you.
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -1059,45 +517,7 @@ spec:
               backupCmd: pg_dumpall    # or pg_dump
 ```
 
-For a physical backup, change the task and its command:
-
-```yaml
-      addon:
-        name: documentdb-addon
-        tasks:
-          - name: physical-backup
-            params:
-              backupCmd: pg_basebackup
-```
-
-For CSI volume snapshots, use the `volume-snapshot` task and name your `VolumeSnapshotClass` through the `volumeSnapshotClassName` parameter.
-
-**RestoreSession**
-
-Create the target DocumentDB with `init.waitForInitialRestore: true` so it waits for the restore before becoming ready:
-
-```yaml
-apiVersion: kubedb.com/v1alpha2
-kind: DocumentDB
-metadata:
-  name: restored-documentdb
-  namespace: demo
-spec:
-  init:
-    waitForInitialRestore: true
-  version: "pg17-0.109.0"
-  replicas: 3
-  storageType: Durable
-  storage:
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 5Gi
-  deletionPolicy: WipeOut
-```
-
-Then restore the latest snapshot into it:
+To restore into a new DocumentDB, create it with `init.waitForInitialRestore: true`, so it waits for the restore before becoming ready:
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -1127,9 +547,7 @@ spec:
 
 #### Solr Backup & Restore [PR](https://github.com/kubedb/installer/pull/2440)
 
-KubeDB-managed [Apache Solr](https://solr.apache.org/) can now be backed up and restored with KubeStash. The new `solr-addon` gives you reliable data protection with cloud storage backends such as **S3** and **GCS**. By default it skips internal collections (names starting with `.`, `apm-agent-configuration` or `kubedb-system`). Narrow or widen that with the `args` parameter.
-
-**BackupConfiguration for Solr**
+KubeDB-managed [Apache Solr](https://solr.apache.org/) can now be backed up to **S3** and **GCS** with the new `solr-addon`. By default it skips internal collections (names starting with `.`, `apm-agent-configuration` or `kubedb-system`); change that with the `args` parameter.
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -1153,11 +571,8 @@ spec:
         namespace: demo
   sessions:
     - name: solr-frequent-backup
-      sessionHistoryLimit: 10
       scheduler:
         schedule: "*/30 * * * *"
-        successfulJobsHistoryLimit: 1
-        failedJobsHistoryLimit: 1
         jobTemplate:
           backoffLimit: 1
       repositories:
@@ -1169,8 +584,6 @@ spec:
         tasks:
           - name: logical-backup
 ```
-
-**RestoreSession for Solr**
 
 ```yaml
 apiVersion: core.kubestash.com/v1alpha1
@@ -1185,8 +598,8 @@ spec:
     namespace: demo
     name: solr-restored
   dataSource:
-    repository: solr-s3-repo
     snapshot: latest
+    repository: solr-s3-repo
   addon:
     name: solr-addon
     tasks:
@@ -1197,9 +610,7 @@ spec:
 
 #### KubeStash UI Server [PR](https://github.com/kubestash/installer/pull/386)
 
-How do you know your data is actually protected? Before this release, answering that meant stitching together `BackupConfiguration`s, `Repository`s, `Snapshot`s and `BackupSession`s by hand. v2026.10.12 introduces the **KubeStash UI server**, an aggregated API server that computes the answer for you and serves it under the new **`ui.kubestash.com/v1alpha1`** API group. Dashboards and any other tool can consume it as a ready-made view of backup health.
-
-It ships as two Helm charts. `kubestash-ui-server` installs the API server, and `kubestash-opscenter` bundles it with `kubestash-metrics` and the user roles:
+How do you know your data is protected? The new **KubeStash UI server** is an aggregated API server that computes the answer and serves it under **`ui.kubestash.com/v1alpha1`**, ready for dashboards and other tools. It ships as the `kubestash-ui-server` chart, and the `kubestash-opscenter` chart bundles it with `kubestash-metrics` and the user roles:
 
 ```bash
 $ helm install kubestash-opscenter oci://ghcr.io/appscode-charts/kubestash-opscenter \
@@ -1208,58 +619,23 @@ $ helm install kubestash-opscenter oci://ghcr.io/appscode-charts/kubestash-opsce
         --set-file global.license=/path/to/the/license.txt
 ```
 
-Once installed, the API server registers itself with the Kubernetes API aggregation layer:
-
-```bash
-$ kubectl get apiservice v1alpha1.ui.kubestash.com
-```
-
 It serves four resources:
 
-| Resource | Scope | What it tells you |
-|----------|-------|-------------------|
-| `BackupOverview` | namespaced | The computed state of one `BackupConfiguration`: sessions and schedules, last runs, repositories and their integrity, backends and reachability, total size, the continuous-log (PITR) window, and the achieved **RPO** and measured **RTO**. It also lists every recovery point inside the RPO window as a timeline. It shares its name with the `BackupConfiguration`. |
-| `DatabaseBackup` | namespaced | The backup state of one KubeDB database, **whether or not any `BackupConfiguration` targets it**. Unprotected databases show up as `Unprotected`. Named `<name>~<Kind>.<group>`, for example `pg~Postgres.kubedb.com`. |
-| `BackupCoverage` | cluster | One object named `cluster` that counts databases, how many are protected, failing, PITR-enabled or breaching their RPO, plus the cluster manifest backups. |
-| `RestoreRequest` | namespaced | A create-only request that renders and creates the objects needed to restore from a repository. |
+| Resource | What it tells you |
+|----------|-------------------|
+| `BackupOverview` | The computed state of one `BackupConfiguration`: schedules, last runs, repositories, backend reachability, the PITR window, the achieved **RPO** and measured **RTO**, and a recovery timeline. |
+| `DatabaseBackup` | The backup state of one KubeDB database, **including databases that no `BackupConfiguration` targets** (`Unprotected`). |
+| `BackupCoverage` | One cluster-wide object, `cluster`, counting databases that are protected, failing, PITR-enabled or breaching their RPO. |
+| `RestoreRequest` | A create-only request that renders and creates the objects needed to restore from a repository. |
 
-Each backup gets one of these health values: `Healthy`, `Paused`, `NotReady`, `StorageUnreachable`, `LastBackupFailed`, `NoBackupYet` or `Unprotected`. The backup methods are reported as `Logical`, `Manifest`, `Physical`, `VolumeSnapshot` or `ContinuousLog`.
-
-```bash
-# the whole cluster at a glance
-$ kubectl get backupcoverages.ui.kubestash.com cluster -o yaml
-
-# every database, protected or not
-$ kubectl get databasebackups.ui.kubestash.com -A
-
-# the details behind one BackupConfiguration
-$ kubectl get backupoverviews.ui.kubestash.com -n demo
-```
-
-The chart installs a `kubestash:ui:viewer` `ClusterRole` that grants `get` and `list` on the `ui.kubestash.com` resources and is aggregated into the built-in `view` role. Creating a `RestoreRequest` needs additional permissions.
-
-**Set an RPO target**
-
-Annotate a `BackupConfiguration` with the RPO it must meet. The UI server then reports whether the objective is currently breached:
+Each backup is reported as `Healthy`, `Paused`, `NotReady`, `StorageUnreachable`, `LastBackupFailed`, `NoBackupYet` or `Unprotected`. Set the RPO a `BackupConfiguration` must meet with an annotation, and the UI server reports whether it is breached:
 
 ```bash
 $ kubectl annotate backupconfiguration sample-postgres-backup -n demo \
     ui.kubestash.com/rpo-target=1h
 ```
 
-Or declare it in the manifest. The value is any Go duration, such as `15m` or `2h`:
-
-```yaml
-metadata:
-  name: sample-postgres-backup
-  namespace: demo
-  annotations:
-    ui.kubestash.com/rpo-target: "1h"
-```
-
-**Restore from a request**
-
-A `RestoreRequest` of type `Clone` restores an application into a **new object in a separate namespace** and leaves the source untouched. The optional `deleteAfter` garbage-collects the clone once it has existed that long, which makes disposable recovery drills easy:
+A `RestoreRequest` of type `Clone` restores an application into a **new object in a separate namespace** and leaves the source untouched. `deleteAfter` garbage-collects the clone, which makes recovery drills easy. Use `pitr: {targetTime: ...}` instead of `snapshot` to recover to a point in time, or `--dry-run=server` to see the rendered objects in `status.rendered` without creating anything.
 
 ```yaml
 apiVersion: ui.kubestash.com/v1alpha1
@@ -1276,66 +652,28 @@ spec:
     namespace: demo-drill        # created when missing
     name: postgres-drill
     deleteAfter: 24h
-  timeout: 30m
-```
-
-To recover to a point inside a continuous-log window, replace `snapshot` with `pitr: {targetTime: "2026-10-10T13:32:30Z"}`. `snapshot` and `pitr` are mutually exclusive. A request of type `Manifest` re-applies backed-up Kubernetes manifests instead, and you can narrow it by namespace, resource and label selectors.
-
-A `RestoreRequest` is never persisted. With a server-side dry run, nothing is created and the rendered objects come back in `status.rendered`, so you can review exactly what a restore would do:
-
-```bash
-$ kubectl create -f restorerequest.yaml --dry-run=server -o yaml
 ```
 
 ---
 
 #### CLI: Update the Repository Password from stdin [PR](https://github.com/kubestash/cli/pull/108)
 
-KubeStash encrypts every repository with a restic password, and the `kubectl kubestash password` command (alias `pw`) manages those keys. Until now `password add` and `password update` only accepted a **file** (`--new-password-file`), which meant writing a secret to disk first. This release adds two more ways to supply the new password:
-
-| Flag | Use it when |
-|------|-------------|
-| `--new-password-stdin` | You pipe the password in, for example from a password manager or a secrets CLI. Recommended for scripts. |
-| `--new-password` | You are experimenting. The password lands in your shell history and the process list, so prefer the other two. |
-| `--new-password-file` | The password is already in a file. This keeps working as before. |
-
-Exactly one of the three must be given, and they are mutually exclusive. A temporary file is created for the operation and removed when the command finishes.
-
-Update the password of the repository `s3-postgres-repo`:
+`kubectl kubestash password add` and `update` used to accept the new restic password only from a file. They now also accept **`--new-password-stdin`**, which is recommended for scripts, and `--new-password`, which exposes the password in your shell history and process list. Exactly one of `--new-password-stdin`, `--new-password` and `--new-password-file` must be given.
 
 ```bash
 $ printf '%s' "$NEW_PASSWORD" | kubectl kubestash password update s3-postgres-repo \
     -n demo --new-password-stdin
 ```
 
-Add a second key to a repository instead of replacing the existing one:
-
-```bash
-$ printf '%s' "$NEW_PASSWORD" | kubectl kubestash password add s3-postgres-repo \
-    -n demo --new-password-stdin --user backup-admin
-```
-
-Use `printf '%s'` rather than `echo`: `echo` appends a trailing newline, which would become part of the password. Use `--paths` to limit the change to specific component repositories.
+Use `printf '%s'` rather than `echo`, because `echo` appends a newline that would become part of the password.
 
 ---
 
 ### Improvements
-
-#### Exported Cloud Constants [PR](https://github.com/kubestash/apimachinery/pull/256)
-
-The cloud storage constants in `apimachinery`'s `pkg/blob` package are now exported. Values such as `GCSPrefix`, `AzurePrefix`, `LocalPrefix`, `CredentialsDir`, `AzureStorageAccount`, `AzureStorageKey`, `AzureAccountKey`, `GoogleServiceAccountJSONKey`, `GoogleApplicationCredentials` and `CACertData` can be reused by plugins and other tools instead of being redefined.
-
-#### `SnapshotsDirectory` Constant [PR](https://github.com/kubestash/apimachinery/pull/254)
-
-`apimachinery` now defines `SnapshotsDirectory = "snapshots"`, next to the existing directory constants such as `DirRepository`, so components share one definition of the `snapshots` directory name instead of repeating the string.
-
-#### Go 1.27, Kubernetes 1.37 and debian:13 [PR](https://github.com/kubestash/apimachinery/pull/267)
-
-All components are now built with **Go 1.27**. Their container base images move to **Debian 13**, and the installer's CI matrix now runs against Kubernetes **v1.31, v1.33, v1.35 and v1.37**.
-
-#### restic v0.5.1 [PR](https://github.com/kubestash/apimachinery/pull/253)
-
-The restic dependency (`gomodules.xyz/restic`) is bumped to **v0.5.1**. This is transparent to users: your existing `BackupConfiguration`, `Repository` and `BackupStorage` resources continue to work without any changes.
+- Exported the cloud storage constants in `apimachinery`'s `pkg/blob` (`GCSPrefix`, `AzurePrefix`, `CredentialsDir`, `CACertData` and others) so plugins can reuse them [PR](https://github.com/kubestash/apimachinery/pull/256).
+- Added the `SnapshotsDirectory = "snapshots"` constant next to the existing directory constants [PR](https://github.com/kubestash/apimachinery/pull/254).
+- All components are built with **Go 1.27** and use **Debian 13** base images, and the installer's CI matrix now covers Kubernetes **v1.31, v1.33, v1.35 and v1.37** [PR](https://github.com/kubestash/apimachinery/pull/267).
+- Bumped `gomodules.xyz/restic` to **v0.5.1**. Your existing `BackupConfiguration`, `Repository` and `BackupStorage` resources work without changes [PR](https://github.com/kubestash/apimachinery/pull/253).
 
 ---
 
