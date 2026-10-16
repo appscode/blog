@@ -157,6 +157,36 @@
       "show": true
     },
     {
+      "version": "v2026.8.26-rc.2",
+      "hostDocs": true,
+      "info": {
+        "autoscaler": "v0.52.0-rc.2",
+        "cli": "v0.67.0-rc.2",
+        "dashboard": "v0.43.0-rc.2",
+        "installer": "v2026.8.26-rc.2",
+        "ops-manager": "v0.54.0-rc.2",
+        "provisioner": "v0.67.0-rc.2",
+        "schema-manager": "v0.43.0-rc.2",
+        "ui-server": "v0.43.0-rc.2",
+        "webhook-server": "v0.43.0-rc.2"
+      }
+    },
+    {
+      "version": "v2026.8.14-rc.0",
+      "hostDocs": true,
+      "info": {
+        "autoscaler": "v0.52.0-rc.0",
+        "cli": "v0.67.0-rc.0",
+        "dashboard": "v0.43.0-rc.0",
+        "installer": "v2026.8.14-rc.0",
+        "ops-manager": "v0.54.0-rc.0",
+        "provisioner": "v0.67.0-rc.0",
+        "schema-manager": "v0.43.0-rc.0",
+        "ui-server": "v0.43.0-rc.0",
+        "webhook-server": "v0.43.0-rc.0"
+      }
+    },
+    {
       "version": "v2026.7.10",
       "hostDocs": true,
       "show": true,
