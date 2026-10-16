@@ -380,9 +380,6 @@ The addon also exposes `volume-backup` / `volume-restore` and `manifest-backup` 
 
 **Things to know in this release**
 - `cbt` backups are full backups. `forceFull: "true"` is required for now, so incremental CBT backups are not available yet.
-- Restoring a VM into a **different namespace** is not supported in plugin `v0.2.0`. Restore in place instead.
-- A VM without the QEMU guest agent is backed up **crash-consistent**, as if the power had been cut. The backup log reports this with a `NoGuestAgent` warning. Install the QEMU guest agent in the guest if you need it quiesced during the backup.
-- Deleting the VM while its `BackupConfiguration` is still scheduled makes the next run fail. Pause the `BackupConfiguration` with `spec.paused: true` first.
 
 ---
 
@@ -508,7 +505,6 @@ spec:
 - Only S3-compatible `BackupStorage` is supported.
 - Use **exactly one repository per session**. Multi-repository backup sessions are not supported.
 - The S3 `prefix` is **not** applied to RMAN data, because the SBT module writes backup pieces at the root of the bucket. The prefix applies only to KubeStash metadata, so do not rely on it for bucket lifecycle rules or manual cleanup.
-- Only full backups are supported in this release.
 
 ---
 
