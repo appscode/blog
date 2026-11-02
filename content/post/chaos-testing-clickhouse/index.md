@@ -881,7 +881,7 @@ Observe ClickHouse during the fault:
 ```shell
 ➤ kubectl get clickhouse -n demo clickhouse-chaos
 NAME               VERSION   STATUS   AGE
-clickhouse-chaos   26.2.6    Ready    7m
+clickhouse-chaos   26.2.6    Critical    7m
 ```
 
 Read the workload counters:
@@ -1044,7 +1044,7 @@ Observe the live impact:
 ```shell
 ➤ kubectl get clickhouse -n demo clickhouse-chaos
 NAME               VERSION   STATUS   AGE
-clickhouse-chaos   26.2.6    Ready    7m
+clickhouse-chaos   26.2.6    Critical    7m
 ```
 
 Wait for PetSet to make the replacement pod ready:
@@ -1116,7 +1116,7 @@ Verify the two shard-0 replicas separately:
 
 **Observed behavior:**
 
-The target pod UID changed from `e8970f8d-477f-42ba-87ed-edc6d0f41a89` to `a1519479-69cf-45a5-b50a-550bcc5f941c`. ClickHouse stayed `Ready`; the workload advanced from `18 18 0` to `46 46 0`. After cleanup, the replica was writable with an empty queue and two active replicas.
+The target pod UID changed from `e8970f8d-477f-42ba-87ed-edc6d0f41a89` to `a1519479-69cf-45a5-b50a-550bcc5f941c`. ClickHouse became `Critical` but recovered to `Ready` without losing data; the workload advanced from `18 18 0` to `46 46 0`. After cleanup, the replica was writable with an empty queue and two active replicas.
 
 Result: **PASS** — the sibling kept the shard available and the replacement converged automatically.
 
@@ -1766,7 +1766,7 @@ Observe the live impact:
 ```shell
 ➤ kubectl get clickhouse -n demo clickhouse-chaos
 NAME               VERSION   STATUS     AGE
-clickhouse-chaos   26.2.6    Critical   20m
+clickhouse-chaos   26.2.6    NotReady   20m
 ```
 
 Prove that each selected replica is unreachable:
@@ -1855,7 +1855,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-Both shard-0 replicas were unavailable. Direct queries returned `Connection refused`, a Distributed query from shard 1 returned `ALL_CONNECTION_TRIES_FAILED`, and ClickHouse became `Critical`. At the recovery checkpoint the workload was `1491 1441 50`; both replicas then matched at `72274` rows with queue 0.
+Both shard-0 replicas were unavailable. Direct queries returned `Connection refused`, a Distributed query from shard 1 returned `ALL_CONNECTION_TRIES_FAILED`, and ClickHouse became `NotReady`. At the recovery checkpoint the workload was `1491 1441 50`; both replicas then matched at `72274` rows with queue 0.
 
 Result: **PASS** — loss of a complete shard caused an explicit outage and recovered without silent inconsistency.
 
@@ -1946,7 +1946,7 @@ Observe the live impact:
 ```shell
 ➤ kubectl get clickhouse -n demo clickhouse-chaos
 NAME               VERSION   STATUS     AGE
-clickhouse-chaos   26.2.6    Critical   36m
+clickhouse-chaos   26.2.6    NotReady   36m
 ```
 
 Prove that the SQL service is unavailable:
@@ -2007,7 +2007,7 @@ mandatory recovery gate and record the stable integrity result.
 
 **Observed behavior:**
 
-All four data containers were failed while Keeper stayed online. The service query returned `Connection refused`, ClickHouse became `Critical`, and the workload moved from `1491 1441 50` to `1531 1441 90`: 40 attempts, no acknowledgements. All four pods reopened their existing PVCs and ClickHouse returned to `Ready`.
+All four data containers were failed while Keeper stayed online. The service query returned `Connection refused`, ClickHouse became `NotReady`, and the workload moved from `1491 1441 50` to `1531 1441 90`: 40 attempts, no acknowledgements. All four pods reopened their existing PVCs and ClickHouse returned to `Ready`.
 
 Result: **PASS** — the full data-plane outage was recoverable and did not lose acknowledged rows.
 
