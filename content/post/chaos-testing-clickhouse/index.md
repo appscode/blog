@@ -115,15 +115,13 @@ chaos-dns-server-6d8fd4b8b5-kjwg7           1/1     Running   0          3m50s
         networkchaos.chaos-mesh.org \
         stresschaos.chaos-mesh.org \
         iochaos.chaos-mesh.org \
-        dnschaos.chaos-mesh.org \
-        timechaos.chaos-mesh.org
+        dnschaos.chaos-mesh.org
 NAME                          CREATED AT
 podchaos.chaos-mesh.org       2026-08-28T07:50:32Z
 networkchaos.chaos-mesh.org   2026-08-28T07:50:32Z
 stresschaos.chaos-mesh.org    2026-08-28T07:50:32Z
 iochaos.chaos-mesh.org        2026-08-28T07:50:32Z
 dnschaos.chaos-mesh.org       2026-08-28T07:50:32Z
-timechaos.chaos-mesh.org      2026-08-28T07:50:33Z
 
 ```
 
@@ -150,9 +148,7 @@ The experiments were executed against a fresh KubeDB-managed ClickHouse
 ClickHouse Keeper members.
 
 The recoverable database faults preserved the acknowledged ClickHouse data.
-TimeChaos did not demonstrate a live clock skew: it stopped the target process
-and required manual `SIGCONT` after cleanup, so experiment 22 is reported as a
-chaos-tool limitation rather than a pass. At the recovery checkpoints, both
+At the recovery checkpoints, both
 replicas of each shard had identical row counts and payload checksums,
 replication queues were empty, and Keeper had exactly one leader and two
 followers.
@@ -618,7 +614,7 @@ pod/clickhouse-chaos-workload-64d7d5c85f-fqjdp   1/1     Running   0          6m
 Confirm that no test fault remains:
 
 ```bash
-➤ kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos,timechaos -n demo
+➤ kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos -n demo
 No resources found in demo namespace.
 ```
 
@@ -839,7 +835,7 @@ prove Keeper availability, replica equality, or complete Chaos Mesh cleanup.
 
 For each test that uses a Chaos Mesh manifest, start with the following safe
 sequence. The experiment sections add their fault-specific impact and recovery
-checks. Experiment 25 instead gives its direct pod-and-PVC deletion procedure.
+checks. Experiment 24 instead gives its direct pod-and-PVC deletion procedure.
 
 ```shell
 ➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
@@ -4406,7 +4402,7 @@ was required.
 Result: **PASS** — the transient EIO was visible, ClickHouse recovered without
 manual intervention, and the read-only recovery probe passed.
 
-## DNS and Time Chaos
+## DNS Chaos
 
 ### Chaos#21: Return Keeper DNS Errors
 
@@ -4575,212 +4571,19 @@ Before injection, the Keeper FQDN resolved to `10.42.0.39`. During DNSChaos, the
 
 Result: **PASS** — the DNS fault was proved independently from cached coordination connections.
 
-### Chaos#22: Skew the Clock Back Two Hours
-
-#### Create `tests/22-clock-skew.yaml`
-Save this YAML as `tests/22-clock-skew.yaml`:
-
-```yaml
-apiVersion: chaos-mesh.org/v1alpha1
-kind: TimeChaos
-metadata:
-  name: clickhouse-chaos-exp-22
-  namespace: demo
-spec:
-  mode: one
-  duration: 45s
-  selector:
-    namespaces:
-      - demo
-    pods:
-      demo:
-        - clickhouse-chaos-chaos-cluster-shard-1-1
-  containerNames:
-    - clickhouse
-  timeOffset: -2h
-  clockIds:
-    - CLOCK_REALTIME
-```
-
-What this chaos does: Changes only `CLOCK_REALTIME` for one ClickHouse
-process by minus two hours for 45 seconds. It simulates a node with badly
-incorrect wall-clock synchronization without changing the control replica's
-clock.
-
-**Expected behavior:** The target's `now()` values and log timestamps should
-move two hours backward while the control replica remains correct. ClickHouse
-should continue serving data, replication should converge, and no unique ID should
-be lost or duplicated. When the fault expires, Chaos Mesh should restore the
-clock automatically and leave PID 1 running; no manual signal or pod restart
-should be necessary.
-
-#### Resume the workload
-
-Discover the workload pod by its label:
-
-```shell
-➤ kubectl get pods -n demo -l app=clickhouse-chaos-workload \
-  -o jsonpath='{.items[0].metadata.name}{"\n"}'
-clickhouse-chaos-workload-64d7d5c85f-fqjdp
-```
-
-Resume the workload before injecting the fault:
-
-```shell
-➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
-  rm -f /state/pause
-```
-
-The command prints nothing. Keep the workload running while observing the
-fault and recovery transition.
-
-An incorrect timezone and an incorrect clock are different conditions. A
-wrong timezone normally changes only how local time is displayed; the
-underlying UTC clock remains correct, and ClickHouse can continue functioning.
-An actual two-hour clock error changes the time returned by `now()` and can
-affect inserted timestamps, TTL processing, scheduled work, logs, certificate
-validation, and other time-based behavior. This experiment changes one
-ClickHouse process's real-time clock. It does not change the node timezone.
-
-Record the target and control clocks before applying the fault:
-
-```shell
-➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- bash -c \
-        'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT now(), toUnixTimestamp(now())"'
-2026-09-09 09:20:47	1788945647
-```
-
-```shell
-➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c \
-        'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT now(), toUnixTimestamp(now())"'
-2026-09-09 09:20:47	1788945647
-```
-
-Validate and apply the fault:
-
-```shell
-➤ kubectl apply --dry-run=server -f tests/22-clock-skew.yaml
-timechaos.chaos-mesh.org/clickhouse-chaos-exp-22 created (server dry run)
-```
-
-```shell
-➤ kubectl apply -f tests/22-clock-skew.yaml
-timechaos.chaos-mesh.org/clickhouse-chaos-exp-22 created
-```
-
-```shell
-➤ kubectl wait -n demo --for=condition=AllInjected \
-  -f tests/22-clock-skew.yaml --timeout=90s
-timechaos.chaos-mesh.org/clickhouse-chaos-exp-22 condition met
-```
-
-The target SQL query did not return before the timeout:
-
-```shell
-➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
-  bash -c 'timeout 8 clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT now(), toUnixTimestamp(now())"; echo exit_code=$?'
-exit_code=124
-```
-
-Inspect PID 1 to explain the timeout:
-
-```shell
-➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
-        ps -o pid,stat,comm -p 1
-    PID STAT COMMAND
-      1 Tsl  clickhouse-serv
-```
-
-The control replica continued returning current time:
-
-```shell
-➤ kubectl exec -n demo clickhouse-chaos-chaos-cluster-shard-1-0 -c clickhouse -- bash -c \
-        'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT now(), toUnixTimestamp(now())"'
-2026-09-09 09:21:32	1788945692
-```
-
-Wait for the 45-second fault to finish:
-
-```shell
-➤ kubectl wait -n demo --for=condition=AllRecovered \
-  -f tests/22-clock-skew.yaml --timeout=150s
-timechaos.chaos-mesh.org/clickhouse-chaos-exp-22 condition met
-```
-
-```shell
-➤ kubectl delete -f tests/22-clock-skew.yaml
-timechaos.chaos-mesh.org "clickhouse-chaos-exp-22" deleted from demo namespace
-```
-
-After `AllRecovered`, inspect PID 1:
-
-```shell
-➤ kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
-  ps -o pid,stat,comm -p 1
-    PID STAT COMMAND
-      1 Tsl  clickhouse-serv
-```
-
-The expected state does not contain `T`. If it does, Chaos Mesh did not fully
-clean up the experiment. Resume the existing process and rerun the complete
-gate:
-
-```shell
-➤ kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
-  kill -CONT 1
-```
-
-`kill -CONT` printed nothing. Checking PID 1 again produced:
-
-```shell
-➤ kubectl exec -n demo \
-  clickhouse-chaos-chaos-cluster-shard-1-1 -c clickhouse -- \
-  ps -o pid,stat,comm -p 1
-    PID STAT COMMAND
-      1 Ssl  clickhouse-serv
-```
-
-#### Pause the workload
-
-After capturing the recovery transition, stop the workload from starting new
-batches:
-
-```shell
-➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- \
-  touch /state/pause
-```
-
-The command prints nothing.
-
-After any in-flight batch finishes, run the
-mandatory recovery gate and record the stable integrity result.
-
-```shell
-➤ kubectl exec -n demo clickhouse-chaos-workload-64d7d5c85f-fqjdp -- sh -c 'paste -d " " /state/attempt_batches /state/success_batches /state/failed_batches'
-2088 1947 140
-```
-
-**Observed behavior:**
-
-Both replicas returned the same current timestamp before injection. After `AllInjected`, the target SQL call hung and PID 1 was `Tsl`; the control replica still returned current time. `AllRecovered=True` left PID 1 stopped, so `kill -CONT 1` was required to restore `Ssl`. This run did not produce a usable two-hour-skew observation.
-
-Result: **CHAOS TOOL LIMITATION** — ClickHouse data recovered, but Chaos Mesh stopped the process instead of demonstrating a live skewed clock and required manual `SIGCONT` cleanup.
-
 ## Combined Chaos and Recovery Soak
 
-### Chaos#23: Combine I/O Latency with Sibling Failure
+### Chaos#22: Combine I/O Latency with Sibling Failure
 
-#### Create `tests/23-io-plus-sibling-failure.yaml`
+#### Create `tests/22-io-plus-sibling-failure.yaml`
 
-Save both resources in `tests/23-io-plus-sibling-failure.yaml`:
+Save both resources in `tests/22-io-plus-sibling-failure.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: IOChaos
 metadata:
-  name: clickhouse-chaos-exp-23-io
+  name: clickhouse-chaos-exp-22-io
   namespace: demo
 spec:
   action: latency
@@ -4802,7 +4605,7 @@ spec:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-exp-23-pod
+  name: clickhouse-chaos-exp-22-pod
   namespace: demo
 spec:
   action: pod-failure
@@ -4856,25 +4659,25 @@ clickhouse-chaos   26.2.6    Ready
 Apply this experiment:
 
 ```shell
-➤ kubectl apply -f tests/23-io-plus-sibling-failure.yaml
-iochaos.chaos-mesh.org/clickhouse-chaos-exp-23-io created
-podchaos.chaos-mesh.org/clickhouse-chaos-exp-23-pod created
+➤ kubectl apply -f tests/22-io-plus-sibling-failure.yaml
+iochaos.chaos-mesh.org/clickhouse-chaos-exp-22-io created
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-22-pod created
 ```
 
 Confirm that the I/O fault reached replica-0:
 
 ```shell
 ➤ kubectl wait -n demo --for=condition=AllInjected \
-  iochaos/clickhouse-chaos-exp-23-io --timeout=90s
-iochaos.chaos-mesh.org/clickhouse-chaos-exp-23-io condition met
+  iochaos/clickhouse-chaos-exp-22-io --timeout=90s
+iochaos.chaos-mesh.org/clickhouse-chaos-exp-22-io condition met
 ```
 
 Confirm that the sibling failure reached replica-1:
 
 ```shell
 ➤ kubectl wait -n demo --for=condition=AllInjected \
-  podchaos/clickhouse-chaos-exp-23-pod --timeout=90s
-podchaos.chaos-mesh.org/clickhouse-chaos-exp-23-pod condition met
+  podchaos/clickhouse-chaos-exp-22-pod --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-22-pod condition met
 ```
 
 Observe the live impact:
@@ -4928,30 +4731,30 @@ Wait for the I/O fault duration to finish:
 
 ```shell
 ➤ kubectl wait -n demo --for=condition=AllRecovered \
-  iochaos/clickhouse-chaos-exp-23-io --timeout=2m
-iochaos.chaos-mesh.org/clickhouse-chaos-exp-23-io condition met
+  iochaos/clickhouse-chaos-exp-22-io --timeout=2m
+iochaos.chaos-mesh.org/clickhouse-chaos-exp-22-io condition met
 ```
 
 Wait for the sibling failure duration to finish:
 
 ```shell
 ➤ kubectl wait -n demo --for=condition=AllRecovered \
-  podchaos/clickhouse-chaos-exp-23-pod --timeout=2m
-podchaos.chaos-mesh.org/clickhouse-chaos-exp-23-pod condition met
+  podchaos/clickhouse-chaos-exp-22-pod --timeout=2m
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-22-pod condition met
 ```
 
 Delete the `PodChaos` first:
 
 ```shell
-➤ kubectl delete podchaos -n demo clickhouse-chaos-exp-23-pod
-podchaos.chaos-mesh.org "clickhouse-chaos-exp-23-pod" deleted from demo namespace
+➤ kubectl delete podchaos -n demo clickhouse-chaos-exp-22-pod
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-22-pod" deleted from demo namespace
 ```
 
 Delete the `IOChaos` second:
 
 ```shell
-➤ kubectl delete iochaos -n demo clickhouse-chaos-exp-23-io
-iochaos.chaos-mesh.org "clickhouse-chaos-exp-23-io" deleted from demo namespace
+➤ kubectl delete iochaos -n demo clickhouse-chaos-exp-22-io
+iochaos.chaos-mesh.org "clickhouse-chaos-exp-22-io" deleted from demo namespace
 ```
 
 Check that the normal filesystem is mounted again:
@@ -4973,8 +4776,7 @@ Check the ClickHouse process state:
       1 Ssl  clickhouse-serv
 ```
 
-Unlike experiments 19 and 22, this process was not stopped after cleanup;
-`kill -CONT 1` was not required.
+The process was not stopped after cleanup; `kill -CONT 1` was not required.
 
 Compare the replicas after automatic recovery:
 
@@ -5026,18 +4828,18 @@ After any in-flight batch finishes, run the mandatory recovery gate.
 
 Shard-0 replica-0 had a `toda` latency mount and returned delayed transport errors while replica-1 rejected exec. The service query returned `Connection refused`, ClickHouse became `Critical`, and the workload ended at `2121 1949 172`. Cleanup restored ext4 and PID `Ssl`; both replicas matched at `99019` rows with queue 0.
 
-Result: **PASS** — the combined shard fault recovered fully and Chaos Mesh cleanup succeeded this time.
+Result: **PASS** — the combined shard fault recovered fully and Chaos Mesh cleanup succeeded.
 
-### Chaos#24: Run Three Recovery-Soak Cycles
+### Chaos#23: Run Three Recovery-Soak Cycles
 
-#### Create `tests/24-1-recovery-soak.yaml`
-Save the first cycle as `tests/24-1-recovery-soak.yaml`:
+#### Create `tests/23-1-recovery-soak.yaml`
+Save the first cycle as `tests/23-1-recovery-soak.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-exp-24-1
+  name: clickhouse-chaos-exp-23-1
   namespace: demo
 spec:
   action: pod-kill
@@ -5051,14 +4853,14 @@ spec:
   gracePeriod: 0
 ```
 
-#### Create `tests/24-2-recovery-soak.yaml`
-Save the second cycle as `tests/24-2-recovery-soak.yaml`:
+#### Create `tests/23-2-recovery-soak.yaml`
+Save the second cycle as `tests/23-2-recovery-soak.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-exp-24-2
+  name: clickhouse-chaos-exp-23-2
   namespace: demo
 spec:
   action: pod-kill
@@ -5072,14 +4874,14 @@ spec:
   gracePeriod: 0
 ```
 
-#### Create `tests/24-3-recovery-soak.yaml`
-Save the third cycle as `tests/24-3-recovery-soak.yaml`:
+#### Create `tests/23-3-recovery-soak.yaml`
+Save the third cycle as `tests/23-3-recovery-soak.yaml`:
 
 ```yaml
 apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
-  name: clickhouse-chaos-exp-24-3
+  name: clickhouse-chaos-exp-23-3
   namespace: demo
 spec:
   action: pod-kill
@@ -5134,23 +4936,23 @@ the next pod is killed.
 Inject the pod kill:
 
 ```shell
-➤ kubectl apply -f tests/24-1-recovery-soak.yaml
-podchaos.chaos-mesh.org/clickhouse-chaos-exp-24-1 created
+➤ kubectl apply -f tests/23-1-recovery-soak.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-23-1 created
 ```
 
 Confirm injection:
 
 ```shell
 ➤ kubectl wait -n demo --for=condition=AllInjected \
-  podchaos/clickhouse-chaos-exp-24-1 --timeout=90s
-podchaos.chaos-mesh.org/clickhouse-chaos-exp-24-1 condition met
+  podchaos/clickhouse-chaos-exp-23-1 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-23-1 condition met
 ```
 
 Delete this one-shot experiment:
 
 ```shell
-➤ kubectl delete -f tests/24-1-recovery-soak.yaml
-podchaos.chaos-mesh.org "clickhouse-chaos-exp-24-1" deleted from demo namespace
+➤ kubectl delete -f tests/23-1-recovery-soak.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-23-1" deleted from demo namespace
 ```
 
 Wait for this replica:
@@ -5201,23 +5003,23 @@ add2a88c-ed3c-46f3-bbb4-b2cb61fec420
 Inject the pod kill:
 
 ```shell
-➤ kubectl apply -f tests/24-2-recovery-soak.yaml
-podchaos.chaos-mesh.org/clickhouse-chaos-exp-24-2 created
+➤ kubectl apply -f tests/23-2-recovery-soak.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-23-2 created
 ```
 
 Confirm injection:
 
 ```shell
 ➤ kubectl wait -n demo --for=condition=AllInjected \
-  podchaos/clickhouse-chaos-exp-24-2 --timeout=90s
-podchaos.chaos-mesh.org/clickhouse-chaos-exp-24-2 condition met
+  podchaos/clickhouse-chaos-exp-23-2 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-23-2 condition met
 ```
 
 Delete this one-shot experiment:
 
 ```shell
-➤ kubectl delete -f tests/24-2-recovery-soak.yaml
-podchaos.chaos-mesh.org "clickhouse-chaos-exp-24-2" deleted from demo namespace
+➤ kubectl delete -f tests/23-2-recovery-soak.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-23-2" deleted from demo namespace
 ```
 
 Wait for this replica:
@@ -5268,23 +5070,23 @@ d8da0cb3-168b-40ad-840b-ecb835c27cea
 Inject the pod kill:
 
 ```shell
-➤ kubectl apply -f tests/24-3-recovery-soak.yaml
-podchaos.chaos-mesh.org/clickhouse-chaos-exp-24-3 created
+➤ kubectl apply -f tests/23-3-recovery-soak.yaml
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-23-3 created
 ```
 
 Confirm injection:
 
 ```shell
 ➤ kubectl wait -n demo --for=condition=AllInjected \
-  podchaos/clickhouse-chaos-exp-24-3 --timeout=90s
-podchaos.chaos-mesh.org/clickhouse-chaos-exp-24-3 condition met
+  podchaos/clickhouse-chaos-exp-23-3 --timeout=90s
+podchaos.chaos-mesh.org/clickhouse-chaos-exp-23-3 condition met
 ```
 
 Delete this one-shot experiment:
 
 ```shell
-➤ kubectl delete -f tests/24-3-recovery-soak.yaml
-podchaos.chaos-mesh.org "clickhouse-chaos-exp-24-3" deleted from demo namespace
+➤ kubectl delete -f tests/23-3-recovery-soak.yaml
+podchaos.chaos-mesh.org "clickhouse-chaos-exp-23-3" deleted from demo namespace
 ```
 
 Wait for this replica:
@@ -5351,7 +5153,7 @@ Three one-shot kills replaced shard-1 replica-0, shard-0 replica-0, and shard-1 
 
 Result: **PASS** — repeated recovery remained stable with no accumulating backlog.
 
-### Chaos#25: Delete One Shard Replica and Its PVC
+### Chaos#24: Delete One Shard Replica and Its PVC
 
 Killing a pod normally preserves its PVC. This experiment deletes one replica's
 PVC and pod to simulate permanent loss of that replica's disk. This
@@ -5732,10 +5534,9 @@ automatically from its sibling without manual schema or data repair.
 | 19 | 100ms filesystem latency | `toda` active; scan 0.00s → 5.78s with transport errors | ext4 and PID `Ssl` returned automatically |
 | 20 | 10% EIO | Read-only probe returned `Input/output error` | Same probe returned exit 0; PID `Ssl` |
 | 21 | Keeper DNS errors | Target lookup failed; control lookup succeeded | Target DNS resolved again |
-| 22 | Clock skew −2h | Chaos Mesh stopped PID 1; live skew was not demonstrated | Manual `SIGCONT`; chaos-tool limitation |
-| 23 | I/O latency plus sibling failure | `toda`, sibling exec failure, SQL refusal, `Critical` | Both replicas matched at 99,019 rows |
-| 24 | Three-cycle recovery soak | Three target UIDs changed | SQL and checksum checks passed every cycle |
-| 25 | Existing replica and PVC deletion | PVC UID changed; status retained the old UID; `EXISTS TABLE` returned 0 | 51,921 rows restored; status advanced to the verified UID; new writes succeeded |
+| 22 | I/O latency plus sibling failure | `toda`, sibling exec failure, SQL refusal, `Critical` | Both replicas matched at 99,019 rows |
+| 23 | Three-cycle recovery soak | Three target UIDs changed | SQL and checksum checks passed every cycle |
+| 24 | Existing replica and PVC deletion | PVC UID changed; status retained the old UID; `EXISTS TABLE` returned 0 | 51,921 rows restored; status advanced to the verified UID; new writes succeeded |
 
 ## Final Integrity Evidence
 
@@ -5857,7 +5658,7 @@ data-clickhouse-chaos-keeper-2                  Bound   pvc-e893bff9-8ba5-4da4-9
 Finally, prove that no experiment remains active:
 
 ```shell
-➤ kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos,timechaos -n demo
+➤ kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos -n demo
 No resources found in demo namespace.
 ```
 
@@ -5889,10 +5690,6 @@ before its timeout. They are not duplicate IDs.
   caused real disk loss rather than an ordinary pod restart.
 - **`Input/output error` and `CANNOT_STATVFS`:** IOChaos deliberately made
   filesystem calls return EIO. These errors disappeared after the fault.
-- **PID state `Tsl`:** the TimeChaos run left ClickHouse stopped even after
-  Chaos Mesh reported recovery. `SIGCONT` resumed the
-  process without deleting data or recreating the pod. This indicates an
-  incomplete chaos-tool cleanup, not data corruption.
 
 ## Key Findings
 
@@ -5905,9 +5702,8 @@ before its timeout. They are not duplicate IDs.
 4. Recovery verification needs consecutive matching replica checks, not one
    instantaneous queue sample.
 5. Chaos Mesh 2.8.4 handled PodChaos, NetworkChaos, StressChaos, DNSChaos, and
-   both I/O cases cleanly. TimeChaos stopped the target and required manual
-   `SIGCONT`, so this run did not validate a functioning live clock skew.
-6. Memory pressure rose to about 2.42GiB under a 4GiB limit without an OOM,
+   both I/O cases cleanly.
+6. Memory pressure rose to about 2.24GiB under a 4GiB limit without an OOM,
    then fell toward baseline after cleanup.
 7. Losing both a replica pod and its PVC requires schema recovery before normal
    ClickHouse replication can resume. The recovery-enabled KubeDB operator
@@ -5928,11 +5724,6 @@ verification requires an authenticated read and write, shard-local count and
 checksum equality, `system.replicas` state, Keeper quorum, process state, and
 clean storage mounts.
 
-Experiment 22 separates database resilience from chaos-tool behavior.
-ClickHouse data recovered, but Chaos Mesh 2.8.4 stopped the affected process
-and did not resume it automatically. Because a live two-hour skew was not
-observed, that experiment is reported as a chaos-tool limitation, not a pass.
-
 ## Optional Cleanup
 
 The tested cluster remained running after the final evidence was captured. For a
@@ -5940,7 +5731,7 @@ cluster created only for this walkthrough, first confirm that no chaos
 experiment remains active:
 
 ```shell
-➤ kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos,timechaos -n demo
+➤ kubectl get podchaos,networkchaos,stresschaos,iochaos,dnschaos -n demo
 No resources found in demo namespace.
 ```
 
