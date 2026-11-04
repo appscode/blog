@@ -1,6 +1,6 @@
 ---
 title: 'KubeDB on VMware VKS: Validated Database-as-a-Service for VCF'
-date: "2026-10-16"
+date: "2026-11-10"
 weight: 14
 authors:
 - Arnob Kumar Saha
