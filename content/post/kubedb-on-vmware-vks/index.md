@@ -1,6 +1,6 @@
 ---
 title: 'KubeDB by AppsCode Validated on VMware vSphere Kubernetes Service (VKS)'
-date: "2026-11-5"
+date: "2026-11-05"
 weight: 14
 authors:
 - Arnob Kumar Saha
