@@ -1,6 +1,6 @@
 ---
-title: 'KubeDB on VMware VKS: Validated Database-as-a-Service for VCF'
-date: "2026-11-10"
+title: 'KubeDB by AppsCode Validated on VMware vSphere Kubernetes Service (VKS)'
+date: "2026-11-5"
 weight: 14
 authors:
 - Arnob Kumar Saha
@@ -17,11 +17,11 @@ tags:
 - vmware
 ---
 
-vSphere Kubernetes Service (VKS) gives your teams Kubernetes clusters on demand. Databases usually still come through a ticket queue. **KubeDB closes that gap, and it is now validated on VKS.** A production-ready database, with high availability, TLS, backups and monitoring built in, becomes one YAML object or a few clicks in a console, on the VMware Cloud Foundation (VCF) you already run.
+The VMware vSphere Kubernetes Service (VKS) component of VMware Cloud Foundation (VCF) gives your teams Kubernetes clusters on demand. Databases usually still come through a ticket queue. **KubeDB closes that gap, and it is now validated by AppsCode to run on VKS.** A production-ready database, with high availability, TLS, backups and monitoring built in, becomes one YAML object or a few clicks in a console, on the VCF platform you already trust to run all types of workloads.
 
 Hyperscaler database services work *only inside their own cloud*, with their own APIs, tooling and hard-to-predict costs, and they're often ruled out for regulated, sovereign or air-gapped sites. KubeDB runs on any conformant cluster, so hybrid estates get **the same database API everywhere**, with VCF as the validated home for the data they keep on premises.
 
-AppsCode and VMware published the validated stack as a reference architecture, and KubeDB is listed among Broadcom's [Kubernetes software partners](https://www.broadcom.com/how-to-buy/software-partners/kubernetes-partners).
+AppsCode and Broadcom published the validated stack as a [reference architecture](https://www.vmware.com/docs/isv-kubedb-vks-vcf), and KubeDB is listed among Broadcom's [Kubernetes Ecosystem Partners](https://www.broadcom.com/how-to-buy/software-partners/kubernetes-partners).
 
 - **Validated:** VCF 9.0, VKS 3.7 and KubeDB v2026.10.12; all eight PostgreSQL high-availability tests passed
 - **What you get:** 30+ database engines, automatic failover, backups, day-2 OpsRequests and monitoring
@@ -29,9 +29,9 @@ AppsCode and VMware published the validated stack as a reference architecture, a
 
 ![KubeDB adds the database layer on top of VKS and VCF](kubedb-vks-architecture.png)
 
-**Each layer handles its own failures:** vSphere HA and VKS replace failed nodes, KubeDB promotes a standby when a database member fails, and backups leave the cluster for an S3-compatible store.
+**Each layer handles its own failures:** VMware vSphere HA and VKS replace failed nodes, KubeDB promotes a standby when a database member fails, and backups leave the cluster for an S3-compatible store.
 
-## VKS runs the clusters, KubeDB runs the databases
+## VKS runs the clusters, KubeDB runs the databases, VCF runs the private cloud
 
 VKS provides CNCF-conformant Kubernetes clusters governed with the same vSphere tools and policies teams already use for VMs. For databases, that foundation matters: vSAN storage policies decide how each volume is protected, NSX isolates and load-balances database traffic, vSphere HA and vSphere Zones keep the nodes available, and vSphere Namespaces with vCenter Single Sign-On control who can create clusters. **The vSphere administrator keeps those controls; application teams get self-service inside them.**
 
@@ -41,7 +41,7 @@ KubeDB adds one Kubernetes custom resource per database engine and operators tha
 
 From the console, teams create databases, run backups and day-2 operations, and open each database's Grafana dashboard without writing YAML.
 
-| Area | VKS on VCF provides | KubeDB adds |
+| Area | VKS component of VCF provides | KubeDB adds |
 | --- | --- | --- |
 | Platform | Conformant Kubernetes clusters with automated provisioning and upgrades | Database operators for 30+ engines |
 | Storage | vSAN storage policies exposed as StorageClasses through vSphere CSI | A persistent volume per member, online volume expansion, storage autoscaling |
@@ -53,7 +53,7 @@ From the console, teams create databases, run backups and day-2 operations, and 
 
 A day-2 change, such as scaling or a TLS rotation, is a small YAML object (an *OpsRequest*) that the operator runs step by step and records. **Teams get an audit trail instead of a runbook.** Because databases and OpsRequests are plain Kubernetes objects, they can live in Git and be applied by Argo CD or Flux like any other workload.
 
-## What we validated
+## What AppsCode validated
 
 **All eight tests passed** on a three-member, TLS-enabled PostgreSQL 18.3 cluster running on VKS. The lab cluster used the same Kubernetes release, ClusterClass and vSAN policy as the production design, on smaller nodes.
 
@@ -66,7 +66,7 @@ A day-2 change, such as scaling or a TLS rotation, is a small YAML object (an *O
 | Network | NSX with VPC networking, one vSphere Zone |
 | KubeDB | v2026.10.12 with KubeStash, cert-manager, kube-prometheus-stack |
 
-| Test | What we did | Outcome |
+| Test | What AppsCode did | Outcome |
 | --- | --- | --- |
 | Provisioning | Applied one Postgres object with 3 replicas | Ready with one primary, two standbys, three vSAN volumes |
 | Failover | Deleted the primary pod | A standby was promoted; the old primary rejoined as a standby; writes kept working with no client change |
