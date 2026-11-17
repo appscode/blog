@@ -18,7 +18,7 @@ tags:
 - vm-backup
 ---
 
-We are pleased to announce the release of [KubeStash v2026.11.15](https://kubestash.com/docs/v2026.11.15/setup/). This release rolls up the changes from [v2026.11.10](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.11.10/README.md) and brings a **resident KubeVirt CBT archiver with point-in-time restore**, **PVC support for `kubectl kubestash download`**, **DocumentDB continuous archiving with PITR**, and a fix that stops a repository's `lastBackupTime` from moving backwards, along with updated dependencies. You can check out the full changelogs for [v2026.11.15](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.11.15/README.md) and [v2026.11.10](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.11.10/README.md). In this post, we'll highlight the key changes.
+We are pleased to announce the release of [KubeStash v2026.11.15](https://kubestash.com/docs/v2026.11.15/setup/). This release rolls up the changes from [v2026.11.10](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.11.10/README.md) and brings a **resident KubeVirt CBT archiver with point-in-time restore**, **PVC support for `kubectl kubestash download`**, **DocumentDB continuous archiving with PITR**, and a fix that stops a repository's `lastBackupTime` from moving backwards. You can check out the full changelogs for [v2026.11.15](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.11.15/README.md) and [v2026.11.10](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.11.10/README.md). In this post, we'll highlight the key changes.
 
 ---
 
@@ -27,8 +27,6 @@ We are pleased to announce the release of [KubeStash v2026.11.15](https://kubest
 - Added **PVC as storage** support to `kubectl kubestash download`, so snapshots in a local PVC backend can be downloaded.
 - Added **DocumentDB continuous archiving** with a `DocumentDBArchiver` (full, WAL and manifest backups) and **point-in-time recovery**.
 - Fixed `Repository` **`lastBackupTime`** moving backwards when snapshots are resynced.
-- Added the RBAC needed for **Solr restore** through `OpsRequest`.
-- Updated `apimachinery` dependencies for **Kubernetes 1.34** and cleaned up unused dependencies.
 
 ---
 
@@ -285,24 +283,6 @@ spec:
 
 ### Bug Fixes and Improvements
 - **`lastBackupTime` no longer goes backwards.** When snapshots were resynced, the `Repository`'s `lastBackupTime` could be set to an older snapshot's time. That made a healthy repository look stale and could trigger false RPO alerts. It now only moves forward.
-- **Solr restore permissions.** The operator now carries the `OpsRequest` permission that Solr restore needs.
-- **Kubernetes 1.34 libraries.** `apimachinery` v0.32.0 moves its dependencies to the Kubernetes 1.34 line, and every component is rebuilt on it.
-- **Leaner dependencies.** A "Clean up deps" change removes unused modules from `apimachinery`, which every plugin inherits.
-- **Added constants** in `apimachinery` for the KubeVirt CBT feature.
-- **CI.** All repositories now pull the linter image with `docker run --pull=always`.
-
----
-
-### Upgrading
-
-No API changes are required for existing `BackupConfiguration`, `BackupStorage`, `Repository` and `RestoreSession` resources. Upgrade the operator with Helm:
-
-```bash
-$ helm upgrade -i kubestash oci://ghcr.io/appscode-charts/kubestash \
-        --version v2026.11.15 \
-        --namespace stash --create-namespace \
-        --set-file global.license=/path/to/the/license.txt
-```
 
 ---
 
