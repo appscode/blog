@@ -18,14 +18,14 @@ tags:
 - vm-backup
 ---
 
-We are pleased to announce the release of [KubeStash v2026.11.15](https://kubestash.com/docs/v2026.11.15/setup/). This release rolls up the changes from [v2026.11.10](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.11.10/README.md) and brings a **resident KubeVirt CBT archiver with point-in-time restore**, **PVC support for `kubectl kubestash download`**, **DocumentDB manifest backup**, and a fix that stops a repository's `lastBackupTime` from moving backwards, along with updated dependencies. You can check out the full changelogs for [v2026.11.15](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.11.15/README.md) and [v2026.11.10](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.11.10/README.md). In this post, we'll highlight the key changes.
+We are pleased to announce the release of [KubeStash v2026.11.15](https://kubestash.com/docs/v2026.11.15/setup/). This release rolls up the changes from [v2026.11.10](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.11.10/README.md) and brings a **resident KubeVirt CBT archiver with point-in-time restore**, **PVC support for `kubectl kubestash download`**, **DocumentDB continuous archiving with PITR**, and a fix that stops a repository's `lastBackupTime` from moving backwards, along with updated dependencies. You can check out the full changelogs for [v2026.11.15](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.11.15/README.md) and [v2026.11.10](https://github.com/kubestash/CHANGELOG/blob/master/releases/v2026.11.10/README.md). In this post, we'll highlight the key changes.
 
 ---
 
 ### Quick highlights
 - Added the **`KubeVirtArchiver`** and **`KubeVirtArchiverRestore`** APIs: continuous, incremental VM backup using KubeVirt **changed block tracking (CBT)** with Restic, and restore to the latest or to a **point in time**.
 - Added **PVC as storage** support to `kubectl kubestash download`, so snapshots in a local PVC backend can be downloaded.
-- Added **DocumentDB manifest backup** to `apimachinery`.
+- Added **DocumentDB continuous archiving** with a `DocumentDBArchiver` (full, WAL and manifest backups) and **point-in-time recovery**.
 - Fixed `Repository` **`lastBackupTime`** moving backwards when snapshots are resynced.
 - Added the RBAC needed for **Solr restore** through `OpsRequest`.
 - Updated `apimachinery` dependencies for **Kubernetes 1.34** and cleaned up unused dependencies.
@@ -179,9 +179,120 @@ $ kubectl kubestash download <snapshot-name> -n demo --destination=/tmp/snapshot
 
 ---
 
-#### DocumentDB Manifest Backup
+#### DocumentDB: Manifest Backup and Continuous Archiving (PITR)
 
-`apimachinery` now includes the types for **DocumentDB manifest backup**, so the Kubernetes objects around a DocumentDB (such as its Secrets, Services and configuration) can be captured next to the data backup. This lays the groundwork for fully reproducible DocumentDB recovery. See the [DocumentDB backup guide](https://kubestash.com/docs/v2026.11.15/) for how to use it with your addon version.
+KubeStash can now archive a KubeDB-managed **DocumentDB** continuously. The new `DocumentDBArchiver` combines three things:
+
+- **Full backups** with Restic, taken on a schedule.
+- **WAL log backups**, shipped continuously so you can recover to any second inside the archived window.
+- **Manifest backups** of the Kubernetes objects around the database (the new manifest backup support in `apimachinery`), kept in their own repository.
+
+Create the archiver. A DocumentDB joins it through a label selector:
+
+```yaml
+apiVersion: archiver.kubedb.com/v1alpha1
+kind: DocumentDBArchiver
+metadata:
+  name: documentdb-archiver
+  namespace: demo
+spec:
+  databases:
+    namespaces:
+      from: Selector
+      selector:
+        matchLabels:
+          kubernetes.io/metadata.name: demo
+    selector:
+      matchLabels:
+        archiver: enabled
+  fullBackup:
+    driver: Restic
+    scheduler:
+      schedule: "0 1 * * *"           # nightly full backup
+      successfulJobsHistoryLimit: 1
+      failedJobsHistoryLimit: 1
+  manifestBackup:
+    scheduler:
+      schedule: "*/30 * * * *"        # manifests every 30 minutes
+      successfulJobsHistoryLimit: 1
+      failedJobsHistoryLimit: 1
+  logBackup:
+    runtimeSettings: {}
+  backupStorage:
+    ref:
+      name: s3-storage
+      namespace: demo
+  encryptionSecret:
+    name: encrypt-secret
+    namespace: demo
+  retentionPolicy:
+    name: demo-retention
+    namespace: demo
+```
+
+Then label the DocumentDB and point `spec.archiver.ref` at the archiver. WAL is only shipped when a segment fills (16 MB) or when `archive_timeout` fires, so set `archive_timeout` to bound how much data you can lose. Here it is 60 seconds:
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: DocumentDB
+metadata:
+  name: dcdb-pitr
+  namespace: demo
+  labels:
+    archiver: enabled
+spec:
+  version: pg17-0.109.0
+  replicas: 1
+  storageType: Durable
+  storage:
+    accessModes: ["ReadWriteOnce"]
+    resources:
+      requests:
+        storage: 1Gi
+  configuration:
+    inline:
+      user.conf: |
+        archive_timeout = 60
+  archiver:
+    ref:
+      name: documentdb-archiver
+      namespace: demo
+  deletionPolicy: WipeOut
+```
+
+To recover, create a **new** DocumentDB with `spec.init.archiver`. Recovery is never done in place. `recoveryTimestamp` is an RFC3339 UTC time with second precision. `manifestRepository` is optional; when set, the restore waits for a manifest snapshot before it starts.
+
+```yaml
+apiVersion: kubedb.com/v1alpha2
+kind: DocumentDB
+metadata:
+  name: dcdb-pitr-restored
+  namespace: demo
+spec:
+  version: pg17-0.109.0
+  replicas: 1
+  storageType: Durable
+  storage:
+    accessModes: ["ReadWriteOnce"]
+    resources:
+      requests:
+        storage: 1Gi
+  init:
+    archiver:
+      recoveryTimestamp: "2026-11-15T11:10:22Z"   # a UTC time inside the archived window
+      encryptionSecret:
+        name: encrypt-secret
+        namespace: demo
+      fullDBRepository:
+        name: dcdb-pitr-full
+        namespace: demo
+      manifestRepository:
+        name: dcdb-pitr-manifest
+        namespace: demo
+  deletionPolicy: WipeOut
+```
+
+> In our test we inserted a batch of rows, noted the time, inserted a second batch, and restored to a timestamp between the two. The restored database contained only the first batch.
 
 ---
 
