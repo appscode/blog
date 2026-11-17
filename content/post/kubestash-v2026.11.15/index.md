@@ -34,8 +34,6 @@ We are pleased to announce the release of [KubeStash v2026.11.15](https://kubest
 
 ### What's New
 
-The examples assume the namespace `demo`, an S3 `BackupStorage` named `s3-storage` and an encryption secret named `encrypt-secret`.
-
 #### KubeVirt: Continuous CBT Backup and Point-in-Time Restore
 
 KubeStash already backs up KubeVirt VMs on a schedule. The new **`KubeVirtArchiver`** makes this continuous. A resident job per VM uses KubeVirt's **native CBT pull-mode export** and streams each disk's map-and-extent artifact **straight into Restic**. That gives you:
@@ -107,17 +105,6 @@ spec:
     retentionSchedule: "0 0 * * *"
     successfulHistoryLimit: 5
     failedHistoryLimit: 5
-```
-
-Watch the lineage build up. Every disk should show a `full` entry followed by `incremental` entries whose `parentCheckpoint` points at the previous checkpoint:
-
-```bash
-$ kubectl -n demo get snapshots.storage.kubestash.com
-$ kubectl -n demo get snapshot <snapshot-name> -o json | jq '
-    .status.components
-    | to_entries[]
-    | {component: .key, checkpoints: [.value.resticCBTStats[]
-        | {kind, checkpoint, parentCheckpoint}]}'
 ```
 
 To recover, create a **`KubeVirtArchiverRestore`**. It restores the newest complete multi-disk checkpoint, or, with `recoveryPoint.targetTime`, the newest complete checkpoint at or before that UTC time. Each checkpoint holds every disk plus an immutable copy of the VM manifest, so the restored VM is consistent. The target VM must not already exist: the restore refuses to overwrite one, and your source VM is never touched.
@@ -308,27 +295,13 @@ spec:
 
 ### Upgrading
 
-No API changes are required for existing `BackupConfiguration`, `BackupStorage`, `Repository` and `RestoreSession` resources. Upgrade the operator with Helm, then run one on-demand backup to confirm everything works:
+No API changes are required for existing `BackupConfiguration`, `BackupStorage`, `Repository` and `RestoreSession` resources. Upgrade the operator with Helm:
 
 ```bash
 $ helm upgrade -i kubestash oci://ghcr.io/appscode-charts/kubestash \
         --version v2026.11.15 \
         --namespace stash --create-namespace \
         --set-file global.license=/path/to/the/license.txt
-```
-
-```yaml
-apiVersion: core.kubestash.com/v1alpha1
-kind: BackupSession
-metadata:
-  name: post-upgrade-check
-  namespace: demo
-spec:
-  invoker:
-    apiGroup: core.kubestash.com
-    kind: BackupConfiguration
-    name: sample-backup      # replace with your BackupConfiguration
-  session: frequent-backup   # replace with your session name
 ```
 
 ---
