@@ -161,6 +161,21 @@ The request suspends archiving, keeps the old volumes (when `retainPV` is `true`
 
 **Note:** archiving stays disabled after the restore, because the restore forks the binlog history. Re-enable it once you have checked the restored data. MariaDB uses the same request type through `MariaDBOpsRequest`.
 
+### Other Improvements
+
+- **Cross-namespace PITR restore (MySQL and MariaDB):** a point-in-time restore now works when the archiver repository is in a different namespace from the database. The restore looks up the Repository and Snapshot in the repository's namespace, and the BackupStorage credential Secret is copied into the database namespace before the binlog restore starts, so the restore no longer gets stuck on `FailedMount`.
+- **MariaDB primary service template:** in replication mode, the `primary` service template from `spec.serviceTemplates` is applied to the MaxScale Service by default. Set the `kubedb.com/primary-service-template` annotation on the MariaDB to `mariadb` to apply it to the MariaDB primary Service instead, or `both` to apply it to both.
+
+```yaml
+apiVersion: kubedb.com/v1
+kind: MariaDB
+metadata:
+  name: sample-mariadb
+  namespace: demo
+  annotations:
+    kubedb.com/primary-service-template: mariadb # maxscale (default) | mariadb | both
+```
+
 ---
 
 ## Postgres
@@ -173,7 +188,7 @@ The request suspends archiving, keeps the old volumes (when `retainPV` is `true`
 - On OpenShift, Postgres UID, GID and fsGroup default to the namespace's SCC ranges.
 - Issuer events that arrive before the Postgres watchers start are ignored.
 - `run.sh` is found via `/proc` on RHEL-family images.
-- PITR restores work when the archiver repository is in another namespace.
+- PITR restores work when the archiver repository is in another namespace: the RestoreSessions use the repository's namespace, and the storage credential Secret is copied into the database namespace for WAL restore.
 
 ### pg-coordinator
 
