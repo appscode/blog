@@ -23,7 +23,7 @@ tags:
 
 [KubeVault](https://kubevault.com) is a Kubernetes operator for [OpenBao](https://openbao.org/). OpenBao is an open source tool for secrets management, encryption as a service, and privileged access management. The KubeVault operator makes it easy to deploy, maintain and manage OpenBao servers in Kubernetes. It also manages secret engines, auth methods and policies in a Kubernetes-native way.
 
-We are excited to announce the release of [KubeVault v2026.11.15](https://kubevault.com/docs/v2026.11.15/setup/). The main change in this release is **nine new storage backends for `VaultServer`**. You can find the full commit-by-commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2026.11.15/README.md).
+We are excited to announce the release of [KubeVault v2026.11.15](https://kubevault.com/docs/v2026.11.15/setup/). The main change in this release is **nine new storage backends for `VaultServer`**. It also adds support for **Sigilr 2.6.5.1**. You can find the full commit-by-commit changelog [here](https://github.com/kubevault/CHANGELOG/blob/master/releases/v2026.11.15/README.md).
 
 ---
 
@@ -33,6 +33,38 @@ We are excited to announce the release of [KubeVault v2026.11.15](https://kubeva
 - Most of the database backends can point at a **KubeDB-managed database** through `databaseRef`. KubeVault reads the address, and where available the TLS material, from the database's `AppBinding`.
 - Credentials and TLS material always come from Kubernetes `Secret`s. They are never written into the `VaultServer` spec.
 - The admission webhook checks **HA capability** for every new backend, so `spec.exposePrimary` is only accepted on a backend that can actually elect a leader.
+- Added support for **Sigilr 2.6.5.1**.
+
+---
+
+## New Version Support
+
+KubeVault now supports Sigilr 2.6.5.1, which is built on OpenBao 2.6.5. To deploy a `VaultServer` with it, set `spec.version` to `sigilr-2.6.5.1`:
+
+````yaml
+apiVersion: kubevault.com/v1alpha2
+kind: VaultServer
+metadata:
+  name: vault
+  namespace: demo
+spec:
+  replicas: 3
+  version: sigilr-2.6.5.1
+  backend:
+    raft:
+      storage:
+        storageClassName: "standard"
+        resources:
+          requests:
+            storage: 1Gi
+  unsealer:
+    secretShares: 5
+    secretThreshold: 3
+    mode:
+      kubernetesSecret:
+        secretName: vault-keys
+  terminationPolicy: WipeOut
+````
 
 ---
 
@@ -58,7 +90,7 @@ A few things apply to all of them:
 - **KubeDB integration.** When `databaseRef` points at a KubeDB `AppBinding`, KubeVault generates the host address from it. For Cassandra, CockroachDB and MSSQL it can also take the CA bundle (and client certificate, where supported) from the `AppBinding` when you don't set `tlsSecretRef`.
 - **Pre-created storage.** Some backends expect the database, keyspace, namespace or bucket to exist already. The notes under each example say which.
 
-Below is a short example for each backend. Each one shows only `spec.backend`; the rest of the `VaultServer` stays the same. All examples use the `demo` namespace and OpenBao 2.7.1. Here is a complete manifest, using CockroachDB as the backend:
+Below is a short example for each backend. Each one shows only `spec.backend`; the rest of the `VaultServer` stays the same. All examples use the `demo` namespace and Sigilr 2.6.5.1. Here is a complete manifest, using CockroachDB as the backend:
 
 ````yaml
 apiVersion: kubevault.com/v1alpha2
@@ -68,16 +100,14 @@ metadata:
   namespace: demo
 spec:
   replicas: 3
-  version: openbao-2.7.1
+  version: sigilr-2.6.5.1
   backend:
     cockroachdb:
       databaseRef:
-        name: cockroach-db
+        name: cockroachdb
         namespace: demo
       database: vault
       sslMode: verify-full
-      credentialSecretRef:
-        name: cockroach-cred
       haEnabled: true
   unsealer:
     secretShares: 5
@@ -95,11 +125,11 @@ The Aerospike namespace must already exist on the server.
 ````yaml
   backend:
     aerospike:
-      hostList: aerospike-0.demo.svc:3000,aerospike-1.demo.svc:3000
+      hostList: aerospike.demo.svc:3000
       namespace: vault
       set: vault-data
       credentialSecretRef:
-        name: aerospike-cred
+        name: aerospike-cred   # username, password
       authMode: INTERNAL
 ````
 
@@ -115,7 +145,7 @@ The bucket must already exist, and `credentialSecretRef` is required.
       endpoint: https://oss-us-east-1.aliyuncs.com
       bucket: vault-data
       credentialSecretRef:
-        name: alicloud-cred
+        name: alicloudoss-cred   # access_key, secret_key
 ````
 
 The `Secret` holds `access_key` and `secret_key`.
@@ -135,7 +165,7 @@ The keyspace and table must already exist. `protocolVersion` must be `"2"` or hi
       consistency: LOCAL_QUORUM
       protocolVersion: "4"
       credentialSecretRef:
-        name: cassandra-cred
+        name: cassandra-cred   # username, password
       tlsEnabled: true
 ````
 
@@ -149,16 +179,14 @@ CockroachDB uses the PostgreSQL wire protocol, so the spec looks a lot like the 
   backend:
     cockroachdb:
       databaseRef:
-        name: cockroach-db
+        name: cockroachdb
         namespace: demo
       database: vault
       sslMode: verify-full
-      credentialSecretRef:
-        name: cockroach-cred
       haEnabled: true
 ````
 
-The credential `Secret` holds `username` and `password`. You can also give it a full `connection_url`, which then replaces `address`, `database` and `sslMode`. Without a `databaseRef`, set `address` to the CockroachDB host instead.
+With `databaseRef`, KubeVault reads the host and the credentials from the database's `AppBinding`. Without it, set `address` to the CockroachDB host and point `credentialSecretRef` at a `Secret` holding `username` and `password`. That `Secret` can instead hold a full `connection_url`, which replaces `address`, `database` and `sslMode`.
 
 ### CouchDB
 
@@ -169,26 +197,39 @@ The credential `Secret` holds `username` and `password`. You can also give it a 
     couchdb:
       endpoint: http://couchdb.demo.svc:5984/vault
       credentialSecretRef:
-        name: couchdb-cred
+        name: couchdb-cred   # username, password
 ````
 
 With `databaseRef`, KubeVault builds the endpoint as `<appbinding url>/<database>`, so set `database` instead of `endpoint`.
 
 ### Google Cloud Spanner
 
-`database` is the full Spanner database name. Credentials come from a service account key stored under `sa.json`.
+`database` is the full Spanner database name. Credentials come from a service account key stored under `sa.json`. If you leave out `credentialSecretRef`, Google's default credentials are used instead, for example Workload Identity on GKE. The service account needs the `roles/spanner.databaseUser` role on the database.
 
 ````yaml
   backend:
     spanner:
-      database: projects/my-project/instances/vault/databases/vault
-      table: vault-data
+      database: projects/<project-id>/instances/<instance-id>/databases/vault
       haEnabled: true
       credentialSecretRef:
-        name: spanner-sa
+        name: spanner-cred   # sa.json
 ````
 
-With `haEnabled: true`, the leader-election table defaults to the value of `table` with `HA` appended. Use `haTable` to choose a different name.
+OpenBao does not create tables, so create them before deploying. The data table is named `Vault` by default (set `table` to change it), and with `haEnabled: true` OpenBao also needs a leader-election table, named after `table` with `HA` appended (set `haTable` to change it):
+
+````sql
+CREATE TABLE Vault (
+  Key   STRING(MAX) NOT NULL,
+  Value BYTES(MAX),
+) PRIMARY KEY (Key);
+
+CREATE TABLE VaultHA (
+  Key       STRING(MAX) NOT NULL,
+  Value     STRING(MAX),
+  Identity  STRING(MAX),
+  Timestamp TIMESTAMP,
+) PRIMARY KEY (Key);
+````
 
 ### Microsoft SQL Server
 
@@ -204,7 +245,7 @@ OpenBao creates the database, schema and table if they are missing, provided the
       schema: dbo
       table: vault
       credentialSecretRef:
-        name: mssql-cred
+        name: mssql-cred   # username, password
       encrypt: "true"
 ````
 
@@ -218,11 +259,11 @@ Both buckets must already exist. By default the backend authenticates with **ins
   backend:
     oci:
       bucketName: vault-data
-      namespaceName: my-tenancy-namespace
+      namespaceName: <object-storage-namespace>
       region: us-ashburn-1
       authTypeAPIKey: true
       credentialSecretRef:
-        name: oci-api-key
+        name: oci-cred   # config, oci_api_key.pem
       haEnabled: true
       lockBucketName: vault-lock
 ````
@@ -236,14 +277,14 @@ ZooKeeper is always HA-capable, just like Raft and Consul.
 ````yaml
   backend:
     zookeeper:
-      address: zk-0.zk-pods.demo.svc:2181,zk-1.zk-pods.demo.svc:2181,zk-2.zk-pods.demo.svc:2181
+      address: zookeeper.demo.svc:2181
       path: vault/
       znodeOwner: digest:vault:<hashed-password>
       authInfoSecretRef:
-        name: zk-auth
+        name: zookeeper-auth   # authInfo
 ````
 
-The `zk-auth` `Secret` holds an `authInfo` key with a `scheme:auth` pair (for example `digest:vault:password`). For TLS, set `tlsEnabled: true` and point `tlsSecretRef` at a `Secret` containing `ca.crt`, `tls.crt` and `tls.key`.
+The `zookeeper-auth` `Secret` holds an `authInfo` key with a `scheme:auth` pair (for example `digest:vault:<password>`). For TLS, set `tlsEnabled: true` and point `tlsSecretRef` at a `Secret` containing `ca.crt`, `tls.crt` and `tls.key`.
 
 ---
 
