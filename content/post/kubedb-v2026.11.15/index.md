@@ -21,6 +21,7 @@ tags:
 - mssqlserver
 - mysql
 - neo4j
+- openshift
 - oracle
 - pitr
 - postgres
@@ -30,7 +31,7 @@ tags:
 
 KubeDB **v2026.11.15** extends **KubeDB Branching** to Kafka, MSSQLServer and Neo4j, and brings **dynamic configuration** to Postgres, MySQL, MariaDB, Elasticsearch and Neo4j, so most configuration changes no longer need a pod restart.
 
-This release also adds **automatic recovery of lost ClickHouse replicas**, **in-place point-in-time restore** for MySQL and MariaDB, **point-in-time recovery for DocumentDB**, **TLS for Milvus object storage**, **Oracle backup to S3-compatible storage**, and a set of security and reliability improvements for Postgres and its coordinator.
+This release also adds **automatic recovery of lost ClickHouse replicas**, **in-place point-in-time restore** for MySQL and MariaDB, **point-in-time recovery for DocumentDB**, **TLS for Milvus object storage**, **Oracle backup to S3-compatible storage**, **OpenShift-friendly security defaults** for all databases, and a set of security and reliability improvements for Postgres and its coordinator.
 
 ---
 
@@ -38,6 +39,7 @@ This release also adds **automatic recovery of lost ClickHouse replicas**, **in-
 
 * **Branching for Kafka, MSSQLServer and Neo4j** — create an independent copy of a database for testing and development
 * **Dynamic Configuration** — Postgres, MySQL, MariaDB, Elasticsearch and Neo4j apply configuration changes without restarting pods when possible
+* **OpenShift Security IDs** — every database now takes its default UID, GID and fsGroup from the namespace's SCC ranges, so pods run under `restricted-v2` without extra configuration
 * **ClickHouse Replica Disaster Recovery** — a replica whose data volume is lost is rebuilt automatically from a healthy replica of the same shard
 * **MySQL & MariaDB In-Place Archiver Restore** — restore an existing database to a point in time with the new `ArchiverRestore` ops request
 * **DocumentDB PITR** — continuous archiving and point-in-time recovery via `DocumentDBArchiver`
@@ -85,25 +87,37 @@ spec:
 - `false`: Never restart. KubeDB applies the changes to the running database. If any changed parameter is static the OpsRequest fails.
 - `true`: Always restart the pods after applying the changes, even if every change could have been applied dynamically.
 
-The following is an example for MySQL:
+The following is an example for Postgres. MySQL and MariaDB examples are in the KubeDB docs, linked in their sections below; Elasticsearch and Neo4j examples are in their own sections.
 
 ```yaml
 apiVersion: ops.kubedb.com/v1alpha1
-kind: MySQLOpsRequest
+kind: PostgresOpsRequest
 metadata:
-  name: mysql-reconfigure
+  name: pg-reconfigure
   namespace: demo
 spec:
   type: Reconfigure
   databaseRef:
-    name: sample-mysql
+    name: sample-postgres
   configuration:
-    restart: "false"
+    restart: "auto"
     applyConfig:
-      my.cnf: |
-        [mysqld]
-        max_connections=300
+      user.conf: |
+        log_min_duration_statement = 500
 ```
+
+---
+
+## OpenShift: Security IDs from the Namespace
+
+On OpenShift, the `restricted-v2` SCC admits a pod only if its user ID and fsGroup lie in the ranges that OpenShift assigns to the namespace. A fixed catalog UID (for example `70` for Postgres) is rejected.
+
+KubeDB now reads the namespace's `openshift.io/sa.scc.uid-range` and `openshift.io/sa.scc.supplemental-groups` annotations and uses them as the defaults for **all databases**:
+
+- `runAsUser` and `runAsGroup`: the first ID of the uid range.
+- `fsGroup`: the first ID of the supplemental-groups range, or of the uid range if the namespace has no supplemental-groups annotation.
+
+These are defaults only. A value you set in the pod or container `securityContext` always wins. On clusters other than OpenShift, nothing changes.
 
 ---
 
@@ -163,6 +177,10 @@ The request suspends archiving, keeps the old volumes (when `retainPV` is `true`
 
 **Note:** archiving stays disabled after the restore, because the restore forks the binlog history. Re-enable it once you have checked the restored data.
 
+### Dynamic Configuration
+
+MySQL now applies configuration changes that can be set at runtime without restarting the pods. See the [MySQL Reconfigure guide](https://kubedb.com/docs/v2026.11.15/guides/mysql/reconfigure/reconfigure-steps/) for examples.
+
 ---
 
 ## MariaDB
@@ -199,6 +217,10 @@ spec:
 
 As with MySQL, the request suspends archiving, keeps the old volumes (when `retainPV` is `true`), wipes the data volumes, restores the base backup, and replays binlogs up to `recoveryTimestamp`. Archiving stays disabled after the restore; re-enable it once you have checked the restored data.
 
+### Dynamic Configuration
+
+Changes that MariaDB can apply at runtime are now set on each pod as global variables, without a restart. See the [MariaDB Reconfigure guide](https://kubedb.com/docs/v2026.11.15/guides/mariadb/reconfigure/cluster/) for examples.
+
 ### Other Improvements
 
 - **Primary service template:** in replication mode, the `primary` service template from `spec.serviceTemplates` is applied to the MaxScale Service by default. Set the `kubedb.com/primary-service-template` annotation on the MariaDB to `mariadb` to apply it to the MariaDB primary Service instead, or `both` to apply it to both.
@@ -217,12 +239,14 @@ metadata:
 
 ## Postgres
 
+### Dynamic Configuration
+
+Postgres now applies configuration changes with `pg_reload_conf()` instead of a restart. KubeDB then checks `pg_settings` on every pod; with `restart: auto` it restarts the database only if a changed setting still needs a restart. See the example in [Dynamic Configuration](#dynamic-configuration) above.
+
 ### Operator
 
 - **Security:** opt-in service account token hardening, plus token authentication and TLS for the coordinator API.
-- **Reconfigure:** with `restart: auto`, KubeDB decides whether a restart is needed and verifies that PostgreSQL has reloaded the change.
 - **Major version upgrade:** the upgrade now holds a Raft key while it runs.
-- **OpenShift:** the Postgres UID, GID and fsGroup now default to the namespace's SCC ranges.
 - **Startup:** Issuer events received before the Postgres watchers start are now ignored.
 - **RHEL-based images:** `run.sh` is now located through `/proc`, so these images start correctly.
 
@@ -232,6 +256,55 @@ metadata:
 - **Re-seed:** an override file can now skip the free-space check before a re-seed.
 - **Crash recovery:** a crashed standby now restarts in standby mode instead of single-user crash recovery.
 - **Major upgrade:** a re-seed during a major version upgrade no longer keeps the old data.
+
+---
+
+## Elasticsearch
+
+### Dynamic Configuration
+
+Elasticsearch now applies changed cluster-wide settings in `elasticsearch.yml` through the cluster settings API, without a restart. Changes to other files (such as `jvm.options`) or to node-level settings still need a restart.
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: ElasticsearchOpsRequest
+metadata:
+  name: es-reconfigure
+  namespace: demo
+spec:
+  type: Reconfigure
+  databaseRef:
+    name: sample-es
+  configuration:
+    restart: "auto"
+    applyConfig:
+      elasticsearch.yml: |
+        cluster.max_shards_per_node: 2000
+```
+
+---
+
+## Neo4j
+
+### Dynamic Configuration
+
+Neo4j now applies settings that the server reports as dynamic with `dbms.setConfigValue`, without a restart. Other settings still need a restart.
+
+```yaml
+apiVersion: ops.kubedb.com/v1alpha1
+kind: Neo4jOpsRequest
+metadata:
+  name: neo4j-reconfigure
+  namespace: demo
+spec:
+  type: Reconfigure
+  databaseRef:
+    name: sample-neo4j
+  configuration:
+    restart: "auto"
+    applyConfig:
+      db.logs.query.threshold: "2s"
+```
 
 ---
 
